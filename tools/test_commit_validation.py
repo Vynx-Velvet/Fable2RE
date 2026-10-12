@@ -55,6 +55,45 @@ class CommitValidationTests(unittest.TestCase):
             "mods/_Example_ModLoadTest/make_example.py", "mods/_Example_ModLoadTest/.gitignore",
             "mods/MyPlugin/native/README.md"), [])
 
+    # (the user names are filled in at run time: written out, these lines would be user folders in this file)
+    def test_user_folders_are_rejected(self):
+        a, b, c, d = "alice", "Bob", "carol", "dave"
+        found = (f"docs/a.md:3:C:\\Users\\{a}\n"
+                 f"tools/b.ps1:9:c:/users/{b}\n"
+                 f"tools/c.py:1:/home/{c}\n"
+                 f"README.md:5:/Users/{d}\n")
+        errors = commit.profile_path_problems(found)
+        self.assertEqual(len(errors), 4)
+        self.assertIn("./docs/a.md:3", errors[0])
+
+    def test_user_folder_placeholders_are_allowed(self):
+        found = ("docs/a.md:3:C:\\Users\\you\n"
+                 ".github/x.yml:1:/home/runner\n"
+                 "docs/b.md:2:C:\\Users\\Public\n")
+        self.assertEqual(commit.profile_path_problems(found), [])
+
+    def test_user_folder_search_finds_nothing(self):
+        error = commit.subprocess.CalledProcessError(1, ["git", "grep"])
+        with patch.object(commit, "git", side_effect=error):
+            self.assertEqual(commit.profile_paths(Path("unused")), [])
+
+    def test_user_folder_search_in_a_real_index(self):
+        import shutil
+        import subprocess
+        if not shutil.which("git"):
+            self.skipTest("git not found")
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            a, b = "alice", "bob"
+            (repo / "a.md").write_text(f"see C:\\Users\\{a}\\x and C:\\Users\\<you>\\y\n", encoding="utf-8")
+            (repo / "b.ps1").write_text(f"$p = '/home/{b}/tools'\n", encoding="utf-8")
+            (repo / "c.txt").write_text("nothing personal\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+            errors = commit.profile_paths(repo)
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(any("alice" in e for e in errors) and any("bob" in e for e in errors), errors)
+
     def test_native_plugin_binary_is_rejected(self):
         self.assertTrue(self._content_errors("mods/_Example_HelloNative/native/HelloMod.dll"))
 

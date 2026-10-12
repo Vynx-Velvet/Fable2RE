@@ -19,7 +19,7 @@ function Step([string]$what, [scriptblock]$body) {
 Push-Location $lift
 try {
     Step 'native declarations and bridges' { python native_gen.py }
-    if (Test-Path cache/facts) { Step 'class model (classes.h)' { python classes.py } }
+    if (Test-Path cache/facts) { Step 'class model (classes.h)' { python classes.py --facts } }
     Step 'lift (all functions)' { python lift.py --all --skip overridden.txt }
     Step 'test (changed functions)' { python difftest/run.py --jobs $Jobs }
     foreach ($p in 2, 3) {

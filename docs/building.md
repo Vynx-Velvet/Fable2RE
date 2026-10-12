@@ -50,7 +50,7 @@ Each step records its inputs and its outputs in `tools/.setup/<step>.json` when 
 | `toolchain` | Checks the tools. Builds the ReXGlue SDK (`rexglue.exe`) on the first run and when the SDK checkout moved | `rexglue-sdk/out/install/win-amd64/bin/rexglue.exe` | first SDK build not timed |
 | `codegen` | `rexglue codegen Fable2_config.toml`: the game recompiled instruction by instruction | `Fable2Recomp/generated/` | 195 s |
 | `image` | `tools/xex_decrypt.py`. The result must match the reference image hash | `research/decomp/default_image.bin` | about 12 s |
-| `classes` | Class model: `lift.py --facts`, then `classes.py` | `tools/lift/cache/facts`, `classes.json`, `structs.json`, `Fable2Recomp/lifted/classes.h` | facts about 25 min; a rename re-runs only `classes.py` |
+| `classes` | Class model: from the shipped model (`classes.py --bundle`), or computed here (`lift.py --facts`, then `classes.py --facts`; see `-Classes`) | `tools/lift/cache/classes.json`, `structs.json`, `Fable2Recomp/lifted/classes.h` (computed: also `tools/lift/cache/facts`) | shipped: 2 s; computed: facts about 25 min, and a rename re-runs only `classes.py` |
 | `decls` | `native_gen.py`: native entry points and bridges | `Fable2Recomp/lifted/native_decls.h`, `native_bridges.N.cpp` | not timed |
 | `lift` | `apply_names.py --init` records the names the lift uses. Then `lift.py --all`, after which only tested functions stay lifted (below) | `Fable2Recomp/lifted/lifted.N.K.cpp`, `tools/lift/cache/applied_names.json` | 9.5 to 27.6 min for the lift, plus about 3 min for the test filter |
 | `config` | Installs `Fable2.toml` from [the template](settings.md) and stages `assets/game` beside the exe. Never overwrites | `Fable2Recomp/out/build/<preset>/` | seconds |
@@ -74,6 +74,12 @@ The tester compiles the lifted and the recompiled form of a function and compare
 - `status` (default once `tools/lift/difftest/results/status.json` exists): this machine's own tester results. `make_skip.py` writes `tools/lift/skip.txt`.
 - `tester`: runs the tester on every function whose text changed (`tools/lift/update.ps1`), then drops the failures. It needs a built release tree, so a fresh machine runs it only after a first `build`.
 - `none`: keeps every lifted function except `tools/lift/overridden.txt`. These functions are untested; this mode is for developers only.
+
+The manifest's hashes are of the text the development machine lifted, and that text depends on its class model. The class model therefore ships too: `research/lift/class_model.json.gz` holds its structure (vtables, base classes, constructors, the class of each function's `this`, field offsets and sizes; no names, no code). `-Classes` chooses where the model comes from:
+
+- `auto` (default): the shipped model with `-Tested manifest`, when it fits this executable and typeflow is off; otherwise computed here.
+- `shipped`: `classes.py --bundle`. Names come from the naming dictionary and, for the rest, from RTTI in your own image. Seconds.
+- `facts`: computed here, `lift.py --facts` (about 25 minutes) and `classes.py --facts`. The development machine (`-Tested status`) does this.
 
 ## Options
 
@@ -114,7 +120,7 @@ Hashes of file contents. `tools/.setup/hashes.json` caches each hash by file siz
   - local rewrites (`Fable2Recomp/rewritten/`)
   - the class model
   - the verdict source (manifest or `status.json`)
-- The `facts` part of `classes` leaves out names. A rename re-runs `classes.py`, not the 25-minute facts pass.
+- Computed here, the `facts` part of `classes` leaves out names. A rename re-runs `classes.py`, not the 25-minute facts pass.
 - A step's own outputs count too. When one is missing, the step runs again. `stage`, `codegen` and `image` record their output's hash, so a changed output also counts. The outputs are:
   - `iso/extracted/default.xex` (`extract`)
   - the staged `default.xex` (`stage`)
@@ -151,8 +157,8 @@ Then, from `tools/lift` (the [lifting guide](lifted-code.md) explains each comma
 
 ```powershell
 python bundle.py check                     # the shipped analysis fits this default.xex
-python lift.py --facts                     # class-recovery facts
-python classes.py                          # class model, lifted/classes.h
+python classes.py --bundle                 # class model from the shipped one, lifted/classes.h
+                                           # (computed instead: python lift.py --facts, then python classes.py --facts)
 python native_gen.py                       # native declarations and bridges
 python apply_names.py --init               # the names the lift uses (before it: a rename during the lift stays pending)
 python lift.py --all --skip overridden.txt
@@ -185,7 +191,7 @@ powershell -File tools/build.ps1 -Preset win-amd64-release -Target Fable2
 
 ## Known limitations
 
-- Run end to end once, from a fresh clone on the development machine (2026-10-12: 2.2 hours from the SDK build to the title screen, [record](../research/findings/2026-10-12-fresh-clone-end-to-end.md)); not yet on a machine without the toolchain. Check the `matched OK` count that `make_skip.py` prints. The manifest helps only when this machine's lifted text matches the text that was tested; anything else safely falls back to the recompiled original. That run matched 57,321 functions; 371 more stayed recompiled because the development tree's class model is older than the lifter.
+- Run end to end once, from a fresh clone on the development machine (2026-10-12: 2.2 hours from the SDK build to the title screen, [record](../research/findings/2026-10-12-fresh-clone-end-to-end.md)); not yet on a machine without the toolchain. Check the `matched OK` count that `make_skip.py` prints. The manifest helps only when this machine's lifted text matches the text that was tested; anything else safely falls back to the recompiled original. That run matched 57,321 functions; 371 more stayed recompiled because the development tree's class model is older than the lifter. Since then the class model ships (`-Classes`, above), and a new setup lifts the tested text.
 - `verify` and `extract` run before the `toolchain` check. `extract` checks only for CMake, which it needs to build extract-xiso. With Ninja and Clang on PATH it builds with Clang and defines `WIN32`, which extract-xiso's bundled `getopt` needs. Clang defines only `_WIN32`.
 - `codegen` records a hash of `generated/` as its output. A hand edit there makes the next run generate the code again. The `lift` step checks only that lifted chunks exist, not their content.
 - The `extract` record uses the image's path, size and modification time, not a hash of all 7 GB.

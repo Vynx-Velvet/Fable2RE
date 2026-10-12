@@ -18,6 +18,13 @@ that had wrongly revoked 297 correct rewrites were found and fixed
 ([record](../research/findings/2026-10-07-difftest-wrapped-pointer-timeouts.md)). The dictionary holds 6,085
 function names. Revoke / re-check / restore / retry steps: [parallel work](parallel-work.md).
 
+**Update 2026-10-12 (fresh setups; publishing):** a fresh clone set up end to end from the disc reaches the title
+screen ([record](../research/findings/2026-10-12-fresh-clone-end-to-end.md)). The class model now ships
+(`research/lift/class_model.json.gz`, structure only), so a new setup lifts exactly the text the verification
+manifest records and skips the 25-minute facts pass; checked on the 368 functions that differed before, not yet
+in a whole setup. `tools/publish.py` publishes progress (research data, docs, reviewed promoted modules) with
+every check in one command ([publishing](publishing.md)).
+
 **Update 2026-10-10/11 (toolchain for fresh users; no new game build):**
 - *Setup.* `tools/setup_all.ps1` now runs every step of the development pipeline: executable identification
   (`tools/xex_info.py`), extraction, codegen, the decrypted image, the class model, declarations and bridges, the

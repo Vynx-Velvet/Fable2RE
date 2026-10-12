@@ -98,8 +98,8 @@ for the disc steps, [record](../research/findings/2026-10-12-fresh-clone-end-to-
 4. (Done 2026-10-12, [record](../research/findings/2026-10-12-fresh-clone-end-to-end.md).) Run generation,
    compilation and runtime smoke checks in an isolated checkout using only committed tooling, declared
    dependencies and the user's game copy (`tools/test_fresh_clone.ps1`). It ran on the development machine with its installed toolchain; a machine
-   without one is still untested. A new setup lifts 368 fewer functions than the development tree until the
-   manifest is exported again after a class-model refresh.
+   without one is still untested. The 368 functions a new setup lifted less than the development tree came from an
+   older class model there; the class model ships since the same day.
 5. (Reviewed 2026-10-12, see above.) Provenance of the published tree and its single commit. A review is not a
    legal opinion; the promoted modules need their own review before publication.
 

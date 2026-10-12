@@ -178,8 +178,35 @@ def audit(repo, label="."):
     return errors
 
 
+# A machine's own user folder in a published file: personal data, and a path no other machine has. Placeholders
+# (C:\Users\<you>, %USERPROFILE%, $HOME, ~) do not match.
+PROFILE_PATH = r"[A-Za-z]:[\\/]+Users[\\/]+[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+|/Users/[A-Za-z0-9._-]+"
+NOT_PERSONAL = {"runner", "user", "username", "you", "your-name", "name", "me", "public", "default", "example",
+                "shared"}
+
+
+def profile_path_problems(grep_output):
+    """Errors for `git grep -n -o` lines (path:line:match) that name a real user folder."""
+    errors = []
+    for line in grep_output.splitlines():
+        path, number, match = line.split(":", 2)
+        user = re.split(r"[\\/]+", match.rstrip("\\/"))[-1]
+        if user.lower() not in NOT_PERSONAL:
+            errors.append(f"./{path}:{number}: a user folder ({match}): personal data, and a path only one machine has")
+    return errors
+
+
+def profile_paths(repo):
+    """Staged text files of this repository (not the SDK's) that name a user folder."""
+    try:
+        out = git(repo, "grep", "--cached", "-I", "-n", "-o", "-i", "-E", PROFILE_PATH)
+    except subprocess.CalledProcessError:   # (exit status 1: nothing found)
+        return []
+    return profile_path_problems(out)
+
+
 if __name__ == "__main__":
-    problems = audit(ROOT)
+    problems = audit(ROOT) + profile_paths(ROOT)
     for problem in problems:
         print(f"FAIL: {problem}")
     print(f"Staged packaging audit: {len(problems)} blocker(s).")

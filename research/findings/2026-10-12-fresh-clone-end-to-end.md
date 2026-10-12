@@ -59,9 +59,18 @@ The lift lifted 59,908 functions and left 42 recompiled. `make_skip.py --manifes
   old form, 354 are functions whose `this` assignment changed: their lifted text changes, the hash no longer
   matches, and they safely stay recompiled.
 
-So a new user gets 368 fewer lifted functions than the development tree (0.6%), with no loss of correctness. To
-close the gap, refresh the class model in the development tree, lift, retest and export the manifest again (a
-whole-game cycle, overnight); new setups then match the manifest again.
+So a new user gets 368 fewer lifted functions than the development tree (0.6%), with no loss of correctness.
+
+## Fix (the same day): the class model ships
+
+The development tree's model is reproducible: `classes.py` on its facts gives the same structure with any hash
+seed, and exactly the structure in its `cache/classes.json`. `classes.py --export` now writes that structure to
+`research/lift/class_model.json.gz` (182 KB: vtables and their functions, base classes, constructors, the class
+of each function's `this`, field access sizes and counts; no names, no code, no text). In the fresh clone,
+`classes.py --bundle` built `structs.json` and `classes.h` byte-identical to the development tree's and a
+`classes.json` with the same content, in 2 seconds instead of the 22-minute facts pass. Re-lifting the 368
+functions with it gave the manifest's hash for all 368. `setup_all.ps1` uses the shipped model by default with
+the manifest (`-Classes`). Not yet checked: a whole setup with it (the lift step runs again for 23 minutes).
 
 ## Other observations
 

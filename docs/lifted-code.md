@@ -42,8 +42,8 @@ The same by hand. The image comes first, from the repository root:
 Then from `tools/lift`, in this order:
 
     python bundle.py check                      # is the shipped analysis valid for your default.xex?
-    python lift.py --facts                      # class-recovery facts (cache/facts, cache/flow), about 25 min
-    python classes.py                           # cache/classes.json, cache/structs.json, lifted/classes.h
+    python classes.py --bundle                  # cache/classes.json, cache/structs.json, lifted/classes.h from the
+                                                # shipped model (or: lift.py --facts, about 25 min, then classes.py --facts)
     python native_gen.py                        # lifted/native_decls.h, lifted/native_bridges.N.cpp
     python apply_names.py --init                # record the naming dictionary the lift will use
     python lift.py --all --skip overridden.txt  # every function, 9.5 to 27.6 min on the development machine
@@ -58,8 +58,10 @@ What each command needs:
 
 - `lift.py --facts` and `lift.py --all`: the generated code, the analysis and the decrypted image
   (`readable.py` reads the game strings the readable form refers to).
-- `classes.py`: the facts, the image, `research/symbols/func_db.json` and the naming dictionary. Each lifted chunk
-  carries the structs it uses, from `cache/structs.json`.
+- `classes.py --bundle`: the shipped model (`research/lift/class_model.json.gz`), the image (class names from RTTI)
+  and the naming dictionary. `classes.py --facts`: the facts, the image, `research/symbols/func_db.json` and the
+  dictionary. Without an option, `classes.py` rebuilds from the source the current `cache/classes.json` came from
+  (a rename). Each lifted chunk carries the structs it uses, from `cache/structs.json`.
 - `native_gen.py`: only the analysis and the names. The promoted source modules (`Fable2Recomp/src/game/promoted`)
   include `classes.h` and `native_decls.h`, so both must exist before a build.
 
@@ -79,9 +81,27 @@ After a lifter-wide change, `tools/lift/verify_and_build.ps1` runs `setup_all.ps
 the build. It does not refresh the class model (`lift.py --facts`, about 25 minutes, and `classes.py`) or the
 native declarations (`native_gen.py`). A new class model changes the structs that every lifted chunk carries, so
 it means a retest and recompile across the game. Refresh them on purpose, overnight, with
-`setup_all.ps1 -From classes -To build -Tested tester`. Renames in `research/names` reach the lifted code through `python tools/lift/apply_names.py`. It
+`setup_all.ps1 -From classes -To build -Tested tester`, and publish the new class model with the manifest
+(`python tools/publish.py --refresh`, [publishing](publishing.md)). Renames in `research/names` reach the lifted code through `python tools/lift/apply_names.py`. It
 re-lifts only the affected functions and updates the promoted modules. `setup_all.ps1` runs it before writing
 anything with the new names.
+
+### The shipped class model
+
+`research/lift/class_model.json.gz` is the class model the development machine lifted and tested with, as
+structure only: each vtable's functions, base classes, constructors, the class of each function's `this`, and per
+field offset the access sizes and counts. It holds no names, no code and no text. A setup that uses it
+(`classes.py --bundle`) builds the same `classes.json`, `structs.json` and `classes.h` as the development machine,
+so its lift gives the text the verification manifest records, and it skips the 25-minute facts pass. Without it,
+a fresh setup's model differed for 401 functions and 368 tested functions stayed recompiled
+([record](../research/findings/2026-10-12-fresh-clone-end-to-end.md)).
+
+    python classes.py --export    # write it from the facts; refused unless it is the structure in cache/classes.json
+    python classes.py --verify    # is the shipped model the structure in cache/classes.json?
+    python classes.py --check     # does it fit this machine's default.xex?
+
+The model and the manifest are a pair: export both after a class-model refresh, lift and test
+(`python tools/publish.py --refresh`). The analysis is deterministic: the same facts give the same model.
 
 ### Tested functions without running the tester
 

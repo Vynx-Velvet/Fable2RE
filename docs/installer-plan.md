@@ -45,7 +45,7 @@ Times are from the development machine (8 threads) unless marked. "Implemented" 
 | 4 | Toolchain | LLVM/Clang 20+, CMake 3.29+, Ninja, Python 3.12+ with `tools/requirements.txt`, VS Build Tools; `rexglue.exe` | Checks only that the tools exist. Builds the SDK on first use and when its checkout moves. VS via Microsoft's installer (the user accepts its licence); investigate clang + xwin/mingw to avoid it | implemented (checks) |
 | 5 | Recompile | `Fable2Recomp/generated/` | `rexglue codegen Fable2_config.toml`: 195 s (log of 2026-10-02) | implemented |
 | 6 | Image | `research/decomp/default_image.bin` | `tools/xex_decrypt.py`, about 12 s; checked against the reference image hash | implemented |
-| 7 | Class model | `tools/lift/cache/classes.json`, `lifted/classes.h` | `lift.py --facts` (about 25 min, 2026-10-05 run), then `classes.py` (not timed) | implemented |
+| 7 | Class model | `tools/lift/cache/classes.json`, `lifted/classes.h` | From the shipped model `research/lift/class_model.json.gz` (`classes.py --bundle`, 2 s); computed here: `lift.py --facts` (about 25 min, 2026-10-05 run), then `classes.py --facts` | implemented |
 | 8 | Declarations | `lifted/native_decls.h`, `native_bridges.N.cpp` | `native_gen.py`; not timed | implemented |
 | 9 | Lift | `Fable2Recomp/lifted/` | `apply_names.py --init`, then `lift.py --all` with the shipped analysis: 9.5 to 27.6 min. Filter: `difftest/make_skip.py --manifest`, hashing about 3 min. Then the drop pass | implemented; manifest filter fixed 2026-10-11 for a freshly extracted `default.xex` (not yet run in a full setup) |
 | 10 | Mod/research data (optional) | `extracted/` | `tools/bnk.py`, `tools/babel.py` | not in the script |

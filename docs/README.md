@@ -28,6 +28,7 @@
 | [Promoted code](promoted-code.md) | Model-written readable functions: checks, review, publication |
 | [Parallel work](parallel-work.md) | Running rewrite and naming workers alongside development |
 | [Initial-commit audit](initial-commit-audit.md) | What the repository may contain, release blockers, validation commands |
+| [Publishing](publishing.md) | Publishing progress in one command (`tools/publish.py`) and its checks |
 | [Ghidra tooling](../tools/ghidra/README.md) | Local analysis and decompiler exports |
 
 ## Research and history

@@ -13,7 +13,8 @@
 #   codegen    rexglue codegen Fable2_config.toml -> Fable2Recomp/generated/
 #   image      tools/xex_decrypt.py -> research/decomp/default_image.bin (checked against the reference image hash),
 #              then the local research/decomp/function_strings.tsv (tools/catalog/function_strings.py)
-#   classes    lift.py --facts (cache/facts, cache/flow) + classes.py -> cache/classes.json, structs.json, lifted/classes.h
+#   classes    the class model -> cache/classes.json, structs.json, lifted/classes.h: from the shipped model
+#              (classes.py --bundle, seconds) or from this machine's facts (lift.py --facts + classes.py --facts)
 #   decls      native_gen.py -> lifted/native_decls.h, lifted/native_bridges.N.cpp
 #   lift       apply_names.py --init (records the names the lift reads), lift.py --all, then only tested functions
 #              stay lifted (see -Tested)
@@ -33,6 +34,12 @@
 #                      tester    run the differential tester on what changed first (tools/lift/update.ps1; needs a
 #                                built release tree)
 #                      none      keep every lifted function except overridden.txt (untested; for developers)
+#   -Classes <src>   where the class model comes from:
+#                      auto      shipped with -Tested manifest (when it fits this executable and typeflow is off),
+#                                else facts (default)
+#                      shipped   research/lift/class_model.json.gz: the model the shipped verification manifest was
+#                                tested with, so the lift gives the tested text
+#                      facts     computed here (lift.py --facts, about 25 minutes, then classes.py --facts)
 #   -Jobs <n>        worker processes for lift.py and make_skip.py (default: processors, at most 8)
 #   -Check           also run the check step (boots the game; closes any running Fable2.exe first)
 #   -DryRun          only report which steps would run and which of their inputs changed
@@ -48,6 +55,7 @@ param(
     [string]$From = '',
     [string]$To = '',
     [ValidateSet('auto', 'manifest', 'status', 'tester', 'none')][string]$Tested = 'auto',
+    [ValidateSet('auto', 'shipped', 'facts')][string]$Classes = 'auto',
     [int]$Jobs = 0,
     [switch]$Check,
     [switch]$DryRun
@@ -70,6 +78,7 @@ $Image = Join-Path $Root 'research/decomp/default_image.bin'
 $FuncStrings = Join-Path $Root 'research/decomp/function_strings.tsv'
 $Bundle = Join-Path $Root 'research/lift/summaries.json.gz'
 $Manifest = Join-Path $Root 'research/lift/verified.json.gz'
+$ClassModel = Join-Path $Root 'research/lift/class_model.json.gz'
 $ManifestSkip = 'cache/manifest_skip.txt'   # (relative to tools/lift: lift.py --funcs splits its argument at commas)
 $Status = Join-Path $Difftest 'results/status.json'
 $Names = Join-Path $Root 'research/names'
@@ -626,11 +635,42 @@ function Facts-Inputs {
     return $o
 }
 
+# Where the class model comes from (-Classes). The shipped model is the structure the development machine's lift and
+# the shipped verification manifest were made with: lifting with it gives the text that was tested. typeflow.py
+# (types.on) needs the facts pass's cache/flow, so it always computes the model here.
+function Class-Source {
+    if ($null -eq $script:ClassSource) {
+        $want = $Classes
+        if ($want -eq 'auto') {
+            if ($Mode -eq 'manifest' -and -not (Types-On)) { $want = 'shipped' } else { $want = 'facts' }
+        }
+        if ($want -eq 'shipped') {
+            if (Types-On) { throw '-Classes shipped: typeflow.py (types.on / LIFT_TYPES=1) needs the facts; use -Classes facts' }
+            if (-not (Test-Path -LiteralPath $StagedXex)) {
+                $want = 'facts'   # (no executable to check the model against yet: the classes step stops at Need)
+            } elseif ((Tool 'python' @((Join-Path $Lift 'classes.py'), '--check') -NoThrow) -ne 0) {
+                if ($Classes -eq 'shipped') { throw 'the shipped class model does not fit this default.xex (see above): use -Classes facts' }
+                Log '  the shipped class model does not fit (see above): the classes step computes it from the facts'
+                $want = 'facts'
+            }
+        }
+        $script:ClassSource = $want
+    }
+    return $script:ClassSource
+}
+
 function Classes-Inputs {
-    $o = Facts-Inputs
-    $o['func_db.json'] = File-Id $FuncDb
+    if ((Class-Source) -eq 'shipped') {
+        $o = [ordered]@{}
+        $o['class model'] = 'shipped: ' + (File-Id $ClassModel)
+        $o['image'] = File-Id $Image   # (RTTI names of the classes the dictionary does not name)
+    } else {
+        $o = Facts-Inputs
+        $o['class model'] = 'facts'
+        $o['func_db.json'] = File-Id $FuncDb
+        $o['types (typeflow.py)'] = [string](Types-On)
+    }
     $o['research/names'] = Tree-Id $Names '\.tsv$'
-    $o['types (typeflow.py)'] = [string](Types-On)
     $entries = @('classes')
     if (Types-On) { $entries += 'typeflow' }
     $o['classes.py and its modules'] = Sources-Id $entries
@@ -640,24 +680,31 @@ function Classes-Inputs {
 }
 
 Step 'classes' { Classes-Inputs } {
-    Need (Join-Path $Generated 'Fable2_init.h') 'the generated code' 'codegen'
     Need $Image 'the decrypted image' 'image'
-    Assert-Analysis
+    $shipped = (Class-Source) -eq 'shipped'
+    if (-not $shipped) {
+        Need (Join-Path $Generated 'Fable2_init.h') 'the generated code' 'codegen'
+        Assert-Analysis
+    }
     Apply-PendingNames
     Snapshot-Inputs
-    $factsKey = Text-Sha (Facts-Inputs | ConvertTo-Json -Compress)
-    $factsDir = Join-Path $LiftCache 'facts'
-    $have = (Test-Path -LiteralPath $factsDir) -and @(Get-ChildItem -LiteralPath $factsDir -Filter '*.jsonl').Count -gt 0
-    $last = $null
-    if ($script:OldStamp -and $script:OldStamp.extra) { $last = $script:OldStamp.extra.facts }
     Push-Location $Lift
     try {
-        if ($script:StepForced -or -not $have -or $last -ne $factsKey) {
-            Tool 'python' @('lift.py', '--facts', '--jobs', "$Jobs")
-        } else { Log '  facts up to date (their inputs did not change): lift.py --facts not needed' }
-        $script:StampExtra['facts'] = $factsKey
-        Tool 'python' @('classes.py')
-        if (Types-On) { Tool 'python' @('typeflow.py') }
+        if ($shipped) {
+            Tool 'python' @('classes.py', '--bundle')
+        } else {
+            $factsKey = Text-Sha (Facts-Inputs | ConvertTo-Json -Compress)
+            $factsDir = Join-Path $LiftCache 'facts'
+            $have = (Test-Path -LiteralPath $factsDir) -and @(Get-ChildItem -LiteralPath $factsDir -Filter '*.jsonl').Count -gt 0
+            $last = $null
+            if ($script:OldStamp -and $script:OldStamp.extra) { $last = $script:OldStamp.extra.facts }
+            if ($script:StepForced -or -not $have -or $last -ne $factsKey) {
+                Tool 'python' @('lift.py', '--facts', '--jobs', "$Jobs")
+            } else { Log '  facts up to date (their inputs did not change): lift.py --facts not needed' }
+            $script:StampExtra['facts'] = $factsKey
+            Tool 'python' @('classes.py', '--facts')
+            if (Types-On) { Tool 'python' @('typeflow.py') }
+        }
     } finally { Pop-Location }
 } @('class model present')
 

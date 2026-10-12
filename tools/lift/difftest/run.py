@@ -496,7 +496,8 @@ def prerequisites():
          'the recompiled code', os.path.join(gen, 'Fable2_init.h'),
          "tools/setup_all.ps1 step 'codegen' (rexglue codegen Fable2_config.toml)"),
         (os.path.isfile(os.path.join(lifted, 'classes.h')), 'the class model', os.path.join(lifted, 'classes.h'),
-         "tools/setup_all.ps1 step 'classes' (in tools/lift: python lift.py --facts, then python classes.py)"),
+         "tools/setup_all.ps1 step 'classes' (in tools/lift: python classes.py --bundle, or python lift.py --facts "
+         "then python classes.py --facts)"),
         (os.path.isfile(os.path.join(lifted, 'native_decls.h')), 'the native declarations',
          os.path.join(lifted, 'native_decls.h'), decls_step),
         (has(lifted, r'native_bridges\.\d+\.cpp'), 'the native bridges', os.path.join(lifted, 'native_bridges.N.cpp'),
