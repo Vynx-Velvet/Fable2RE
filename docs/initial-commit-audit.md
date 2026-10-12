@@ -76,13 +76,15 @@ whole-game lift and the game build to a check that reaches the title screen with
 for the disc steps, [record](../research/findings/2026-10-12-fresh-clone-end-to-end.md)). The promoted modules
 (`Fable2Recomp/src/game/promoted/`) stay out until reviewed ([promoted code](promoted-code.md)).
 
-## Before hosting
+## Hosting
 
 1. (Done 2026-10-12.) `powershell -ExecutionPolicy Bypass -File tools/test_fresh_clone.ps1 -Iso "<disc image>"`
    (blocker 4).
-2. One private repository for this one, then push `main` only.
-3. On the hosted repository: enable private vulnerability reporting (`.github/SECURITY.md` and the code of conduct
-   point to it), create the labels the issue forms use, and check that the CI workflow passes.
+2. (Done 2026-10-12.) One private GitHub repository; `main` only pushed.
+3. (Done 2026-10-12.) The labels the issue forms use exist, and the CI workflow passes on GitHub's Ubuntu runner
+   (whose PowerShell also runs the two PowerShell-based tests).
+4. When the repository goes public: enable private vulnerability reporting, which GitHub offers only for public
+   repositories (`.github/SECURITY.md` and the code of conduct point to it).
 
 ## Remaining release blockers
 
