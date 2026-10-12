@@ -388,7 +388,12 @@ class RotatedLogTests(SandboxCase):
         game = FakeGame(fixture('menu_run.txt'), MENU_FRAMES, before_write=lambda lay: os.remove(lay.log))
         r = self.run_game(MENU, game)
         self.assertEqual(r['result'], 'OK', r['reasons'])
-        self.assertIn('is gone', self.summary(r))
+        if sys.platform == 'win32':
+            self.assertIn('is gone', self.summary(r))
+        else:
+            # (Linux reuses the deleted file's inode for the new log at once: the same file, shorter, as when
+            # truncated in place. The game and this check run on Windows, whose file ids are not reused so.)
+            self.assertRegex(self.summary(r), 'is gone|truncated')
         self.assertEqual(len(r['steps']), 3)  # this run's script echo, shot, exit; nothing from fable2.1.log
 
     def test_truncated_in_place(self):
@@ -941,7 +946,7 @@ class CommandLineTests(unittest.TestCase):
 
 POWERSHELL = shutil.which('powershell') or shutil.which('pwsh')
 FULL_CYCLE_CHECK = r'''
-param([string]$Path)
+param([string]$Path, [string]$Py)
 $tokens = $null; $errors = $null
 $ast = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
 if ($errors.Count) { foreach ($e in $errors) { "PARSE ERROR: $($e.Message)" }; exit 1 }
@@ -960,7 +965,7 @@ foreach ($c in $calls) {
 # the script's own Step function must stop on a failing command
 $fn = $ast.Find({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Step' }, $true)
 Invoke-Expression $fn.Extent.Text
-try { Step 'game check: fake' { cmd /c exit 1 } *> $null; 'STEP DID NOT STOP' } catch { "STEP STOPPED: $($_.Exception.Message)" }
+try { Step 'game check: fake' { & $Py -c 'import sys; sys.exit(1)' } *> $null; 'STEP DID NOT STOP' } catch { "STEP STOPPED: $($_.Exception.Message)" }
 '''
 
 
@@ -973,7 +978,7 @@ class FullCycleTests(unittest.TestCase):
             with open(check, 'w', encoding='utf-8') as f:
                 f.write(FULL_CYCLE_CHECK)
             r = subprocess.run([POWERSHELL, '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
-                                check, '-Path', os.path.join(TOOLS, 'lift', 'full_cycle.ps1')],
+                                check, '-Path', os.path.join(TOOLS, 'lift', 'full_cycle.ps1'), '-Py', sys.executable],
                                capture_output=True, text=True, timeout=90)
         finally:
             sb.close()
