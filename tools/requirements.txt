@@ -1,0 +1,9 @@
+# Python packages the Fable2RE tools need (Python 3.12 or newer).
+#   python -m pip install -r tools/requirements.txt
+# tools/setup_all.ps1 checks for them in its toolchain step.
+
+# Decrypting default.xex (tools/xex_decrypt.py, tools/xex_info.py): setup's image step, the class model.
+cryptography>=41
+# Game checks: snapshot analysis (tools/autotest.py, tools/lift/auto_bisect.py, tools/analyze_frames.py).
+Pillow>=10
+numpy>=1.26

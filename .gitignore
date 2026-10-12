@@ -1,0 +1,104 @@
+# Local assistant and editor state
+/.claude/
+/.idea/
+/.vs/
+/.vscode/
+*.code-workspace
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+CMakeUserPresets.json
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+
+# User-supplied game media and extracted content
+/iso/
+/extracted/
+/mods/*/*/
+!/mods/*/native/
+/xenia/
+
+# Workspace build and setup output
+/build/
+/out/
+/tools/.setup/
+/tools/extract-xiso/build/
+/tools/lift/cache/
+/tools/lift/difftest/build*/
+/tools/lift/difftest/results/
+/tools/thirdparty/
+
+# Local reverse-engineering exports
+/research/decomp/
+
+# Generated runtime code (also covered by Fable2Recomp's own ignore rules)
+/Fable2Recomp/generated*/
+/Fable2Recomp/lifted/lifted.*.cpp
+/Fable2Recomp/lifted/lift_report.txt
+/Fable2Recomp/lifted/native_bridges.*.cpp
+/Fable2Recomp/lifted/native_decls.h
+/Fable2Recomp/lifted/classes.h
+
+# Compiled files and archives
+*.a
+*.dll
+*.dylib
+*.exe
+*.ilk
+*.lib
+*.o
+*.obj
+*.pdb
+*.so
+*.7z
+*.rar
+*.zip
+/tools/thirdparty/*.jar
+
+# Python caches and virtual environments
+**/__pycache__/
+*.py[cod]
+/.venv/
+/venv/
+
+# Logs, dumps, captures, and profiling output
+*.binlog
+*.dmp
+*.log
+*.stackdump
+/stderr_*.txt
+/tools/lift/prof.out
+*.trace
+
+# Temporary and backup files
+*.bak
+*.bak[0-9]*
+*.orig
+*.pre_*
+*.rej
+*.tmp
+*.swp
+*~
+/temp/
+/tmp/
+
+# Test and coverage output
+/.coverage
+/.pytest_cache/
+/coverage/
+/TestResults/
+
+# Operating-system metadata
+.DS_Store
+Desktop.ini
+Thumbs.db
+/tools/vcpkg/
+# maintainers' local helper, not published
+/tools/rewrite/keepalive.py

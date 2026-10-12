@@ -1,0 +1,19 @@
+* text=auto
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.sh text eol=lf
+
+*.7z binary
+*.dll binary
+*.exe binary
+*.gz binary
+*.jar binary
+*.png binary
+*.zip binary
+
+# patches apply byte for byte: no line-ending conversion
+*.patch -text -whitespace
+# third-party sources stay as their authors wrote them
+Fable2Recomp/thirdparty/** -whitespace

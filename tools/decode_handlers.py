@@ -1,0 +1,120 @@
+"""Decode the D3D device's state-handler tables (device+64 .. +1152, dumped by
+src/d3d_probe.cpp into research/symbols/d3d_handler_table.txt) into the register
+fields each handler writes.
+
+Device register-shadow blocks (research/findings/2026-09-30-d3d-runtime-map.md) map a
+device offset to a Xenos register; register and bitfield names come from the SDK's
+register_table.inc / registers.h.
+
+Usage: python tools/decode_handlers.py [> research/symbols/d3d_state_handlers.md]
+"""
+import json, os, re, sys
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SDK = os.path.join(ROOT, 'rexglue-sdk', 'include', 'rex', 'graphics')
+db = json.load(open(os.path.join(ROOT, 'research', 'symbols', 'func_db.json')))
+
+# device offset -> first register of the block (block lengths from the gaps)
+BLOCKS = [(10112, 0x4900), (10368, 0x2000), (10444, 0x2100), (10528, 0x2180), (10548, 0x2200),
+          (10596, 0x2280), (10680, 0x2300), (10832, 0x2380)]
+BLOCK_END = 10940
+
+regname = {}
+for line in open(os.path.join(SDK, 'register_table.inc')):
+    m = re.match(r'XE_GPU_REGISTER\((0x[0-9A-Fa-f]+),\s*\w+,\s*(\w+)\)', line)
+    if m:
+        regname[int(m.group(1), 16)] = m.group(2)
+
+fields = {}  # reg name -> [(lo, hi, field)]
+src = open(os.path.join(SDK, 'registers.h')).read()
+for m in re.finditer(r'union alignas\(uint32_t\) (\w+) \{(.*?)\n\};', src, re.S):
+    name, body = m.group(1), m.group(2)
+    bit = 0; lst = []
+    for fm in re.finditer(r'^\s*[\w:]+\s+(\w+)\s*:\s*(\d+);', body, re.M):
+        w = int(fm.group(2)); lst.append((bit, bit + w - 1, fm.group(1))); bit += w
+    if lst:
+        fields[name] = lst
+
+
+def reg_for(off):
+    if off < BLOCKS[0][0] or off >= BLOCK_END:
+        return None
+    base_off, base_reg = BLOCKS[0]
+    for bo, br in BLOCKS:
+        if off >= bo:
+            base_off, base_reg = bo, br
+    return base_reg + (off - base_off) // 4
+
+
+def describe(off, lo=0, hi=31):
+    r = reg_for(off)
+    if r is None:
+        return 'soft+%d[%d:%d]' % (off, hi, lo) if (lo, hi) != (0, 31) else 'soft+%d' % off
+    name = regname.get(r, 'reg%04X' % r)
+    fl = [f for (a, b, f) in fields.get(name, []) if not (b < lo or a > hi) and not f.startswith('_pad')]
+    rng = '' if (lo, hi) == (0, 31) else '[%d:%d]' % (hi, lo)
+    return '%s(0x%04X)%s%s' % (name, r, rng, ('{' + ','.join(fl) + '}') if fl and rng else '')
+
+
+def asm_lines(a):
+    f = db[a]
+    L = open(os.path.join(ROOT, 'Fable2Recomp', 'generated', f['file']), encoding='utf-8', errors='replace').read().split('\n')
+    i = f['line']; out = []
+    while i < len(L) and not L[i].startswith('}'):
+        m = re.match(r'\s*// (\S+)\s*(.*)', L[i])
+        if m: out.append((m.group(1), [x.strip() for x in m.group(2).split(',')]))
+        i += 1
+    return out
+
+
+def decode(a):
+    if a not in db:
+        return 'not a known function'
+    ins = asm_lines(a)
+    if len(ins) <= 2 and ins and ins[-1][0] == 'blr':
+        return 'no-op' if len(ins) == 1 else 'returns constant'
+    parts = []
+    pending = {}  # reg -> (lo, hi) inserted
+    loaded = {}   # reg -> device offset loaded into it
+    for op, args in ins:
+        if op in ('lwz', 'lbz', 'lhz') and len(args) == 2:
+            m = re.match(r'(-?\d+)\(r3\)', args[1])
+            if m: loaded[args[0]] = int(m.group(1)); pending.pop(args[0], None)
+        elif op == 'rlwimi' and len(args) == 5 and args[0] in loaded:
+            mb, me = int(args[3]), int(args[4])
+            lo, hi = (31 - me, 31 - mb) if mb <= me else (0, 31)
+            p = pending.get(args[0])
+            pending[args[0]] = (min(lo, p[0]), max(hi, p[1])) if p else (lo, hi)
+        elif op in ('stw', 'stb', 'sth') and len(args) == 2:
+            m = re.match(r'(-?\d+)\(r3\)', args[1])
+            if not m: continue
+            off = int(m.group(1))
+            if off in (0, 8, 16, 24, 32):
+                continue  # dirty masks, reported separately
+            if args[0] in pending and loaded.get(args[0]) == off:
+                lo, hi = pending.pop(args[0]); parts.append(describe(off, lo, hi))
+            elif args[0] == 'r4':
+                parts.append(describe(off) + '=value')
+            else:
+                parts.append(describe(off) + '=computed')
+    dirty = []
+    for op, args in ins:
+        if op in ('ori', 'oris') and len(args) == 3 and args[0] == args[1]:
+            dirty.append('%s %s' % (op, args[2]))
+    calls = [args[0] for op, args in ins if op == 'bl']
+    s = '; '.join(dict.fromkeys(parts)) or '(no device stores)'
+    if calls: s += '  calls ' + ' '.join(calls[:4])
+    return s
+
+
+entries = []
+for line in open(os.path.join(ROOT, 'research', 'symbols', 'd3d_handler_table.txt')):
+    m = re.match(r'\+(\d+)=([0-9A-F]{8})', line.strip())
+    if m: entries.append((int(m.group(1)), m.group(2)))
+
+print('# D3D device state-handler table (decoded)\n')
+print('Entry at device+OFF; for the render-state table the D3DRS value is OFF-64 (ZENABLE = 40).')
+print('Generated by tools/decode_handlers.py from the table dumped at runtime by src/d3d_probe.cpp.\n')
+print('| device+ | state (OFF-64) | handler | writes |')
+print('|---|---|---|---|')
+for off, a in entries:
+    print('| %d | %d | %s | %s |' % (off, off - 64, a, decode(a).replace('|', '/')))

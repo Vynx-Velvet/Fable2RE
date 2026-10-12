@@ -1,0 +1,40 @@
+# Blob ids of the GNU binutils the ReXGlue SDK ships under tools/binutils/ (the public ReXGlue v0.8.0 release,
+# rexglue-sdk commit e8ce24f). tools/validate_commit.py exempts exactly these blobs; any other binary there
+# still needs review. Columns: path<TAB>blob id
+tools/binutils/LICENSE	94a9ed024d3859793618152ea559a168bbcbb5e2
+tools/binutils/cygiconv-2.dll	b7f49eaa298d3414c636d9c3b6db498fad5d9303
+tools/binutils/cygintl-8.dll	f8e5745cb4c055b4b561c70cb7263297a985b0b6
+tools/binutils/cygwin1.dll	7831069a60aa3f1f753cdd6901c12d7d9de4e138
+tools/binutils/powerpc-none-elf-addr2line	d6afa5e2664c7e512d7a60bfbf646a58adf3c675
+tools/binutils/powerpc-none-elf-addr2line.exe	944382cb536ffb769034653025d6139f2e49727f
+tools/binutils/powerpc-none-elf-ar	34b488187beec549f42042686653039145180ccd
+tools/binutils/powerpc-none-elf-ar.exe	96fbb641b360c451a9bd2067311c855c3e99cb21
+tools/binutils/powerpc-none-elf-as	f7a55af3e1c6219e438e4784f33c7a44cf565d14
+tools/binutils/powerpc-none-elf-as.exe	4ee4c6d1f2e05b7b49455c591b64fd1d35b9456f
+tools/binutils/powerpc-none-elf-c++filt	d295a68737c94439b82702969db166425c4c6496
+tools/binutils/powerpc-none-elf-c++filt.exe	1706b3462532ae5f29e0b837cc0cc09005913853
+tools/binutils/powerpc-none-elf-elfedit	2b20c9f13e9b1e146a503d796f1bfd72c660cc72
+tools/binutils/powerpc-none-elf-elfedit.exe	d781cbe12a0f1e2da45af5e75b834471559c0a9b
+tools/binutils/powerpc-none-elf-embedspu	9e2261b4f85487ffcf8915fb0980eabd96d2f406
+tools/binutils/powerpc-none-elf-gprof	54aa89f68ea73f83ba2f58cb98b4bcf668934e83
+tools/binutils/powerpc-none-elf-gprof.exe	666559de2a5f9734e0149bd4d0ffa3853df8a636
+tools/binutils/powerpc-none-elf-ld	f04ecd515efc5f04a62d350a4c2e9983548d4226
+tools/binutils/powerpc-none-elf-ld.bfd	f04ecd515efc5f04a62d350a4c2e9983548d4226
+tools/binutils/powerpc-none-elf-ld.bfd.exe	a9184e17d0a10d5f6b729fce3ae818b6ad04e342
+tools/binutils/powerpc-none-elf-ld.exe	a9184e17d0a10d5f6b729fce3ae818b6ad04e342
+tools/binutils/powerpc-none-elf-nm	d1c9ec8753560c3375707eae8c5b5a6e86f62d8e
+tools/binutils/powerpc-none-elf-nm.exe	0a38f065301c086fab813f9fcf8f4a1458e49795
+tools/binutils/powerpc-none-elf-objcopy	4eccea1cd0a8184bbdf304c7ad5c2d14dc9970b6
+tools/binutils/powerpc-none-elf-objcopy.exe	646543ef870095eb8ab2f3aaa2171e190661a380
+tools/binutils/powerpc-none-elf-objdump	0827c22ed3c5a0f5bc3da3991b50d1ce2f0638c8
+tools/binutils/powerpc-none-elf-objdump.exe	d0b8ac78bea151037736e4bcdc48646d1fd0b041
+tools/binutils/powerpc-none-elf-ranlib	d7f5815351a3be069615c629326bc048e5d3fe45
+tools/binutils/powerpc-none-elf-ranlib.exe	d51314b0909bbed3fd9373932d0f6039057098b2
+tools/binutils/powerpc-none-elf-readelf	79e28600578ab8c01c249587317462d35f2fa4e1
+tools/binutils/powerpc-none-elf-readelf.exe	c4bce8e6f38aa7a00c712654b5870116cbfc769a
+tools/binutils/powerpc-none-elf-size	a15f2d7b98be13e9145c81d123ee5b403932253f
+tools/binutils/powerpc-none-elf-size.exe	8815320a8b2bec6359795dd29eab6e1024b8f86e
+tools/binutils/powerpc-none-elf-strings	c8455fd05978514dc0ed72d16bb5eb21ba4f8001
+tools/binutils/powerpc-none-elf-strings.exe	54a7ec698277ac8e35a5b25d048b15c1639bd9ae
+tools/binutils/powerpc-none-elf-strip	35c2c08cc9a4ae668da512f4f3072e914f2f0d54
+tools/binutils/powerpc-none-elf-strip.exe	d16a6cd973ff5384e499be3f36916cc0900ce308

@@ -1,0 +1,16 @@
+[project]
+sdk_version = "0.8.0.0"
+name = "Fable2"
+
+[entrypoint]
+file_path = "assets/game/default.xex"
+out_directory_path = "generated"
+includes = [
+  "Fable2_config.toml",
+]
+
+# Verified against the mapped image (2026-09-28): longjmp restores f14.. from the jmp_buf and
+# calls RtlUnwind; setjmp is the asm routine at 0x83000200 (lis r4,0x8332 / _setjmpexused check,
+# mflr r0, mfcr r4, stfd f14,0(r3) ...). The old values 0x82CAFA30/0x83006C90 were mid-function.
+longjmp_address = 0x82CA9260
+setjmp_address = 0x83000200

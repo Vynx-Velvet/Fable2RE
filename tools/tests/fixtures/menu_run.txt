@@ -1,0 +1,12 @@
+[2026-10-10 09:00:00.100] [info] [core] [t1001] Fable2 starting
+[2026-10-10 09:00:00.120] [info] [core] [t1001] Loaded config: {build}\Fable2.toml
+[2026-10-10 09:00:00.800] [info] [core] [t1001] autotest: script 'at 40; shot; exit'
+[2026-10-10 09:00:20.000] [info] [core] [t1002] audio level: peak 0.3120, 375 of 375 frames not silent (buffer 4C100300)
+[2026-10-10 09:00:22.000] [info] [core] [t1002] audio level: peak 0.2950, 376 of 376 frames not silent (buffer 4C100300)
+[2026-10-10 09:00:40.000] [info] [core] [t1003] autotest: 40.0 s shot
+[2026-10-10 09:00:40.200] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_001802.png
+[2026-10-10 09:00:40.230] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_001803.png
+[2026-10-10 09:00:40.260] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_001804.png
+[2026-10-10 09:00:40.700] [info] [core] [t1003] autotest: 40.7 s exit
+[2026-10-10 09:00:40.710] [info] [sys] [t1005] KernelState::TerminateTitle
+[2026-10-10 09:00:40.720] [info] [core] [t1006] Guest exited

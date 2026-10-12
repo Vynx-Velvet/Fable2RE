@@ -1,0 +1,25 @@
+start	end	category	what	confidence	evidence
+82170000	82C40000	game	Lionhead game and engine code	high	script bindings, CEC component classes, game strings throughout
+82C40000	82C60000	system	Xbox audio library (voices, wave sources, effects)	medium	classes CXAudioStreamSource, CWaveSound, CAudioEngineCore, CXAudioEffectInstance; a few game strings at the start may belong to the block before
+82C60000	82C90000	game	Lionhead engine support: virtual file system, streams, XML writer, option parser, sockets	high	classes CVirtualFileSystem, CBinaryDataStream, LIONHEAD::CBinaryStreaming, COptionParser
+82C90000	82CA0000	library	XML parser with DTD support	medium	strings NOTATION, ATTLIST, ELEMENT, SYSTEM, PUBLIC
+82CA0000	82CD0000	system	C and C++ runtime	high	memcpy, memset and formatted output identified here; no game strings
+82CD0000	82CF8E10	system	Xbox audio library (voice implementation, reverb, render driver client)	high	classes CXAudioVoiceImpl, CReverbXapo, CXAudioRenderDriverClient
+82CF8E10	82D10000	unknown	not identified	low	no strings, no named classes
+82D10000	82D40000	library	image readers (PNG, RGBE) and software texture reading	medium	strings libpng, bit_rle_rgbe; classes CSoftTextureReader, CTextureImage
+82D40000	82E60000	library	Havok physics and animation	high	hk / hkp / hka classes by RTTI, Havok strings
+82E60000	82EE0000	library	Kynapse AI and pathfinding	high	strings Kynogon; agents, path finders, graph managers (the first block also holds the last Havok classes)
+82EE0000	82EF0000	game	Game host: pub games and cross-title content	high	classes CGameHost, CGameHostGameImpl; strings pubGame, XContentItemCrossTitleEnumeration
+82EF0000	82FC0000	library	Scaleform GFx user interface runtime with its ActionScript machine	high	strings GFxLoader, GFx_InflateWrapper, ActionScript object names
+82FC0000	82FE0000	unknown	not identified	low	small numeric helpers, no strings
+82FE0000	82FF0000	system	Direct3D resource classes	medium	class CD3DTexture; vertex buffer statistics strings
+82FF0000	83000000	game	Web services: photo submission and online tasks	medium	strings WebServices, Photo, Submit, XTS_TASK_HANDLE
+83000000	830C0000	system	D3DX effects and the shader / microcode compiler	high	class CD3DXBaseEffect; strings Microcode Compiler, register and statement errors
+830C0000	830E0000	library	Havok serialisation and reflection	high	hkXml and hkClass classes and strings
+830E0000	830F0000	unknown	not identified	low	layer and attribute processing strings
+830F0000	83210000	system	Xbox graphics library internals and shader compiler	high	assertion strings with the path xenon\core\private\graphics
+83210000	83240000	game	Materials, particles, entity definitions, splines	high	classes CMaterialParam..., CEntityDef, CPropertyContainer, CRegistrableThing
+83240000	832A0000	game-static	Start-up initialisers of global objects (they register property and definition names)	high	about 5,600 functions of 64 bytes or less, each with one name string; the last block registers Havok reflection data
+832A0000	832B21FC	game-static	Shut-down destructors of global objects	high	about 3,200 functions of 12 bytes that release one global string each
+832B21FC	832B31D0	system	Import thunks to the Xbox kernel and system libraries	high	import names
+832B31D0	832C23A9	unknown	decompression code, not identified	low	strings about compressed and corrupt data

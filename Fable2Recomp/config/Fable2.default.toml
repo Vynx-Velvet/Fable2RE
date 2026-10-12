@@ -1,0 +1,89 @@
+# Fable2RE player settings: the shipped defaults.
+#
+# The build copies this file to Fable2.toml beside Fable2.exe when no Fable2.toml exists there yet. It never
+# overwrites an existing Fable2.toml, so change the copy beside the exe, not this template. To get the defaults
+# back, copy this file (Fable2Recomp/config/Fable2.default.toml) over Fable2.toml: a rebuild restores it only
+# when it relinks Fable2.exe. Keys are flat cvar names (no [tables]). docs/settings.md lists every key with its
+# compiled default and the evidence for it.
+#
+# Status words in the comments:
+#   verified  = active in the unattended menu, save-load and play checks (tools/autotest.py) that passed on the
+#               development build, 2026-10-04 to 2026-10-07
+#   manual    = checked only in hand-played sessions
+#   fallback  = used only by the emulated GPU path (native_renderer = false); same value as the verified runs
+
+# ---- Input: keyboard and mouse ----
+# Keyboard and mouse act as controller 1 (key map in docs/settings.md). Driver verified; keys manual.
+mnk_mode = true
+# Mouse-to-right-stick sensitivity, 0.01 to 10. Manual.
+mnk_sensitivity = 1.0
+# Invert mouse Y (camera pitch). Manual.
+mnk_invert_y = false
+# Raw (unaccelerated) mouse motion for the camera. Manual.
+mnk_raw_input = true
+# Stick deflection added to any mouse motion so small movements clear the game's deadzone, 0 to 0.9. Manual.
+mnk_mouse_deadzone = 0.25
+# Mouse smoothing between polls, 0 (raw) to 0.95. Manual.
+mnk_mouse_smoothing = 0.3
+# Mouse response exponent, 0.2 to 3 (below 1 boosts small movements). Manual.
+mnk_mouse_exponent = 1.0
+# Key held to walk instead of run; several keys separated by | (e.g. "Control|Alt"). Manual.
+keybind_walk = "Control"
+# Left-stick deflection while walking, 0.1 to 1. Manual.
+mnk_walk_scale = 0.45
+
+# ---- Window ----
+# Window client width at startup; the game renders 1280x720 and is scaled to fit. Verified.
+window_width = 1600
+# Window client height at startup. Verified.
+window_height = 900
+# Start fullscreen (F11 or Alt+Enter toggles it while playing). Not covered by the checks.
+fullscreen = false
+
+# ---- Frame pacing ----
+# Guest vblank rate: 120 targets 60 fps, 0 = console pacing (30 fps). Verified; 60 fps game timing not established.
+vblank_rate_hz = 120
+# Pace frames on the vblank; false runs uncapped and is for measurements only. Verified.
+vsync = true
+
+# ---- Rendering ----
+# Native D3D12 renderer driven by the game's D3D calls; false = the emulated Xbox GPU. Verified.
+native_renderer = true
+# Do not create the emulated GPU command processor (forced on again when native_renderer = false). Verified.
+gpu_command_processor = false
+# Run the native renderer on its own thread so game and renderer work in parallel. Verified.
+native_render_thread = true
+# Skip render-state calls that would not change anything. Verified.
+native_state_cache = true
+# Skip the Xbox D3D library's command-buffer writers inside draws (the renderer reads device state). Verified.
+native_skip_d3d_flush = true
+# Real GPU occlusion query results (true is untested); false = every query reports visible. Verified.
+native_occlusion_queries = false
+
+# ---- Emulated GPU (only with native_renderer = false) ----
+# Compile shaders before drawing: no objects flickering or popping in while pipelines compile. Fallback.
+async_shader_compilation = false
+# No CPU readback of the game's memexport draws (about 40 per frame, each a GPU sync). Fallback.
+readback_memexport = false
+# Queries report visible instead of stalling on a GPU fence per query. Fallback.
+occlusion_query_enable = false
+
+# ---- Audio ----
+# Silence the game's environmental reverb, which runs on default parameters here (the "cave" echo). Verified.
+audio_reverb_disable = true
+# Audio output setting reported to the game: 0 = stereo, 65537 = surround capable. Verified (0).
+xconfig_audio_flags = 0
+
+# ---- Lifted (readable) game code ----
+# Run the lifted readable C++ where it exists; false = the recompiled originals everywhere. Verified.
+lifted_code = true
+# Ranges that run recompiled; keep the XAudio2 library range, it crashes on level load when lifted. Verified.
+lifted_disable_ranges = "82C40000-82CF8E10"
+
+# ---- Logging (developer diagnostics stay off; docs/settings.md lists them) ----
+# Log the environmental reverb parameters whenever the game changes them (compiled default: on).
+audio_reverb_log = false
+# Log the busiest threads' CPU load every 5 s (compiled default: on).
+thread_cpu_stats = false
+# Log the audio mix's peak level every 2 s; tools/autotest.py reads it for its no-sound check.
+audio_level_log = true

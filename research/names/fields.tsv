@@ -1,0 +1,941 @@
+vtable	offset	name	confidence	basis
+820011B0	4	objectPointer	medium	Pointer to the object whose virtual release is called.
+820011B0	8	refCount	medium	Decremented on release; when zero the object is released.
+82001610	64	initialized	medium	bool field set to 1 during initialization.
+82001610	67	m_timerStarted	low	Set to one on the first elapsed-time query that records start times.
+82001610	68	m_startTime	low	Stores the current seconds value on first elapsed-time query and later subtracted.
+82001610	70	m_lastTime	low	Receives the current seconds value each update and is subtracted when accumulating.
+82001610	78	m_accumulatedTime	low	Increased by the delta between now and the last time value.
+82001944	10	m_NumClients	medium	Count of entries in the client array.
+82001944	8	m_Server	medium	Server object deleted during shutdown.
+82001944	C	m_Clients	medium	Array of eight-byte client entries.
+82001998	10	frequency	medium	Divides timebase to get time.
+82001998	18	initialized	medium	Flag checked before computing time.
+82001998	8	baseTime	medium	Base time subtracted from computed time.
+82001AD8	4	m_count	medium	Used as the number of elements in the array.
+82001AD8	8	m_objects	medium	Array of object pointers iterated by index.
+82001C44	10	m_EntityHandle	medium	Passed to Lua_Entity_IsAlive as an entity handle.
+82001CCC	C	m_impl	medium	Holds the 288 byte implementation object created in the constructor and released in the destructor.
+82001CE4	74	m_Children	low	Array iterated by reset code calling a virtual on each element.
+82001CE4	7C	m_ChildCount	low	Element count used as loop bound over the array at 74.
+82001E24	10	m_MaxEntity	medium	Integer read from the MaxEntity config entry.
+82001E24	14	m_EntityPool	low	Free-list pool constructed with the max entity count.
+82001E24	18	m_MaxTeam	medium	Integer read from the MaxTeam config entry.
+82001E24	1C	m_TeamPool	low	Free-list pool constructed with the max team count.
+82001E24	34	m_TimeManager	low	Object initialized from the TimeMgt config node.
+82001E24	8	m_ConfigNode	low	Stores the config node passed to the initializer.
+82001E24	C	m_OneMeter	medium	Float read from the OneMeter config entry.
+82001EF4	14	m_triangles	medium	triangle index records of 16 bytes each
+82001EF4	18	m_numTriangles	medium	loop bound over the triangle records
+82001EF4	8	m_vertices	medium	vertex array addressed with 16-byte stride
+82002180	C	m_numChildShapes	medium	Compared against key+1 to bound child shape indices.
+820022A8	10	m_flagsD	low	bits are ORed in by a setter
+820022A8	C	m_flagsC	low	bits are ORed in by a setter
+82002320	1C	m_giftItemId	medium	Loaded from the GiftItem field value.
+82002320	20	m_moneyAmount	medium	Loaded from MoneyAmount and passed to the received-money message.
+82002320	24	m_isMoneyGift	high	Set from the IsMoneyGift flag.
+82002320	4	m_opinionAxis	medium	Loaded as an integer from the OpinionAxis field.
+82002320	8	m_targetOpinionStrength	medium	Float loaded from the TargetOpinionStrength field.
+82002364	58	m_currentMusicHandle	high	Serialized under the CurrentMusicHandle tag.
+82002364	5C	m_nextMusicHandle	high	Serialized under the NextMusicHandle tag and used as the id counter.
+82002364	60	m_isActive	high	Serialized under the IsActive tag.
+820024C4	18	m_childInfos	medium	Array of 16-byte child entries walked by all methods.
+820024C4	1C	m_numChildren	medium	Loop bound over the child array.
+820024C4	20	m_childInfoCapacityAndFlags	low	Capacity word whose top bit marks non-owned storage.
+820025B8	10	m_numChildrenB	medium	Count of the second child array.
+820025B8	4	m_childrenA	medium	Array of child pointers iterated with virtual calls.
+820025B8	8	m_numChildrenA	medium	Count of the first child array.
+820025B8	C	m_childrenB	medium	Second array of child pointers iterated with virtual calls.
+82002604	20	m_currentValue	medium	Setter stores new float here after moving the old one to the next field.
+82002604	24	m_previousValue	medium	Receives the old value of the field at 0x20 on each set.
+82002604	2C	m_flag	low	Byte set from argument and copied to a sibling object.
+82002634	4	m_description	medium	Description block with name, width, height and target count.
+82002634	8	m_colorR	low	First of four bytes copied from a four-byte value.
+82002634	9	m_colorG	low	Second byte of the copied four-byte value.
+82002634	A	m_colorB	low	Third byte of the copied four-byte value.
+82002634	B	m_colorA	low	Fourth byte of the copied four-byte value.
+82002660	4	m_id	low	First identifying value copied in the copy constructor and written to streams.
+8200268C	20	m_currentTime	low	set from the time argument of the update method
+8200268C	24	m_previousTime	low	receives the old value of m_20 when updated
+8200268C	3C	m_childBegin	medium	start of an array of 8-byte child entries iterated by the methods
+8200268C	40	m_childEnd	medium	end pointer of the same child array
+8200274C	4	m_entries	high	Array of entry pointers searched by name and compacted on removal.
+8200274C	8	m_numEntries	high	Count of entries in the array.
+8200274C	C	m_entriesCapacity	high	Capacity doubled when the array is full.
+820027FC	20	m_childShape	medium	Pointer to the child shape whose virtual method is called.
+820028E4	14	m_mode	medium	Integer mode id switched on in several routines and set by a setter.
+820028E4	1C	m_targetEntityHandle	medium	Pointer used with entity handle get and release helpers before reading entity flags.
+820028E4	30	m_delayTimer	low	Float that is reduced each update unless a flag is set and checked against zero.
+820028E4	44	m_elapsedTime	low	Float that accumulates the frame time each update and is cleared on reset.
+820028E4	80	m_nameHash	low	Hash value computed from a name string when the mode is set.
+820028E4	9C	m_blendFrom	low	Float copied from the current value when a blend restarts.
+820028E4	A0	m_blendCurrent	low	Current interpolated float value updated from a ratio each frame.
+820028E4	A4	m_blendTarget	low	Target float of the interpolation, zeroed when it stops.
+820028E4	A8	m_blendDuration	low	Divisor used to compute the interpolation ratio.
+820028E4	AC	m_blendElapsed	low	Time accumulated for the interpolation.
+82002A24	8	m_RefCount	high	atomic decrement at offset 8
+82002B44	D0	m_sharedResourceHandle	medium	Copied in clone together with the refcounted pointer after it.
+82002B44	D4	m_sharedResourceRefCount	medium	Pointer whose count is atomically incremented in clone.
+82002D38	18	m_LeftStickX	medium	Filled from the raw thumb LX value after scaling.
+82002D38	1C	m_LeftStickY	medium	Filled from the raw thumb LY value after scaling.
+82002D38	20	m_RightStickX	medium	Filled from the raw thumb RX value and returned by a getter.
+82002D38	24	m_RightStickY	medium	Filled from the raw thumb RY value and returned by a getter.
+82002D38	3C	m_PreviousButtons	medium	Button mask xored with the new state to find changed buttons.
+82002D38	4	m_PadIndex	medium	Passed as the user index to the pad state calls.
+82002D38	54	m_LeftMotorSpeed	low	Float rumble intensity reset to default when vibration is cleared.
+82002D38	58	m_RightMotorSpeed	low	Float rumble intensity reset to default when vibration is cleared.
+82002D38	5C	m_VibrationState	medium	Pointer to the two motor speed words sent to the pad.
+82002D38	C	m_EventList	medium	Sentinel of the linked list of button events that is flushed on update.
+82002DA8	10	m_DistFromEntity	medium	Set from the DistFromEntity parameter in the parameter setter.
+82002DA8	14	m_AngleFromEntity	medium	Set from the AngleFromEntity parameter in the parameter setter.
+82002DA8	8	m_Owner	low	Owner object whose position at +0x34..0x3C is read for distances.
+82002DA8	AC	m_MaxSpeed	low	Clamped value from the setter at 821E80B8 and passed to the navigator virtual call.
+82002DA8	B4	m_MinimalImportantMove	medium	Set from the MinimalImportantMove parameter scaled by a global factor.
+82002DA8	C	m_TargetEntity	medium	Set from the TargetEntity script parameter and its position is used as destination.
+82002E88	10	m_bulletsLoaded	medium	Initialised from BulletCapacity as the current count.
+82002E88	14	m_reloadTime	high	Loaded from the ReloadTime property.
+82002E88	18	m_bulletsPerReload	high	Loaded from the BulletsPerReload property.
+82002E88	1C	m_reloadOnlyIfEmpty	high	Loaded from the ReloadOnlyIfEmpty property.
+82002E88	20	m_range	high	Loaded from the Range property.
+82002E88	28	m_closeRange	high	Loaded from the CloseRange property.
+82002E88	2C	m_knockDownRange	medium	Loaded from the string located just before CloseDamageMultiplier, matching KnockDownRange.
+82002E88	30	m_closeDamageMultiplier	high	Loaded from CloseDamageMultiplier.
+82002E88	34	m_knockDownDamageMultiplier	high	Loaded from KnockDownDamageMultiplier.
+82002E88	38	m_cursorSpeedMultiplier	high	Loaded from CursorSpeedMultiplier.
+82002E88	3C	m_targetCircleMultiplier	high	Loaded from TargetCircleMultiplier.
+82002E88	40	m_aimedShotTimeMultiplier	high	Loaded from AimedShotTimeMultiplier.
+82002E88	C	m_bulletCapacity	high	Loaded from the BulletCapacity property.
+82002F48	4	m_owner	medium	Owning entity whose component tables are searched.
+82002F88	24C	m_EventCallback	medium	Function pointer invoked with the context during gameplan loading.
+82002F88	250	m_EventCallbackContext	medium	Second value stored alongside the callback and passed to it.
+82002FC8	14	m_splineId	medium	Spline reference resolved from SplineToUse.
+82002FC8	1C	m_speed	high	Loaded from Speed.
+82002FC8	20	m_distanceAlongPath	high	Saved as DistanceAlongPath.
+82002FC8	24	m_loop	high	Loaded from Loop.
+82002FC8	25	m_destroyAtEnd	high	Loaded from DestroyAtEnd.
+82002FC8	26	m_moving	high	Saved as Moving.
+82002FC8	4	m_entity	medium	Owner entity.
+82003008	10	previousPosition	medium	Stores previous position for distance calculation.
+82003008	20	totalDistance	medium	Accumulates distance traveled.
+82003008	24	totalTime	medium	Accumulates time from virtual call.
+82003088	1C	MinimumNoticeRadius	high	GameDB string MinimumNoticeRadius stored as float.
+82003088	20	RadiusIncreasePerSecond	high	GameDB string RadiusIncreasePerSecond stored as float.
+82003088	24	MinimumRadiusIncreasePerSecond	high	GameDB string MinimumRadiusIncreasePerSecond stored as float.
+82003088	28	RadiusDecreasePerSecond	high	GameDB string RadiusDecreasePerSecond stored as float.
+82003088	2C	CurrentNoticeRadius	medium	Initialized from MinimumNoticeRadius.
+82003088	30	MaximumNoticeRadius	high	GameDB string MaximumNoticeRadius stored as float.
+82003088	3C	MaximumCrowdSize	high	GameDB string MaximumCrowdSize stored as int.
+82003088	40	MinimumCrowdSize	high	GameDB string MinimumCrowdSize stored as int.
+82003088	48	CrowdVector	medium	Vector object at offset 72 used for crowd entries.
+82003088	58	DancerVector	medium	Vector object at offset 88 used for Lord of the Dance dancers.
+82003148	C	money	high	The CECMoney_ReadFromGameDB and CECMoney_SetMoney functions access the money value at offset 12.
+82003188	128	entityHandleList	medium	Circular list of entity handles pruned by CECPlayer_PruneEntityList.
+82003188	74	lastAutoHealTime	medium	Set to current game time after applying auto-heal.
+82003248	0C	m_SharedHandle	high	Released by SharedHandle_Release.
+82003248	30	m_EntityHandle	high	Released by EntityHandle_Release.
+82003248	34	m_EntityHandleId	medium	Set to zero after releasing entity handle.
+82003248	70	m_EntityHandle2	high	Released by EntityHandle_Release.
+82003248	74	m_EntityHandle2Id	medium	Set to zero after releasing entity handle.
+82003288	10	m_questsBegin	medium	Start of a vector of 12-byte quest entries iterated and searched by hash.
+82003288	14	m_questsEnd	medium	End pointer of the quest entry vector.
+82003348	20	m_NumberOfDaysWithoutVisitToTriggerChildGrowth	low	Loaded from the first definition integer name in the loader.
+82003348	2A	m_ShowWifeDivorceText	low	Flag that when set shows the wife divorce text then clears itself.
+82003348	2B	m_ShowHusbandDivorceText	low	Flag that when set shows the husband divorce text then clears itself.
+82003348	4	m_Owner	medium	Entity pointer the component is attached to.
+82003348	C	m_NumberOfDaysChildTakesToGrowUp	low	Loaded from the second definition integer name in the loader.
+8200348C	18	m_childShape	high	Child convex shape pointer forwarded to by every virtual method.
+82003650	10	m_desiredAltitude	medium	Loaded from Altitude and saved as DesiredAltitude.
+82003650	14	m_currentAltitude	medium	Saved as CurrentAltitude.
+82003650	18	m_bobOffset	medium	Saved as BobOffset.
+82003650	1C	m_amplitude	high	Loaded from Amplitude and saved as OscillationAmplitude.
+82003650	20	m_combinedResult	medium	Saved as CombinedResult.
+82003650	24	m_bobSpeed	medium	Derived from Period, saved as BobSpeed.
+82003650	28	m_rotateSpeed	high	Loaded from RotateSpeed.
+82003650	2C	m_bobType	high	Loaded from InitialBobType.
+82003650	4	m_entity	medium	Owner entity used for vtable calls and position.
+82003650	C	m_groundAltitude	medium	Set from entity position height and saved as GroundAltitude.
+82003754	10	m_radius	medium	Float added to projection and AABB extents like a shape radius.
+82003754	44	m_childShapes	medium	Array of child shape pointers called through virtual methods.
+82003754	48	m_childShapesSize	medium	Element count of the child pointer array.
+82003754	4C	m_childShapesCapacityAndFlags	medium	Capacity with flag bit controlling whether the array is freed.
+82003898	18	m_Enabled	medium	loaded from the Enabled field when serializing
+82003898	4	m_OwnerEntity	medium	stored from the constructor argument as the owning entity
+82003958	10	m_DefaultFaction	medium	read from the Faction field of the definition
+82003958	14	m_CurrentFaction	high	serialized as CurrentFaction
+82003958	4	m_OwnerEntity	medium	entity compared with the player and used for faction lookups
+82003998	2C	m_SoundCategory	medium	category object tested for playing events and released on cleanup
+82003998	4	m_OwnerEntity	medium	entity whose sound component data is looked up
+82003AD8	10	m_emitter	medium	Shared emitter object created by name and driven by transform updates.
+82003AD8	24	m_emitterName	medium	Ref-counted name string read from definition and used to look up the emitter.
+82003AD8	3C	m_maxVisibilityDistance	high	Float read from the MaxVisibilityDistance definition entry.
+82003AD8	4	m_entity	medium	Owner entity whose transform is read through virtual getters.
+82003AD8	40	m_overrideMaxVisibilityDistance	high	Byte read from the OverrideMaxVisibilityDistance definition entry.
+82003B18	28	m_attached	low	cleared after the particle lists are released
+82003B18	4	m_entity	low	owning entity pointer used to read component data
+82003C58	10	m_augmentationsBegin	medium	Start of a vector of 16-byte augmentation entries.
+82003C58	14	m_augmentationsEnd	medium	End pointer of the augmentation vector.
+82003C58	20	m_effectHandle	low	Entity handle that is destroyed and cleared when the effect is removed.
+82003C58	4	m_owner	medium	Owner entity whose component tables are searched by type id.
+82003C98	7C	m_BreadcrumbText	medium	Assigned from a C string during reset.
+82003C98	80	m_BreadcrumbTarget	medium	Assigned an EntityHandle during reset.
+82003D58	18	m_TimeBetweenComments	medium	Loaded from TimeBetweenComments and scaled by a constant to an integer.
+82003D58	20	m_SpeakerType	medium	Loaded from the SpeakerType field.
+82003D58	4	m_Owner	medium	Entity pointer the component is attached to.
+82003E18	14	m_DistanceToUseForAtShopCheck	high	loaded from the DistanceToUseForAtShopCheck field
+82003E18	18	m_ShopType	medium	loaded from the Type field of the shop record
+82003E58	54	m_refCount	high	Decremented in release function.
+82003E58	D8	m_nextSibling	medium	Next pointer in child linked list.
+82003E58	DC	m_childList	medium	Head of child linked list iterated in update.
+82003E98	4	m_OwnerEntity	medium	passed to entity registration and used to find sibling components
+82003E98	73	m_UsesFootstepLocomotionData	high	loaded from the UsesFootstepLocomotionData field of the definition
+82003E98	74	m_UseSimpleLocomotion	high	loaded from the UseSimpleLocomotion field of the definition
+82003F58	10	m_combatStyle	medium	String field read and written under the CombatStyle key.
+82003F58	4	m_owner	medium	Entity pointer used for component lookup and Lua calls.
+82003F58	54	m_baseLevel	low	Integer read under the BaseLevel key.
+82003F58	58	m_canFight	medium	Byte read under the CanFight key.
+82003F58	59	m_canFlee	medium	Byte read under the CanFlee key.
+82003F58	5B	m_styleOverridePending	medium	Set after the Lua override call and cleared after restore.
+82003F58	65	m_canBeAttacked	medium	Byte read under the CanBeAttacked key.
+82003F58	B4	m_startingChanceToHitWithFirearm	low	First value loaded from the shooting balance table.
+82003F58	B8	m_maxChanceToHitWithFirearmCap	low	Second value loaded from the shooting balance table.
+82003F58	BC	m_chanceToHitModBonusRangeDistance	low	Third value loaded from the shooting balance table.
+82003FD8	C	m_alcoholLevel	medium	stored and loaded as the AlcoholLevel value and decreased over time
+82004118	18	m_respawnedItemsOnce	medium	Byte saved and loaded under the RespawnedItemsOnce key.
+82004118	19	m_filledFromInitialItems	medium	Byte saved under the FilledFromInitialItems key and set after InitialItems are created.
+82004118	4	m_owner	medium	Owner entity whose component tables are searched by type id.
+82004158	4	m_owner	medium	Owning entity passed to the component base setup.
+820041D8	C	m_Gender	high	Stores the gender value loaded from GameDB "Gender".
+82004218	4	m_Owner	medium	Entity pointer read first in nearly every method and passed to entity helpers.
+820042DC	10	m_shape	medium	Reference counted shape replaced by the set shape routine.
+820042DC	150	m_collisionDetailsData	medium	Array of agent and collidable pairs of eight bytes.
+820042DC	154	m_collisionDetailsSize	medium	Element count of the collision detail array.
+820042DC	158	m_collisionDetailsCapacity	medium	Capacity word of the collision detail array.
+820042DC	4	m_memSizeAndFlags	medium	Havok object size and flags field used by the delete path.
+820042DC	8C	m_phantomListenersData	medium	Array of listeners notified of phantom events.
+820042DC	90	m_phantomListenersSize	medium	Element count of the phantom listener array.
+82004360	18	m_morphRecordsBegin	medium	Start of a vector of 12 byte morph records.
+82004360	1C	m_morphRecordsEnd	medium	End of the morph record vector.
+82004360	28	m_particleEntityList	low	List of particle entities destroyed in cleanup.
+82004360	4	m_owner	medium	Owning entity whose component tables are read.
+820043A0	18	m_dirty	low	Flag set when the spell state changes and cleared on reset.
+820043A0	1E4	m_savedSpellState	low	Set from m_10 during initialisation next to float defaults.
+820043A0	20	m_currentSpell	low	Value compared with the player spell id and zeroed on reset.
+820043A0	24	m_chargeA	low	Float reset to a constant and pushed into player state.
+820043A0	28	m_chargeB	low	Float reset together with the other charge value.
+820043A0	4	m_owner	high	Entity pointer passed to the constructor and used for network checks.
+82004560	1D	m_PrimaryMarker	medium	loaded from the PrimaryMarker field of the definition
+82004560	20	m_UniqueId	medium	loaded from the UniqueID field of the definition
+82004560	4	m_OwnerEntity	medium	entity passed to registration call and compared against other entities
+82004660	10	m_radius	high	Filled from the Radius field.
+82004660	14	m_highPriority	high	Filled from the HighPriority field.
+82004660	C	m_range	high	Filled from the Range field.
+820047A0	10	m_entriesBegin	medium	Start of a vector of 8-byte entries iterated everywhere.
+820047A0	14	m_entriesEnd	medium	End pointer of the same vector.
+820047A0	4	m_owner	low	Owner object whose flags and handle are read in the update paths.
+82004860	E8	m_E8	high	float base value
+82004860	EC	m_EC	high	float max value
+82004860	F0	m_F0	high	float computed speed/current value
+82004920	4	m_entity	medium	Owner entity passed to the constructor and used for flag and component lookups.
+82004960	14	m_14	high	begin pointer of array
+82004960	18	m_18	high	end pointer of array
+82004960	2C	m_2C	high	float state value
+82004960	30	m_30	high	float state value copy
+820049A0	10	m_ColourBlue	medium	Blue channel read from the Colour block.
+820049A0	11	m_ColourGreen	medium	Green channel read from the Colour block.
+820049A0	12	m_ColourRed	medium	Red channel read from the Colour block.
+820049A0	18	m_Intensity	low	First float read from the light definition after colour.
+820049A0	1C	m_LightType	low	Integer read from the light definition after intensity.
+820049A0	20	m_Range	low	Float scaled by a constant when loaded from the light definition.
+820049A0	38	m_FadeStepsLeft	medium	Counter decremented each update while a fade runs.
+820049A0	3C	m_FadeValue	medium	Value stepped each update towards the fade target.
+820049A0	4	m_Entity	medium	Owner entity used when posting messages and queuing updates.
+820049A0	88	m_IsOn	low	Cleared when a fade ends before posting the active message.
+820049E0	10	m_ComponentsBegin	medium	Start of the vector of shared component pointers.
+820049E0	14	m_ComponentsEnd	medium	End of the vector of shared component pointers.
+820049E0	4	m_Owner	medium	Entity pointer whose property list is queried.
+82004A60	1E0	m_shieldSwords	medium	object whose items are removed by Entity_RemoveShieldedSwords
+82004A60	269	m_magicEnabled	high	flag written by SpellManager_SetMagicEnabled
+82004A60	4	m_owner	high	entity handle compared with the player's entity and used to send events for this component
+82004AA0	4	m_OwnerEntity	medium	passed to the entity registration call and used for entity component lookups
+82004C7C	150	m_overlappingCollidablesData	medium	Pointer to the array of overlapping collidables searched and edited by the methods.
+82004C7C	154	m_overlappingCollidablesSize	medium	Element count of the overlapping collidables array.
+82004C7C	158	m_overlappingCollidablesCapacityAndFlags	medium	Capacity word with a top-bit flag meaning memory is not owned.
+82004D48	14	m_worldIconZOffset	high	Filled from the WorldIconZOffset property.
+82004D48	18	m_isInUse	low	Nonzero flag that gates the reset routine.
+82004D48	19	m_canDisplayWorldIcon	medium	Saved under the CanDisplayWorldIcon tag at this offset.
+82004D48	4	m_owner	medium	Used as the owning entity whose component tables are searched.
+82004DD0	10	m_creatureType	medium	loaded from the CreatureType value during serialization
+82004DD0	C	m_currentStage	medium	loaded from the CurrentStage value during serialization
+82004E14	10	m_radius	medium	Float stored as the w component of each collision sphere and added to ray tests.
+82004E14	40	m_rotatedVertices	medium	Pointer to vertex data stored in packed groups of four.
+82004E14	44	m_numRotatedVertexGroups	low	Count of vertex groups used as the loop bound for the support search.
+82004E14	4C	m_numVertices	medium	Vertex count used when writing out collision spheres and returned by a getter.
+82004E14	50	m_planeEquations	medium	Pointer to 16-byte plane equation array used in ray casting.
+82004E14	54	m_numPlaneEquations	medium	Size of the plane array.
+82004E58	300	m_QueueStartIndex	medium	Used as the start index for the network ring buffer.
+82004E58	304	m_QueueEndIndex	medium	Used as the end index for the network ring buffer.
+820050A0	48	m_prevTime	low	Double timestamp initialised to a sentinel and used to interpolate.
+820050A0	50	m_currentTime	low	Double timestamp compared with the new time on update.
+820050A0	5A4	m_resourceA	medium	Refcounted object released in destructor and queried for readiness.
+820050A0	5A8	m_resourceB	medium	Second refcounted object released in destructor.
+82005248	18	m_paramsBegin	medium	Start of a sorted vector of 12-byte keyed parameter entries searched by binary search.
+82005248	1C	m_paramsEnd	medium	End of the sorted parameter vector.
+82005298	58	m_ActionsBegin	medium	Start pointer of the 8-byte entry vector indexed by the current index.
+82005298	5C	m_ActionsEnd	medium	End pointer of the action vector used to compute its size.
+82005298	64	m_CurrentAction	medium	Shared pointer to the action selected by the current index.
+82005298	74	m_CurrentIndex	medium	Index into the action vector set by the index setter.
+820052E8	E4	m_MessageValue	low	Stores a message parameter from the incoming message.
+82005480	10	m_pWorld	medium	Set when added to a world and cleared on removal.
+82005480	2C	m_pRagdoll	low	Ref counted multi body object iterated by most methods.
+82005480	C	m_collisionFilterInfo	medium	Filter value written into every body.
+820054D0	54	m_ElapsedTime	medium	compared against duration
+820054D0	58	m_Duration	medium	compared against elapsed time
+820054D0	60	m_startPhase	low	Phase object whose duration is added to the total.
+820054D0	68	m_loopPhase	low	Phase object whose duration is multiplied by the loop count.
+820054D0	70	m_TargetPhase	medium	compared to current phase and used for virtual call
+820054D0	78	m_CurrentPhase	medium	compared to target phase
+82005740	10	m_world	medium	Set by add-to-world and cleared by remove-from-world, passed with body.
+82005740	2C	m_body	medium	Body object passed when adding to or removing from the world.
+82005740	30	m_sharedHandle	low	Reference-counted handle released in destructor and updated by setters.
+82005740	C	m_owner	low	Value forwarded to the body owner field in setter.
+820057E0	100	m_radius	medium	Squared and compared against squared distance to a position.
+820057E0	108	m_handleTarget	low	Object freed in destructor.
+820057E0	120	m_refCountedData	low	Atomically refcounted object released in destructor.
+820057E0	B4	m_componentsBegin	medium	Start of a pointer array iterated with virtual calls.
+820057E0	B8	m_componentsEnd	medium	End of the component pointer array.
+820057E0	BC	m_componentsCapacity	low	Third pointer of the vector, zeroed with begin and end.
+82005838	34	m_Priority	medium	Number read from the Priority script field.
+82005838	40	m_BlendInTime	medium	Float read from the BlendInTime script field.
+82005838	44	m_BlendOutTime	medium	Float read from the BlendOutTime script field.
+82005838	54	m_LoopCounter	low	Zeroed on start and incremented each time the loop action is instantiated.
+82005838	58	m_NumLoops	medium	Number read from the NumLoops script field.
+82005838	60	m_IntoAction	medium	Shared handle filled from the IntoAction script field.
+82005838	68	m_LoopAction	medium	Shared handle filled from the LoopAction script field.
+82005838	70	m_OutOfAction	medium	Shared handle filled from the OutOfAction script field.
+82005838	78	m_CurrentAction	low	Shared handle assigned from the loop action each iteration.
+82005838	C	m_Target	medium	Entity handle read from the Target script field.
+82005A88	14	m_data	low	Pointer to the data block freed in destructor.
+82005A88	4	m_nameHash	medium	FNV hash of the name string stored in constructor.
+82005A88	8	m_variantIndex	medium	Random index chosen from the matching candidates.
+82005BA0	10	m_pWorld	medium	Set when the body is added to a world and cleared on removal.
+82005BA0	2C	m_pRigidBody	medium	Pointer to the physics body that most methods forward to.
+82005BA0	C	m_collisionFilterInfo	medium	Value copied into the body filter word and followed by a world filter refresh.
+82005EA8	1C	m_Flags	medium	Bitfield checked for flag 0x80.
+82005EA8	70	m_Position	medium	Loaded as vector and used in distance computation.
+82005EA8	7C	m_Radius	medium	Compared against distance to determine range.
+82006438	20	m_mode	medium	Current mode value pushed into every child.
+82006438	3C	m_children	medium	Start of an array of eight-byte child entries iterated by all update functions.
+82006438	4	m_owner	medium	Pointer set when the group is attached and cleared on detach.
+82006438	40	m_childrenEnd	medium	End pointer of the child array.
+82006438	60	m_rotation	medium	Orientation quaternion stored by the rotation setter.
+820065E0	1C	m_flags	medium	Field at offset 0x1C is tested with bit mask in CAKElementBuilder_HasFlag.
+820065E0	8	m_pRoot	low	Used as the starting node for tree searches by id.
+82006818	20	m_State	medium	State value compared and switched among 2, 3 and 4 in the state setter.
+82006818	38	m_Body	low	Pointer passed to virtual calls on physics subsystem objects.
+82006888	4	m_Owner	medium	Entity pointer whose property table and flags are read by most methods.
+820069E8	C	m_ChildListEnd	low	End pointer of the child list that the iteration loops compare against.
+82006A60	38	m_mainComponent	low	Primary child object receiving the same virtual calls as each listed handle.
+82006A60	44	m_componentsBegin	high	begin pointer of component array
+82006A60	48	m_componentsEnd	high	end pointer of component array
+82006D68	368	m_flag872	medium	Byte field returned by getter.
+82006DF8	10	m_pCurrentAction	medium	Non-null pointer means a talk or action is in progress; used by the IsTalking binding.
+82006DF8	29	m_changingAlpha	medium	Byte written under the ChangingAlpha tag.
+82006DF8	2C	m_targetAlpha	medium	Float written under the TargetAlpha tag.
+82006DF8	4	m_pEntity	low	Entity pointer whose definition tables are queried.
+82007328	2C	m_physicsLayer	medium	Filled from the PhysicsLayer integer field in the loader.
+82007490	4	m_pEntity	medium	Passed to the entity unique id lookup when posting messages.
+82007620	6C	m_Target	high	Returned directly by the getter.
+82007620	B0	m_TargetHandle	medium	EntityHandle field used to retrieve the target entity.
+820076EC	10	m_markedLineNumber	medium	Saved copy of the line number when a mark is set.
+820076EC	8	m_stream	medium	Wrapped stream object that all calls are forwarded to.
+820076EC	C	m_lineNumber	medium	Incremented once per newline byte read.
+8200A770	10	m_AllowPopWithChildren	low	When clear, popping a tag with children is an error.
+8200A770	14	m_ErrorSink	low	Non-null enables error reporting and receives the message text.
+8200A770	24	m_Document	medium	Points to the parse tree with root and current node pointers.
+8200A830	10	m_stream	high	Underlying stream object whose virtual read function is called with a byte count.
+8200AC34	A0	m_lastCompletedBlockType	high	Returned by the GetLastCompletedBlockType script binding.
+8200AC34	A4	m_lastCompletedBlockTime	high	Returned by the GetLastCompletedBlockTime script binding.
+8200ACA0	10	m_ownedRef	low	Object released through a virtual call in the destructor.
+8200ACA0	4	m_refObject	low	Pointer copied from a source object and add-ref-ed through its virtual call.
+8200B84C	10	m_childA	low	Child object whose virtual methods are called in parallel with the other child.
+8200B84C	18	m_childB	low	Second child object receiving the same forwarded calls.
+8200B84C	24	m_fadeStartTime	low	Start time compared against the current time when computing the blend ratio.
+8200B84C	28	m_fadeEndTime	low	Upper bound used to divide the elapsed fade time into a ratio.
+8200B84C	2C	m_isFading	low	Set when a fade begins and cleared when it ends.
+8200BEC4	4	m_items	high	Pointer to the heap array of element pointers.
+8200BEC4	C	m_count	high	Number of element pointers, reset to zero when freed.
+8200C150	30	m_Inner	medium	Inner object whose virtuals are called by pause and resume.
+8200C150	44	m_IsPaused	medium	Set to one by the pause function and cleared by the resume function.
+8200C150	45	m_IsStopped	medium	Set when the owned inner object is stopped and released.
+8200C21C	14	m_templateMap	low	Tree freed in destructor and searched when creating entries.
+8200C21C	20	m_childMap	low	Tree head of the child map iterated by all broadcast methods.
+8200C21C	30	m_paused	medium	Set by pause and cleared by resume, which are guarded by it.
+8200C21C	31	m_shutdown	medium	Set in the teardown routine and checked by the child-iterating methods.
+8200C2D8	14	m_childrenA	low	Vector begin pointer of child entries freed in destructor.
+8200C2D8	24	m_childrenB	low	Second child vector begin pointer.
+8200C2D8	34	m_childrenC	low	Third child vector begin pointer.
+8200C2D8	50	m_isDisabled	low	Byte checked before iterating children in the group operations.
+8200C2D8	51	m_isFinished	low	Byte set when children setup fails and checked as early-out.
+8200C37C	18	m_timedListBegin	low	Start of a vector of 28-byte entries each holding a child object and a timer.
+8200C37C	1C	m_timedListEnd	low	End of the second child vector.
+8200C37C	68	m_duration	low	Float passed to children as a time value and compared in the emit routine.
+8200C37C	6C	m_enabled	low	Cleared by one routine and set by its counterpart.
+8200C37C	8	m_emitterListBegin	low	Start of a vector of 12-byte entries each holding a child object pointer.
+8200C37C	C	m_emitterListEnd	low	End of the first child vector.
+8200C978	78	m_Voice	medium	Handle created lazily, used for submit calls and destroyed on shutdown.
+8200CEB4	10	m_pVoice	low	Object whose virtual methods play, pause and submit data.
+8200CEB4	20	m_pSource	low	Object queried for stream size and state.
+8200CEB4	30	m_loopCount	low	Written under a loop count tag and compared with -1 for infinite.
+8200CEB4	80	m_mode	low	Small enum compared against ranges to select behavior.
+8200CEB4	F8	m_playing	low	Byte flag cleared and set by update logic.
+8200D000	5C	m_CurrentTime	low	Updated each tick from a clock source and used as time base for interpolating envelopes.
+8200D000	64	m_State	low	Compared against 2 and 3 in the update to decide whether to advance.
+8200D580	14	m_Impl	medium	Pointer to the created implementation object, destroyed in the release method.
+8200D580	18	m_ParamCount	medium	Bounds-checked as the number of parameters before indexing.
+8200D580	1C	m_Params	medium	Array of 40-byte entries indexed by parameter number.
+8200D580	20	m_IsActive	low	Set to 1 after starting the implementation and cleared on reset.
+8200D580	4	m_InitFloat	low	First float copied from the init params block.
+8200D7D8	18	m_paramCount	medium	Entry count passed to the constructor and used to size the array.
+8200D7D8	1C	m_paramEntries	medium	Pointer to the allocated array of 40-byte parameter entries.
+8200DE20	4	m_Path	medium	String initialised in constructor and set from the path in the open routine.
+8200DE20	8	m_Source	medium	Reference-counted source object released in destructor and tested for validity.
+8200DE20	C	m_Stream	medium	Lazily created stream pointer that is released by the close method.
+8200DE60	4	m_charString	high	Destructor releases CCharString at offset 4.
+8200DE60	8	m_8	high	Destructor releases object at offset 8.
+8200DEF8	10	m_position	medium	64-bit value set by one method and advanced by another and read by a getter.
+8200DEF8	4	m_refCount	medium	Counter decremented by the release function and zeroed in the constructor.
+8200DEF8	8	m_inner	medium	Wrapped object that gets AddRef in the constructor and receives forwarded calls.
+8200E17C	2C	m_VolumeB	low	Object created when the second count becomes nonzero.
+8200E17C	30	m_VolumeA	low	Object created when the first count becomes nonzero.
+8200E17C	4	m_VolumeARefCount	low	Counter acquired and released around the first volume object.
+8200E17C	4C	m_TimeoutSeconds	low	Setter value multiplied by 1000 in the open routine.
+8200E17C	8	m_VolumeBRefCount	low	Counter acquired and released around the second volume object.
+8200E374	34	m_refCount	medium	Atomically incremented in AddRef and decremented in Release.
+8200E374	3C	m_value	low	Plain value returned through an out pointer by a getter.
+8200E3A4	14	m_cursor	medium	Current index, reset to minus one.
+8200E3A4	8	m_itemsBegin	medium	Start of the pointer vector used to compute the element count.
+8200E3A4	C	m_itemsEnd	medium	End of the pointer vector used to compute the element count.
+8200E3C0	8	m_streamByteOrder	low	Compared with the second field to decide whether to byte-swap values.
+8200E3C0	C	m_nativeByteOrder	low	Compared with the first field to decide whether to byte-swap values.
+8200E4B8	10	m_Ring	medium	Ring buffer control block holding size, read and fill counters.
+8200E4B8	14	m_BufferMemory	medium	128K block allocated in the constructor and freed in the destructor.
+8200E4B8	18	m_Stream	medium	Underlying stream object whose read functions are called.
+8200E4B8	20	m_DirectBytesRead	low	Accumulates bytes returned by the unbuffered read path.
+8200E4B8	28	m_BufferedBytesRead	low	Accumulates bytes returned by the buffered read path.
+8200E69C	10	m_notifyOnRead	low	Flag that triggers an extra callback after each successful read.
+8200E69C	C	m_readPos	medium	Byte offset advanced after each read and compared against the buffer size.
+8200E898	14	m_result	low	Returned from begin and write calls.
+8200E898	8	m_inElement	medium	Set on begin element and cleared after a value write.
+8200E898	C	m_depth	medium	Incremented on begin and decremented on end.
+8200E8E0	2C	m_currentNode	low	Pointer to a node whose first word is a type tag checked by the typed getters.
+8200E8E0	30	m_nodeList	low	Container whose 64-byte entries are searched by name.
+8200E948	10	m_nextNode	medium	Sibling saved as the continuation point after the current node.
+8200E948	14	m_startedFromHead	low	Flag set when the cursor was positioned from the first node.
+8200E948	8	m_firstNode	low	Head node used when iteration starts from scratch.
+8200E948	C	m_currentNode	medium	Node currently pointed at by the cursor and advanced by the next functions.
+82013E74	18	m_clientHandle	high	Handle returned by registering the render driver client.
+82013E74	C	m_callbackContext	low	Value copied from the constructor argument and passed on registration.
+82014FE0	70	m_FrequencyRatioTarget	low	Float set together with m_74 by the ratio setter and returned by a getter.
+82014FE0	74	m_FrequencyRatio	low	Float returned by a getter and also used as scale for the byte rate.
+82014FE0	D8	m_SampleRate	low	Initialised to 48000 in the constructor.
+820150FC	10	m_totalSize	medium	Capacity of the buffer and subtracted by the used offset to get remaining space.
+820150FC	14	m_usedSize	medium	Offset advanced by each aligned allocation.
+820150FC	18	m_buffer	medium	Pointer to the allocated backing memory freed in the destructor.
+820150FC	8	m_refCount	medium	Incremented by the add reference function and decremented by release.
+820150FC	C	m_allocContext	low	Context argument stored at init and passed back to the buffer free routine.
+8201CFD4	F4	m_blockCacheUsed	medium	Counter of allocated cache blocks.
+8201CFD4	F8	m_blockCache	medium	Array of block pointers freed in destructor.
+8201CFE4	68	m_texelCount	medium	Number of texels copied scaled by 16 bytes.
+8201CFE4	80	m_texelBuffer	medium	Buffer of 16-byte texels freed in destructor and filled via memcpy.
+820243F0	14	m_idStackData	medium	Array data pointer pushed to and popped by the section functions.
+820243F0	18	m_idStackSize	medium	Count of the id stack decremented on pop.
+820243F0	1C	m_idStackCapacityAndFlags	medium	Capacity word with the not-owning flag checked in the destructor.
+820243F0	20	m_outputCallback	low	Function pointer invoked with the formatted text.
+820243F0	24	m_outputUserData	low	Second argument passed to the output callback.
+82024450	10	m_isOk	medium	Byte cleared when a read returns nothing.
+82024450	C	m_file	high	File handle used for reading and closed in the destructor.
+820245DC	8	m_file	high	File handle closed by Close and the destructor.
+820245DC	C	m_ownsFile	medium	Byte checked before closing the file handle.
+82024F4C	10	m_bufferPos	medium	Read cursor advanced on reads and skips.
+82024F4C	14	m_bufferFill	medium	Count of valid bytes after refill.
+82024F4C	18	m_bufferSize	medium	Capacity used when refilling.
+82024F4C	1C	m_markPos	medium	Saved position set by mark.
+82024F4C	20	m_markLimit	medium	Limit stored by mark.
+82024F4C	8	m_stream	medium	Underlying stream whose virtual read is called to refill.
+82024F4C	C	m_buffer	medium	Buffer base used for copies.
+82025DDC	20	m_numberOfPoses	medium	Used as frame count and in block calculations.
+82025DDC	24	m_blockSize	medium	Divisor and modulus for frame-to-block mapping.
+82025DDC	5C	m_dataBuffer	low	Pointer freed with its size in the destructor.
+82025DDC	60	m_dataBufferSize	low	Size passed when freeing the data buffer.
+82025DDC	C	m_duration	high	Divides time by it to find the frame.
+82028994	54	m_broadPhase	low	Virtual call on this object removes the phantom handle from the broadphase.
+82028994	7C	m_pendingOperations	medium	Queue that receives a deferred remove-phantom operation when locked.
+82028994	84	m_criticalOperationsLockCount	medium	Incremented around the removal and checked to decide whether to defer.
+82028994	E0	m_phantoms	medium	Array searched for the phantom pointer and compacted on removal.
+82028994	E4	m_numPhantoms	medium	Count of the phantom array, decremented on removal.
+82028CD4	C0	m_inertiaInv	low	Scalar used as the diagonal of the inertia matrices.
+82028E14	C0	m_inertiaInvX	medium	Reciprocal of this is the x inertia diagonal.
+82028E14	C4	m_inertiaInvY	medium	Reciprocal of this is the y inertia diagonal.
+82028E14	C8	m_inertiaInvZ	medium	Reciprocal of this is the z inertia diagonal.
+82028E14	CC	m_massInv	medium	Fourth lane of the inertia and inverse mass vector.
+82028FE4	4	m_MemSizeAndFlags	medium	Standard hkReferencedObject 16-bit size field at offset 4.
+82028FE4	6	m_ReferenceCount	medium	Standard hkReferencedObject reference count, initialised to 1 and decremented on release.
+8202A728	10	m_shape	medium	Reference counted shape released in the destructor.
+8202A728	4	m_memSizeAndFlags	medium	Havok object size and flags field read by the delete path.
+8202A728	80	m_overlapListenersData	medium	Array of listeners called when collidables are added or removed.
+8202A728	84	m_overlapListenersSize	medium	Element count of the overlap listener array.
+8202A728	88	m_overlapListenersCapacity	medium	Capacity word of the overlap listener array.
+8202A728	8C	m_phantomListenersData	medium	Array of phantom listeners notified on phantom events.
+8202A728	90	m_phantomListenersSize	medium	Element count of the phantom listener array.
+8202A728	94	m_phantomListenersCapacity	medium	Capacity word of the phantom listener array.
+8202A728	C0	m_overlappingCollidablesData	medium	Array of collidable pointers currently overlapping.
+8202A728	C4	m_overlappingCollidablesSize	medium	Element count of the overlapping array.
+8202A728	C8	m_overlappingCollidablesCapacity	medium	Capacity word of the overlapping array.
+8202D834	20	m_points	high	Array of 16-byte vectors interpolated by parameter.
+8202D834	24	m_pointCount	high	Count of points used to clamp parameter.
+8202D834	2C	m_distance	medium	Float array interpolated to give length from parameter.
+8202D834	8	m_smoothingFactor	medium	Float initialised in the constructor of the linear curve.
+8202D834	C	m_closedLoop	medium	Byte flag initialised false in constructor.
+8202DDE0	18	m_path	high	Reference counted path object released in the destructor and used for tangent queries.
+8202E12C	4	m_memSizeAndFlags	medium	Used as the allocation size argument when the deleting destructor frees the object, matching the Havok reference header.
+8202E12C	4C	m_motors	low	Array of reference-counted pointers that the destructor releases one by one.
+8202E12C	50	m_numMotors	low	Element count for the pointer array released in the destructor.
+8202E1C8	18	m_infosData	medium	Pointer to the per-link info array freed in the destructor.
+8202E1C8	1C	m_infosSize	medium	Element count of the info array.
+8202E1C8	20	m_infosCapacityAndFlags	high	Initialized to the Havok array flag value for not owning memory.
+8202E1C8	4	m_memSizeAndFlags	high	Havok referenced object header holds the allocation size at this offset.
+8202E1C8	6	m_referenceCount	high	Constructor sets this 16 bit field to one as Havok reference count.
+8202E384	14	m_currentTime	medium	Float time at the start of the step to which the delta is added.
+8202E384	18	m_deltaTime	medium	Stores the step delta time passed to the step routine.
+8202E384	30	m_toiEvents	medium	Array of 112-byte time-of-impact event records appended by the add routine.
+8202E384	34	m_toiEventCount	medium	Number of time-of-impact events stored so far.
+8202E384	38	m_toiEventCapacityAndFlags	medium	Capacity of the event array with a top-bit flag meaning memory is not owned.
+8202E384	8	m_world	high	Pointer to the physics world used for its lists, counters and vectors.
+8202E384	FC	m_stepCounter	low	Counter read before and incremented under a critical section at each step.
+8202E4E4	10	m_reservedContactPoints	medium	Increased by the reserve routine after checking against the maximum.
+8202E4E4	3C	m_contactConstraintData	low	Data block with capacity fields and an array of contact points.
+8202E4E4	4	m_memSizeAndFlags	medium	Used as the allocation size when the deleting destructor frees the object.
+8202E4E4	58	m_entityA	low	First of two bodies whose material values are combined.
+8202E4E4	5C	m_entityB	low	Second of two bodies whose material values are combined.
+8202E4E4	C	m_world	low	Object that receives contact add and remove events.
+8202E708	4C	m_entities	medium	Array of entity pointers walked when reporting statistics.
+8202E708	50	m_entityCount	medium	Number of entities in the array.
+8202FB44	18	m_infosData	medium	Pointer to the per-link info array freed in the destructor.
+8202FB44	1C	m_infosSize	medium	Element count of the info array.
+8202FB44	20	m_infosCapacityAndFlags	high	Havok array capacity and not-owning flag word.
+8202FB44	4	m_memSizeAndFlags	high	Havok referenced object header holds the allocation size at this offset.
+8202FC00	18	m_infosData	medium	Pointer to the per-link info array freed in the destructor.
+8202FC00	1C	m_infosSize	medium	Element count of the info array used to size runtime data.
+8202FC00	20	m_infosCapacityAndFlags	high	Initialized to the Havok array flag value for not owning memory.
+8202FC00	4	m_memSizeAndFlags	high	Havok referenced object header holds the allocation size at this offset.
+8202FC00	6	m_referenceCount	high	Constructor sets this 16 bit field to one as Havok reference count.
+8202FC54	18	m_constraintData	high	Wrapped constraint data object whose virtual slots are forwarded.
+8202FC54	20	m_threshold	medium	Float whose square is compared against accumulated squared magnitude to detect breaking.
+8202FC54	24	m_revertBackVelocityOnBreak	medium	Byte passed along in the break event.
+8202FC54	25	m_removeWhenBroken	medium	Byte checked after a break to decide further action.
+8202FC54	28	m_listener	low	Optional callback object invoked when the constraint breaks.
+8202FCB4	1C	m_strength	medium	Scale factor multiplied into the solver value before solving.
+8202FCB4	C	m_constraintData	medium	Wrapped constraint data that calls are delegated to and released in the destructor.
+82030108	50	m_trianglesSubpartData	low	Pointer to growing array of 128-byte subpart records.
+82030108	54	m_trianglesSubpartCount	low	Count incremented when a triangles subpart is added.
+82030108	58	m_shapesSubpartData	low	Pointer to growing array of 144-byte subpart records.
+82030108	5C	m_shapesSubpartCount	low	Count incremented when a shapes subpart is added.
+82030108	F0	m_radius	low	Float added to the box extents when subparts are added.
+82033678	C	m_contactMgr	medium	Wrapped contact manager to which the calls are forwarded after mapping.
+820369CC	18	m_body	medium	Body pointer used as the target of the applied spring force.
+820369CC	40	m_springDamping	low	Float parameter initialised in the constructor, order follows Havok.
+820369CC	44	m_springElasticity	low	Float parameter initialised in the constructor, order follows Havok.
+820369CC	48	m_maxRelativeForce	low	Float parameter initialised in the constructor, order follows Havok.
+820369CC	4C	m_objectDamping	low	Float parameter initialised in the constructor, order follows Havok.
+820369CC	50	m_shapeKey	low	Initialised to minus one and copied by clone.
+82036B2C	14	m_constraints	low	Reference counted element array in constraint position.
+82036B2C	18	m_constraintCount	low	Size of the constraint array.
+82036B2C	20	m_actions	low	Reference counted element array in action position.
+82036B2C	24	m_actionCount	low	Size of the action array.
+82036B2C	2C	m_phantoms	low	Array released like rigid bodies, in phantom position.
+82036B2C	30	m_phantomCount	low	Size of the phantom array.
+82036B2C	8	m_rigidBodies	low	Array whose elements are released first, matching rigid bodies.
+82036B2C	C	m_rigidBodyCount	low	Size of the first array.
+82037228	4	m_networkMessageQueue	low	Set by hkProcessContext_SetNetworkMessageQueue from network message queue functions.
+820372A4	6C	m_worlds	medium	Array searched and compacted when a world is removed.
+820372A4	70	m_numWorlds	medium	Decremented when a world entry is removed.
+820372A4	78	m_listeners	low	Array whose entries get a virtual call when a world is removed.
+82038AF0	3C	m_walkSpeed	medium	Set by the handler for the WalkSpeed property.
+82038AF0	40	m_runSpeed	medium	Set by the handler for the RunSpeed property.
+82038AF0	44	m_pathway	medium	Pathway object resolved from the PathWayName property.
+82038AF0	48	m_currentPointIndex	medium	Index into the path points, set from StartingPointIndex and advanced during update.
+82038F80	14	m_pointNames	medium	Array of strings searched by case-insensitive compare.
+82038F80	18	m_pointIds	medium	Array of ids searched for a matching value.
+82038F80	1C	m_nextPointMatrix	low	Square table of indices indexed by two points.
+82038F80	C	m_pointCount	medium	Loop bound for the name, id and matrix arrays.
+82039010	4	m_entries	medium	Pointer array that is grown, copied and freed as entries are added.
+82039010	8	m_entryCount	medium	Incremented after each entry is appended.
+82039010	C	m_entryCapacity	medium	Doubled when the count reaches it.
+820393E0	14	minValue	low	Field set to the maximum of an argument and a scaled global, acting as a lower bound.
+820393E0	18	maxValue	low	Field clamped between the lower bound and a global maximum.
+82039570	3C	m_validTime	low	Float set by the ValidTime attribute and clamped to a bound.
+82039570	4	m_owner	low	Constructor argument; used to reach tables and bounds of the owning object.
+82039570	40	m_unsafeTime	low	Float set by the UnsafeTime attribute and clamped to a bound.
+82039570	44	m_immediateMode	low	Byte flag matching the ImmediateMode attribute.
+82039570	50	m_pool	low	Free list pool created while loading using the MaxFilter size.
+82039570	C	m_name	medium	Heap copy of the name string passed to the constructor.
+82039698	10C	m_param	low	Constructor argument stored without interpretation.
+82039698	110	m_flags	low	Flag value ORed into a global mask when requested.
+82039698	4	m_registryIndex	medium	Index of the entry in the global table or -1 if registration failed.
+82039698	8	m_userData	low	Constructor argument stored without interpretation.
+82039D20	70	m_dangerousPoints	medium	Array of three-float entries allocated by the maximum-points setter.
+82039D20	74	m_numDangerousPoints	low	Count reset to zero when the points array is reallocated.
+82039D20	78	m_maxDangerousPoints	medium	Capacity assigned by the max-points setter.
+82039D20	7C	m_dangerousEntities	medium	Array of entity pointers allocated by the max-entities setter.
+82039D20	80	m_numDangerousEntities	low	Count reset to zero when the entity array is reallocated.
+82039D20	84	m_maxDangerousEntities	medium	Capacity assigned by the max-entities setter.
+82039DE8	10	m_PendingHandle	low	Holds the next handle that replaces the current one on swap.
+82039DE8	1C	m_AnimIds	medium	Allocated array of four-byte ids indexed per entry.
+82039DE8	20	m_Entries	medium	Allocated array of eight-byte flag records per entry.
+82039DE8	24	m_EntryCount	medium	Count used to size both arrays and loop bounds.
+82039DE8	28	m_BlendTime	low	Float passed as the last argument when starting animations.
+82039DE8	4	m_AnimSystem	low	Passed first to every anim-system helper call.
+82039DE8	C	m_CurrentHandle	low	Stores the handle returned from starting an animation.
+82039E68	20	m_Handles	medium	Array of 4 byte ids allocated by the count setter.
+82039E68	28	m_MaxGraphCount	medium	Set from the MaxGraphCount attribute and used as handle array count.
+82039E68	2C	m_MinHandleValidity	medium	Loaded from the MinHandleValidity attribute and passed as a float to play calls.
+82039E68	4	m_pSoundEngine	low	Passed as first argument to every engine call.
+82039FA4	10	m_costScale	low	Float written into the data file header.
+82039FA4	4	m_navGraph	low	Source graph whose node count and node array are used to build the matrix.
+82039FA4	8	m_costMatrix	medium	Allocated array of count squared entries read and written by the serializers.
+82039FA4	C	m_nodeCount	medium	Matrix dimension used to size and index the cost array.
+82039FEC	10	m_listCount	medium	Signed 16 bit number of lists read from the chunk.
+82039FEC	8	m_lists	low	Array of pointers to 16 bit value lists.
+82039FEC	C	m_listLengths	low	Array of 16 bit lengths one per list.
+8203A054	8	m_nodeCount	medium	Row and column count of the matrix.
+8203A054	C	m_matrix	medium	Array of row arrays each sized by the node count.
+8203A078	1C	m_nodeArrayA	low	First array allocated with the node count.
+8203A078	20	m_nodeArrayB	low	Second array allocated with the node count.
+8203A078	24	m_nodeArrayC	low	Third array allocated with the node count.
+8203A078	28	m_maxNodeCount	medium	Set from the MaxNodeCount parameter and used to size the arrays.
+8203A078	38	m_maxDistance	medium	Float parameter read from the MaxDistance setting.
+8203A398	10	m_value	medium	Float value set to min(newValue, entry value).
+8203A834	10	m_maxCandidatePerFrame	medium	Integer parameter parsed from the first named setting.
+8203A834	18	m_candidatesThisFrame	medium	Incremented each time a candidate passes the distance test and reset on frame change.
+8203A834	C	m_maxDistPathNode	medium	Float parameter scaled and stored, used squared as distance limit.
+8203B0CC	14	m_maxDist	low	Read from the MaxDist script field in the loader.
+8203B1C4	5C	m_neighbourCount	medium	Loop count over the neighbour pointer array.
+8203B1C4	8	m_owner	low	Entity whose position and direction are read throughout.
+8203B1C4	D0	m_isActive	low	Flag set while avoidance is being applied.
+8203B548	3C	m_lowThreshold	low	Float compared against a time delta to choose a result state.
+8203B548	40	m_highThreshold	low	Second float threshold compared against the same time delta.
+8203B548	88	m_maxLoopCount	low	Set from a parsed number when the MaxLoopCount attribute is handled.
+8203CF60	504	m_pBackingAllocator	low	Fallback allocator whose vtable is called for large blocks.
+8203CF60	510	m_NumAllocs	medium	Incremented on each small allocation.
+8203CF60	514	m_NumFrees	medium	Incremented on each free.
+8203CF60	518	m_NumReallocs	medium	Incremented on each realloc.
+8203CF60	520	m_BytesAllocated	low	Accumulates allocated sizes.
+8203CF60	528	m_BytesFreed	low	Accumulates freed sizes.
+8203D998	14	m_isOpen	medium	Byte flag tested by the accessor and cleared when the stream is closed.
+8203D998	18	m_handle	medium	Handle passed to the underlying file calls and cleared on close.
+8203D998	20	m_lastError	medium	Receives an error code whenever an underlying call fails.
+8203D998	24	m_openMode	low	Set to one or two before a transfer and compared to avoid redundant mode switches.
+8203D9E8	10	m_innerStream	medium	Object to which every virtual method forwards.
+8203DA38	10	m_Stream	medium	Underlying stream object whose virtual read, write and seek are called.
+8203DA38	14	m_Buffer	medium	Memory copied into and out of by the read and write functions.
+8203DA38	18	m_Mode	medium	Value 1 means reading and 2 means writing, switched by the mode setter.
+8203DA38	1C	m_BufferPos	medium	Current offset inside the buffer for reads and writes.
+8203DA38	20	m_BufferEnd	medium	Amount of valid data in the buffer after a fill.
+8203DA38	28	m_StreamPosition	medium	64-bit position of the underlying stream advanced by flushes and seeks.
+82040628	180	m_flags	low	Byte whose bit 2 is set or cleared by a boolean setter.
+82040628	80	m_pDefinition	low	Pointer returned by a getter and read for flags during updates.
+82040790	10	m_file	medium	Inner file object pointer checked for null in every method.
+8204142C	94	m_StartShape	low	Source keyframe interpolated from in the blend function.
+8204142C	98	m_EndShape	low	Target keyframe interpolated to in the blend function.
+82041530	28	m_glyphImages	low	Array indexed by glyph number with bounds check against count.
+82041530	2C	m_glyphImageCount	low	Bounds used for glyph image array lookup.
+82041530	38	m_glyphMetrics	low	Array of 12-byte entries with scaled 16-bit values.
+82041530	3C	m_glyphMetricCount	low	Bounds used for metrics array lookup.
+82042B30	90	m_flag90	low	Byte set by the setter and returned by the byte getter.
+82042B30	A4	m_callbackFn	low	Function pointer invoked by the callback runner.
+82042B30	A8	m_callbackArg	low	Argument passed to the stored function pointer.
+82047C80	24	m_device	medium	Owner whose field at +260 is the D3D device used for creation.
+82047C80	28	m_width	medium	Set from the dimension argument on creation.
+82047C80	2C	m_height	medium	Set alongside width.
+82047C80	30	m_resource	medium	D3D resource pointer released on destruction.
+82047C80	34	m_format	medium	Format constant chosen from the type code.
+8204F398	80	m_colorScale	low	Chosen by pixel format and used to scale texel channel values.
+8204F398	84	m_invColorScale	low	Reciprocal of the colour scale set alongside it.
+8204F398	8C	m_tileDecodeFn	low	Called indirectly per row of tiles to decode them into the cache.
+8204F398	F0	m_blockBuffer	low	Lazily allocated buffer of 16 byte texels filled by the block reader.
+8204F398	F4	m_cachedTileCount	low	Incremented each time a new tile cache block is allocated.
+8204F398	F8	m_tileTable	low	Lazily allocated table of tile entries each pointing to a cache block.
+820554F0	14	m_Parameters	medium	Array of parameter pointers walked by index and freed in the destructor.
+820554F0	18	m_ParameterCount	medium	Loop bound when iterating the parameter array.
+820554F0	4	m_RefCount	high	Decremented in the release method which destroys the object at zero.
+82079ABC	8	m_ObjectEntries	low	Array data of 24 byte entries appended by the entry-add routine.
+82079ABC	C	m_NumObjectEntries	low	Count of the 24 byte entry array.
+82079C6C	14	m_contentsVersion	medium	Version string compared against the Havok-5.1.0-r1 constant.
+820A2BC4	4	m_String	medium	CCharString released in the destructor.
+820A2F14	4	m_ptrVector8	high	PtrVector8_ClearAndFree is called on this field in the destructor.
+820A6754	20	m_RefCountedPtr	medium	Released atomically in the destructor and reference-incremented in the constructor.
+820A6754	24	m_String	medium	CCharString constructed and released at this offset.
+820A6754	28	m_Float	medium	Float field stored by the constructor.
+820A69F0	C	m_pImpl	medium	Holds a heap object created in the constructor and released through its virtual destructor.
+820A6A48	10	m_Handle	medium	Underlying file handle passed to the low level calls.
+820A6A48	18	m_FileName	medium	Embedded string holding the file name.
+820A6A48	4	m_Mode	medium	Open mode value set by the open routine.
+820A6A48	8	m_Position	medium	Current read or write position.
+820A6A48	C	m_Length	medium	Known file length updated by writes and size changes.
+820A7A10	4	m_data	medium	buffer data pointer
+820A7A10	8	m_capacity	medium	buffer capacity
+820A7A10	C	m_offset	medium	current write offset
+820A80C4	80	m_deltaTime	low	Written as the difference of successive elapsed-time readings.
+820A80C4	84	m_lastTime	low	Holds the previous elapsed-time reading used for the delta.
+820A84D4	14	m_PtrVector	medium	Cleared and freed by PtrVector8_ClearAndFree.
+820A84D4	4	m_SharedHandle	medium	Released by SharedHandle_Release in the destructor.
+820A84D4	C	m_EntityHandle	medium	Released by EntityHandle_Release in the destructor.
+820ABCC0	14	m_dataBegin	medium	Start of byte buffer holding the contents.
+820ABCC0	20	m_isOpen	medium	Set on open, cleared on close, returned by accessor.
+820ABCC0	4	m_mode	low	Set from the open mode argument.
+820ABCC0	8	m_position	medium	Current offset advanced by reads and set by seeks.
+820ABCC0	C	m_size	medium	Upper bound checked by read and seek.
+820AC200	10	m_duration	low	Float initialised from a constant or passed time and reset on hide.
+820AC200	C	m_active	low	Flag set when shown and cleared when hidden.
+820ADC78	68	faceTargetAtStart	high	bool field read from Lua string "FaceTargetAtStart".
+820ADC78	69	faceTargetThroughout	high	bool field read from Lua string "FaceTargetThroughout".
+820ADCC8	6C	m_speedMultiplier	medium	Filled from the SpeedMultiplier script field.
+820ADCC8	70	m_addedTotalRotation	medium	Filled from the AddedTotalRotation field and scaled by a constant.
+820ADCC8	74	m_hasMovement	high	Filled from the HasMovement bool field.
+820ADCC8	75	m_disablePhysics	medium	Bool read from the field following HasMovement in the string list, DisablePhysics.
+820ADCC8	76	m_looping	high	Filled from the Looping bool field.
+820ADD18	54	m_CCharString	high	Released by CCharString_ReleaseAndDecGlobalCountA.
+820ADD18	C0	m_EntityHandle	high	Released by EntityHandle_Release.
+820ADD18	C4	m_EntityHandleId	medium	Set to zero after releasing entity handle.
+820ADD18	C8	m_SharedHandle	high	Released by SharedHandle_Release.
+820ADD18	D4	m_HandleRangeHandle	medium	Passed to HandleRange_ReleaseAll as handle.
+820ADD18	D8	m_HandleRangeCount	medium	Passed to HandleRange_ReleaseAll as count.
+820B286C	40	m_radius	medium	Radius is squared and compared against squared distance.
+820B53F8	24	m_lookAtHandle	medium	Handle cleared with LookAt_ClearLooking and used for LookAtEntity.
+820B53F8	2C	m_secondaryLookAtHandle	low	Second handle cleared the same way when stopping.
+820B6FF8	4D0	m_PurityBalancingThreshold	low	Compared against computed purity to decide whether to modify.
+820B6FF8	4D4	m_PurityBalancingValue	low	Stores computed purity value during balancing.
+820B9318	24	m_entityHandle	medium	Handle to the entity that is destroyed with the presence.
+820BC0E8	4	m_owner	medium	Owner entity whose component list is searched.
+820BD1E8	7B	m_showTargetingHighlight	medium	Loaded from the ShowTargetingHighlight property flag.
+820BD1E8	7C	m_targetableByChild	medium	Loaded from the TargetableByChild property flag.
+820BD1E8	AC	m_breakOnCollide	medium	Loaded and saved under the BreakOnCollide name.
+820BEA90	10	m_currentLevel	medium	Loaded from base level then used for Level_ lookup and CurrentLevel.
+820BEA90	28	m_furnitureLevels	medium	Holds the FurnitureLevels record.
+820BEA90	4	m_owner	medium	Owner entity whose components are queried.
+820BEA90	C	m_forUpgrades	medium	Set from the inverse of the NotActuallyForUpgrades flag.
+820BED10	14	m_effectHandle	low	Entity handle released in destructor.
+820BED10	24	m_weakSpotHandle	medium	Handle checked, destroyed and recreated for the weak spot entity.
+820BED10	34	m_explodeFxName	medium	Region property read right after ExplodeFX.
+820BED10	38	m_hitFxName	medium	Region property read for HitFX.
+820BED10	3C	m_dummyNumber	medium	Serialized under the DummyNumber key.
+820BED10	4	m_owner	medium	Owner entity used to reach its handle and world.
+820BED10	40	m_status	medium	Serialized under the Status key.
+820BEDA0	24	m_weakSpotEntity	medium	Filled from the WeakSpotEntity property.
+820BEDA0	34	m_weakSpotHealth	medium	Filled from the WeakSpotHealth integer property.
+820C09D4	1C	m_entriesBegin	medium	Start of the entry array walked in the turn-off loop.
+820C09D4	20	m_entriesEnd	medium	End of the entry array walked in the turn-off loop.
+820C09D4	28	m_isShowing	medium	Byte cleared when the display is turned off.
+820C53C8	10	m_WealthIndex	medium	Float compared against thresholds to pick the TownWealth level.
+820C53C8	100	m_WealthLevel	medium	Integer 0 to 4 chosen from the TownWealth thresholds.
+820C53C8	4	m_OwnerEntity	low	Object whose name at +0x80 is used when talking to the gossip and village systems.
+820C53C8	D0	m_DangerLevel	low	Averaged value later compared against thresholds to choose a DangerLevel string.
+820C721C	10	m_brightness2	medium	Float stored right after the second colour block and paired with Brightness2.
+820C721C	8	m_brightness1	medium	Float stored right after the first colour block and paired with Brightness1.
+820CCE50	10	m_getAreaBasePtr	low	Pointer to the start of the get area used when computing available data.
+820CCE50	20	m_getNextPtrPtr	medium	Pointer to the current read position that is advanced on reads.
+820CCE50	24	m_putNextPtrPtr	medium	Pointer to the current write position that is advanced on writes.
+820CCE50	30	m_getCountPtr	medium	Pointer to the remaining readable count.
+820CCE50	34	m_putCountPtr	medium	Pointer to the remaining writable count.
+820CCE50	3C	m_seekHigh	low	High-water mark of written data updated during reads and seeks.
+820CCE50	40	m_stateFlags	medium	Bit flags for allocated, constant and read-only modes tested before writing.
+820CCE94	14	length	high	Stored as the string length.
+820CCE94	18	capacity	high	Used for capacity and allocation threshold.
+820CCE94	4	buffer	high	Union of heap pointer or small-string buffer.
+820CDC78	90	m_facing	medium	Read from the Facing field of the script table in the constructor.
+820D0050	10	m_zapFrequency	medium	Filled from the ZapFrequency property and used as the zap interval.
+820D0050	14	m_zapFrequencyOffset	medium	Filled from ZapFrequencyOffset and used as the first zap interval.
+820D0050	18	m_lightningBoltHitWidth	medium	Filled from LightningBoltHitWidth.
+820D0050	1C	m_frameLastZapped	medium	Holds the frame counter at last zap and serialised as FrameLastZapped.
+820D0050	29	m_autoZappingDisabled	medium	Serialised under the AutoZappingDisabled name.
+820D0050	2B	m_doneFirstZap	medium	Serialised as DoneFirstZap and selects which interval is used.
+820D0050	C	m_damage	medium	Filled from the Damage property.
+820D82F4	14	m_lovePositive	high	Loaded from the LovePositive entry.
+820D82F4	18	m_fearPositive	high	Loaded from the FearPositive entry.
+820D82F4	1C	m_attractivePositive	high	Loaded from the AttractivePositive entry.
+820D82F4	20	m_moralityPositive	high	Loaded from the MoralityPositive entry.
+820D82F4	24	m_respectPositive	high	Loaded from the RespectPositive entry.
+820D82F4	28	m_hate	high	Loaded from the Hate entry.
+820D82F4	2C	m_funny	high	Loaded from the Funny entry.
+820D82F4	34	m_moralityNegative	high	Loaded from the MoralityNegative entry.
+820D82F4	38	m_respectNegative	high	Loaded from the RespectNegative entry.
+820D82F4	C	m_like	medium	Loaded from the Like entry.
+820D830C	14	m_respectPositive	high	Loaded from the RespectPositive entry.
+820D830C	1C	m_funny	high	Loaded from the Funny entry.
+820D830C	24	m_moralityNegative	high	Loaded from the MoralityNegative entry.
+820D830C	28	m_respectNegative	high	Loaded from the RespectNegative entry.
+820D830C	2C	m_itemId	medium	Stores the game database id passed to the constructor.
+820D830C	30	m_like	medium	Loaded from the Like entry of the record.
+820D830C	4	m_lovePositive	high	Loaded from the LovePositive entry.
+820D830C	8	m_fearPositive	high	Loaded from the FearPositive entry.
+820D8BF8	80	m_expressionId	low	Id pair filled from an id reference.
+820D8F50	4	m_entity	medium	pointer to the owning entity whose component tables the methods query
+820D9D38	10	m_isPlayer	high	Stores the result of the player check on the owner.
+820D9D38	4	m_owner	medium	Owner entity the effect acts on.
+820D9E88	12	m_isPlayer	medium	Set from the player test on the owner entity.
+820D9E88	4	m_owner	medium	Constructor argument used as the entity whose flags and component table are queried.
+820D9E88	58	m_lookAtHandle	low	Passed to the clear-looking routine and released afterwards.
+820D9F70	4	m_pOwner	medium	First constructor argument stored here and used to read definition tables.
+820DD23C	8	m_Value	medium	Float value clamped when event type is 7.
+820DD36C	18	m_useInfoBox	low	Selects between the info box path and the message path.
+820DE6D8	18	listenerBegin	medium	Start of listener array (stride 12).
+820DE6D8	1C	listenerEnd	medium	End of listener array.
+820DE6D8	4A	notifiedFlag	medium	Set to true after notifying listeners.
+820DF320	10	m_childrenBegin	medium	Start of a vector of 8-byte entity handles.
+820DF320	14	m_childrenEnd	medium	End of the same entity handle vector.
+820DF7A8	10	m_alpha	medium	Loaded from the Alpha entry.
+820DF7A8	14	m_tint	medium	Loaded from the Tint entry.
+820E0098	C	m_CurrState	high	Serialised under the property name CurrState.
+820E0E10	1C	m_pickupDistanceSquared	high	Set to PickupDistance multiplied by itself.
+820E1780	1C	m_knockdown	medium	Loaded from the Knockdown entry.
+820E1780	1D	m_flashExplosion	medium	Loaded from the FlashExplosion entry.
+820E1780	1E	m_fadeEffect	medium	Loaded from the FadeEffect entry.
+820E1780	C	m_damageRadius	high	Loaded from the DamageRadius entry.
+820E3958	20	m_treeHead	medium	Head node of an empty-initialised red-black tree allocated in the constructor.
+820E3958	28	m_count	low	Zeroed alongside the tree head as the entry count.
+820E4538	28	m_selectedIndex	low	Initialised to -1 and stepped by increment and decrement input cases.
+820E4768	28	m_SelectedItem	medium	Index of the currently selected options item starting at minus one.
+820E4768	2C	m_SoundVolume	medium	Volume read from the first slider.
+820E4768	30	m_MusicVolume	medium	Volume read from the second slider.
+820E4768	34	m_VoiceVolume	medium	Volume read from the third slider.
+820E4768	38	m_AudioOutputMode	medium	Value read from the fourth item choosing TV, hifi or surround.
+820EB6E8	4	m_entity	medium	Entity pointer used to remove the component and destroy the entity.
+820EBB50	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820EC140	10	m_wavesBegin	medium	Start of a vector of 12 byte wave entries.
+820EC140	14	m_wavesEnd	medium	End of the vector of 12 byte wave entries.
+820EC140	1C	m_currentWave	high	Index of the wave being run, serialized as CurrentWave and incremented per wave.
+820EC140	20	m_currentWaveLoaded	low	Set when CurrentWave is read back and blocks the restart that resets the index.
+820EC140	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820EC308	10	m_fillRate	medium	Added to the fill amount each update.
+820EC308	20	m_filling	medium	Checked at start of update and cleared when done.
+820EC308	21	m_filled	medium	Set when the fill reaches its cap.
+820EC308	4	m_entity	medium	Owner entity.
+820EC308	C	m_fillAmount	medium	Grows by the rate each update up to a cap.
+820ECE70	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820ECE70	C	m_state	medium	Value 1, 2 or 3 selects which state update runs.
+820ED010	30	m_speed	medium	Loaded from the Speed entry.
+820ED010	34	m_range	medium	Loaded from the Range entry.
+820ED010	38	m_scale	medium	Loaded from the Scale entry.
+820ED010	4	m_entity	medium	Entity pointer used for position and component calls.
+820ED010	40	m_effect	low	Loaded from the Effect property.
+820ED250	10	m_wispCount	high	Value read from the WispCount entry and used as loop bound.
+820ED250	14	m_maxRadius	high	Value read from the MaxRadius entry and used to scale random offsets.
+820ED250	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820ED250	C	m_infinite	medium	Value read from the Infinite entry and stored at this offset.
+820ED310	4	m_owner	medium	Owning entity whose components and handle are used throughout.
+820ED310	C	m_onCeiling	medium	Serialized as a boolean under the OnCeiling key.
+820EDAE0	10	m_slotDepth	medium	Matches the serialized SlotDepth entry written at this offset.
+820EDAE0	14	m_stringLength	medium	Matches the serialized StringLength entry written at this offset.
+820EDAE0	18	m_cageRadius	medium	Matches the serialized CageRadius entry written at this offset.
+820EDAE0	1C	m_maxCageRadius	medium	Matches the serialized MaxCageRadius entry written at this offset.
+820EDAE0	20	m_focalOffset	high	Loaded from the FocalOffset value.
+820EDAE0	28	m_heightOffset	high	Loaded from the HeightOffset value.
+820EDAE0	2C	m_fov	high	Loaded from the FOV value.
+820EDAE0	30	m_overridesCombat	high	Loaded from the OverridesCombat flag.
+820EDAE0	34	m_trackAmount	high	Loaded from the TrackAmount value.
+820EDAE0	38	m_horizontalFocalOffset	high	Loaded from the HorizontalFocalOffset value.
+820EDAE0	3C	m_movementFactor	high	Loaded from the MovementFactor value.
+820EDAE0	40	m_blendTime	high	Loaded from the BlendTime value.
+820EDAE0	44	m_priority	high	Loaded from the Priority value.
+820EDAE0	C	m_slotWidth	medium	Matches the serialized SlotWidth entry written at this offset.
+820EE3B8	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820EE488	4	m_owner	medium	Entity this component belongs to is passed to entity helpers.
+820EE488	C	m_active	high	Stored from the Active value and toggled by the set function.
+820EE6E0	1C	m_uniqueId	medium	Set from the UniqueID database entry.
+820EE6E0	4	m_entity	medium	Entity pointer used for component lookups like other entity components.
+820EED58	14	m_timer	medium	Saved as Timer and counted down in update.
+820EED58	18	m_currTintFactor	high	Saved as CurrTintFactor.
+820EED58	1C	m_prevTintFactor	low	Holds the tint factor from the previous update.
+820EED58	20	m_tintDirty	low	Cleared after the tint is applied.
+820EED58	4	m_entity	medium	Owner entity used for time and component removal.
+820EED58	C	m_damageMultiplier	medium	Saved as DamageMultiplier.
+820EFB9C	4	m_OwnedObject	medium	Released and cleared in the destructor.
+820F0B78	88	m_SourceHandleTargetA	low	Handle target pointer reset when the first entity handle is released.
+820F0B78	90	m_SourceHandleTargetB	low	Handle target pointer reset when the second entity handle is released.
+820F0B78	B8	m_Scale	low	Float copied directly between instances next to counts and flags.
+820F0B78	D0	m_AttachedHandlesBegin	medium	Start pointer of the vector of 32-byte entity handle entries.
+820F0B78	D4	m_AttachedHandlesEnd	medium	End pointer of the handle vector.
+820F0B78	D8	m_AttachedHandlesCapacityEnd	low	Third pointer of the handle vector, zero-initialised with the others.
+820F1840	120	m_pChild	low	Object pointer used by the update and later activation paths.
+820F1840	C4	m_cooldownTicks	low	Counter decremented each update while positive.
+820F1840	FC	m_intensity	low	Float that decays by a scaled step every update.
+820F1948	10	m_entriesBegin	medium	Start of vector of 20-byte entries iterated by serialization.
+820F1948	14	m_entriesEnd	medium	End of the entry vector used for count.
+820F1948	1C	m_flag	low	Boolean written in the stream.
+820F1948	20	m_version	low	Value read only for newer stream versions.
+820F1948	4	m_id	low	Constructor argument stored here and written on save.
+820F19A4	10	m_entriesHead	medium	Sentinel node of the first collection cleared in the destructor.
+820F19A4	14	m_entryCount	medium	Count written to the stream and zeroed on clear.
+820F19A4	20	m_secondHead	medium	Sentinel node of the second collection cleared in the destructor.
+820F19A4	24	m_secondCount	medium	Size of the second collection zeroed on clear.
+820F1A2C	10	m_changeFrequencyInSecs	medium	First float stored and written.
+820F1A2C	24	m_linked	medium	Boolean read last and loaded from the Linked property.
+820F1A5C	4	m_id	high	Serialized under the ID name.
+820F1B74	8	m_pointsBegin	medium	Start of a vector of 16-byte spline points.
+820F1B74	C	m_pointsEnd	medium	End of the point vector, used with the start to compute the count.
+820F1BA0	10	m_alpha	high	Loaded from the Alpha property.
+820F1BB8	10	m_diffuseTexture	low	Filled with a resolved texture handle read from the DiffuseTexture entry.
+820F1BE8	10	m_numSpritePoints	high	Value serialized under the NumSpritePoints name.
+820F1C18	10	m_blendMode	high	Value serialized under the BlendMode name.
+820F1C30	10	m_blendMode	high	Value serialized under the BlendMode name.
+820F1C48	10	m_blendOp	high	Holds the value serialized under the BlendOp name.
+820F1C90	10	m_changeFrequencyInSecs	medium	First of three loaded properties, written first.
+820F1C90	14	m_minimumSize	medium	Second property, MinimumSize.
+820F1C90	18	m_sizeRange	medium	Third property, SizeRange.
+820F1CC0	10	m_quatLow	low	First 8 bytes of the 16 byte quaternion value.
+820F1CC0	18	m_quatHigh	low	Second 8 bytes of the 16 byte quaternion value.
+820F1E60	0	m_string	medium	first field is a CCharString used in ReadChar.
+820F1E60	14	m_bytesRemaining	medium	Decremented by bytes consumed.
+820F1E60	18	m_byteSwap	medium	Flag selecting byte reversal of read values.
+820F1E60	1C	m_stream	medium	Backing stream object whose virtuals are called.
+820F1E60	20	m_buffer	medium	Buffer freed on reset.
+820F1E60	24	m_bufferSize	medium	Compared as capacity.
+820F1E60	4	m_streamPos	low	Advanced by bytes consumed.
+820F1E60	C	m_cursor	medium	Buffer read pointer advanced on each read.
+820F1E88	10	m_buffer	low	Memory block freed by the destructor and copied into by the write routine.
+820F1E88	14	m_bufferSize	low	Capacity compared against the write length to decide between buffering and direct write.
+820F1E88	C	m_stream	low	Pointer whose virtuals are called to write buffered data.
+820F1EA0	14	m_bytesRemaining	medium	Count of bytes left in the current buffer, reduced on reads.
+820F1EA0	18	m_swapBytes	medium	Flag that makes values read from the buffer get byte swapped.
+820F1EA0	4	m_bytesRead	low	Advanced by the amount consumed on every read.
+820F1EA0	C	m_cursor	low	Pointer that advances through the buffered data while reading.
+820F6B88	14	m_pOwner	low	Pointer used to reach a registry whose sub-objects are notified on change.
+820F6B88	18	m_state	low	Value whose change triggers owner notification.
+820F6B88	1C	m_flags	medium	Bit mask modified by the flag setter.
+820F7EE8	14	m_MemoryUsage	medium	Last memory size accounted to the owner and refreshed by the size routine.
+820F7EE8	28	m_MaterialCount	medium	Count of the material pointer array that is appended to and freed.
+820F7EE8	2C	m_MeshPartCount	low	Count of the 224 byte part entries.
+820F7EE8	30	m_SkinnedPartCount	low	Count of the 156 byte part entries.
+820F7EE8	3C	m_TotalVertexCount	low	Sum of the per part vertex counts.
+820F7EE8	40	m_TotalIndexCount	low	Sum of the per part index counts.
+820F7EE8	58	m_Materials	medium	Pointer array of material objects released on clear.
+820F7EE8	5C	m_MeshParts	low	Array of 224 byte part entries summed for totals.
+820F7EE8	60	m_SkinnedParts	low	Array of 156 byte part entries.
+820F879C	C	m_tileSize	low	Initialised to 256 matching the reflection and refraction tile size.
+820F8E34	AC	m_stopRequested	medium	Set to 1 in the shutdown routine.
+820F8F0C	10	m_position	medium	Current logical stream offset advanced by reads and writes.
+820F8F0C	20	m_bufferSize	medium	Size of each buffer allocated for the two halves.
+820F8F0C	24	m_currentBuffer	medium	Index 0 or 1 toggled to select the active buffer descriptor.
+820F8F0C	30	m_bufferA	low	First buffer allocated with the buffer size.
+820F8F0C	50	m_bufferB	low	Second buffer allocated with the buffer size.
+820F8F0C	8	m_stream	medium	Underlying stream object whose virtual methods are called for IO.
+820FA0F4	14	length	high	field set from argument representing string length.
+820FA0F4	18	capacity	high	field used as capacity and compared for reallocation.
+820FA0F4	4	buffer	high	Union of heap pointer or small-string buffer.
+820FE3BC	24	m_Tables	high	Array of table pointers indexed by table index.
+820FE3BC	2C	m_TableCount	high	Bound used when validating table indices.
+820FED48	C	m_fileStream	medium	Inner stream created in constructor and released in destructor.
+832F5E4C	2C	m_queuedList	low	Head of a list of queued buffers checked against pending status.
+832F5E4C	34	m_pendingList	low	Head of a list of buffers walked and recycled.
+832F5E4C	40	m_started	low	Flag toggled when the voice is started or stopped.
+832F5E4C	8	m_context	low	Stored from the initialise arguments and used by buffer setup.

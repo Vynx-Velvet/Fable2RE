@@ -1,0 +1,39 @@
+name: Modding, quest, or level capability
+description: Propose an original-content workflow or a stable extension point.
+title: "[Modding]: "
+labels: ["area: modding", "needs: triage"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Capability
+      options:
+        - Gameplay or scripting
+        - Quest authoring
+        - Level/world authoring
+        - Assets and data formats
+        - Native plugin API
+        - Mod packaging and conflicts
+        - Multiplayer/online extension
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Creator goal
+      description: Describe what an author should be able to create or change.
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current limitation and proposed interface
+    validations:
+      required: true
+  - type: checkboxes
+    id: content
+    attributes:
+      label: Content check
+      options:
+        - label: The proposal can be implemented and demonstrated using original content or local patch tooling.
+          required: true

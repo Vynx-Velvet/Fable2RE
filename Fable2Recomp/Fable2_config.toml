@@ -1,0 +1,232 @@
+# Fable2 - ReXGlue Codegen Configuration (cleaned 2026-09-27)
+#
+# The previous [functions] table carried 789 named entries (plus sizes and the
+# setjmp/longjmp addresses) taken from a different build of the game. Audited
+# against this XEX's .pdata (tools/audit_config_functions.py): 853 of 946 entries
+# were mid-function addresses and split real functions apart, which produced the
+# "unresolved branch"/"split-use" mess in the generated code. Original kept as
+# Fable2_config.toml.foreign_symbols. Function starts now come from .pdata and
+# discovery; only entries verified against the image are listed here.
+
+project_name = "Fable2"
+file_path = "assets/game/default.xex"
+out_directory_path = "generated"
+
+[functions]
+# Tiny functions with no .pdata entry that the game reaches through data pointers
+# (verified from guest bytes under cdb).
+0x82CAC3C8 = { size = 0x8 }   # b __imp__KeTlsAlloc, called via CRT TLS table at 0x833368FC
+0x82CB6EE0 = { size = 0x30 }  # CRT worker-init table entry at 0x832D5DD8
+
+# Small trampolines (previous sessions) whose address is a plausible function start
+# in this image: preceded by b/blr, not inside any .pdata range.
+0x82C000F8 = { size = 0x8 }
+0x82C00108 = { size = 0x8 }
+0x82C00110 = { size = 0x8 }
+0x82C00118 = { size = 0x8 }
+0x82C00120 = { size = 0x8 }
+0x82C00128 = { size = 0x8 }
+0x82C00130 = { size = 0x10 }
+0x82C00140 = { size = 0x10 }
+0x82CD7948 = { size = 0x10 }
+0x82E7E4F8 = { size = 0x10 }
+
+# Reported by codegen Validate as "target not in any function" (verified bytes 2026-09-28):
+0x82C14D58 = { size = 0x14 }                       # lwz r11,0x4C(r3); cmplwi; beqlr; lwz r3,0(r11); b 0x82C1DB98
+0x82F279D8 = { parent = 0x82F274C0, size = 0x8 }   # bl ...; b 0x82F27968 (tail shared with sub_82F274C0)
+
+# Vtable/data-pointer targets that codegen discovery missed (scan of the mapped image,
+# 2026-09-28): each is preceded by blr/bctr/b/padding and sized up to its own blr/b/bctr.
+0x82267568 = { size = 0xC }  # 1 data ref(s), first insn 3D60834A
+0x82267C88 = { size = 0xC }  # 1 data ref(s), first insn 3D608335
+0x824D56C8 = { size = 0x3C }  # 1 data ref(s), first insn 3D608332
+0x824F0600 = { size = 0x10 }  # 1 data ref(s), first insn 81630000
+0x825EF568 = { size = 0x1C }  # 1 data ref(s), first insn 2B040000
+0x8274B798 = { size = 0x8 }  # 2 data ref(s), first insn 38600043
+0x82903F70 = { size = 0x10 }  # 1 data ref(s), first insn 81830000
+0x82903F80 = { size = 0x10 }  # 1 data ref(s), first insn 81830000
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x8292E980 = { size = 0x134 }  # 1 data ref(s), first insn 3B800000
+0x82996258 = { size = 0x8 }  # 2 data ref(s), first insn 386000AD
+0x829FCB00 = { size = 0x18 }  # 1 data ref(s), first insn 80630004
+0x82B56870 = { size = 0x2C }  # 1 data ref(s), first insn 7C6B1B78
+0x82B84350 = { size = 0x8 }  # 1 data ref(s), first insn 38630008
+0x82BBC898 = { size = 0x20 }  # 1 data ref(s), first insn 3D408331
+0x82BFA4A8 = { size = 0x10 }  # 1 data ref(s), first insn 81830000
+0x82C09188 = { size = 0x24 }  # 1 data ref(s), first insn 81630008
+0x82C0B400 = { size = 0x20 }  # 1 data ref(s), first insn 81630004
+0x82C1DC50 = { size = 0x10 }  # 18 data ref(s), first insn 81630000
+0x82C1DC60 = { size = 0x10 }  # 23 data ref(s), first insn 81630000
+0x82C1DC80 = { size = 0x18 }  # 4 data ref(s), first insn 80640004
+0x82C1DC98 = { size = 0x34 }  # 14 data ref(s), first insn 3D408209
+0x82C2F500 = { size = 0x18 }  # 1 data ref(s), first insn 80630004
+0x82C4C2C8 = { size = 0x20 }  # 1 data ref(s), first insn 81630004
+0x82C4C2E8 = { size = 0x18 }  # 1 data ref(s), first insn 81630004
+0x82C4C300 = { size = 0x20 }  # 1 data ref(s), first insn 81630004
+0x82C4C320 = { size = 0x1C }  # 1 data ref(s), first insn 81630004
+0x82C4C5A8 = { size = 0x20 }  # 1 data ref(s), first insn 81630004
+0x82C4C5C8 = { size = 0x20 }  # 1 data ref(s), first insn 81630004
+0x82C4C5E8 = { size = 0x24 }  # 1 data ref(s), first insn 81630004
+0x82C867E8 = { size = 0xC }  # 1 data ref(s), first insn 80A30010
+0x82C8D820 = { size = 0x78 }  # 4 data ref(s), first insn 81460000
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x82CA507C = { size = 0x28 }  # 1 data ref(s), first insn 7D084378
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x82CA8060 = { size = 0x14 }  # 1 data ref(s), first insn 7D084378
+# dropped (mid-function block, produced unresolved branches in regen #5): 0x82CB49C0 = { size = 0x1C }  # 1 data ref(s), first insn 837F00CC
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x82CB49DC = { size = 0x3C }  # 1 data ref(s), first insn 7D084378
+# dropped (inside the label extent of sub_82CB4AC8 in the clean regen): 0x82CB4B38 = { size = 0x18 }  # 1 data ref(s), first insn 48000C69
+# dropped (inside the label extent of sub_82CB4C48 in the clean regen): 0x82CB4EAC = { size = 0xC }  # 1 data ref(s), first insn 480008F5
+# dropped (inside the label extent of sub_82CB4ED8 in the clean regen): 0x82CB4FEC = { size = 0xC }  # 1 data ref(s), first insn 480007B5
+# dropped (inside the label extent of sub_82CB5580 in the clean regen): 0x82CB56CC = { size = 0x20 }  # 1 data ref(s), first insn 480000D5
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x82CB5918 = { size = 0x18 }  # 1 data ref(s), first insn 7D084378
+# dropped (inside the label extent of sub_82CB5B78 in the clean regen): 0x82CB5BD0 = { size = 0x34 }  # 1 data ref(s), first insn 3D60C000
+# dropped (inside the label extent of sub_82CBC6C0 in the clean regen): 0x82CBC940 = { size = 0x34 }  # 1 data ref(s), first insn 3C60C000
+# dropped (inside the label extent of sub_82CBF6D8 in the clean regen): 0x82CBF770 = { size = 0x28 }  # 1 data ref(s), first insn 7C7E1B78
+# dropped (inside sub_82CBFC80, hit at runtime in regen #6): 0x82CC032C = { end = 0x82CC04A4 }  # data ref; real function spans to the next entry (size heuristic cut it at an internal b)
+# dropped (inside sub_82CBFC80 region): 0x82CC04A4 = { size = 0x24 }  # 1 data ref(s), first insn 39600000
+0x82CD8650 = { size = 0x18 }  # 1 data ref(s), first insn 39600006
+0x82CDBAE0 = { size = 0x14 }  # 13 data ref(s), first insn 7C6A1B78
+0x82CE1510 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE1520 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE1548 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE3750 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE3760 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE3768 = { size = 0x8 }  # 2 data ref(s), first insn 3863FFF0
+0x82CE3770 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE3798 = { size = 0x8 }  # 2 data ref(s), first insn 3863FFFC
+0x82CE37A0 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE37A8 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82CE5D50 = { size = 0x24 }  # 5 data ref(s), first insn 8943003C
+0x82CE5D98 = { size = 0x1C }  # 5 data ref(s), first insn 8943003C
+# dropped (mid-function block, produced unresolved branches in regen #5): 0x82D18B2C = { size = 0x34 }  # 1 data ref(s), first insn 55632834
+0x82DA87B8 = { size = 0x4 }  # 1 data ref(s), first insn 4E800020
+0x82E86188 = { size = 0x3C }  # 1 data ref(s), first insn 81230008
+0x82E87A10 = { size = 0x18 }  # 2 data ref(s), first insn 3D608200
+0x82E8F9E8 = { size = 0xC }  # 1 data ref(s), first insn 3D608334
+0x82EB7ED0 = { size = 0xC }  # 1 data ref(s), first insn 3D608335
+0x82EC1918 = { size = 0xC }  # 1 data ref(s), first insn 3D608335
+0x82EC4E58 = { size = 0xC }  # 1 data ref(s), first insn 3D608335
+0x82EF41D8 = { size = 0x18 }  # 1 data ref(s), first insn 81630004
+0x82EF41F0 = { size = 0x18 }  # 1 data ref(s), first insn 81630004
+0x82EF8D20 = { size = 0x14 }  # 6 data ref(s), first insn 3960FFFF
+0x82F04420 = { size = 0x10 }  # 7 data ref(s), first insn 81630000
+0x82F04430 = { size = 0x8 }  # 373 data ref(s), first insn 38600000
+0x82F0BAF8 = { size = 0x8 }  # 1 data ref(s), first insn 3863FF80
+0x82F0BB08 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82F1D508 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D520 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D538 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D550 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D568 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D580 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D598 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F1D5B0 = { size = 0x18 }  # 1 data ref(s), first insn 81630020
+0x82F2C2E8 = { size = 0x14 }  # 1 data ref(s), first insn 8163001C
+0x82F2C3A8 = { size = 0x18 }  # 1 data ref(s), first insn 8163001C
+0x82F2C3C0 = { size = 0x18 }  # 1 data ref(s), first insn 8163001C
+0x82F38DA0 = { size = 0x10 }  # 1 data ref(s), first insn 7C852378
+0x82F435A8 = { size = 0x24 }  # 2 data ref(s), first insn C0040048
+0x82F56690 = { size = 0x8 }  # 1 data ref(s), first insn 3863FFF0
+0x82F67E18 = { size = 0x14 }  # 8 data ref(s), first insn 81630030
+0x82F67E40 = { size = 0x14 }  # 8 data ref(s), first insn 81630030
+0x82F67E68 = { size = 0x14 }  # 8 data ref(s), first insn 81630030
+0x82FB7470 = { size = 0x10 }  # 1 data ref(s), first insn 81640018
+0x82FE7EF8 = { size = 0x8 }  # 1 data ref(s), first insn 386322B0
+0x82FE7F00 = { size = 0xC }  # 1 data ref(s), first insn 38A30180
+# dropped (is a loc_ label inside an existing function in the clean regen): 0x8300342C = { size = 0x18 }  # 1 data ref(s), first insn 7D084378
+# dropped (mid-function block, produced unresolved branches in regen #5): 0x8304101C = { size = 0x9C }  # 1 data ref(s), first insn 83DF02A4
+# dropped (mid-function block, produced unresolved branches in regen #5): 0x8304A300 = { size = 0x80 }  # 1 data ref(s), first insn 817E0014
+0x83056810 = { size = 0x10 }  # 9 data ref(s), first insn 81630000
+0x83056BC0 = { size = 0x28 }  # 3 data ref(s), first insn 81630000
+0x83056BE8 = { size = 0x28 }  # 3 data ref(s), first insn 81630000
+0x83056C10 = { size = 0x28 }  # 3 data ref(s), first insn 81630000
+0x83056C38 = { size = 0x28 }  # 3 data ref(s), first insn 81630000
+0x83057068 = { size = 0x20 }  # 2 data ref(s), first insn 81630000
+0x830ACB28 = { size = 0x70 }  # 3 data ref(s), first insn 80C40004
+# dropped (inside the label extent of sub_830FB3E8 in the clean regen): 0x830FB4A0 = { size = 0x38 }  # 1 data ref(s), first insn 3D608208
+# dropped (inside the label extent of sub_830FD760 in the clean regen): 0x830FD7B8 = { size = 0x3C }  # 1 data ref(s), first insn 83DF0084
+# dropped (inside the label extent of sub_830FD760 in the clean regen): 0x830FD7F4 = { size = 0x40 }  # 1 data ref(s), first insn 83DF0084
+# dropped (inside the label extent of sub_830FE118 in the clean regen): 0x830FE230 = { size = 0x30 }  # 1 data ref(s), first insn 809F00F4
+# dropped (inside the label extent of sub_830FE278 in the clean regen): 0x830FE390 = { size = 0x30 }  # 1 data ref(s), first insn 38800000
+# dropped (inside the label extent of sub_83117E80 in the clean regen): 0x83117F94 = { size = 0x8 }  # 1 data ref(s), first insn 83DF0054
+0x831C5CD8 = { size = 0x38 }  # 2 data ref(s), first insn 54AA063E
+0x831C5D28 = { size = 0x18 }  # 1 data ref(s), first insn 81630010
+0x831FFA08 = { size = 0x2C }  # 13 data ref(s), first insn 7C6B1B78
+
+# Functions reached only through far lis/addi address computations in code, missed by
+# discovery (scan of the mapped image, 2026-09-28).
+0x8217EFE0 = { size = 0x4C }  # lis/addi ref at 82822730, first insn 81630040
+0x822142D0 = { size = 0xC }  # lis/addi ref at 825AFD5C, first insn 3D608332
+0x822D6678 = { size = 0x18 }  # lis/addi ref at 826788A0, first insn 3D60834A
+0x823A1810 = { size = 0x10 }  # lis/addi ref at 825209C8, first insn 3D608349
+0x823AB0E0 = { size = 0xC }  # lis/addi ref at 823AE5A0, first insn 3D608349
+0x823AC190 = { size = 0x14 }  # lis/addi ref at 823AE650, first insn 3D608332
+0x8243FFF0 = { size = 0x10 }  # lis/addi ref at 82441118, first insn 1000038C
+0x824DA7D0 = { size = 0x8 }  # lis/addi ref at 824DE3F4, first insn 38A00000
+0x8274B738 = { size = 0x10 }  # lis/addi ref at 827497E8, first insn 81830000
+0x8274B748 = { size = 0x10 }  # lis/addi ref at 827498CC, first insn 81830000
+0x8274B758 = { size = 0x10 }  # lis/addi ref at 824C41A0, first insn 81830000
+0x8274B768 = { size = 0x10 }  # lis/addi ref at 82749750, first insn 81830000
+0x8274B778 = { size = 0x10 }  # lis/addi ref at 82749704, first insn 81830000
+0x8274B788 = { size = 0x10 }  # lis/addi ref at 8274979C, first insn 81830000
+0x827A0DE0 = { size = 0x10 }  # lis/addi ref at 827A8B7C, first insn 548B063E
+0x8297EB28 = { size = 0x10 }  # lis/addi ref at 8297B3E8, first insn 81830000
+0x8297EB38 = { size = 0x10 }  # lis/addi ref at 8297B4CC, first insn 81840000
+0x8297EB48 = { size = 0x10 }  # lis/addi ref at 8297B480, first insn 81830000
+0x82988EA8 = { size = 0x10 }  # lis/addi ref at 82986530, first insn 81840000
+0x82988EB8 = { size = 0x10 }  # lis/addi ref at 82986828, first insn 81840000
+0x82988EC8 = { size = 0x10 }  # lis/addi ref at 8297B564, first insn 81830000
+0x82988ED8 = { size = 0x10 }  # lis/addi ref at 829869F0, first insn 81830000
+0x82988EE8 = { size = 0x10 }  # lis/addi ref at 8298657C, first insn 81840000
+0x82988EF8 = { size = 0x10 }  # lis/addi ref at 829866F8, first insn 81830000
+0x82988F08 = { size = 0x10 }  # lis/addi ref at 829867DC, first insn 81830000
+0x82988F18 = { size = 0x10 }  # lis/addi ref at 829869A4, first insn 81830000
+0x82988F28 = { size = 0x10 }  # lis/addi ref at 82986A88, first insn 81830000
+0x82988F38 = { size = 0x10 }  # lis/addi ref at 82986498, first insn 81830000
+0x82988F48 = { size = 0x10 }  # lis/addi ref at 82986A3C, first insn 81830000
+0x82EAA980 = { size = 0x24 }  # lis/addi ref at 82EACFD8, first insn 7C8B2378
+0x83057088 = { size = 0x10 }  # lis/addi ref at 830600B4, first insn 81830000
+0x83057098 = { size = 0x10 }  # lis/addi ref at 830601DC, first insn 81830000
+0x830570A8 = { size = 0x10 }  # lis/addi ref at 83060A24, first insn 81830000
+0x830570B8 = { size = 0x10 }  # lis/addi ref at 8306048C, first insn 81830000
+0x830570C8 = { size = 0x10 }  # lis/addi ref at 83060854, first insn 81830000
+0x830570D8 = { size = 0x10 }  # lis/addi ref at 83060014, first insn 81830000
+0x830570E8 = { size = 0x10 }  # lis/addi ref at 830604DC, first insn 81830000
+0x830570F8 = { size = 0x10 }  # lis/addi ref at 830602BC, first insn 81830000
+0x83057108 = { size = 0x10 }  # lis/addi ref at 83060064, first insn 81830000
+0x83057118 = { size = 0x10 }  # lis/addi ref at 8306052C, first insn 81830000
+0x831465C8 = { size = 0x74 }  # lis/addi ref at 8315FA04, first insn 81630000 (size corrected 2026-10-02: was 0x14, body runs to 0x8314663C)
+
+# Gap functions: code between emitted functions with no .pdata entry,
+# found by tools/find_gap_functions.py (2026-10-02).
+0x82353FD8 = { size = 0xC }  # 38A00000 38800000 4BFFDE50
+0x82520608 = { size = 0x10 }  # 3D608349 816B6BCC 806B000C 486DCC14
+0x827A0DF4 = { size = 0x8 }  # 996300A5 4E800020
+0x82B568A0 = { size = 0x8 }  # 60634005 4E800020
+0x82C0B680 = { size = 0x8 }  # 38630060 4803DFEC
+0x82C0B688 = { size = 0x8 }  # 38630060 4804074C
+0x82C9D8E8 = { size = 0x30 }  # 7C6B1B78 2F04000F 419A0050 2F04001B; conditional tail calls into 0x82C9D918/0x82C9D92C/0x82C9D940
+0x82CE5D78 = { size = 0x20 }  # 556B1838 7CE63B78 7D244B78 7C6B502E
+0x82CE5DB8 = { size = 0x18 }  # 556B1838 38600000 7D6B5214 896B0005
+0x82D2AD78 = { size = 0x18 }  # 81430000 39600000 916A006C 81230000
+0x82D61BB0 = { size = 0x2C }  # D021FFF0 8961FFF3 9961FFF4 8961FFF2
+0x82D63620 = { size = 0x2C }  # D021FFF0 8961FFF3 9961FFF4 8961FFF2
+0x82D71E90 = { size = 0x8 }  # 80630008 48015D94
+0x82D71E98 = { size = 0x8 }  # 80630008 48015DAC
+0x82D71EA0 = { size = 0x8 }  # 80630008 48018F3C
+0x82D71EC0 = { size = 0x14 }  # 80630008 81630000 816B0040 7D6903A6
+0x82D7AD78 = { size = 0x18 }  # 7C6B1B78 386B00D0 816B00D0 816B0010
+0x82D7ADA8 = { size = 0x18 }  # 7C6B1B78 386B00D0 816B00D0 816B0020
+0x82D89B58 = { size = 0x10 }  # 3D6082D9 7CE83B78 38EB8898 4BFFEFFC
+0x82D8C0A8 = { size = 0x14 }  # 8163001C 2F0B0000 409A000C 3860FFFF; conditional tail call into 0x82D8C0BC
+0x82DDC4B0 = { size = 0x28 }  # 7CC33378 7C8B2378 3D408203 38A00008
+0x82DDC4D8 = { size = 0x1C }  # 7C8B2378 7CA42B78 806B0000 81630000
+0x82DDC510 = { size = 0x1C }  # 7C8B2378 7CA42B78 806B0000 81630000
+0x82E08DD8 = { size = 0x6C }  # 3CC082E1 3C8082E1 38C68858 3CA082E1
+0x82E1C068 = { size = 0x24 }  # 3D608200 546AE000 C00B0C08 D001FFF0
+0x82E55E00 = { size = 0x8 }  # 38630054 4BF0440C
+0x82F67E30 = { size = 0x10 }  # 81630000 816B000C 7D6903A6 4E800420
+0x82F67E58 = { size = 0x10 }  # 81630000 816B0018 7D6903A6 4E800420
+0x82F67E80 = { size = 0x10 }  # 81630000 816B001C 7D6903A6 4E800420
+0x830074D8 = { size = 0x10 }  # 3D608205 396BEA90 102058C3 4BFFFE1C
+0x830074E8 = { size = 0x78 }  # 3D608205 81430000 3921FFF0 1BE00774
+0x830C7228 = { size = 0x14 }  # 89440000 89630000 99430000 99640000
+0x831C5D14 = { size = 0x14 }  # 7D665B78 38A00001 816A000C 7D6903A6

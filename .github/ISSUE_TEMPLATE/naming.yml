@@ -1,0 +1,41 @@
+name: Naming or dictionary contribution
+description: Propose verified names, types, fields, globals, or local variables.
+title: "[Naming]: "
+labels: ["area: naming", "needs: review"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach game code, decompiler output, an executable, or extracted assets. Summarize evidence in your own words.
+  - type: input
+    id: revision
+    attributes:
+      label: Target revision
+      description: Executable edition/update and SHA-256 when known.
+      placeholder: Fable II, media ID 716F0A0D, canonical SHA-256 from tools/xex_info.py
+    validations:
+      required: true
+  - type: textarea
+    id: entries
+    attributes:
+      label: Proposed entries
+      description: Include address or vtable/offset, proposed identifier, and confidence for each entry.
+    validations:
+      required: true
+  - type: textarea
+    id: basis
+    attributes:
+      label: Evidence
+      description: Describe call sites, strings, bindings, layout use, observed behavior, or public APIs without pasting game code.
+    validations:
+      required: true
+  - type: dropdown
+    id: validation
+    attributes:
+      label: Validation level
+      options:
+        - Static evidence only
+        - Generated/lifted output checked locally
+        - Compiled successfully
+        - Tested in game
+    validations:
+      required: true

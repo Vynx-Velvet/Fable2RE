@@ -1,0 +1,40 @@
+name: Conversion, native system, or tool work
+description: Propose a scoped reconstruction, tool improvement, platform replacement, or online-system task.
+title: "[Engineering]: "
+labels: ["needs: triage"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Conversion/lifting tool
+        - Readable C++ reconstruction
+        - Rendering/audio/input/platform
+        - Online architecture
+        - Build/installer/reproducibility
+        - Debug tooling
+        - Documentation/research
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Bounded problem
+      description: State the current limitation and a concrete completion condition.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or interface boundary
+      description: Include known behavior, addresses, APIs, formats, or subsystem boundaries.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Proposed validation
+      description: Explain how correctness can be checked without distributing game content.
+    validations:
+      required: true

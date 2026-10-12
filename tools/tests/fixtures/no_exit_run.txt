@@ -1,0 +1,7 @@
+[2026-10-10 09:30:00.100] [info] [core] [t1001] Fable2 starting
+[2026-10-10 09:30:00.800] [info] [core] [t1001] autotest: script 'at 1; shot; wait 5'
+[2026-10-10 09:30:01.000] [info] [core] [t1003] autotest: 1.0 s shot
+[2026-10-10 09:30:01.200] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_000031.png
+[2026-10-10 09:30:01.230] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_000032.png
+[2026-10-10 09:30:02.000] [info] [core] [t1002] audio level: peak 0.1000, 375 of 375 frames not silent (buffer 4C100300)
+[2026-10-10 09:30:06.700] [info] [core] [t1003] autotest: script finished

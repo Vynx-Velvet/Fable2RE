@@ -1,0 +1,3 @@
+[2026-10-10 09:20:00.100] [info] [core] [t1001] Fable2 starting
+[2026-10-10 09:20:00.800] [info] [core] [t1001] autotest: script 'at 40; shot; exit'
+[2026-10-10 09:20:20.000] [info] [core] [t1002] audio level: peak 0.3120, 375 of 375 frames not silent (buffer 4C100300)

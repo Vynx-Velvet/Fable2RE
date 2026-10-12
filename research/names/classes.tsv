@@ -1,0 +1,488 @@
+vtable	name	confidence	basis
+820011B0	RefCountedPtr	medium	Class appears to be a reference-counted smart pointer.
+82001610	CGameLoopBase	high	already named in header; game loop base class.
+82001624	Weather	medium	Object initialized with many weather-like float parameters and used by Weather_UpdateSnowFlakes.
+82001998	CTimer	medium	Implements a timer using timebase and frequency.
+82001CCC	CGameApp	low	Owns the main game implementation object, records itself in a global and forwards init and tick calls.
+82001CE4	CEntityGridSystem	low	Config strings GridPitch GridUpdatePeriod Filters Profiles and EntityInfos suggest a grid based entity tracker.
+82001E24	CWorldManager	low	Configured from MaxEntity, MaxTeam, OneMeter and TimeMgt entries and owns entity pools.
+82001E5C	CModelRenderer	low	Draws batches of mesh parts through indexed draw calls with render state setup.
+82002034	CKDynamicObstacle	low	Vtable set by the constructor invoked from the CKDynamicObstacle binding.
+8200213C	CKNavigationOracle	low	Vtable set by the constructor invoked from the CKNavigationOracle binding.
+82002320	CGiftReward	low	Constructed from GameDB fields IsMoneyGift, GiftItem, MoneyAmount and random reward axes.
+82002364	C_82002364	low	given in header
+820025B8	CMoveGraphController	low	Holds two child arrays and loads MoveGraph related members.
+82002634	CTextureRenderer	high	The constructor formats a Texture Renderer debug name string.
+82002660	CEntityDef	low	Base record with id, transform and element arrays and many derived subclasses; exact role unclear.
+8200268C	CChildGroup	low	owns a vector of child objects and forwards calls to each
+8200274C	CTraversalGraphSet	low	Owned array of named graph entries searched by case-insensitive name and loaded from Traversal data.
+820028E4	CCameraEffectController	low	Per-mode controller with a target entity handle, timers, blend values and two name strings.
+82002958	CWanderAgent	low	Vtable set by the constructor invoked from the CWanderAgent binding.
+82002B44	CRenderEffectInstance	low	Polymorphic object with name string, matrix block and shared handle that is cloned and loaded from a stream.
+82002D38	CGamePad	medium	Holds pad index, thumbstick values, previous button mask, rumble motors and queues button events.
+82002DA8	CFollowAgent	medium	Constructor name is already CFollowAgent and strings concern follow distance and target entity.
+82002E14	CHideAgent	low	Vtable set by the constructor invoked from the CHideAgent binding.
+82002E88	CECFirearm	high	Class name string CECFirearm is constructed by its type-name function.
+82002EC8	CECMana	high	Its own name method returns the string CECMana, the name the game gives the class.
+82002F08	CECWorldMapInfo	high	Its own name method returns the string CECWorldMapInfo, the name the game gives the class.
+82002F48	CECShopkeeper	high	Class name string CECShopkeeper is constructed by its type-name function.
+82002F88	CGameplanLoader	low	Constructor registers a BGF deserializer and gameplan data store and loads bgf/bgp gameplan files.
+82002FC8	CECSplineAttachedEntity	high	Type name string returned is CECSplineAttachedEntity.
+82003008	CECDogStats	high	Its own name method returns the string CECDogStats, the name the game gives the class.
+82003048	CECAppearanceModifierManager	high	Its own name method returns the string CECAppearanceModifierManager, the name the game gives the class.
+82003088	CECExpressionPerformer	high	Its own name method returns the string CECExpressionPerformer, the name the game gives the class.
+820030C8	CSlideShowControl	low	UI object with GotoSlide script errors and a current slide and slide count.
+82003108	CECDog	high	Its own name method returns the string CECDog, the name the game gives the class.
+82003148	CECMoney	high	Its own name method returns the string CECMoney, the name the game gives the class.
+82003188	CECPlayer	high	Its own name method returns the string CECPlayer, the name the game gives the class.
+820031C8	CECPlayerProperties	high	Its own name method returns the string CECPlayerProperties, the name the game gives the class.
+82003208	CECFlitSwitch	high	Its own name method returns the string CECFlitSwitch, the name the game gives the class.
+82003248	CECVaulting	high	Its own name method returns the string CECVaulting, the name the game gives the class.
+82003288	CECQuestTracker	high	Constructor-area function references the CECQuestTracker string.
+820032C8	CECExperience	high	Its own name method returns the string CECExperience, the name the game gives the class.
+82003308	CECCombo	high	Its own name method returns the string CECCombo, the name the game gives the class.
+82003348	CECPlayerFamily	high	One method builds the string CECPlayerFamily and the class tracks spouse and child state.
+82003388	CECPlayerWebsiteUnlocks	high	Its own name method returns the string CECPlayerWebsiteUnlocks, the name the game gives the class.
+820033C8	CECTrigger	high	Its own name method returns the string CECTrigger, the name the game gives the class.
+82003408	CECLevelExit	high	Its own name method returns the string CECLevelExit, the name the game gives the class.
+82003448	CECPlayerAbility	high	Its own name method returns the string CECPlayerAbility, the name the game gives the class.
+820034D0	CECFacialExpression	high	Its own name method returns the string CECFacialExpression, the name the game gives the class.
+82003510	CECUpgradeableFurnitureUnlocker	high	Its own name method returns the string CECUpgradeableFurnitureUnlocker, the name the game gives the class.
+82003550	CECDonation	high	Its own name method returns the string CECDonation, the name the game gives the class.
+82003590	CECWeapon	high	Its own name method returns the string CECWeapon, the name the game gives the class.
+820035D0	CECWeaponOpinionEffects	high	Its own name method returns the string CECWeaponOpinionEffects, the name the game gives the class.
+82003610	CECDogLeadTo	high	Its own name method returns the string CECDogLeadTo, the name the game gives the class.
+82003650	CECBob	high	Type name string returned is CECBob.
+82003690	CECBird	high	Its own name method returns the string CECBird, the name the game gives the class.
+820036D0	CECDependantEntity	high	Its own name method returns the string CECDependantEntity, the name the game gives the class.
+82003710	CECWhereabouts	high	Its own name method returns the string CECWhereabouts, the name the game gives the class.
+82003798	CECGraphicAppearanceStaticMesh	high	Its own name method returns the string CECGraphicAppearanceStaticMesh, the name the game gives the class.
+820037D8	CECChest	high	Its own name method returns the string CECChest, the name the game gives the class.
+82003818	CECHealth	high	Its own name method returns the string CECHealth, the name the game gives the class.
+82003858	CECTargeted	high	Its own name method returns the string CECTargeted, the name the game gives the class.
+82003898	CECHittable	high	its name-string function constructs the text CECHittable
+820038D8	CECMapwho	high	its name function builds CECMapwho
+82003918	CECSpellReactionModifiers	high	Its own name method returns the string CECSpellReactionModifiers, the name the game gives the class.
+82003958	CECFaction	high	its name-string function constructs the text CECFaction
+82003998	CECSound	high	its name-string function constructs the text CECSound
+820039D8	CECTalk	high	Its own name method returns the string CECTalk, the name the game gives the class.
+82003A18	CECGraphicAppearance	high	Its own name method returns the string CECGraphicAppearance, the name the game gives the class.
+82003A58	CECInventoryItem	high	Its own name method returns the string CECInventoryItem, the name the game gives the class.
+82003A98	CECHighlightedItem	low	Its name accessor returns the string CECHighlightedItem.
+82003AD8	CECParticleEmitter	high	Constructor-name string and strings identify the particle emitter entity component.
+82003B18	CECParticleAttacher	high	its name function builds CECParticleAttacher and its methods call the ParticleAttacher script bindings
+82003B58	CECEntityModeManager	high	Its own name method returns the string CECEntityModeManager, the name the game gives the class.
+82003B98	CECGift	high	Its own name method returns the string CECGift, the name the game gives the class.
+82003BD8	CECShopItem	high	Its own name method returns the string CECShopItem, the name the game gives the class.
+82003C18	CECObjectAttachment	high	Its own name method returns the string CECObjectAttachment, the name the game gives the class.
+82003C58	CECAugmentable	high	Its name-getter builds the string CECAugmentable and it manages a list of augmentations.
+82003C98	CECBreadcrumber	high	Its own name method returns the string CECBreadcrumber, the name the game gives the class.
+82003CD8	CECTransient	high	Its own name method returns the string CECTransient, the name the game gives the class.
+82003D18	CECCarried	high	Its own name method returns the string CECCarried, the name the game gives the class.
+82003D58	CECCombatTalk	high	One method builds the string CECCombatTalk and others read speaker type and comment timing.
+82003D98	CECDoor	high	Its own name method returns the string CECDoor, the name the game gives the class.
+82003DD8	CECHeroStatue	high	Its own name method returns the string CECHeroStatue, the name the game gives the class.
+82003E18	CECShop	high	its name-string function constructs the text CECShop
+82003E58	CGameObject	medium	Has vtable, children linked list, and reference count.
+82003E98	CECAIMovementModes	high	its name-string function constructs the text CECAIMovementModes
+82003ED8	CECSwimming	high	Its own name method returns the string CECSwimming, the name the game gives the class.
+82003F18	CECHitResponsePlayAction	high	Its own name method returns the string CECHitResponsePlayAction, the name the game gives the class.
+82003F58	CECCombat	high	A string in its name function says this class name.
+82003F98	CECExperienceReward	high	Its own name method returns the string CECExperienceReward, the name the game gives the class.
+82003FD8	CECBloodAlcohol	high	its name-string function builds CECBloodAlcohol
+82004018	CECPerception	high	Its own name method returns the string CECPerception, the name the game gives the class.
+82004058	CECLook	high	Its own name method returns the string CECLook, the name the game gives the class.
+82004098	CECOpinionReaction	high	Its own name method returns the string CECOpinionReaction, the name the game gives the class.
+820040D8	CECPlayerDrunkenness	high	Its own name method returns the string CECPlayerDrunkenness, the name the game gives the class.
+82004118	CECInventory	high	Its name-getter builds the string CECInventory and its code handles inventory items.
+82004158	CECKynapse	high	Class name string CECKynapse is constructed by its type-name function.
+82004198	CECGraphicAppearanceEyes	high	Its own name method returns the string CECGraphicAppearanceEyes, the name the game gives the class.
+820041D8	CECGender	high	Its own name method returns the string CECGender, the name the game gives the class.
+82004218	CECGraphicAppearanceMorph	high	Its own name method returns the string CECGraphicAppearanceMorph, the name the game gives the class.
+82004258	CECVillager	high	Its own name method returns the string CECVillager, the name the game gives the class.
+82004298	CECWeaponSetManager	high	Its own name method returns the string CECWeaponSetManager, the name the game gives the class.
+82004320	CECCarrying	high	Its own name method returns the string CECCarrying, the name the game gives the class.
+82004360	CECMorph	high	Class name string CECMorph is constructed by its type-name function.
+820043A0	CECPlayerSpellManager	high	A string in its name function says this class name.
+820043E0	CECGossip	high	Its own name method returns the string CECGossip, the name the game gives the class.
+82004420	CECSpellHeatable	high	Its own name method returns the string CECSpellHeatable, the name the game gives the class.
+82004460	CECMood	high	Its own name method returns the string CECMood, the name the game gives the class.
+820044A0	CECButterfly	high	Its own name method returns the string CECButterfly, the name the game gives the class.
+820044E0	CECOwnedEntity	high	Its own name method returns the string CECOwnedEntity, the name the game gives the class.
+82004520	CECShoveable	high	Its own name method returns the string CECShoveable, the name the game gives the class.
+82004560	CECGraphEdgeController	high	its name-string function constructs the text CECGraphEdgeController
+820045A0	CECPhysicsFilterManager	high	Its own name method returns the string CECPhysicsFilterManager, the name the game gives the class.
+820045E0	CECNPCVaulting	high	Its own name method returns the string CECNPCVaulting, the name the game gives the class.
+82004620	CECAge	high	Its own name method returns the string CECAge, the name the game gives the class.
+82004660	CECCameraInterest	high	Its own name method returns the string CECCameraInterest, the name the game gives the class.
+820046A0	CECMapToken	high	Its own name method returns the string CECMapToken, the name the game gives the class.
+820046E0	CECCutsceneReaction	high	Its own name method returns the string CECCutsceneReaction, the name the game gives the class.
+82004720	CECDogInfluencer	high	Its own name method returns the string CECDogInfluencer, the name the game gives the class.
+82004760	CECNPCRewardGiver	high	Its own name method returns the string CECNPCRewardGiver, the name the game gives the class.
+820047A0	CECSpacialAwareness	high	Its own name method returns the string CECSpacialAwareness, the name the game gives the class.
+820047E0	CECGuildMessages	high	Its own name method returns the string CECGuildMessages, the name the game gives the class.
+82004820	CECGraphicAppearanceAnimatedMesh	high	Its own name method returns the string CECGraphicAppearanceAnimatedMesh, the name the game gives the class.
+82004860	CECNavigation	high	Its own name method returns the string CECNavigation, the name the game gives the class.
+820048A0	CECFollow	high	Its own name method returns the string CECFollow, the name the game gives the class.
+820048E0	CECAIBrain	high	Its own name method returns the string CECAIBrain, the name the game gives the class.
+82004920	CECAnimationManager	high	Its own name method returns the string CECAnimationManager, the name the game gives the class.
+82004960	CECFootSteps	high	Its own name method returns the string CECFootSteps, the name the game gives the class.
+820049A0	CECGraphicAppearanceLight	high	The class name string is returned by one of its methods.
+820049E0	CECPhysicsRagdollComponentManager	high	One method builds the string CECPhysicsRagdollComponentManager and the class manages ragdoll components.
+82004A20	CECBlock	high	Its own name method returns the string CECBlock, the name the game gives the class.
+82004A60	CECSpellManager	high	entity component found by type id 56 next to the class-name string CECSpellManager; its methods implement the SpellManager script bindings
+82004AA0	CECStance	high	Its own name method returns the string CECStance, the name the game gives the class.
+82004BA8	CECDecapitatable	high	Its own name method returns the string CECDecapitatable, the name the game gives the class.
+82004D08	CECSprint	high	Its own name method returns the string CECSprint, the name the game gives the class.
+82004D48	CECOnActionUse	high	Class name string CECOnActionUse is constructed by its type-name function.
+82004DD0	CECCommunityService	high	its name-string function builds CECCommunityService
+82004E58	CECNetwork	high	Its own name method returns the string CECNetwork, the name the game gives the class.
+82004EF0	CECBuilding	high	Its own name method returns the string CECBuilding, the name the game gives the class.
+82004F38	CECCamera	high	Its own name method returns the string CECCamera, the name the game gives the class.
+82004FC8	CECCreature	high	Its own name method returns the string CECCreature, the name the game gives the class.
+820050A0	CSceneComponent	low	Scene object with two state blocks, timestamps and two refcounted resources.
+820050E8	CECObject	high	Its own name method returns the string CECObject, the name the game gives the class.
+820051B8	CECMarker	high	Its own name method returns the string CECMarker, the name the game gives the class.
+82005248	CPerformAction	low	Action class with PERFORM and interrupt-permission parameters and two name strings.
+82005298	CActionSequence	low	Holds a vector of shared actions with a current index and current action pointer, advancing through them.
+820052E8	CRenderViewPass	low	Render object with four sub-passes, two ref-counted resources and per-frame profiling scopes.
+82005480	CPhysicsRagdollEntity	low	Same shape as the rigid body entity but loops over every body of a multi body object.
+820054D0	CPhasedAction	high	given in header
+82005740	CPhysicsBodyEntity	low	Entity component wrapping a physics body (m_2C) and world (m_10) with position and orientation getters.
+820057E0	CSceneEntity	low	Base entity with position, radius, component list and message handler.
+82005838	CLoopAction	low	Script-built action node with Target, Priority, BlendInTime, BlendOutTime, NumLoops and Into/Loop/OutOf sub-actions.
+820059D8	CECNavigatorControl	high	Its own name method returns the string CECNavigatorControl, the name the game gives the class.
+82005A88	CRandomNameVariant	low	Stores a name hash and a randomly chosen variant index picked among matching entries.
+82005AE8	CECPlayerControl	high	Its own name method returns the string CECPlayerControl, the name the game gives the class.
+82005BA0	CPhysicsRigidBodyEntity	low	Sibling of the physics body entity class holding a rigid body (m_2C) and a world pointer (m_10) with add and remove from world.
+82005F60	CSceneEntityThing	low	Thing subclass with visual bounds handling and per frame scene entity fields.
+820060F0	CSceneEntityVisual	low	Derived entity holding model reference and render bounds.
+82006438	CBoneDriverGroup	low	Holds a list of child drivers, an orientation quaternion and a mode, and forwards attach, detach and mode changes to each child; DriveBones string in its builder.
+820065E0	CAKElementBuilder	low	Methods allocate with the AKElementBuilder source file path and walk a tree of element nodes.
+82006818	CPhysicsBodyComponent	low	Wraps a physics body pointer, loads a PhysicsFile, and switches between states that create or release body handles.
+82006888	CCharacterAnimController	low	Per-character component with an owner entity and animation related strings such as pose and weapon hold.
+820069E8	CCompositeComponent	low	Holds a list of shared child objects and many methods just forward one virtual call to every child.
+82006A60	CCompositeComponentHost	low	Object that forwards lifecycle calls to a main component and a vector of shared component handles.
+82006AD8	hkMallocMemory	medium	Memory manager class whose unimplemented virtuals report an hkMallocMemory message.
+82006DF8	CECActionManagerSimple	high	Its own name method returns the string CECActionManagerSimple, the name the game gives the class.
+82006FA8	CECPhysicsSimpleLight	high	Its own name method returns the string CECPhysicsSimpleLight, the name the game gives the class.
+82007058	CECPhysicsSimulationCharacterNavigator	high	Its own name method returns the string CECPhysicsSimulationCharacterNavigator, the name the game gives the class.
+82007110	CECPhysicsSimulationKeyframed	high	Its own name method returns the string CECPhysicsSimulationKeyframed, the name the game gives the class.
+820071C0	CECPhysicsSimulationCharacterControlled	high	Its own name method returns the string CECPhysicsSimulationCharacterControlled, the name the game gives the class.
+82007278	CECPhysicsSimple	high	Its own name method returns the string CECPhysicsSimple, the name the game gives the class.
+82007328	CECPhysicsSimulationStatic	high	Its own name method returns the string CECPhysicsSimulationStatic, the name the game gives the class.
+820073D8	CECPhysicsSimulationDynamic	high	Its own name method returns the string CECPhysicsSimulationDynamic, the name the game gives the class.
+82007490	CECTargetingDog	high	Its own name method returns the string CECTargetingDog, the name the game gives the class.
+82007558	CECTargetingAI	high	Its own name method returns the string CECTargetingAI, the name the game gives the class.
+82007620	CECTargetingPlayer	high	Its own name method returns the string CECTargetingPlayer, the name the game gives the class.
+82007B3C	CFilePath	low	Object holding a 260-char path string at offset 0xC with directory helpers.
+82009308	CXmlNodeWriter	low	Formats typed values into text and attaches them as typed nodes; strings like type, %d, %u, %f and True/False.
+8200A770	CXmlReader	medium	Reads typed values from XML tags and reports parse errors with line and char positions.
+8200A830	CBinaryStreamReader	low	Reader wrapping an underlying stream at offset 0x10 with fixed size reads and a string read.
+8200A924	AudioEngineCore	medium	class associated with audio engine update time query.
+8200AC34	CBlockComponent	low	Its offsets A0 and A4 are returned by the Block.GetLastCompleted bindings.
+8200ACA0	CObjectProxy	low	Small handle class holding a reference-counted pointer plus links to two helper objects.
+8200B578	CSoundContainer	low	Keeps a map of child sounds and writes SubSounds tags when serialized.
+8200B84C	CCrossFadePair	low	Holds two child objects driven together with a fade time window and blend factor.
+8200BD74	CMusicalNoteLoader	low	Record-based loader whose parse routine reports failures with a MusicalNote prefix and builds an 80-byte note object.
+8200BEC4	CPointerArray	low	Container with a data pointer and a count whose subclass destructors free each owned element.
+8200C150	CPausableStreamPlayer	low	Object with a pause flag that forwards pause and resume to an owned inner object.
+8200C21C	CLayerManager	low	Holds a map of child objects and forwards pause, resume, update and shutdown to them.
+8200C2D8	CChildControllerGroup	low	Holds three vectors of child objects and broadcasts virtual calls to each.
+8200C37C	CEmitterGroup	low	Holds two lists of sub-effects and forwards update, stop and release calls to each.
+8200C978	CXAudioStreamSource	low	Owns a voice pointer, buffer lists and queued-buffer bookkeeping for streamed audio submission.
+8200CA14	CRiffWaveReader	low	Parses RIFF, WAVE, fmt and data chunk tags.
+8200CEB4	CWaveSound	low	Sound instance serialized with WavName and LoopCount tags, drives a voice object and a stream source.
+8200D000	CAudioEngineCore	low	Per-frame update owns lists of voice objects at 0x11C and 0x124 and a time counter, a sound engine core in the audio library.
+8200D580	CXAudioEffectInstance	low	Owns an implementation object plus an array of 40-byte parameter entries and exposes indexed get/set accessors.
+8200D7D8	CXAudioEffectInstanceBase	low	Base class constructed by the existing XAudio effect instance constructor and owning the parameter entry array.
+8200DE20	CVirtualFile	low	Holds a path string, a source object and a lazily created stream that it forwards operations to.
+8200DEF8	CStreamAdapter	low	Reference counted wrapper around an inner stream object that tracks a 64-bit position.
+8200E17C	CVirtualFileSystem	low	Reference-counted lazy volume objects, a timeout and file open helpers using game and cache paths.
+8200E1E4	CStdWStreamBuf	medium	Wide character stream buffer using the same available helpers as the narrow stream buffer.
+8200E258	CCtypeWChar	medium	Facet with classify, scan, toupper, tolower, widen and narrow over 16-bit chars.
+8200E374	CNamedComObject	low	Reference-counted COM-style object with QueryInterface and a name string.
+8200E3A4	CInterfaceEnumerator	low	Reference counted COM style enumerator over a vector of interface pointers with a cursor.
+8200E3C0	CBinaryDataStream	low	Vtable-based stream with typed read/write helpers and optional byte swapping.
+8200E4B8	CRingBufferedReadStream	low	Stream wrapper with a 128K ring buffer over an underlying stream and byte counters.
+8200E898	CStructuredWriter	low	Scoped begin/end element writer with typed value writes and nesting depth.
+8200E8E0	COptionParser	medium	Existing methods of this class are already named COptionParser with typed value getters and a destructor.
+8200E948	CXmlNodeCursor	low	Iterates over named sibling nodes of a parsed node tree and reads typed values from them.
+82013E20	CReverbXapo	low	Constructor installs vtables and calls the reverb native defaults routine; its process method is the reverb XAPO one.
+82013E74	CXAudioRenderDriverClient	medium	Registers with the XAudio render driver and submits frames of audio to it.
+82014E50	CXAudioVoiceInterface	low	Thunks adjust the this pointer and forward to the XAudio voice implementation.
+82014FE0	CXAudioVoiceImpl	low	Many setters lock a global spinlock and update playback fields such as frequency ratio and sample counts; looks like an audio voice object.
+820150FC	CLinearAllocator	low	Holds a buffer with total size and used offset and hands out four byte aligned blocks.
+8201CFD4	CSoftTextureTiledReader	low	Sibling texture reader with tiled block cache freed in destructor.
+8201CFE4	CSoftTextureReader	low	CPU-side texture surface reader that converts texel blocks to float4 with gamma-style conversion.
+82038948	CHidingTraversal	low	Vtable set by the constructor invoked from the CHidingTraversal binding.
+82038AF0	CBehaviourFollowPathway	medium	Reads PathWayName, StartingPointIndex, WalkSpeed and RunSpeed and steps along path points.
+82038F80	CNavPointMapping	medium	Stores Kynogon point mapping data: names, ids and a point-to-point matrix.
+82039010	CPathWayManager	low	Owned array of path way entries created from PathWay and RawData nodes, matching the path way manager binding.
+82039570	CEntityInfoBase	medium	Constructor is already named EntityInfoBase_Ctor, class holds entity info with name and timing values.
+82039698	CNamedRegistryEntry	low	Object with an inline name registered in a global 256-slot table by name.
+82039A40	CLinkedEdgeComponent	low	Uses a LinkedEdgeMax setting and keeps a list of linked entries.
+82039CA8	CHierarchicalHidingTraversal	low	Vtable set by the constructor invoked from the CHierarchicalHidingTraversal binding.
+82039D20	CBehaviourDangerAvoid	low	Behaviour parsing MaxDangerousPoints and MaxDangerousEntities settings with point and entity arrays.
+82039DE8	CAnimStanceSelector	low	Holds anim ids and per-entry flags, starts handles via an anim system and reads a stance string.
+82039E68	CAudioGraphEffect	low	Holds a handle array and count, plays graphs on a sound engine and reads MaxGraphCount and MinHandleValidity.
+82039F4C	CPathObjectsPool	low	Loads Name, Count, ID and MaxLinkedEdges for pooled path objects.
+82039FA4	CKynogonPathCostData	medium	Reads and writes a "Kynogon PathCost Data" chunk holding a square cost matrix.
+82039FEC	CKynogonAccessWaysData	medium	Reads and writes the Kynogon AccessWays Data chunk with per-entry 16 bit lists.
+8203A054	CKynogonAstarData	medium	Reads and writes the Kynogon Astar Data chunk holding a square node matrix.
+8203A078	CPathNodeBuffer	low	Owns three arrays sized by a node count and reads MaxNodeCount and MaxDistance settings.
+8203A0E0	CAudioEffectController	low	Parses a Class XML child list and drives start, update and stop through virtual hooks on an owned audio object.
+8203A260	CMeshIntersect2d	low	Constructor looks up the Mesh_Intersect2d setting and manages 2D grid arrays.
+8203A834	CPathNodeCandidateFilter	low	Reads MaxCandidatePerFrame and MaxDistPathNode parameters and limits path node candidates per frame.
+8203B1C4	CAvoidBehaviour	low	Scans nearby entities and steers away, with tunable timing parameters.
+8203B418	CDistanceEntityInfo	low	Vtable set by the constructor invoked from the CDistanceEntityInfo binding.
+8203C240	CGameHost	medium	Its destructor asserts on the GameHost singleton and reference count strings.
+8203C270	CGameHostAllocator	low	Forwards allocation and free to virtual functions with extra header bookkeeping, and sits in GameHost code.
+8203CE6C	CGameHostGameImpl	low	Ref-counted object with strings from GameHost.GameImpl.cpp.
+8203CF60	CMemoryHeap	medium	Size-class free lists with critical section, alloc, free and realloc entry points.
+8203D060	CWorkerThread	low	Has a lock-protected callback list, a start function and a thread-creation call.
+8203D998	CFileStream	low	Stream with open flag, handle, last error code and open mode, read and write helpers.
+8203D9E8	CStreamProxy	low	Forwards its virtual calls to an inner stream object stored at offset 0x10.
+8203DA38	CBufferedStream	medium	Wraps an underlying stream with a small 8K read or write buffer, mode, position and seek logic.
+82040628	CScriptEntityBase	low	Polymorphic entity base with many thin virtual forwarders and a flags byte.
+8204142C	CMorphShape	low	Interpolates between two keyframe shapes and computes bounds.
+82041530	CFont	low	Holds glyph images, glyph metrics and kerning pair lookup.
+82041C38	CFrameNameTable	low	Class whose AddFrameName method rejects duplicate frame names.
+82042B30	CScriptObject	low	Class with property get/set and ExecuteEvent logging; scripting-layer object with many virtuals.
+82047C80	CD3DTexture	medium	Wraps a D3D resource with width, height and format and releases it on destruction.
+8204F398	CTextureImageTiled	low	Destructor chains to CTextureImage destructor and the object caches 256 byte tile blocks.
+8204F588	CTextureImage	low	Holds pixel buffers and converts pixel rows with clamp, sqrt and square operations.
+820554F0	CD3DXBaseEffect	medium	Parameter handle lookup by name and a family of typed Set methods match the D3DX base effect interface.
+820781E0	CShaderTranslator	low	Holds shader compile state with strings about target TX and output semantics.
+820834B4	CXGraphicsCompilerDispatch	low	Forwards shader compiler calls to one of two backend objects chosen by a flag in the context.
+8208BB80	CXGraphicsUcodeAssembler	low	methods assert from the xgraphics ucode compiler asm.cpp source path
+820A3FB0	CInventoryItem	medium	Functions in this area manage weapon inventory names, quality suffixes, and item destruction.
+820A4328	C_820A4328	medium	Vtable pointer written by the constructor.
+820A482C	C_820A482C	medium	Vtable pointer written by the constructor.
+820A6754	C_820A6754	low	class from header
+820A69F0	CMainGameModeProxy	low	Wrapper whose thunks forward to the main game mode start and main loop functions.
+820A6A48	CBufferedFile	medium	File object with mode, position, length, handle and file name that opens, reads, writes and seeks.
+820A7A10	ByteBuffer	medium	holds buffer pointer, capacity, and current write offset
+820A80C4	CGameLoop	low	Owns main music and event objects and tracks frame timing in its update.
+820ABCC0	CMemoryFile	medium	In-memory file with open flag, position, size and error strings for read and seek past end.
+820AC200	CGuiMessageBox	medium	Its constructor is the message box constructor and it holds two strings plus a lifetime.
+820AC260	CGuiQueryBox	medium	References the Group.QueryBox.Text GUI element.
+820AC280	CGUIQuestDetailsScreen	low	Fills GUI elements named QuestDescription, Stars and DetailsGroup amounts.
+820AD674	CECRumble	low	Method checks an entity handle and calls Rumble_StartEventById.
+820ADCC8	CAnimMovementDef	low	Reads speed multiplier, rotation, movement, physics and looping flags from a script table.
+820AE4A0	LuaScriptCallback	medium	Class holding function pointers for Lua script callbacks, as seen from destructor and invocation methods.
+820AE6C0	CBlockPoseState	low	Method selects among BlockPose animation names for left and right foot and one handed or blunt weapons.
+820AEE3C	CGuiScrollList	low	Holds an item list with up and down arrow icons that are shown or hidden by scroll position.
+820B286C	CBoundingSphere	medium	Holds a center vector at 0x30 and a radius at 0x40, built from a point set.
+820B3BE8	SleepMenu	medium	caller SleepMenu_Open and constructor initializes menu options.
+820B53A8	PlayerControlMode	medium	Constructed by player interaction and script control mode Lua bindings.
+820B53F8	CLookAtComponent	low	Entity component holding look-at handles and starting or clearing look-at on an entity.
+820B6FF8	CECStats	high	Its own name method returns the string CECStats, the name the game gives the class.
+820B9318	CECOrbPresence	high	Type name string returned is CECOrbPresence.
+820B93C8	CECPhysicsSimulationRopeBridge	high	Its own name method returns the string CECPhysicsSimulationRopeBridge, the name the game gives the class.
+820BC0E8	CECLinkedAnimation	high	Type name string returned is CECLinkedAnimation.
+820BCCD0	CECExperienceOrb	high	The class name string CECExperienceOrb is built by one of its methods and others read orb parameters.
+820BD1E8	CECBreakable	high	Strings name CECBreakable and the Breakable open-for-entity functions use this class.
+820BEA90	CECUpgradeableFurniture	high	Type name string returned is CECUpgradeableFurniture.
+820BED10	CECTrollWeakSpot	high	Its own name method returns the string CECTrollWeakSpot, the name the game gives the class.
+820BED60	CECTrollTremor	high	Its own name method returns the string CECTrollTremor, the name the game gives the class.
+820BEDA0	CECTroll	high	Its own name method returns the string CECTroll, the name the game gives the class.
+820C0250	CEquipmentMenuScreen	low	Menu screen using equipment items and weapons strings plus augment removal titles.
+820C02E8	CPhotoModeScreen	medium	Uses photo mode success and fail GUI strings.
+820C04C4	CLogbookMenuScreen	low	Runs the Menu repopulate script for LogbookMenuOrb and owns several orb list sub-objects.
+820C0534	CExpandableMenuScreen	low	Screen runs menu scripts including SetExpandableMenuDisabled and FadeOutTopItemEarly formatter calls.
+820C09D4	CGUIMiniGameComplete	medium	Methods call the MiniGameComplete amount text and turn-off routines.
+820C0F28	CPayFineScreen	low	References PayFine and CommunityService menu options with book pages.
+820C1DF8	CGiftGivingScreen	medium	Strings are the gift giving screen prompts and the method gives a gift from inventory.
+820C20F8	CECTrophyDisplay	high	Its own name method returns the string CECTrophyDisplay, the name the game gives the class.
+820C53C8	CECVillage	high	Its own name method returns the string CECVillage, the name the game gives the class.
+820C5500	CECBed	high	Its own name method returns the string CECBed, the name the game gives the class.
+820C721C	CColourBrightnessPair	low	Holds two four-byte colours each followed by a brightness float, matching the Colour1 Brightness1 Colour2 Brightness2 fields.
+820C78F0	CFleeingTraversal	medium	Vtable class initialized by CFleeingTraversal constructor.
+820C95A0	CECParryKill	high	Its own name method returns the string CECParryKill, the name the game gives the class.
+820C95E0	CECPhysicsConstraintSystem	high	Its own name method returns the string CECPhysicsConstraintSystem, the name the game gives the class.
+820C9620	CECPoseRagdoll	high	Its own name method returns the string CECPoseRagdoll, the name the game gives the class.
+820C9660	CECLooseProjectile	high	Its own name method returns the string CECLooseProjectile, the name the game gives the class.
+820C96A0	CECBoobies	high	Its own name method returns the string CECBoobies, the name the game gives the class.
+820C96E0	CECStiltWalker	high	Its own name method returns the string CECStiltWalker, the name the game gives the class.
+820C9720	CECStabKillable	high	Its own name method returns the string CECStabKillable, the name the game gives the class.
+820C9760	CECPhysicsSimpleNetwork	high	Its own name method returns the string CECPhysicsSimpleNetwork, the name the game gives the class.
+820C9820	CECHandPlanting	high	Its own name method returns the string CECHandPlanting, the name the game gives the class.
+820C9A18	CECGraphicAppearanceDLC	high	Its own name method returns the string CECGraphicAppearanceDLC, the name the game gives the class.
+820CAB18	CECTemporalExperience	high	Its own name method returns the string CECTemporalExperience, the name the game gives the class.
+820CCBD0	CECShard	high	Its own name method returns the string CECShard, the name the game gives the class.
+820CCDE8	CECManagedLocation	high	Its own name method returns the string CECManagedLocation, the name the game gives the class.
+820CCE50	CStdStreamBuf	medium	Standard-library style character stream buffer with get and put area pointers and overflow, underflow and pbackfail.
+820CCE94	BasicString	high	Implements small-string-optimized char string assignment.
+820CD890	CKnockdownStabResponseAction	low	Uses StabbedOnGround and ResponseToKnockdownStab strings.
+820CE358	CBlockedHitResponseAction	low	Uses BlockedHitResponse animation name strings.
+820CE470	CMeleeStrikeAction	low	Strings reference action perform, strike start/end, steel/flesh materials and weapon block sound.
+820CEFD8	CECBanshee	high	Its own name method returns the string CECBanshee, the name the game gives the class.
+820D0050	CECLightningTrap	high	Its own name method returns the string CECLightningTrap, the name the game gives the class.
+820D0230	CECFlameTrap	high	Its own name method returns the string CECFlameTrap, the name the game gives the class.
+820D0410	CECSpikeTrap	high	Its own name method returns the string CECSpikeTrap, the name the game gives the class.
+820D05B4	CSpellShotDeadriseStream	low	class uses SpellShot owner lookups and spawns the fxspl_deadrise_stream effect
+820D0A70	CECVortex	high	Its own name method returns the string CECVortex, the name the game gives the class.
+820D69F0	CWorldIconUI	low	Its destructor chains to the world icon destructor and it drives a UI element block.
+820D73F8	CWorldIcon	low	Constructor sets a default UnusedWorldIcon string and handle/colour/timer state.
+820D7478	CECVaultLine	high	Its own name method returns the string CECVaultLine, the name the game gives the class.
+820D82F4	CExpressionEffect	low	Holds effect multipliers plus a target entity handle for an expression.
+820D830C	CExpressionItemEffect	low	Holds love, fear, respect and similar multipliers loaded for an item record.
+820D84C0	CECDiggingSpot	high	Its own name method returns the string CECDiggingSpot, the name the game gives the class.
+820D8BF8	CExpressionBehaviour	low	Uses ExpressionType and lute loop expression strings.
+820D8C48	CAnimationAction	low	Node with expression type foot locking override and sound event loop settings, cloned from a template.
+820D8F50	CMeleeChargeAttack	low	methods reference ChargeAttackLF and RF and melee flourish ability levels
+820D9D38	CElectrifiedEffect	low	Uses Electrified and ElectrifiedLong strings with an owner entity.
+820D9E88	CLookAtBehaviour	low	Holds an owner entity, a player flag and a look-at handle that it clears via the look-at routines.
+820D9F70	CLocomotionAnimState	low	Holds an owner definition and many float tuning values; looks up Jog, Sprint and Pose animation entries.
+820DCE84	GuiInfoBoxScreen	medium	Derived from the intermission screen and constructed with info box parameters for GUI_AddInfoBox.
+820DD36C	CPhotoModeUploadScreen	low	Shows photo mode uploading info boxes and messages.
+820DDFA8	CECVillageCrimeManager	high	Its own name method returns the string CECVillageCrimeManager, the name the game gives the class.
+820DE1A8	CECMentalist	high	Its own name method returns the string CECMentalist, the name the game gives the class.
+820DE6D8	EventDispatcher	medium	Class manages a list of listeners and dispatches notifications.
+820DEA70	CCrumbleEffect	low	One method references the string CrumbleFX.
+820DF208	CECCreatureGeneratorSpawnPoint	high	Its own name method returns the string CECCreatureGeneratorSpawnPoint, the name the game gives the class.
+820DF248	CECGeneratedCreature	high	Its own name method returns the string CECGeneratedCreature, the name the game gives the class.
+820DF288	CECCreatureGenerator	high	Its own name method returns the string CECCreatureGenerator, the name the game gives the class.
+820DF320	CECSummoner	high	Type name string is CECSummoner.
+820DF510	CECRegroupPoint	high	Its own name method returns the string CECRegroupPoint, the name the game gives the class.
+820DF7A8	CECShadowCreature	high	Constructs the name string CECShadowCreature.
+820DF928	CECAppearanceModifier	high	Its own name method returns the string CECAppearanceModifier, the name the game gives the class.
+820DFA40	CECLifetime	high	Its own name method returns the string CECLifetime, the name the game gives the class.
+820DFDE8	CECInChaos	high	Its own name method returns the string CECInChaos, the name the game gives the class.
+820E0098	CECDeadRiser	high	Its own name method returns the string CECDeadRiser, the name the game gives the class.
+820E0340	CECOnFire	high	Its own name method returns the string CECOnFire, the name the game gives the class.
+820E0E10	CECBuildingIncome	high	Type name string is CECBuildingIncome.
+820E1120	CECGenericTrigger	high	Its own name method returns the string CECGenericTrigger, the name the game gives the class.
+820E1348	CECEntityOwner	high	Its own name method returns the string CECEntityOwner, the name the game gives the class.
+820E1780	CECExplosion	high	Constructs the name string CECExplosion.
+820E3958	CKeyCodeNameTable	low	Constructor builds a tree and fills it with numeric key codes paired with name entries.
+820E4538	CControlsOptionsMenu	low	Uses GUI_CONTROLS_ON and GUI_CONTROLS_OFF text keys and reads or writes player option settings.
+820E4768	CGuiOptionsAudioScreen	medium	Options screen with sound, music and voice volume sliders and audio output choice.
+820E5320	CGuiShopScreen	medium	method sets the shop buy or sell screen title
+820E65E0	CECBuildingSaleSign	high	Its own name method returns the string CECBuildingSaleSign, the name the game gives the class.
+820E8C48	CGuiFamilyPage	medium	class builds the Foreground.Book.Pages.FamilyPage group and mask family entries
+820EA4D0	CECGroupMind	high	Type name string is CECGroupMind.
+820EAEA0	CECLocationManager	high	Its own name method returns the string CECLocationManager, the name the game gives the class.
+820EAF68	CECAutomaticObjectInteraction	high	Its own name method returns the string CECAutomaticObjectInteraction, the name the game gives the class.
+820EAFF0	CECAPLHelper	high	Its own name method returns the string CECAPLHelper, the name the game gives the class.
+820EB090	CECGraphicAppearanceStaticMultipleMesh	high	Its own name method returns the string CECGraphicAppearanceStaticMultipleMesh, the name the game gives the class.
+820EB4C0	CECLeadHero	high	Type name string is CECLeadHero.
+820EB6E8	CECSpellDetritus	high	Its own name method returns the string CECSpellDetritus, the name the game gives the class.
+820EB7F8	CECTriggerVolumeExclusionZone	high	Its own name method returns the string CECTriggerVolumeExclusionZone, the name the game gives the class.
+820EB838	CECOnUseEffect	high	Its own name method returns the string CECOnUseEffect, the name the game gives the class.
+820EB8C8	CECSubgameController	high	Its own name method returns the string CECSubgameController, the name the game gives the class.
+820EBA90	CECDogTrigger	high	Type name string is CECDogTrigger.
+820EBAF0	CECClimbable	high	Its own name method returns the string CECClimbable, the name the game gives the class.
+820EBB50	CECInVortex	high	Its name string CECInVortex is built by one of its methods.
+820EBB90	CECTrophyExpressionData	high	Its own name method returns the string CECTrophyExpressionData, the name the game gives the class.
+820EBC58	CECVillagerList	high	Its own name method returns the string CECVillagerList, the name the game gives the class.
+820EBD80	CECViewpoint	high	Its own name method returns the string CECViewpoint, the name the game gives the class.
+820EBDC0	CECPostInVortex	high	Its own name method returns the string CECPostInVortex, the name the game gives the class.
+820EC028	CECProjectile	high	Its own name method returns the string CECProjectile, the name the game gives the class.
+820EC140	CECWaveMachine	high	Its name string CECWaveMachine and wave related entries are used.
+820EC1B8	CECDogMaulee	high	Type name string is CECDogMaulee.
+820EC250	CECFiringPosition	high	Its own name method returns the string CECFiringPosition, the name the game gives the class.
+820EC308	CECFillUrn	high	Type name string is CECFillUrn.
+820EC5C8	CECNPCScriptControlledTargeting	high	Its own name method returns the string CECNPCScriptControlledTargeting, the name the game gives the class.
+820EC6A0	CECNonCombatCreatureRadius	high	Its own name method returns the string CECNonCombatCreatureRadius, the name the game gives the class.
+820EC898	CECFarmCrate	high	Its own name method returns the string CECFarmCrate, the name the game gives the class.
+820ECBA8	CECAmbientCreature	high	Its own name method returns the string CECAmbientCreature, the name the game gives the class.
+820ECC48	CECDemonDoor	high	Its own name method returns the string CECDemonDoor, the name the game gives the class.
+820ECD70	CECBullet	high	Its own name method returns the string CECBullet, the name the game gives the class.
+820ECE28	CECCustomUpperBodyPose	high	Its own name method returns the string CECCustomUpperBodyPose, the name the game gives the class.
+820ECE70	CECHollowmanWisp	high	Its name string CECHollowmanWisp is built by one of its methods.
+820ECEF0	CECSpinner	high	Its own name method returns the string CECSpinner, the name the game gives the class.
+820ED010	CECLuciensSoldierSpell	high	Its own name method returns the string CECLuciensSoldierSpell, the name the game gives the class.
+820ED068	CECDieWhenLost	high	Its own name method returns the string CECDieWhenLost, the name the game gives the class.
+820ED1A8	CECHitResponseFlyingCreature	high	Its own name method returns the string CECHitResponseFlyingCreature, the name the game gives the class.
+820ED250	CECHollowmanWispSource	high	Its name string CECHollowmanWispSource and wisp count and radius values are used.
+820ED310	CECBeetle	high	Class name string CECBeetle and beetle death effect strings.
+820ED398	CECKnotholeIslandShop	high	Its own name method returns the string CECKnotholeIslandShop, the name the game gives the class.
+820ED440	CECElectrified	high	Its own name method returns the string CECElectrified, the name the game gives the class.
+820ED520	CECCrateStack	high	Its own name method returns the string CECCrateStack, the name the game gives the class.
+820ED588	CECConversationPoint	high	Its own name method returns the string CECConversationPoint, the name the game gives the class.
+820ED5C8	CECCrate	high	Its own name method returns the string CECCrate, the name the game gives the class.
+820ED608	CECDye	high	Its own name method returns the string CECDye, the name the game gives the class.
+820ED800	CECVillageMember	high	Its own name method returns the string CECVillageMember, the name the game gives the class.
+820ED8E8	CECPointOfInterest	high	Its own name method returns the string CECPointOfInterest, the name the game gives the class.
+820EDAE0	CECCameraValues	high	Its name string CECCameraValues and camera tuning names are used.
+820EDB70	CECCreatureSpawnPoint	high	Its own name method returns the string CECCreatureSpawnPoint, the name the game gives the class.
+820EDC70	CECWorkplace	high	Its own name method returns the string CECWorkplace, the name the game gives the class.
+820EDCE8	CECSwitch	high	Its own name method returns the string CECSwitch, the name the game gives the class.
+820EDF80	CECAmbush	high	Its own name method returns the string CECAmbush, the name the game gives the class.
+820EDFE8	CECCrescendo	high	Its own name method returns the string CECCrescendo, the name the game gives the class.
+820EE028	CECHeroTitle	high	Its own name method returns the string CECHeroTitle, the name the game gives the class.
+820EE1E8	CECBalverine	high	Type name string is CECBalverine.
+820EE2D8	CECBalverinePerch	high	Its own name method returns the string CECBalverinePerch, the name the game gives the class.
+820EE3B8	CECClock	high	Its name string CECClock and hour or minute hand entities are used.
+820EE438	CECMarkerLocationType	high	Its own name method returns the string CECMarkerLocationType, the name the game gives the class.
+820EE488	CECDiveSpot	high	Its name string CECDiveSpot is returned by one method and DiveSpot is used throughout.
+820EE4F8	CECBonusContainer	high	Its own name method returns the string CECBonusContainer, the name the game gives the class.
+820EE650	CECSpellMovable	high	Its own name method returns the string CECSpellMovable, the name the game gives the class.
+820EE6E0	CECVaultable	high	Its own name method returns the string CECVaultable, the name the game gives the class.
+820EE720	CECSpellNotHeatable	high	Its own name method returns the string CECSpellNotHeatable, the name the game gives the class.
+820EE788	CECReadable	high	Its own name method returns the string CECReadable, the name the game gives the class.
+820EE7C8	CECSpellNotAreaAffectable	high	Its own name method returns the string CECSpellNotAreaAffectable, the name the game gives the class.
+820EE808	CECGraphicAppearancePortal	high	Its own name method returns the string CECGraphicAppearancePortal, the name the game gives the class.
+820EE868	CECVortexShudderHit	high	Its own name method returns the string CECVortexShudderHit, the name the game gives the class.
+820EE8C0	CECSpellCastBreakable	high	Its own name method returns the string CECSpellCastBreakable, the name the game gives the class.
+820EE928	CECCartPuller	high	Its own name method returns the string CECCartPuller, the name the game gives the class.
+820EE988	CECScriptData	high	Its own name method returns the string CECScriptData, the name the game gives the class.
+820EE9C8	CECGuardPatrolPoint	high	Its own name method returns the string CECGuardPatrolPoint, the name the game gives the class.
+820EEA08	CECPhysicsSimpleScaled	high	Its own name method returns the string CECPhysicsSimpleScaled, the name the game gives the class.
+820EEB28	CECGraphicAppearanceMist	high	Its own name method returns the string CECGraphicAppearanceMist, the name the game gives the class.
+820EEBA0	CECTrollProjectile	high	Type name string is CECTrollProjectile.
+820EEBE0	CECGraphicAppearanceScreenFacingSprite	high	Its own name method returns the string CECGraphicAppearanceScreenFacingSprite, the name the game gives the class.
+820EEC88	CECAimFirearm	high	Its own name method returns the string CECAimFirearm, the name the game gives the class.
+820EECC8	CECAutoPickUp	high	Its own name method returns the string CECAutoPickUp, the name the game gives the class.
+820EED08	CECFurnitureUnlock	high	Its own name method returns the string CECFurnitureUnlock, the name the game gives the class.
+820EED58	CECSpellWeaponAffect	high	Type name string is CECSpellWeaponAffect.
+820EED98	CECExclusionZone	high	Its own name method returns the string CECExclusionZone, the name the game gives the class.
+820EEF08	CECFastTravelStop	high	Its own name method returns the string CECFastTravelStop, the name the game gives the class.
+820EEF48	CECSpline	high	Its own name method returns the string CECSpline, the name the game gives the class.
+820EF028	CECButterflyArea	high	Its own name method returns the string CECButterflyArea, the name the game gives the class.
+820EF540	CAbilityActionMeleeEnvironmentalWallLeap	medium	A class-name function returns this literal.
+820F0648	CTeleportTubeEffect	low	Strings mention TeleportTube and FX_Shard teleport effect names.
+820F0738	CFootPlant	low	Strings mention FOOT_PLANT with left and right foot names.
+820F0B78	CParticleAttachEffect	low	Holds entity handles, a vector of attached entities and calls into the particle attach script binding.
+820F1664	EntityHandle	medium	Vtable written by the destructor that calls EntityHandle_Release.
+820F1780	CChainedEntityEffectCurve	low	Subclass that calls the chained entity effect update and samples curve values from a keyed set.
+820F1840	CChainedEntityEffect	low	Base of several effect classes holding a linked chain via handles, shared handle and a decaying float.
+820F1948	CPolylineSet	low	Holds a vector of 20-byte entries each with a list of 12-byte points; serialized.
+820F19A4	CPropertyContainer	low	Holds two ordered collections of child entries and saves or loads them by key.
+820F1A2C	CMaterialRandomSize	high	Property loader names the class and its random size settings.
+820F1A5C	CRegistrableThing	medium	Class name string appears in its serialize function with an ID entry.
+820F1B74	CSplineObject	medium	Its XML loader references CSplineObject, NumSplinePoints and SplinePoint.
+820F1BA0	CMaterialParamDiffuseAlpha	high	String in the load routine names the class.
+820F1BB8	CMaterialParamDiffuseTexture	low	Its serializer references the class name string, DiffuseTexture and division counts.
+820F1BD0	CMaterialParamSize	high	String in the load routine names the class.
+820F1BE8	CMaterialParamSpriteNumSpritePoints	high	Class name string appears in its Serialize function.
+820F1C00	CMaterialParamDiffuseColor	high	String in the load routine names the class.
+820F1C18	CMaterialParamSrcBlendMode	high	Class name string appears in its Serialize function.
+820F1C30	CMaterialParamDestBlendMode	high	Class name string appears in its Serialize function.
+820F1C48	CMaterialParamBlendOp	high	Uses the class name string and the BlendOp parameter name.
+820F1C90	CMaterialMeshRandomScale	high	String in the load routine names the class.
+820F1CA8	CMaterialParamGlobalFrameScale	low	Its serializer references the class name string and GlobalScale value.
+820F1CC0	CMaterialParamAlignmentQuat	high	Uses the class name string and the AlignmentQuat parameter name.
+820F1E2C	CMemoryWriteStream	low	Appends bytes to a growable buffer and releases it plus a name string on destruction.
+820F1E60	CBufferedInputStream	high	already named in header; buffered input stream class.
+820F1E88	CWriteBufferStream	low	Buffers writes in a memory block and forwards them to an underlying stream through virtual calls.
+820F1EA0	CBufferedReadStream	low	Buffered reader that copies bytes from a cursor, refills through virtuals and builds strings from the data.
+820F3A24	CObjectBase	low	Tiny abstract base with two virtuals that many unrelated derived destructors reset their vtable to.
+820F3A2C	BreakablePiece	medium	Object initialized during breakable piece preloading with refcounted pointer.
+820F643C	CTexture	low	Has D3D resource release, mip-level math and a live-object counter decrement, resembling a texture wrapper.
+820F6B88	CThing	low	Base world object with transform matrix at 0x150, flags, owner pointer and many derived destructors.
+820F7EE8	CMeshResource	low	Loaded model data with material list, mesh part arrays and vertex and index totals.
+820F8150	CThingComponent	low	Base with owner pointer and child allocations freed in a shared destructor.
+820F879C	COffscreenWaterRenderer	medium	Constructor references Offscreen Water Renderer, reflection and refraction tile strings.
+820F8BBC	CDiskFile	low	class whose method logs an OPEN message with a disk file name
+820F8E34	CVfsRequestManager	medium	Owns a thread/critical section labelled VFS - Request Manager.
+820F8F0C	CDoubleBufferedStream	low	Wraps a stream with two 32-byte buffer descriptors, a position and flush or swap logic.
+820F9F04	CWin32Request	medium	Its wait function logs the LHVFS CWin32Request WaitForCompletion string.
+820FA0F4	BasicWString	high	wide string class with inline buffer and capacity/length fields.
+820FD0F8	CAKLogicBuilder	low	a function of this class references the AKLogicBuilder source path string
+820FE3BC	CDataTableSet	medium	Holds a list of tables with named columns and typed cells with validation errors for table column and row.
+820FED48	CEndianFileStream	high	Constructor string names class CEndianFileStream.
+832F5E4C	CXAudioStreamVoice	low	Manages pending and completed buffer lists around a voice with start and stop control.
+832FE2E4	GFxStream	low	Reads little-endian values for SWF tags like DefineExternalImage.

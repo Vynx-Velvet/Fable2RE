@@ -1,0 +1,10 @@
+type	name	evidence
+0x14	DeathHandler	Health.SetCantDie writes its +0xCC (can die) and notifies sub_8231A9A8; Health.SetMax/OverrideHealthSetting use it when health reaches 0
+0x23	DamageTracker	Health.Modify: +0x34 accumulates damage dealt by the hero's side (sub_822040D0(attack source, hero) == 2)
+0x25	Breakable	Health.SetMax at 0 health calls Breakable.Break on it
+0x39	Stats	Health.Modify: Stats.ModifyTrackedStat(STAT_DAMAGE_RECEIVED / STAT_HITS_RECEIVED)
+0x4C	DamageShield	Health.Modify: sub_825296E8(component, 0) true -> owner protected
+0x85	AttackSource	on attackers; sub_822040D0(component, hero) returns the side (2 = hero's)
+0x9F	DamageListener	Health.Modify: sub_825644E0(component) after damage
+0xDF	DeathRules	Health.SetMax at 0 health: sub_82898288(component) instead of the default death
+0x5B	AttackAnimation	Combat.SetIsAttacking passes the flag on to it (sub_82389A68, its +0x30C)

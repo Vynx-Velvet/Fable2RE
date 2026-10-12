@@ -1,0 +1,11 @@
+[2026-10-07 13:50:01.100] [info] [core] [t2620] Fable2 starting
+[2026-10-07 13:50:01.120] [info] [core] [t2620] Loaded config: C:\fixture\Fable2.toml
+[2026-10-07 13:50:01.800] [info] [core] [t2620] autotest: script 'at 40; shot; exit'
+[2026-10-07 13:50:21.000] [info] [core] [t21032] audio level: peak 0.4870, 375 of 375 frames not silent (buffer 4C100300)
+[2026-10-07 13:50:41.000] [info] [core] [t20316] autotest: 40.0 s shot
+[2026-10-07 13:50:41.200] [info] [core] [t17948] native renderer: snapshot C:\fixture\native_snapshots\frame_001802.png
+[2026-10-07 13:50:41.230] [info] [core] [t17948] native renderer: snapshot C:\fixture\native_snapshots\frame_001803.png
+[2026-10-07 13:50:41.260] [info] [core] [t17948] native renderer: snapshot C:\fixture\native_snapshots\frame_001804.png
+[2026-10-07 13:50:41.700] [info] [core] [t20316] autotest: 40.7 s exit
+[2026-10-07 13:50:41.710] [info] [sys] [t16136] KernelState::TerminateTitle
+[2026-10-07 13:50:41.720] [info] [core] [t13000] Guest exited

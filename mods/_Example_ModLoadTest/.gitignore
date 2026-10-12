@@ -1,0 +1,4 @@
+# Everything make_example.py builds from your own game files (gamescripts_r/, and the older
+# gamescripts/ location) is game-derived and stays local. Only the files at the top of this folder
+# are authored. (Python caches are ignored repository-wide.)
+/*/

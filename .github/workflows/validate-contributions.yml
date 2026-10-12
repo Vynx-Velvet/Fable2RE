@@ -1,0 +1,30 @@
+name: Validate contributions
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-metadata-and-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out public workspace files
+        uses: actions/checkout@v7
+        with:
+          submodules: false
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate dictionaries and catalogs
+        run: python tools/validate_metadata.py
+      - name: Test commit validation guards
+        run: python tools/test_commit_validation.py
+      - name: Compile project-authored Python tools
+        run: python -m compileall -q tools
+      - name: Unit tests of the setup and game-check tools
+        run: python -m unittest discover -s tools/tests

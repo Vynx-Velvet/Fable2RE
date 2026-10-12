@@ -1,0 +1,18 @@
+[2026-10-10 09:10:00.100] [info] [core] [t1001] Fable2 starting
+[2026-10-10 09:10:00.800] [info] [core] [t1001] autotest: script 'at 38; press A; wait 6; press DOWN; wait 1.5; press A; wait 7; press A; wait 32; shot; wait 10; shot; exit'
+[2026-10-10 09:10:38.000] [info] [core] [t1003] autotest: 38.0 s press A
+[2026-10-10 09:10:44.200] [info] [core] [t1003] autotest: 44.2 s press DOWN
+[2026-10-10 09:10:46.000] [info] [core] [t1003] autotest: 46.0 s press A
+[2026-10-10 09:10:53.400] [info] [core] [t1003] autotest: 53.4 s press A
+[2026-10-10 09:11:00.000] [info] [core] [t1002] audio level: peak 0.2140, 375 of 375 frames not silent (buffer 4C100300)
+[2026-10-10 09:11:25.600] [info] [core] [t1003] autotest: 85.6 s shot
+[2026-10-10 09:11:25.800] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004385.png
+[2026-10-10 09:11:25.830] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004386.png
+[2026-10-10 09:11:25.860] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004387.png
+[2026-10-10 09:11:36.300] [info] [core] [t1003] autotest: 96.3 s shot
+[2026-10-10 09:11:36.500] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004986.png
+[2026-10-10 09:11:36.530] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004987.png
+[2026-10-10 09:11:36.560] [info] [core] [t1004] native renderer: snapshot {snapdir}\frame_004988.png
+[2026-10-10 09:11:37.000] [info] [core] [t1003] autotest: 97.0 s exit
+[2026-10-10 09:11:37.010] [info] [sys] [t1005] KernelState::TerminateTitle
+[2026-10-10 09:11:37.020] [info] [core] [t1006] Guest exited

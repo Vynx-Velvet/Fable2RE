@@ -1,0 +1,6 @@
+address	name
+825575C8	EntityHandle_Get
+821940C8	EntityHandle_Release
+8221BE68	HandleTarget_Free
+82978470	EntityHandle_Assign
+82232748	Players_IsPlayer
