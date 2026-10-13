@@ -52,6 +52,7 @@ Each step records its inputs and its outputs in `tools/.setup/<step>.json` when 
 | `image` | `tools/xex_decrypt.py`. The result must match the reference image hash | `research/decomp/default_image.bin` | about 12 s |
 | `classes` | Class model: from the shipped model (`classes.py --bundle`), or computed here (`lift.py --facts`, then `classes.py --facts`; see `-Classes`) | `tools/lift/cache/classes.json`, `structs.json`, `Fable2Recomp/lifted/classes.h` (computed: also `tools/lift/cache/facts`) | shipped: 2 s; computed: facts about 25 min, and a rename re-runs only `classes.py` |
 | `decls` | `native_gen.py`: native entry points and bridges | `Fable2Recomp/lifted/native_decls.h`, `native_bridges.N.cpp` | not timed |
+| `globals` | `tools/naming/global_strings.py`: names the game's global string objects after their text. The names are the game's own text, so they are written here, never shipped | `research/decomp/global_names.tsv` | 33 s |
 | `lift` | `apply_names.py --init` records the names the lift uses. Then `lift.py --all`, after which only tested functions stay lifted (below) | `Fable2Recomp/lifted/lifted.N.K.cpp`, `tools/lift/cache/applied_names.json` | 9.5 to 27.6 min for the lift, plus about 3 min for the test filter |
 | `config` | Installs `Fable2.toml` from [the template](settings.md) and stages `assets/game` beside the exe. Never overwrites | `Fable2Recomp/out/build/<preset>/` | seconds |
 | `build` | `tools/build.ps1 -Preset win-amd64-release -Target Fable2`. Always runs; ninja compiles only what changed | `Fable2Recomp/out/build/win-amd64-release/Fable2.exe` | first build: about 2 hours (estimated). Incremental release builds: 30 to 41 min |
@@ -182,7 +183,7 @@ powershell -File tools/build.ps1 -Preset win-amd64-release -Target Fable2
 | `iso/extracted/` | the extracted disc | no |
 | `Fable2Recomp/assets/game/` | `default.xex` and the `data` junction used by codegen and the bundle check | no |
 | `Fable2Recomp/generated/` | recompiled code | no |
-| `research/decomp/default_image.bin` | decrypted executable image | no |
+| `research/decomp/` | `default_image.bin` (the decrypted executable image), `function_strings.tsv` and `global_names.tsv` (text from the executable, for the naming tools and the lift) | no |
 | `tools/lift/cache/` | facts, class model, analysis caches, `manifest_skip.txt`, `applied_names.json` | no |
 | `Fable2Recomp/lifted/` | `lifted.N.K.cpp`, `classes.h`, `native_decls.h`, `native_bridges.N.cpp`, `lift_report.txt` (`lifted.h` is tracked) | no |
 | `Fable2Recomp/out/build/<preset>/` | `Fable2.exe`, `build.log`, `Fable2.toml`, `assets/game/` (game files and saves), `fable2.log` | no |

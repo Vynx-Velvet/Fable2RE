@@ -30,7 +30,7 @@ distribute it, regenerate it.
 
 ## Regenerating
 
-On a fresh machine, `tools/setup_all.ps1` does all of it. Its steps `image`, `classes`, `decls` and `lift` produce
+On a fresh machine, `tools/setup_all.ps1` does all of it. Its steps `image`, `classes`, `decls`, `globals` and `lift` produce
 the lifted code, and the [build guide](building.md) describes each step and its cost. To re-run only this part:
 
     powershell -ExecutionPolicy Bypass -File tools/setup_all.ps1 -From image -To lift
@@ -45,6 +45,7 @@ Then from `tools/lift`, in this order:
     python classes.py --bundle                  # cache/classes.json, cache/structs.json, lifted/classes.h from the
                                                 # shipped model (or: lift.py --facts, about 25 min, then classes.py --facts)
     python native_gen.py                        # lifted/native_decls.h, lifted/native_bridges.N.cpp
+    python ../naming/global_strings.py          # research/decomp/global_names.tsv (local: the game's text)
     python apply_names.py --init                # record the naming dictionary the lift will use
     python lift.py --all --skip overridden.txt  # every function, 9.5 to 27.6 min on the development machine
     python difftest/make_skip.py --manifest ../../research/lift/verified.json.gz --out cache/manifest_skip.txt
@@ -57,7 +58,11 @@ lifted code does not have it.
 What each command needs:
 
 - `lift.py --facts` and `lift.py --all`: the generated code, the analysis and the decrypted image
-  (`readable.py` reads the game strings the readable form refers to).
+  (`readable.py` reads the game strings the readable form refers to), and `research/decomp/global_names.tsv`
+  for the names of global string objects.
+- `../naming/global_strings.py`: the generated code, the analysis, the image and the naming dictionary. It lifts
+  the game's start-up functions in memory and names each global string object after the text it is built from.
+  The names are the game's text, so the file is local; the lifted text carries them, so it comes before the lift.
 - `classes.py --bundle`: the shipped model (`research/lift/class_model.json.gz`), the image (class names from RTTI)
   and the naming dictionary. `classes.py --facts`: the facts, the image, `research/symbols/func_db.json` and the
   dictionary. Without an option, `classes.py` rebuilds from the source the current `cache/classes.json` came from

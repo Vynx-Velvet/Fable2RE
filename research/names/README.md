@@ -19,10 +19,12 @@ alias. The shipped lifter analysis `research/lift/summaries.json.gz` records the
 | `functions.tsv` | function address | `address  name  confidence  basis` |
 | `classes.tsv` | vtable address | `vtable  name  confidence  basis` |
 | `fields.tsv` | vtable address + offset | `vtable  offset  name  confidence  basis` |
-| `globals.tsv` | global address | `address  name  text  basis` |
 | `locals.tsv` | function address + generated variable | `function  variable  name  confidence  basis` |
 
 - `name` is a C++ identifier, unique within its file (fields: within the class).
+- The game's global string objects are not here: each is named after the text it is built from, which is the
+  game's own text. `tools/naming/global_strings.py` writes those names on your machine
+  (`research/decomp/global_names.tsv`, setup step `globals`).
 - `confidence`: `high` (identified from a public API or an exact anchor), `medium` (clear from use), `low`
   (a plausible reading; expect renames).
 - `basis`: one line in our own words saying why. Never decompiled code.

@@ -47,6 +47,7 @@ Times are from the development machine (8 threads) unless marked. "Implemented" 
 | 6 | Image | `research/decomp/default_image.bin` | `tools/xex_decrypt.py`, about 12 s; checked against the reference image hash | implemented |
 | 7 | Class model | `tools/lift/cache/classes.json`, `lifted/classes.h` | From the shipped model `research/lift/class_model.json.gz` (`classes.py --bundle`, 2 s); computed here: `lift.py --facts` (about 25 min, 2026-10-05 run), then `classes.py --facts` | implemented |
 | 8 | Declarations | `lifted/native_decls.h`, `native_bridges.N.cpp` | `native_gen.py`; not timed | implemented |
+| 8b | Global names | `research/decomp/global_names.tsv` | `tools/naming/global_strings.py`, 33 s: the game's global string objects named after their text (local, never shipped) | implemented |
 | 9 | Lift | `Fable2Recomp/lifted/` | `apply_names.py --init`, then `lift.py --all` with the shipped analysis: 9.5 to 27.6 min. Filter: `difftest/make_skip.py --manifest`, hashing about 3 min. Then the drop pass | implemented; manifest filter fixed 2026-10-11 for a freshly extracted `default.xex` (not yet run in a full setup) |
 | 10 | Mod/research data (optional) | `extracted/` | `tools/bnk.py`, `tools/babel.py` | not in the script |
 | 11 | Settings and runtime folder | `out/build/<preset>/Fable2.toml`, `assets/game/` | Settings from the shipped template; existing files are never overwritten | implemented |

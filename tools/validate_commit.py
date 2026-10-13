@@ -165,6 +165,9 @@ def audit(repo, label="."):
                      or any(p.startswith("generated") for p in parts[:-1])
                      or (rpath is not None and rpath.split("/")[0] == "lifted" and rpath != "lifted/lifted.h"))
         derived = mod_material(path)
+        if label == "." and path == "research/names/globals.tsv":
+            derived = ("names of global string objects made from the game's text: tools/naming/global_strings.py "
+                       "writes them locally (research/decomp/global_names.tsv)")
         if forbidden:
             errors.append(f"{location}: local game/build material must not be staged")
         elif derived:

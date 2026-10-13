@@ -54,7 +54,6 @@ NAMES = {
     'research/names/functions.tsv': ((0,), 1, 'functions'),
     'research/names/classes.tsv': ((0,), 1, 'classes'),
     'research/names/fields.tsv': ((0, 1), 2, 'fields'),
-    'research/names/globals.tsv': ((0,), 1, 'globals'),
     'research/names/locals.tsv': ((0, 1), 2, 'locals'),
 }
 ENTRY = re.compile(r'^PROMOTED_ENTRY\(\d+, (sub_[0-9A-F]{8}), 0x[0-9A-F]{8}\)', re.M)

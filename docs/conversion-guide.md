@@ -27,7 +27,8 @@ code, the tools and the knowledge (names, structs, notes).
 - `research/catalog/functions.tsv`: every function with its best name, library, Lua binding,
   callers/callees, decompilation location and conversion status. `summary.md` has totals. The strings each
   function references are text from the game, so they are not in it: `research/decomp/function_strings.tsv`,
-  local, written by the setup (`tools/catalog/function_strings.py`).
+  local, written by the setup (`tools/catalog/function_strings.py`). So are the names of the game's global string
+  objects, which are their text: `research/decomp/global_names.tsv` (`tools/naming/global_strings.py`).
 - `research/decomp/named/decomp_XXXX.c`: Ghidra's decompilation with names, string literals and
   globals filled in - the readable reference you work from.
 - `research/symbols/`: Lua bindings, enums, component types, tuning values, hand-verified names.

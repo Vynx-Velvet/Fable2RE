@@ -24,7 +24,6 @@ NAME_TABLES = {
     "functions.tsv": (["address", "name", "confidence", "basis"], ("address",)),
     "classes.tsv": (["vtable", "name", "confidence", "basis"], ("vtable",)),
     "fields.tsv": (["vtable", "offset", "name", "confidence", "basis"], ("vtable", "offset")),
-    "globals.tsv": (["address", "name", "text", "basis"], ("address",)),
     "locals.tsv": (["function", "variable", "name", "confidence", "basis"], ("function", "variable")),
 }
 

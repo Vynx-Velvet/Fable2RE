@@ -52,7 +52,10 @@ in the tree. Changes made from it:
   references (about 9,600 short strings from the executable). The setup's image step recomputes them on the
   user's machine into the ignored `research/decomp/function_strings.tsv` (`tools/catalog/function_strings.py`);
   the scaffolder no longer copies strings into source files. A lifted-code excerpt in `docs/lifted-code.md` became
-  an invented illustration.
+  an invented illustration. Later the same day, `research/names/globals.tsv` (2,080 global string objects, each
+  named after the text it is built from, with the text in a column) left the repository the same way: the setup's
+  `globals` step writes the identical table locally ([record](../research/findings/2026-10-12-global-names-local.md)). It was
+  in the first pushed commits.
 - Console key: `tools/xex_decrypt.py` no longer embeds the retail XEX key; it reads it from the public ReXGlue SDK
   (from Xenia), which the setup needs anyway. The decrypted image still matches the reference hash.
 - Licences and credit: upstream notices restored where files came from ReXGlue's template through Fable2Recomp

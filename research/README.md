@@ -4,6 +4,7 @@ These are dated observations from specific executables and builds. Later finding
 
 | Date | Investigation |
 |---|---|
+| 2026-10-12 | [Global string names: generated locally, not shipped](findings/2026-10-12-global-names-local.md) |
 | 2026-10-12 | [Fresh clone, end to end: from the disc image to the title screen](findings/2026-10-12-fresh-clone-end-to-end.md) |
 | 2026-10-10 | [The supported executable: identity, the 100 MiB over-read, no title update](findings/2026-10-10-executable-identity.md) |
 | 2026-10-10 | [Promoted code: the native-call check](findings/2026-10-10-native-call-check.md) |

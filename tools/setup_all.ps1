@@ -16,6 +16,8 @@
 #   classes    the class model -> cache/classes.json, structs.json, lifted/classes.h: from the shipped model
 #              (classes.py --bundle, seconds) or from this machine's facts (lift.py --facts + classes.py --facts)
 #   decls      native_gen.py -> lifted/native_decls.h, lifted/native_bridges.N.cpp
+#   globals    tools/naming/global_strings.py -> research/decomp/global_names.tsv: the global string objects named
+#              after their text (the game's own text, so written here and never shipped)
 #   lift       apply_names.py --init (records the names the lift reads), lift.py --all, then only tested functions
 #              stay lifted (see -Tested)
 #   config     Fable2.toml from Fable2Recomp/config/Fable2.default.toml and assets/game beside the exe (never overwrites)
@@ -76,6 +78,10 @@ $Generated = Join-Path $Proj 'generated'
 $Image = Join-Path $Root 'research/decomp/default_image.bin'
 # strings each function references, from the image: local context for the naming tools (not in the catalog)
 $FuncStrings = Join-Path $Root 'research/decomp/function_strings.tsv'
+# names of the game's global string objects, from their text: local too (tools/naming/global_strings.py)
+$GlobalNames = Join-Path $Root 'research/decomp/global_names.tsv'
+$GlobalStringsTool = Join-Path $PSScriptRoot 'naming/global_strings.py'
+$ScopeTsv = Join-Path $Root 'research/catalog/scope.tsv'
 $Bundle = Join-Path $Root 'research/lift/summaries.json.gz'
 $Manifest = Join-Path $Root 'research/lift/verified.json.gz'
 $ClassModel = Join-Path $Root 'research/lift/class_model.json.gz'
@@ -98,7 +104,7 @@ $FuncStringsTool = Join-Path $PSScriptRoot 'catalog/function_strings.py'
 $AutoTest = Join-Path $PSScriptRoot 'autotest.py'
 New-Item -ItemType Directory -Force $StampDir | Out-Null
 
-$Steps = @('verify', 'extract', 'stage', 'toolchain', 'codegen', 'image', 'classes', 'decls', 'lift', 'config', 'build',
+$Steps = @('verify', 'extract', 'stage', 'toolchain', 'codegen', 'image', 'classes', 'decls', 'globals', 'lift', 'config', 'build',
            'check')
 
 # Supported executables by whole-file SHA-256: used only when tools/xex_info.py (which also recognises copies with
@@ -726,6 +732,29 @@ Step 'decls' {
     finally { Pop-Location }
 } @('native_decls.h present')
 
+# The global string objects named after their text (research/decomp/global_names.tsv). The names are the game's
+# own text, so they are written here from the user's copy, not shipped. The lift prints them, and the
+# verification manifest's hashes were taken from text that carried them, so this comes before the lift.
+Step 'globals' {
+    $o = [ordered]@{}
+    $o['generated'] = Generated-Id
+    Add-Analysis $o
+    $o['image'] = File-Id $Image
+    $o['research/names'] = Tree-Id $Names '\.tsv$'   # (the dictionary names the string constructors)
+    $o['func_db.json'] = File-Id $FuncDb
+    $o['scope.tsv'] = File-Id $ScopeTsv
+    $o['global_strings.py'] = File-Id $GlobalStringsTool
+    $o['lifter (lift.py, readable.py and their modules)'] = Sources-Id @('lift', 'readable', 'scope', 'chunks')
+    $o['LIFT_ variables'] = Env-Id
+    $o['output'] = File-Id $GlobalNames
+    $o
+} {
+    Need (Join-Path $Generated 'Fable2_init.h') 'the generated code' 'codegen'
+    Need $Image 'the decrypted image' 'image'
+    Assert-Analysis
+    Tool 'python' @($GlobalStringsTool, '--out', $GlobalNames, '--jobs', "$Jobs")
+} @('output')
+
 function Lift-Inputs {
     $o = [ordered]@{}
     $o['generated'] = Generated-Id
@@ -736,6 +765,7 @@ function Lift-Inputs {
     if (Types-On) { $o['vartypes.json'] = File-Id (Join-Path $LiftCache 'vartypes.json') }
     $o['research/names'] = Tree-Id $Names '\.tsv$'
     $o['research/catalog/functions.tsv'] = File-Id $CatalogFunctions
+    $o['global names'] = File-Id $GlobalNames
     $o['overridden.txt'] = File-Id (Join-Path $Lift 'overridden.txt')
     $o['promoted modules'] = Tree-Id $Promoted '\.cpp$'
     $o['local rewrites'] = Tree-Id $Rewritten '\.cpp$'

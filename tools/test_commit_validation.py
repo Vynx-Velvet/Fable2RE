@@ -42,6 +42,11 @@ class CommitValidationTests(unittest.TestCase):
         self.assertIn("game data file", errors[0])
         self.assertIn("exported game text", errors[1])
 
+    def test_global_string_names_are_rejected(self):
+        errors = self._content_errors("research/names/globals.tsv")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("global_strings.py", errors[0])
+
     def test_decompiled_and_game_data_suffixes_are_rejected_anywhere(self):
         for path in ("research/notes/menulib.src.lua", "mods/MyMod/menulib.src.lua",
                      "docs/samples/book.babel", "tools/fixtures/startup.vfsconfig"):

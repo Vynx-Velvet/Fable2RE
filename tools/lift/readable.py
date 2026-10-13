@@ -114,12 +114,12 @@ _GLOBALS = None
 
 
 def global_names():
-    """address -> name of the game's global objects that have one (research/names/globals.tsv: the global
-    string objects, named after their text by tools/naming/global_strings.py)."""
+    """address -> name of the game's global objects that have one (research/decomp/global_names.tsv: the global
+    string objects, named after their text by tools/naming/global_strings.py on this machine)."""
     global _GLOBALS
     if _GLOBALS is None:
         _GLOBALS = {}
-        p = os.path.join(ROOT, 'research', 'names', 'globals.tsv')
+        p = os.path.join(ROOT, 'research', 'decomp', 'global_names.tsv')
         if os.path.exists(p) and os.environ.get('LIFT_NAMES', '1') != '0':
             with open(p, encoding='utf-8') as f:
                 head = f.readline().rstrip('\n').split('\t')
