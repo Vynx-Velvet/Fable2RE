@@ -18,8 +18,9 @@ Two ways to have a model answer the batches:
 - **An agent CLI** (for example a Claude CLI pointed at an OpenRouter model): give it `tools/naming/AGENT.md` as
   its task. It loops over `next_batch.py`, reads each batch and writes the answer file.
 - **Direct API calls**, one request per batch, no agent overhead: `run_local.py` with a local server, or
-  `run_local.py --url https://openrouter.ai/api/v1 --allow-remote --model <provider/model>` with the key in
-  `OPENROUTER_API_KEY`.
+  `run_local.py --url https://openrouter.ai/api/v1 --allow-remote --model <provider/model>` with the key stored
+  once by `python tools/api_keys.py set openrouter` (without a stored key: `OPENROUTER_API_KEY`); for DeepSeek,
+  `--url https://api.deepseek.com` and `set deepseek`. See [API keys](../../docs/parallel-work.md#api-keys).
 
 - One batch is about 6,000 tokens of input (`--tokens`); the answer is a few lines per function.
 - Work in rounds. `make_batches.py` offers functions bottom-up (functions whose callees are already named

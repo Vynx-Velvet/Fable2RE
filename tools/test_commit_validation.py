@@ -99,6 +99,26 @@ class CommitValidationTests(unittest.TestCase):
         self.assertEqual(len(errors), 2, errors)
         self.assertTrue(any("alice" in e for e in errors) and any("bob" in e for e in errors), errors)
 
+    # (the key-shaped strings are built at run time: written out, they would be found in this file)
+    def test_api_key_shapes_in_a_real_index(self):
+        import shutil
+        import subprocess
+        if not shutil.which("git"):
+            self.skipTest("git not found")
+        k1 = "sk" + "-" + "0123456789abcdef" * 2
+        k2 = "sk" + "-or-v1-" + "f" * 64
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            (repo / "a.py").write_text(f"KEY = '{k1}'\n", encoding="utf-8")
+            (repo / "b.md").write_text(f"export OPENROUTER_API_KEY={k2}\n", encoding="utf-8")
+            (repo / "c.md").write_text("disk-space, task-list and sk-short are not keys\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+            errors = commit.api_keys_staged(repo)
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(errors[0].startswith("./a.py:1:") and errors[1].startswith("./b.md:1:"), errors)
+        self.assertFalse(any(k1 in e or k2 in e for e in errors), "the key must not be repeated")
+
     def test_native_plugin_binary_is_rejected(self):
         self.assertTrue(self._content_errors("mods/_Example_HelloNative/native/HelloMod.dll"))
 

@@ -1,13 +1,15 @@
 """Rewrites lifted functions into clean C++ with a model over the OpenAI chat-completions protocol (DeepSeek,
 OpenRouter, a local server ...), checking every answer with the differential tester and feeding failures back.
 
-    set DEEPSEEK_API_KEY=...            (PowerShell: $env:DEEPSEEK_API_KEY = '...')
+    python tools/api_keys.py set deepseek    (once: stores the key outside the repository)
     python tools/rewrite/run_api.py --list-models
-    python tools/rewrite/run_api.py --model deepseek-chat [--packets 5] [--rounds 3] [--jobs 4]
+    python tools/rewrite/run_api.py [--model deepseek-flash] [--packets 5] [--rounds 3] [--jobs 4]
 
     --url            base URL (default https://api.deepseek.com; OpenRouter: https://openrouter.ai/api/v1)
-    --api-key-env    environment variable with the key (default DEEPSEEK_API_KEY)
-    --model          the model; --list-models shows what the endpoint offers
+    --key NAME       the stored key (tools/api_keys.py) or environment variable NAME_API_KEY to use (default:
+                     from the URL - api.deepseek.com: deepseek, openrouter.ai: openrouter)
+    --api-key-env    an environment variable with the key, instead of --key
+    --model          the model (default deepseek-flash); --list-models shows what the endpoint offers
     --packets N      stop after N packets (default: until the queue is done)
     --rounds N       fix rounds per function after a failed check (default 3)
     --jobs N         functions asked for in parallel (checks run one at a time)
@@ -35,6 +37,8 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.dirname(HERE))
+import api_keys  # noqa: E402
 import check as checker  # noqa: E402
 
 RULES = open(os.path.join(HERE, 'RULES.md'), encoding='utf-8').read()
@@ -141,17 +145,16 @@ def hint(why):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--url', default='https://api.deepseek.com')
-    ap.add_argument('--api-key-env', default='DEEPSEEK_API_KEY')
-    ap.add_argument('--model', default='deepseek-chat')
+    ap.add_argument('--key', help='stored key name (tools/api_keys.py); default: from the URL')
+    ap.add_argument('--api-key-env', help='environment variable with the key, instead of --key')
+    ap.add_argument('--model', default='deepseek-flash')
     ap.add_argument('--list-models', action='store_true')
     ap.add_argument('--packets', type=int, default=0, help='stop after this many packets (0: until DONE)')
     ap.add_argument('--rounds', type=int, default=3)
     ap.add_argument('--jobs', type=int, default=4)
     ap.add_argument('--temperature', type=float, default=0.2)
     a = ap.parse_args()
-    key = os.environ.get(a.api_key_env, '')
-    if not key:
-        sys.exit(f'no API key: set the environment variable {a.api_key_env}')
+    key = api_keys.key_for(a.url, a.key, a.api_key_env)
     if a.list_models:
         list_models(a.url, key)
         return

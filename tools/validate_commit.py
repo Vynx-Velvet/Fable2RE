@@ -208,8 +208,32 @@ def profile_paths(repo):
     return profile_path_problems(out)
 
 
+# An API key in a published file works for anyone who reads it. The usual providers' keys start with sk- (DeepSeek,
+# OpenRouter sk-or-..., OpenAI, Anthropic sk-ant-...); tools/api_keys.py keeps keys outside the repository.
+API_KEY = r"\bsk-[A-Za-z0-9_-]{20,}"
+
+
+def api_key_problems(grep_output):
+    """Errors for `git grep -n -o` lines (path:line:match) holding something shaped like an API key (not repeated)."""
+    errors = []
+    for line in grep_output.splitlines():
+        path, number, _ = line.split(":", 2)
+        errors.append(f"./{path}:{number}: something shaped like an API key (sk-...): keep keys out of the "
+                      "repository (python tools/api_keys.py set <name>)")
+    return errors
+
+
+def api_keys_staged(repo):
+    """Staged text files of this repository that hold something shaped like an API key."""
+    try:
+        out = git(repo, "grep", "--cached", "-I", "-n", "-o", "-E", API_KEY)
+    except subprocess.CalledProcessError:   # (exit status 1: nothing found)
+        return []
+    return api_key_problems(out)
+
+
 if __name__ == "__main__":
-    problems = audit(ROOT) + profile_paths(ROOT)
+    problems = audit(ROOT) + profile_paths(ROOT) + api_keys_staged(ROOT)
     for problem in problems:
         print(f"FAIL: {problem}")
     print(f"Staged packaging audit: {len(problems)} blocker(s).")

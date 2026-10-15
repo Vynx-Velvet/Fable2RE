@@ -2,7 +2,8 @@
 
     python tools/naming/run_local.py --model <name> [--url http://localhost:11434/v1] [--max 50]
     python tools/naming/run_local.py --model <provider/model> --url https://openrouter.ai/api/v1 --allow-remote
-        (hosted: needs --allow-remote and the key in OPENROUTER_API_KEY; one request per batch, no agent overhead)
+        (hosted: needs --allow-remote and a key: python tools/api_keys.py set openrouter, once; the key's name
+        comes from the URL - openrouter.ai, api.deepseek.com - or --key NAME; one request per batch)
 
 Works with any server that speaks the OpenAI chat-completions protocol on this machine (Ollama, LM Studio,
 llama.cpp server, vLLM ...). Reads build/naming/batches/batch_NNNN.md, writes build/naming/answers/
@@ -23,6 +24,8 @@ import urllib.error
 import urllib.request
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+import api_keys  # noqa: E402
 _CONF = ('high', 'medium', 'low')
 
 
@@ -72,8 +75,8 @@ def main():
     ap.add_argument('--allow-remote', action='store_true',
                     help='allow a hosted endpoint (for example https://openrouter.ai/api/v1): the batches, which '
                          'contain lifted game code, are sent to that provider')
-    ap.add_argument('--api-key-env', default='OPENROUTER_API_KEY', help='environment variable holding the API key '
-                                                                         'for a hosted endpoint')
+    ap.add_argument('--key', help='stored key name for a hosted endpoint (tools/api_keys.py); default: from the URL')
+    ap.add_argument('--api-key-env', help='environment variable holding the API key, instead of --key')
     a = ap.parse_args()
     host = re.sub(r'^https?://', '', a.url).split('/')[0].split(':')[0]
     key = 'local'
@@ -81,9 +84,7 @@ def main():
         if not a.allow_remote:
             sys.exit(f'{a.url} is not on this machine. The batches contain lifted game code; pass --allow-remote '
                      f'to send them to this provider.')
-        key = os.environ.get(a.api_key_env, '')
-        if not key:
-            sys.exit(f'set {a.api_key_env} to the API key for {host}')
+        key = api_keys.key_for(a.url, a.key, a.api_key_env)
     os.makedirs(a.answers, exist_ok=True)
     done = total = 0
     for path in sorted(glob.glob(os.path.join(a.batches, 'batch_*.md'))):

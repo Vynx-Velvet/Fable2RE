@@ -42,9 +42,10 @@ All must pass before a commit.
 | Check | What it guards |
 |---|---|
 | Commit identity, staged changes | None of the strings in `.git/info/publish-private` (one per line: your e-mail addresses, names, machine paths; case and slash direction ignored). The file lives in `.git` and is never committed. |
+| Staged changes | None of the API keys stored with `tools/api_keys.py` (reported by name, never shown). |
 | Branch | `main`, not behind `origin/main` (unpushed local commits go along) |
 | `tools/validate_metadata.py` | the dictionary and catalog formats |
-| `tools/validate_commit.py` | game material, user folders (`C:\Users\<name>`, `/home/<name>`), promoted modules without review records, the SDK submodule at its release |
+| `tools/validate_commit.py` | game material, user folders (`C:\Users\<name>`, `/home/<name>`), anything shaped like an API key (`sk-...`), promoted modules without review records, the SDK submodule at its release |
 | `git diff --check` | whitespace |
 | Unit tests | `tools/tests`, `tools/test_commit_validation.py` |
 | `tools/sdk_patch.py status` | the SDK working tree matches `patches/rexglue-sdk.patch` |

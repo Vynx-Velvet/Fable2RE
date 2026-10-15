@@ -28,6 +28,32 @@ Rules for it, which the instruction files repeat: it writes only under `build/re
 game. The checkers use their own build directory (`tools/lift/difftest/build_relaxed`), so they do not collide
 with the main session's tester.
 
+## API keys
+
+Without an agent CLI, `tools/rewrite/run_api.py` (rewrites), `tools/rewrite/review_api.py` (the review of the
+promoted modules, [promoted code](promoted-code.md#review)) and `tools/naming/run_local.py --allow-remote`
+(naming) send each packet or batch to a hosted model themselves, over the OpenAI chat-completions protocol. Store
+the provider's key once per user account; every new terminal finds it:
+
+```
+python tools/api_keys.py set deepseek               # paste the key at the prompt (it is not shown)
+python tools/api_keys.py set deepseek --clipboard   # or copy the key, then take it from the clipboard
+python tools/api_keys.py list                       # stored keys, last four characters only
+python tools/rewrite/run_api.py --list-models       # the key works: the models it may use
+python tools/rewrite/run_api.py --model <model> --jobs 4
+```
+
+- The key is kept outside the repository, so no commit can include it: on Windows in
+  `%APPDATA%\Fable2RE\api_keys.json`, encrypted for your Windows account (it cannot be read by another account
+  or on another machine); elsewhere in `~/.config/fable2re/api_keys.json`, readable by you only.
+- The tools choose the key by the URL (`api.deepseek.com`: `deepseek`, `openrouter.ai`: `openrouter`) or by
+  `--key NAME`. The stored key comes first, so an old key left in an environment variable does not shadow a
+  new one; the variable (`DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`) counts only when no key is stored.
+  `--api-key-env VAR` uses that variable first.
+- A new key replaces the old one: `set` again. `remove deepseek` deletes it.
+- Never paste a key into a chat, an issue or a file in the repository. `publish.py` refuses staged changes that
+  contain a stored key, and `validate_commit.py` anything shaped like one (`sk-...`).
+
 ## What the main session does with the results
 
 - Rewrites: `python tools/rewrite/apply.py` copies accepted functions (`OK` in `results.txt`) to

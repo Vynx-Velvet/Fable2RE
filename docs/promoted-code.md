@@ -72,6 +72,31 @@ demoted functions return to the lifter, and `Fable2Recomp/src/game/promoted/REVI
 function reviewed OK with reviewer and date. Then `promote.py check` over all modules, a build and the game
 checks. A module is published when every function in it is recorded OK.
 
+**Reviewing with a model, in tiers** (`tools/rewrite/review_api.py`, since 2026-10-13). A cheap model does the
+bulk; a second reviewer looks only at what it lists:
+
+```
+python tools/api_keys.py set deepseek                 # once (docs/parallel-work.md#api-keys)
+python tools/rewrite/review_api.py prepare            # work list from the modules as they are now
+python tools/rewrite/review_api.py run --jobs 4       # DeepSeek deepseek-flash by default; restartable
+python tools/rewrite/review_api.py status
+python tools/rewrite/review_api.py collect            # verdicts/, fixes/, escalate.tsv
+```
+
+- `prepare` takes over an earlier review in the form above (default `build/rewrite/review_2026-10-10`, with
+  `verified.txt` naming the verdicts a second reviewer confirmed) for functions whose module text is unchanged:
+  confirmed verdicts stand and their fixes are only checked; single verdicts are verified by the model, which
+  sees the earlier verdict, note and fix; the rest get a full review.
+- `run` sends each chunk (up to five functions of one module) with the checklist, the static flags, the result of
+  the strict check, the module text and the lifter's exact output. Every fix is checked as `record` checks it
+  (`check.py --outputs`, six profiles); a failing fix, an OK for a function that fails the check, or an answer
+  in the wrong form goes back to the model with the checker's line and a hint (three rounds by default).
+- `collect` writes `verdicts/<Module>.tsv` and lists in `escalate.tsv` what the second reviewer must look at:
+  functions the model could not settle, its demotions, its disagreements with a single earlier verdict, and one
+  in ten of the functions it decided alone. It also leaves the fixes' check results where `record` reuses them.
+- Then the second review of `escalate.tsv` (corrections go into `verdicts/` and `fixes/`), and
+  `promote.py record --dir build/rewrite/review_api --reviewer <who>`.
+
 ## Names
 
 Modules are written with the names applied to the lifted code (`promote.py build` refuses to run while the

@@ -19,7 +19,8 @@ Options: --note TEXT adds a paragraph to the commit message, --trailer LINE a tr
 
 Every check must pass before a commit:
   * the commit identity and the staged changes contain none of the strings in .git/info/publish-private (one per
-    line: your e-mail addresses, names, machine paths; the file lives in .git and is never committed)
+    line: your e-mail addresses, names, machine paths; the file lives in .git and is never committed), and the
+    staged changes none of the API keys stored with tools/api_keys.py
   * main is the branch, and it is not behind origin/main
   * tools/validate_metadata.py, tools/validate_commit.py (game material, user folders, promoted modules without
     review records), git diff --check, the unit tests (tools/tests, tools/test_commit_validation.py),
@@ -262,6 +263,11 @@ def private_hits(strings, text):
     return [s for s in strings if _fold(s) in t]
 
 
+def key_hits(keys, text):
+    """The names of the stored API keys [(name, key)] that occur in the text (never the keys themselves)."""
+    return [name for name, key in keys if key in text]
+
+
 # ---- checks ------------------------------------------------------------------------------------------------------
 
 class Checks:
@@ -364,6 +370,13 @@ def run_checks(publish, checks, offline, private, jobs):
     else:
         checks.add('WARN', 'private strings', f'{private_file()} is missing: list your e-mail addresses, names and '
                                               'machine paths there, one per line')
+    import api_keys
+    keys = api_keys.stored_values()
+    hits = key_hits(keys, added)
+    if keys:
+        checks.add('FAIL' if hits else 'OK', 'stored API keys (tools/api_keys.py)',
+                   f'the {", ".join(hits)} key is in the staged changes' if hits
+                   else f'none of {len(keys)} in the staged changes')
 
 
 # ---- publishing --------------------------------------------------------------------------------------------------
