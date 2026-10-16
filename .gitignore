@@ -102,3 +102,6 @@ Thumbs.db
 /tools/vcpkg/
 # maintainers' local helper, not published
 /tools/rewrite/keepalive.py
+
+# promoted modules rendered from Fable2Recomp/promoted/ with the game's text (tools/rewrite/promoted_text.py)
+Fable2Recomp/src/game/promoted/

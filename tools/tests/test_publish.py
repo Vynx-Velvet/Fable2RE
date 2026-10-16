@@ -62,24 +62,24 @@ class PublishTests(unittest.TestCase):
                                                    '82100020\tThing_New\tlow\tnew.\n')
         self.write('docs/note.md', '# Note\n')
         self.write('tools/x.py', 'print(2)\n')
-        self.write('Fable2Recomp/src/game/promoted/Thing.cpp', MODULE)
+        self.write('Fable2Recomp/promoted/Thing.cpp', MODULE)
         publish_, held, other = publish.select(publish.changed_paths())
         self.assertEqual(publish_, ['docs/note.md', 'research/names/functions.tsv'])
-        self.assertEqual(list(held), ['Fable2Recomp/src/game/promoted/Thing.cpp'])
-        self.assertIn('no OK review record', held['Fable2Recomp/src/game/promoted/Thing.cpp'][0])
+        self.assertEqual(list(held), ['Fable2Recomp/promoted/Thing.cpp'])
+        self.assertIn('no OK review record', held['Fable2Recomp/promoted/Thing.cpp'][0])
         self.assertEqual(other, ['tools/x.py'])
         parts, lines = publish.summarize(publish_)
         self.assertEqual(parts[0], 'names +1')
         self.assertIn('functions +1, 1 renamed', lines[0])
 
     def test_reviewed_module_is_published(self):
-        self.write('Fable2Recomp/src/game/promoted/Thing.cpp', MODULE)
-        self.write('Fable2Recomp/src/game/promoted/REVIEW.tsv', 'module\tfunction\tverdict\treviewer\tdate\tnote\n'
+        self.write('Fable2Recomp/promoted/Thing.cpp', MODULE)
+        self.write('Fable2Recomp/promoted/REVIEW.tsv', 'module\tfunction\tverdict\treviewer\tdate\tnote\n'
                                                                  'Thing\tsub_82100000\tOK\ttester\t2026-10-12\t\n')
         publish_, held, _ = publish.select(publish.changed_paths())
         self.assertEqual(held, {})
-        self.assertEqual(publish_, ['Fable2Recomp/src/game/promoted/REVIEW.tsv',
-                                    'Fable2Recomp/src/game/promoted/Thing.cpp'])
+        self.assertEqual(publish_, ['Fable2Recomp/promoted/REVIEW.tsv',
+                                    'Fable2Recomp/promoted/Thing.cpp'])
         parts, lines = publish.summarize(publish_)
         self.assertEqual(parts, ['1 module'])
         self.assertIn('1 new, 1 functions', lines[0])

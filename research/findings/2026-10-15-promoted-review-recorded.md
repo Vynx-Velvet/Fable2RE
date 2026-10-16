@@ -73,16 +73,25 @@ too).
   nothing was dropped, the build (1,439 steps: the previous `Fable2.exe` dated from 2026-10-07) succeeded.
 - `tools/autotest.py --suite`: menu OK, load OK, play OK, no teardown crash, no critical log lines.
 
-## Held back: names made from game text
+## Names made from game text: published as references
 
-Publishing is held back anyway. The lifter names a string constant after its text (`str_<Text>`) and a global
-after the text it is built from (`g_<Text>`, local table `research/decomp/global_names.tsv`), and the modules
-keep those names: 294 different `str_` names and 14 such `g_` names in 47 of the 76 modules (tuning keys, text
-identifiers, class names, a development path). Game text stays out of the repository (2026-10-12, the same
-reasoning that took `globals.tsv` out), so `tools/validate_commit.py` now refuses these names in a promoted
-module (address form `str_820E0F10` / `g_83496920` is fine), and `tools/publish.py` holds those 47 modules
-back. The review notes in `REVIEW.tsv` have the same problem in a few rows (three `str_` names, one property
-name read from the image).
+The lifter names a string constant after its text (`str_<Text>`), a local after the constant it holds, and a
+global after the text it is built from (`g_<Text>`, local table `research/decomp/global_names.tsv`), and the
+modules keep those names: 294 different `str_` names and 14 such `g_` names in 47 of the 76 modules (tuning keys,
+text identifiers, class names, a development path), plus 32 locals named after constants, a few names models built
+around the text, and comments and review notes that mention it. Game text stays out of the repository
+(2026-10-12, the same reasoning that took `globals.tsv` out).
 
-Next: a published form of the modules with address names for these constants (a local overlay can keep the
-text names for reading), and review notes checked against the local text tables before they are published.
+`tools/rewrite/promoted_text.py publish` writes the modules to `Fable2Recomp/promoted/` with every such span
+replaced by a reference to the string's address in the image (`TXT_<address>_<kind>_`: the constant name's text
+part, its untruncated form, the local's name, the text itself, or the global's name). The reference is valid
+inside a name, so the published form compiles. Setup step `promoted` renders them back with the user's own image
+and global names, before the lift; the image is checked against the reference hash, so the text, and with it each
+module, is the same byte for byte: `manifest.tsv` records the SHA-256 of every local file and `render` checks it.
+
+First run: 76 modules and `REVIEW.tsv`, 1,060 references, every file rendering back to exactly the local text.
+Five constants a model had renamed (one of them misleadingly: the name described another value than the string
+it holds) cannot be rendered from the image; they got the lifter's names back (in `CECSpellManager`,
+`CECStats`, `CGameplanLoader`; a constant's name does not change what the code does).
+`tools/validate_commit.py` refuses names made from game text in a published module, and the rendered
+`src/game/promoted/` (ignored by git) if it is staged anyway.

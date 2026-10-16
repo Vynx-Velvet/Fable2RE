@@ -2,9 +2,11 @@
 
 Progress is what the project gains between sessions and may be published: the research data (research/: the
 naming dictionary, the catalog, findings, the shipped analysis, class model and verification manifest), the
-documentation (docs/), and promoted modules whose functions are all reviewed OK (Fable2Recomp/src/game/promoted/
-with REVIEW.tsv). Changes anywhere else (tools, runtime code, the SDK patch) are listed and left out: commit those
-yourself, with a message that explains them.
+documentation (docs/), and promoted modules whose functions are all reviewed OK (Fable2Recomp/promoted/ with
+REVIEW.tsv: the local modules in Fable2Recomp/src/game/promoted/ without the game's text, written first by
+tools/rewrite/promoted_text.py publish; a setup renders them back from the user's copy). Changes anywhere else
+(tools, runtime code, the SDK patch) are listed and left out: commit those yourself, with a message that explains
+them.
 
     python tools/publish.py                  what would be published, and every check (changes nothing)
     python tools/publish.py --refresh        first export the verification manifest and the class model again
@@ -45,7 +47,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PROGRESS = ('research/', 'docs/')
-PROMOTED = 'Fable2Recomp/src/game/promoted/'
+PROMOTED = 'Fable2Recomp/promoted/'   # the published form of the local modules (tools/rewrite/promoted_text.py)
 REVIEW = PROMOTED + 'REVIEW.tsv'
 MANIFEST = 'research/lift/verified.json.gz'
 CLASS_MODEL = 'research/lift/class_model.json.gz'
@@ -329,6 +331,13 @@ def run_checks(publish, checks, offline, private, jobs):
     checks.add('OK' if rc == 0 else 'FAIL', 'unit tests (test_commit_validation.py)', tail(out, 1 if rc == 0 else 10))
     rc, out = tool([py, 'tools/sdk_patch.py', 'status'])
     checks.add('OK' if rc == 0 else 'FAIL', 'sdk_patch.py status', tail(out, 1 if rc == 0 else 6))
+    if (ROOT / PROMOTED / 'manifest.tsv').is_file():
+        if (ROOT / 'research/decomp/default_image.bin').is_file():
+            rc, out = tool([py, 'tools/rewrite/promoted_text.py', 'check'])
+            checks.add('OK' if rc == 0 else 'FAIL', 'promoted modules: no game text, render back exactly '
+                       '(promoted_text.py check)', tail(out, 1 if rc == 0 else 8))
+        else:
+            checks.add('SKIP', 'promoted modules: promoted_text.py check', 'no decrypted image on this machine')
     xex = [p for p in (ROOT / 'Fable2Recomp/assets/game/default.xex', ROOT / 'iso/extracted/default.xex') if p.is_file()]
     if xex:
         rc, out = tool([py, 'tools/lift/bundle.py', 'check'])
@@ -494,6 +503,11 @@ def main():
         refresh(checks, a.jobs)
         if checks.failed():
             sys.exit('publish: the refresh failed (see above)')
+    if (ROOT / 'Fable2Recomp/src/game/promoted').is_dir():
+        rc, out = tool([sys.executable, 'tools/rewrite/promoted_text.py', 'publish'])
+        print('promoted modules without the game\'s text (promoted_text.py publish): ' + tail(out, 8))
+        if rc:
+            sys.exit('publish: fix the local modules first (see above)')
     publish, held, other = select(changed_paths())
     print(f'to publish ({len(publish)}):')
     for p in publish:

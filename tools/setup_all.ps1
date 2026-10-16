@@ -18,6 +18,9 @@
 #   decls      native_gen.py -> lifted/native_decls.h, lifted/native_bridges.N.cpp
 #   globals    tools/naming/global_strings.py -> research/decomp/global_names.tsv: the global string objects named
 #              after their text (the game's own text, so written here and never shipped)
+#   promoted   tools/rewrite/promoted_text.py render: the reviewed readable modules from Fable2Recomp/promoted/
+#              (published without the game's text) -> Fable2Recomp/src/game/promoted/ with the text from this copy,
+#              every file checked against the SHA-256 it was published with
 #   lift       apply_names.py --init (records the names the lift reads), lift.py --all, then only tested functions
 #              stay lifted (see -Tested)
 #   config     Fable2.toml from Fable2Recomp/config/Fable2.default.toml and assets/game beside the exe (never overwrites)
@@ -90,7 +93,9 @@ $Status = Join-Path $Difftest 'results/status.json'
 $Names = Join-Path $Root 'research/names'
 $CatalogFunctions = Join-Path $Root 'research/catalog/functions.tsv'
 $FuncDb = Join-Path $Root 'research/symbols/func_db.json'
-$Promoted = Join-Path $Proj 'src/game/promoted'
+$Promoted = Join-Path $Proj 'src/game/promoted'                      # rendered here (local: carries the game's text)
+$PublishedPromoted = Join-Path $Proj 'promoted'                      # as the repository holds them
+$PromotedText = Join-Path $PSScriptRoot 'rewrite/promoted_text.py'
 $Rewritten = Join-Path $Proj 'rewritten'
 $Sdk = Join-Path $Root 'rexglue-sdk'
 $Rexglue = Join-Path $Sdk 'out/install/win-amd64/bin/rexglue.exe'
@@ -104,8 +109,8 @@ $FuncStringsTool = Join-Path $PSScriptRoot 'catalog/function_strings.py'
 $AutoTest = Join-Path $PSScriptRoot 'autotest.py'
 New-Item -ItemType Directory -Force $StampDir | Out-Null
 
-$Steps = @('verify', 'extract', 'stage', 'toolchain', 'codegen', 'image', 'classes', 'decls', 'globals', 'lift', 'config', 'build',
-           'check')
+$Steps = @('verify', 'extract', 'stage', 'toolchain', 'codegen', 'image', 'classes', 'decls', 'globals', 'promoted', 'lift',
+           'config', 'build', 'check')
 
 # Supported executables by whole-file SHA-256: used only when tools/xex_info.py (which also recognises copies with
 # trailing data) is not there. The shipped lifter analysis and verification manifest name the one they belong to.
@@ -754,6 +759,25 @@ Step 'globals' {
     Assert-Analysis
     Tool 'python' @($GlobalStringsTool, '--out', $GlobalNames, '--jobs', "$Jobs")
 } @('output')
+
+# The reviewed readable modules (docs/promoted-code.md). The repository holds them without the game's text
+# (Fable2Recomp/promoted/: references to the strings' addresses in the image); this writes them to
+# src/game/promoted/ with the text from this copy and checks every file against the SHA-256 recorded when it was
+# published. The lift leaves their functions out, so this comes before it.
+Step 'promoted' {
+    $o = [ordered]@{}
+    $o['published'] = Tree-Id $PublishedPromoted
+    $o['image'] = File-Id $Image
+    $o['global names'] = File-Id $GlobalNames
+    $o['promoted_text.py'] = File-Id $PromotedText
+    $o['readable.py'] = Sources-Id @('readable')
+    $o['rendered'] = Tree-Id $Promoted '\.(cpp|tsv)$'
+    $o
+} {
+    Need $Image 'the decrypted image' 'image'
+    Need $GlobalNames 'the global names' 'globals'
+    Tool 'python' @($PromotedText, 'render')
+} @('rendered')
 
 function Lift-Inputs {
     $o = [ordered]@{}

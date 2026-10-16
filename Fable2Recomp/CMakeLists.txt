@@ -61,7 +61,8 @@ set(FABLE2_SOURCES
 
 # Hand-written C++ replacing recompiled game functions (one folder per subsystem, see
 # docs/conversion-guide.md); new files are picked up automatically.
-# (also picks up local, unpublished modules such as src/game/promoted/ when they are present)
+# (also picks up the promoted modules in src/game/promoted/: rendered there from promoted/ with the text of the
+# user's copy, tools/rewrite/promoted_text.py)
 file(GLOB_RECURSE FABLE2_GAME_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/game/*.cpp)
 list(APPEND FABLE2_SOURCES ${FABLE2_GAME_SOURCES})
 

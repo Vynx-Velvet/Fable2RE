@@ -60,15 +60,17 @@ def git(repo, *args):
     return subprocess.check_output(["git", "-C", str(repo), *args], text=True, encoding="utf-8")
 
 
-PROMOTED = "src/game/promoted/"
+PROMOTED = "promoted/"   # the published form (tools/rewrite/promoted_text.py); src/game/promoted/ is rendered locally
+RENDERED = "src/game/promoted/"
 PROMOTED_REVIEW = PROMOTED + "REVIEW.tsv"
 PROMOTED_HEADERS = ("Promoted from model rewrites", "Promoted from verified model rewrites")
 ENTRY = re.compile(r"^PROMOTED_ENTRY\(\d+, (sub_[0-9A-F]{8}), 0x[0-9A-F]{8}\)", re.M)
 DECOMPILER_NAMES = re.compile(r"\b(?:uVar\d+|iVar\d+|puVar\d+|undefined\d?|param_\d+|in_r\d+|extraout_\w+)\b")
 # Names the lifter makes from the game's own text (tools/lift/readable.py): a string constant after its text
-# (str_PieceName; the address form str_820E0F10 is fine) and a global after the text it is built from (the
-# local table research/decomp/global_names.tsv). Game text stays out of the repository (2026-10-12).
-TEXT_CONSTANT_NAME = re.compile(r"\bstr_[A-Za-z]\w*")
+# (str_PieceName; the address form str_820E0F10 and the published reference str_TXT_820E0F10_B_ are fine) and a
+# global after the text it is built from (the local table research/decomp/global_names.tsv). Game text stays out
+# of the repository (2026-10-12): tools/rewrite/promoted_text.py publishes the modules with references instead.
+TEXT_CONSTANT_NAME = re.compile(r"\bstr_(?!TXT_[0-9A-F]{8}_[BWLRG]_)[A-Za-z]\w*")
 GLOBAL_NAME = re.compile(r"\bg_\w+")
 _TEXT_GLOBALS = None
 
@@ -104,7 +106,7 @@ def promoted_problems(path, text, reviewed):
     text_names = set(TEXT_CONSTANT_NAME.findall(text)) | (set(GLOBAL_NAME.findall(text)) & text_global_names())
     if text_names:
         errors.append(f"{path}: {len(text_names)} name(s) made from game text (str_<text>, or g_<text> from "
-                      "research/decomp/global_names.tsv); publish their address form")
+                      "research/decomp/global_names.tsv); publish with tools/rewrite/promoted_text.py")
     for name in ENTRY.findall(text):
         if reviewed.get(name) != "OK":
             errors.append(f"{path}: {name} has no OK review record in {PROMOTED_REVIEW}")
@@ -192,7 +194,10 @@ def audit(repo, label="."):
         if label == "." and path == "research/names/globals.tsv":
             derived = ("names of global string objects made from the game's text: tools/naming/global_strings.py "
                        "writes them locally (research/decomp/global_names.tsv)")
-        if forbidden:
+        if rpath is not None and rpath.startswith(RENDERED):
+            errors.append(f"{location}: rendered with the game's text from the published modules (local); publish "
+                          "Fable2Recomp/promoted/ instead (tools/rewrite/promoted_text.py publish)")
+        elif forbidden:
             errors.append(f"{location}: local game/build material must not be staged")
         elif derived:
             errors.append(f"{location}: {derived} - game-derived, keep it local")

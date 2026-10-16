@@ -5,15 +5,44 @@ They are replacement code in the sense of [CONTRIBUTING](../CONTRIBUTING.md): au
 checked against the original and reviewed. Machine output that has not gone through these steps (the
 lifter's files, `Fable2Recomp/rewritten/`, answers of the rewrite runners) stays local.
 
-**Publication state (2026-10-15): reviewed and checked, not published yet.** On the development machine the
-1,210 promoted functions (76 modules) are reviewed: 1,206 recorded OK in `REVIEW.tsv` (935 of them with a fix),
-4 demoted; the re-check passes all 1,206, the build succeeds and the game checks (menu, load, play) pass
-([finding](../research/findings/2026-10-15-promoted-review-recorded.md)). They are held back because 47
-modules keep names the lifter made from game text (`str_<Text>`, `g_<Text>`); a published form with address
-names comes first. Without the modules the lifter's own output covers those functions (or, where it was not
-tested, the recompiled original), so a clone builds and runs the same game. Modules are added once every
-function in them is recorded OK, re-checked, built and game-checked; `tools/validate_commit.py` refuses a
-module without its review records or with names made from game text.
+The repository holds them in `Fable2Recomp/promoted/`, without the game's text, and setup writes them to
+`src/game/promoted/` from your own copy ([below](#without-the-games-text)), the same text byte for byte as on
+the machine that published them.
+
+**Publication state (2026-10-15): reviewed, checked and published without the game's text.** The 1,210
+promoted functions (76 modules) are reviewed: 1,206 recorded OK in `REVIEW.tsv` (935 of them with a fix), 4
+demoted; the re-check passes all 1,206, the build succeeds and the game checks (menu, load, play) pass
+([finding](../research/findings/2026-10-15-promoted-review-recorded.md)). A module is published once every
+function in it is recorded OK, re-checked, built and game-checked; `tools/validate_commit.py` refuses a module
+without its review records or with names made from game text.
+
+## Without the game's text
+
+The lifter names some things after the game's own text (`tools/lift/readable.py`): a string constant after its
+text (`str_PieceName`), a local after the constant it holds (`pieceName`), a global after the text it is built
+from (`research/decomp/global_names.tsv`, written by setup). The modules keep those names, and comments and
+review notes mention them. Game text stays out of the repository, so `tools/rewrite/promoted_text.py publish`
+writes the published form with each such span replaced by a reference to the string's address in the image:
+
+| Reference | Stands for |
+|---|---|
+| `TXT_<address>_B_` | the text part of the constant's name as the lifter writes it (`str_TXT_820E0F10_B_` is `str_` + it) |
+| `TXT_<address>_W_` | the same without the lifter's 48-character limit |
+| `TXT_<address>_L_` | a local named after the constant (lower camel case) |
+| `TXT_<address>_R_` | the text itself |
+| `TXT_<address>_G_` | the global's name |
+
+A reference is valid inside a name, so the published form still compiles. `publish` refuses a module whose
+form does not render back to exactly the same text, or that still shows text of its constants (a name a model
+gave a constant by hand cannot be rendered: use the lifter's name). It records the SHA-256 of every local file in
+`Fable2Recomp/promoted/manifest.tsv`.
+
+Setup step `promoted` (`promoted_text.py render`, after `image` and `globals`, before `lift`, which leaves the
+modules' functions out) writes the modules back to `src/game/promoted/` with the text from your copy and checks
+each against its recorded SHA-256. A module you changed after the last render is kept (`render --force`
+replaces it). `promoted_text.py check` checks the published form; `tools/publish.py` runs `publish` before it
+stages anything and `check` among its checks. `src/game/promoted/` is ignored by git, and
+`tools/validate_commit.py` refuses it if it is staged anyway.
 
 ## How a function gets here
 
@@ -67,13 +96,13 @@ have reached). The reviewer works through this checklist:
 Verdict per function: OK, FIX (with the exact change) or DEMOTE (with the reason).
 <!-- /checklist -->
 
-Verdicts go to `<dir>/verdicts/<Module>.tsv` (`sub_X<TAB>OK|FIX|DEMOTE<TAB>note`, one line for every
-function of every module) and fixes to `<dir>/fixes/sub_X.cpp` (the whole function, starting from the module
-text, ending in its unchanged `PROMOTED_ENTRY` line). `python tools/rewrite/promote.py record --dir <dir>
---reviewer <who>` applies them: fixes are checked again (a fix that fails is reported and left out),
-demoted functions return to the lifter, and `Fable2Recomp/src/game/promoted/REVIEW.tsv` records every
-function reviewed OK with reviewer and date. Then `promote.py check` over all modules, a build and the game
-checks. A module is published when every function in it is recorded OK.
+Verdicts go to `<dir>/verdicts/<Module>.tsv` (`sub_X<TAB>OK|FIX|DEMOTE<TAB>note`, one line for every function of
+every module) and fixes to `<dir>/fixes/sub_X.cpp` (the whole function, starting from the module text, ending in
+its unchanged `PROMOTED_ENTRY` line). `python tools/rewrite/promote.py record --dir <dir> --reviewer <who>` applies
+them: fixes are checked again (a fix that fails is reported and left out), demoted functions return to the lifter,
+and `Fable2Recomp/src/game/promoted/REVIEW.tsv` (published with the modules) records every function reviewed OK
+with reviewer and date. Then `promote.py check` over all modules, a build and the game checks. A module is
+published when every function in it is recorded OK.
 
 **Reviewing with a model, in tiers** (`tools/rewrite/review_api.py`, since 2026-10-13). A cheap model does the
 bulk; a second reviewer looks only at what it lists:

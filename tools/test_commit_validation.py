@@ -158,8 +158,8 @@ class CommitValidationTests(unittest.TestCase):
               "PROMOTED_ENTRY(3, sub_82000010, 0x82000010) { ctx.r3.u64 = Example(ctx, base); }\n")
 
     def _promoted_index(self, module, review):
-        files = {"Fable2Recomp/src/game/promoted/CExample.cpp": module,
-                 "Fable2Recomp/src/game/promoted/REVIEW.tsv": review}
+        files = {"Fable2Recomp/promoted/CExample.cpp": module,
+                 "Fable2Recomp/promoted/REVIEW.tsv": review}
 
         def fake_git(repo, *args):
             if args[0] == "ls-files":
@@ -190,10 +190,24 @@ class CommitValidationTests(unittest.TestCase):
         reviewed = {"sub_82000010": "OK"}
         text_names = self.MODULE.replace("return 0;", "return str_ExampleText + g_Example_Text;")
         address_names = self.MODULE.replace("return 0;", "return str_820E0F10 + g_83496920 + g_StringCounter;")
+        references = self.MODULE.replace("return 0;", "return str_TXT_820E0F10_B_2 + TXT_83000010_G_;")
         with patch.object(commit, "_TEXT_GLOBALS", {"g_Example_Text"}):
             errors = commit.promoted_problems("m.cpp", text_names, reviewed)
             self.assertTrue(any("2 name(s) made from game text" in e for e in errors), errors)
             self.assertEqual(commit.promoted_problems("m.cpp", address_names, reviewed), [])
+            self.assertEqual(commit.promoted_problems("m.cpp", references, reviewed), [])
+
+    def test_rendered_promoted_modules_are_rejected(self):
+        review = "module\tfunction\tverdict\treviewer\tdate\nCExample\tsub_82000010\tOK\tx\t2026-10-08\n"
+        index = self._promoted_index(self.MODULE, review)
+
+        def rendered_too(repo, *args):
+            if args[0] == "ls-files":
+                return index(repo, *args) + "100644 deadbeef 0\tFable2Recomp/src/game/promoted/CExample.cpp\0"
+            return index(repo, *args)
+        with patch.object(commit, "git", side_effect=rendered_too):
+            errors = commit.audit(Path("unused"))
+            self.assertTrue(any("src/game/promoted/CExample.cpp" in e and "rendered" in e for e in errors), errors)
 
     def test_malformed_tsv_does_not_reach_field_validators(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -6,8 +6,10 @@ initial commit went through. Progress means what may be published and grows betw
 - research data under `research/`: the naming dictionary, the catalog, findings, and the shipped analysis, class
   model and verification manifest (`research/lift/`)
 - documentation under `docs/`
-- promoted modules (`Fable2Recomp/src/game/promoted/`) whose every function has an OK record in `REVIEW.tsv`
-  ([promoted code](promoted-code.md)). Modules not fully reviewed are listed as held back.
+- promoted modules whose every function has an OK record in `REVIEW.tsv` ([promoted code](promoted-code.md)), in
+  their published form without the game's text (`Fable2Recomp/promoted/`, written first from the local modules in
+  `Fable2Recomp/src/game/promoted/` by `tools/rewrite/promoted_text.py publish`). Modules that break the module
+  rules are listed as held back.
 
 Changes anywhere else (tools, runtime code, the SDK patch) are listed and left out: commit those yourself, with a
 message that explains them. Game-derived files never qualify ([contributing](../CONTRIBUTING.md)).

@@ -42,8 +42,9 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 - *Promoted readable code.* The review of the 1,210 promoted functions is recorded (2026-10-15: 1,206 OK, 935
   of them fixed, 4 demoted); the stricter check (native call, registers callers read, passed-through arguments)
   passes all 1,206, and the build with them passes the menu, load and play checks
-  ([record](../research/findings/2026-10-15-promoted-review-recorded.md)). The modules are still **not part of
-  the published tree**: 47 of them keep names the lifter made from game text, which stays out of the repository.
+  ([record](../research/findings/2026-10-15-promoted-review-recorded.md)). The repository holds the modules
+  without the game's text (`Fable2Recomp/promoted/`); setup step `promoted` renders them from your copy, checked
+  byte for byte against the published SHA-256.
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 
@@ -52,7 +53,7 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 | Area | Evidence and current state | Remaining validation / work |
 |---|---|---|
 | Gameplay baseline | September/October findings record title-screen and in-world play | Repeatable regression coverage, full playthrough and save/load validation |
-| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,206 reviewed model rewrites in 76 class modules locally, re-checked, built and game-checked ([process](promoted-code.md)) | Address-form names for constants named after game text, then publish module by module; whole-game reconstruction |
+| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,206 reviewed model rewrites in 76 class modules, re-checked, built, game-checked and published without the game's text ([process](promoted-code.md)) | More modules (review, record, check, publish); whole-game reconstruction |
 | Automatic lifting | Lifter and fallback controls exist; [guide](lifted-code.md) records broad function coverage | Coverage counts are generation-specific and do not measure semantic readability or full-game correctness |
 | Rendering | Native D3D12 renderer, frontend, and GPU synchronization exist | Remaining packet/memory/shader dependencies; shader failures recorded on October 2 |
 | Debug tools | F2 menu, Lua bridge, original-menu gate, and replacement displays implemented; about 30 commands and WinterShrine loading were reported working | Verify each command; some retail bindings are absent or empty |
