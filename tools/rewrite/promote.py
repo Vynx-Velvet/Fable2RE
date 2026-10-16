@@ -724,7 +724,7 @@ def cmd_record(a):
             continue
         if n in verdicts and verdicts[n][0] in ('OK', 'FIX'):
             note = ('fixed: ' + verdicts[n][1]) if verdicts[n][0] == 'FIX' else verdicts[n][1].strip('- ')
-            rows.append([module, n, 'OK', a.reviewer, today, note.replace('\t', ' ')[:300]])
+            rows.append([module, n, 'OK', a.reviewer, today, note.replace('\t', ' ')[:300].rstrip()])
         elif n in old and old[n][2] == 'OK':
             rows.append([module] + old[n][1:])
     with open(REVIEW_RECORD, 'w', encoding='utf-8', newline='\n') as f:

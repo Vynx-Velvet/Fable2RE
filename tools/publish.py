@@ -499,7 +499,8 @@ def main():
     for p in publish:
         print(f'  {p}')
     if held:
-        print(f'held back ({len(held)} promoted module(s) not fully reviewed):')
+        print(f'held back ({len(held)} promoted module(s) that break the module rules, '
+              'tools/validate_commit.py):')
         for p, problems in sorted(held.items()):
             print(f'  {p}: {problems[0]}' + (f' (+{len(problems) - 1} more)' if len(problems) > 1 else ''))
     if other:

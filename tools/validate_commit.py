@@ -65,11 +65,31 @@ PROMOTED_REVIEW = PROMOTED + "REVIEW.tsv"
 PROMOTED_HEADERS = ("Promoted from model rewrites", "Promoted from verified model rewrites")
 ENTRY = re.compile(r"^PROMOTED_ENTRY\(\d+, (sub_[0-9A-F]{8}), 0x[0-9A-F]{8}\)", re.M)
 DECOMPILER_NAMES = re.compile(r"\b(?:uVar\d+|iVar\d+|puVar\d+|undefined\d?|param_\d+|in_r\d+|extraout_\w+)\b")
+# Names the lifter makes from the game's own text (tools/lift/readable.py): a string constant after its text
+# (str_PieceName; the address form str_820E0F10 is fine) and a global after the text it is built from (the
+# local table research/decomp/global_names.tsv). Game text stays out of the repository (2026-10-12).
+TEXT_CONSTANT_NAME = re.compile(r"\bstr_[A-Za-z]\w*")
+GLOBAL_NAME = re.compile(r"\bg_\w+")
+_TEXT_GLOBALS = None
+
+
+def text_global_names():
+    """Names in the local table of globals named after game text (empty without it)."""
+    global _TEXT_GLOBALS
+    if _TEXT_GLOBALS is None:
+        table = ROOT / "research" / "decomp" / "global_names.tsv"
+        _TEXT_GLOBALS = set()
+        if table.is_file():
+            for line in table.read_text(encoding="utf-8").splitlines()[1:]:
+                cells = line.split("\t")
+                if len(cells) > 1 and not re.fullmatch(r"g_[0-9A-F]{8}", cells[1]):
+                    _TEXT_GLOBALS.add(cells[1])
+    return _TEXT_GLOBALS
 
 
 def promoted_problems(path, text, reviewed):
-    """Content rules for a promoted module (docs/promoted-code.md): provenance header, no quoted game text,
-    no lifter markers or decompiler output, and an OK review record for every function."""
+    """Content rules for a promoted module (docs/promoted-code.md): provenance header, no quoted game text and no
+    names made from it, no lifter markers or decompiler output, and an OK review record for every function."""
     errors = []
     if not any(h in text for h in PROMOTED_HEADERS):
         errors.append(f"{path}: provenance header missing")
@@ -81,6 +101,10 @@ def promoted_problems(path, text, reviewed):
             errors.append(f"{path}:{number}: lifter marker")
     if DECOMPILER_NAMES.search(text):
         errors.append(f"{path}: decompiler-style names")
+    text_names = set(TEXT_CONSTANT_NAME.findall(text)) | (set(GLOBAL_NAME.findall(text)) & text_global_names())
+    if text_names:
+        errors.append(f"{path}: {len(text_names)} name(s) made from game text (str_<text>, or g_<text> from "
+                      "research/decomp/global_names.tsv); publish their address form")
     for name in ENTRY.findall(text):
         if reviewed.get(name) != "OK":
             errors.append(f"{path}: {name} has no OK review record in {PROMOTED_REVIEW}")

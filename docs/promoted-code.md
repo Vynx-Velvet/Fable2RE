@@ -5,12 +5,15 @@ They are replacement code in the sense of [CONTRIBUTING](../CONTRIBUTING.md): au
 checked against the original and reviewed. Machine output that has not gone through these steps (the
 lifter's files, `Fable2Recomp/rewritten/`, answers of the rewrite runners) stays local.
 
-**Publication state (2026-10-11): no module is published yet.** 1,210 functions in 76 modules exist on the
-development machine; the review is in progress and nothing is recorded in `REVIEW.tsv`, so the modules are not
-in the repository. Without them the lifter's own output covers those functions (or, where it was not tested,
-the recompiled original), so a clone builds and runs the same game. Modules are added once every function in
-them is recorded OK, re-checked, built and game-checked; `tools/validate_commit.py` refuses a module without
-its review records.
+**Publication state (2026-10-15): reviewed and checked, not published yet.** On the development machine the
+1,210 promoted functions (76 modules) are reviewed: 1,206 recorded OK in `REVIEW.tsv` (935 of them with a fix),
+4 demoted; the re-check passes all 1,206, the build succeeds and the game checks (menu, load, play) pass
+([finding](../research/findings/2026-10-15-promoted-review-recorded.md)). They are held back because 47
+modules keep names the lifter made from game text (`str_<Text>`, `g_<Text>`); a published form with address
+names comes first. Without the modules the lifter's own output covers those functions (or, where it was not
+tested, the recompiled original), so a clone builds and runs the same game. Modules are added once every
+function in them is recorded OK, re-checked, built and game-checked; `tools/validate_commit.py` refuses a
+module without its review records or with names made from game text.
 
 ## How a function gets here
 

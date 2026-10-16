@@ -186,6 +186,15 @@ class CommitValidationTests(unittest.TestCase):
             self.assertTrue(any("no OK review record" in e for e in errors))
             self.assertTrue(any("comment quotes text" in e for e in errors))
 
+    def test_promoted_module_with_names_made_from_game_text_is_rejected(self):
+        reviewed = {"sub_82000010": "OK"}
+        text_names = self.MODULE.replace("return 0;", "return str_ExampleText + g_Example_Text;")
+        address_names = self.MODULE.replace("return 0;", "return str_820E0F10 + g_83496920 + g_StringCounter;")
+        with patch.object(commit, "_TEXT_GLOBALS", {"g_Example_Text"}):
+            errors = commit.promoted_problems("m.cpp", text_names, reviewed)
+            self.assertTrue(any("2 name(s) made from game text" in e for e in errors), errors)
+            self.assertEqual(commit.promoted_problems("m.cpp", address_names, reviewed), [])
+
     def test_malformed_tsv_does_not_reach_field_validators(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

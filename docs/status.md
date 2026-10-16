@@ -39,10 +39,11 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 - *Settings.* `Fable2Recomp/config/Fable2.default.toml` (installed beside the exe when none exists) carries the
   configuration the automated checks use; the XAudio2 library range is now kept recompiled by default in code.
   Reference: [settings](settings.md).
-- *Promoted readable code.* A stricter check (native call, registers callers read, passed-through arguments)
-  passes 821 of the 1,210 promoted functions ([record](../research/findings/2026-10-10-native-call-check.md)).
-  The review is about two-thirds done and not recorded; the modules are **not part of the published tree** until
-  reviewed, recorded, built and game-checked.
+- *Promoted readable code.* The review of the 1,210 promoted functions is recorded (2026-10-15: 1,206 OK, 935
+  of them fixed, 4 demoted); the stricter check (native call, registers callers read, passed-through arguments)
+  passes all 1,206, and the build with them passes the menu, load and play checks
+  ([record](../research/findings/2026-10-15-promoted-review-recorded.md)). The modules are still **not part of
+  the published tree**: 47 of them keep names the lifter made from game text, which stays out of the repository.
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 
@@ -51,7 +52,7 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 | Area | Evidence and current state | Remaining validation / work |
 |---|---|---|
 | Gameplay baseline | September/October findings record title-screen and in-world play | Repeatable regression coverage, full playthrough and save/load validation |
-| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,210 model rewrites promoted into class modules locally, under review ([process](promoted-code.md)) | Finish and record the review, build and game-check the promoted form, publish module by module; whole-game reconstruction |
+| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,206 reviewed model rewrites in 76 class modules locally, re-checked, built and game-checked ([process](promoted-code.md)) | Address-form names for constants named after game text, then publish module by module; whole-game reconstruction |
 | Automatic lifting | Lifter and fallback controls exist; [guide](lifted-code.md) records broad function coverage | Coverage counts are generation-specific and do not measure semantic readability or full-game correctness |
 | Rendering | Native D3D12 renderer, frontend, and GPU synchronization exist | Remaining packet/memory/shader dependencies; shader failures recorded on October 2 |
 | Debug tools | F2 menu, Lua bridge, original-menu gate, and replacement displays implemented; about 30 commands and WinterShrine loading were reported working | Verify each command; some retail bindings are absent or empty |

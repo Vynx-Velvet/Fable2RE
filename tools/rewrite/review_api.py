@@ -550,7 +550,7 @@ def cmd_collect(a):
             for fn in sorted(fns, key=lambda x: int(x[4:], 16)):
                 r = res[fn]
                 if r['verdict']:
-                    note = ' '.join((r['note'] or '-').split()).replace('\t', ' ')[:300]
+                    note = ' '.join((r['note'] or '-').split())[:300].rstrip()
                     f.write(f'{fn}\t{r["verdict"]}\t{note}\n')
     esc = {fn: escalation(fn, r) for fn, r in res.items()}
     esc = {fn: why for fn, why in esc.items() if why}
