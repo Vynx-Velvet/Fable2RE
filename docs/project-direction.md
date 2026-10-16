@@ -16,11 +16,13 @@ Our current build retains several of those dependencies. ReXGlue-generated funct
 
 **Separate projects can share a technical foundation while pursuing different visions.** Fable2RE and Himdo's Fable-2-Recomp both use ReXGlue. Shared tooling and similar generated game code do not establish that either project was forked from the other.
 
-External descriptions checked on 2026-10-03. Projects evolve; this comparison describes documented approaches, not permanent limits on anyone else's work.
+**They are different kinds of project.** A static recompilation turns the executable's machine code into C++ automatically at every build and runs it on a runtime that recreates the console; its goal is a game that runs well. Fable2RE is a source reconstruction, like [OpenGOAL](https://opengoal.dev/) for Jak and Daxter: the recompiled build is its reference, and its product is the game's own code, rebuilt function by function as readable C++, on native PC systems. How far that has come is counted in [conversion progress](progress.md).
+
+External descriptions checked on 2026-10-15 (first on 2026-10-03). Projects evolve; this comparison describes documented approaches, not permanent limits on anyone else's work.
 
 | Project | Documented approach / commitment |
 |---|---|
-| [Himdo/Fable-2-Recomp](https://github.com/himdo/Fable-2-Recomp) | ReXGlue-based ahead-of-time PPC-to-C++ recompilation, with game-specific improvements, debug/Lua functionality, and renderer work |
+| [Himdo/Fable-2-Recomp](https://github.com/himdo/Fable-2-Recomp) | Recompilation with ReXGlue: guest PowerPC code "statically recompiled to C++ at build time by `rexglue codegen`", with game patches (mid-asm hooks), a launcher with an ISO extractor, debug-menu and Lua functionality, renderer work and several language editions |
 | Fable2RE | A transition from a recompiled baseline to readable whole-game C++ and native platform systems, comprehensive modding, and full Lionhead debug-tool restoration |
 
 Static recompilation executes translated CPU code compiled ahead of time. It can still use runtime services descended from an emulator. These facts can coexist: “uses ReXGlue” does not mean “runs the CPU through Xenia's JIT,” and “builds a native executable” does not mean “has reconstructed the entire game into maintainable source.”

@@ -10,6 +10,9 @@ initial commit went through. Progress means what may be published and grows betw
   their published form without the game's text (`Fable2Recomp/promoted/`, written first from the local modules in
   `Fable2Recomp/src/game/promoted/` by `tools/rewrite/promoted_text.py publish`). Modules that break the module
   rules are listed as held back.
+- the conversion progress: `tools/progress.py` runs first and brings `research/progress/history.tsv`,
+  [conversion progress](progress.md), its charts and the progress block in `README.md` up to date (a `README.md`
+  whose only change is that block is published with them)
 
 Changes anywhere else (tools, runtime code, the SDK patch) are listed and left out: commit those yourself, with a
 message that explains them. Game-derived files never qualify ([contributing](../CONTRIBUTING.md)).
@@ -51,6 +54,8 @@ All must pass before a commit.
 | `git diff --check` | whitespace |
 | Unit tests | `tools/tests`, `tools/test_commit_validation.py` |
 | `tools/sdk_patch.py status` | the SDK working tree matches `patches/rexglue-sdk.patch` |
+| `tools/progress.py --check` | the progress page, charts and README block match the files being published (the CI runs it too) |
+| `tools/rewrite/promoted_text.py check` | the published modules show no game text and render back exactly (with a decrypted image) |
 | `tools/lift/bundle.py check` | the shipped analysis fits this `default.xex` (when there is one) |
 | `classes.py --verify` | the shipped class model is the one in `tools/lift/cache/classes.json` |
 | `make_skip.py --manifest` | every function the manifest records lifts here to exactly the tested text |

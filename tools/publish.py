@@ -1,12 +1,13 @@
 """Publish progress to the hosted repository in one command (docs/publishing.md).
 
-Progress is what the project gains between sessions and may be published: the research data (research/: the
-naming dictionary, the catalog, findings, the shipped analysis, class model and verification manifest), the
-documentation (docs/), and promoted modules whose functions are all reviewed OK (Fable2Recomp/promoted/ with
-REVIEW.tsv: the local modules in Fable2Recomp/src/game/promoted/ without the game's text, written first by
-tools/rewrite/promoted_text.py publish; a setup renders them back from the user's copy). Changes anywhere else
-(tools, runtime code, the SDK patch) are listed and left out: commit those yourself, with a message that explains
-them.
+Progress is what the project gains between sessions and may be published: the research data (research/: the naming
+dictionary, the catalog, findings, the shipped analysis, class model and verification manifest), the documentation
+(docs/), and promoted modules whose functions are all reviewed OK (Fable2Recomp/promoted/ with REVIEW.tsv: the
+local modules in Fable2Recomp/src/game/promoted/ without the game's text, written first by
+tools/rewrite/promoted_text.py publish; a setup renders them back from the user's copy), and the conversion
+progress (tools/progress.py: research/progress/history.tsv, docs/progress.md, its charts and the block in
+README.md, refreshed first). Changes anywhere else (tools, runtime code, the SDK patch) are listed and left out:
+commit those yourself, with a message that explains them.
 
     python tools/publish.py                  what would be published, and every check (changes nothing)
     python tools/publish.py --refresh        first export the verification manifest and the class model again
@@ -137,9 +138,18 @@ def select(paths):
                     held[p] = problems
                     continue
             publish.append(p)
+        elif p == 'README.md' and readme_progress_only():
+            publish.append(p)
         else:
             other.append(p)
     return publish, held, other
+
+
+def readme_progress_only():
+    """True when README.md differs from HEAD only in the block tools/progress.py writes."""
+    import progress
+    strip = lambda b: progress.BLOCK.sub('', (b or b'').decode('utf-8').replace('\r\n', '\n'))
+    return strip(head_bytes('README.md')) == strip(work_bytes('README.md'))
 
 
 # ---- summary -----------------------------------------------------------------------------------------------------
@@ -331,6 +341,8 @@ def run_checks(publish, checks, offline, private, jobs):
     checks.add('OK' if rc == 0 else 'FAIL', 'unit tests (test_commit_validation.py)', tail(out, 1 if rc == 0 else 10))
     rc, out = tool([py, 'tools/sdk_patch.py', 'status'])
     checks.add('OK' if rc == 0 else 'FAIL', 'sdk_patch.py status', tail(out, 1 if rc == 0 else 6))
+    rc, out = tool([py, 'tools/progress.py', '--check'])
+    checks.add('OK' if rc == 0 else 'FAIL', 'conversion progress up to date (progress.py --check)', tail(out, 2))
     if (ROOT / PROMOTED / 'manifest.tsv').is_file():
         if (ROOT / 'research/decomp/default_image.bin').is_file():
             rc, out = tool([py, 'tools/rewrite/promoted_text.py', 'check'])
@@ -508,6 +520,10 @@ def main():
         print('promoted modules without the game\'s text (promoted_text.py publish): ' + tail(out, 8))
         if rc:
             sys.exit('publish: fix the local modules first (see above)')
+    rc, out = tool([sys.executable, 'tools/progress.py'])
+    print('conversion progress (progress.py): ' + tail(out, 4))
+    if rc:
+        sys.exit('publish: tools/progress.py failed (see above)')
     publish, held, other = select(changed_paths())
     print(f'to publish ({len(publish)}):')
     for p in publish:

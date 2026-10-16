@@ -8,6 +8,7 @@
 |---|---|
 | [Project direction](project-direction.md) | Native-port goals, OpenGOAL inspiration, FlyX experience, AI workflow, and comparison with other projects |
 | [Current status](status.md) | Implemented work, recorded validation, and known gaps |
+| [Conversion progress](progress.md) | How much of the game is human-readable C++, by kind and area, with its history (generated) |
 | [Build guide](building.md) | Owned-copy inputs, Windows toolchain, setup, build, and run |
 | [Roadmap](roadmap.md) | Milestones and completion criteria |
 | [Architecture](architecture.md) | Source layout and transition from generated code to readable C++ |

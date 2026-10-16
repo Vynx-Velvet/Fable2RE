@@ -28,3 +28,5 @@ jobs:
         run: python -m compileall -q tools
       - name: Unit tests of the setup and game-check tools
         run: python -m unittest discover -s tools/tests
+      - name: Conversion progress in the README is up to date
+        run: python tools/progress.py --check
