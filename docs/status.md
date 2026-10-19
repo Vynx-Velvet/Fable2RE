@@ -45,6 +45,18 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
   ([record](../research/findings/2026-10-15-promoted-review-recorded.md)). The repository holds the modules
   without the game's text (`Fable2Recomp/promoted/`); setup step `promoted` renders them from your copy, checked
   byte for byte against the published SHA-256.
+- *Second DeepSeek round (2026-10-17).* 491 more functions rewritten with the promotion check and promoted into
+  48 modules; 237 of them reviewed before the model account ran out (2 demoted), so 1,441 of 1,695 promoted
+  functions are recorded OK and the other 254 wait for review. All 1,695 pass the strict re-check; the build with
+  them passes the menu, load and play checks
+  ([round](../research/findings/2026-10-17-deepseek-round-491.md)).
+- *Look-alike copies (2026-10-18/19).* 37 representatives of look-alike groups (rewritten in Freebuff agent
+  sessions, reviewed by Claude; 17 more sent back) were carried over to 5,900 other members of their groups by
+  `tools/rewrite/copy_lookalikes.py`. All 5,937 pass the strict check and are promoted; a sampled review of the
+  copies (three per group, 108) found every one right, so 7,378 of 7,632 promoted functions are recorded OK. The
+  build with them passes the menu, load and play checks (one load run crashed while closing, as one run did on
+  2026-10-15 before them; two more load runs closed cleanly)
+  ([finding](../research/findings/2026-10-18-lookalike-functions.md)).
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 
@@ -53,7 +65,7 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 | Area | Evidence and current state | Remaining validation / work |
 |---|---|---|
 | Gameplay baseline | September/October findings record title-screen and in-world play | Repeatable regression coverage, full playthrough and save/load validation |
-| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,206 reviewed model rewrites in 76 class modules, re-checked, built, game-checked and published without the game's text ([process](promoted-code.md)) | More modules (review, record, check, publish); whole-game reconstruction |
+| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/`; 1,441 reviewed model rewrites in 99 class modules, re-checked, built, game-checked and published without the game's text ([process](promoted-code.md)); 254 more promoted, awaiting review | More modules (review, record, check, publish); whole-game reconstruction |
 | Automatic lifting | Lifter and fallback controls exist; [guide](lifted-code.md) records broad function coverage | Coverage counts are generation-specific and do not measure semantic readability or full-game correctness |
 | Rendering | Native D3D12 renderer, frontend, and GPU synchronization exist | Remaining packet/memory/shader dependencies; shader failures recorded on October 2 |
 | Debug tools | F2 menu, Lua bridge, original-menu gate, and replacement displays implemented; about 30 commands and WinterShrine loading were reported working | Verify each command; some retail bindings are absent or empty |

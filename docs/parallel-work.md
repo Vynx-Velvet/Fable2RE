@@ -13,20 +13,66 @@ takes the next packet, answers it, checks the answer with a script and goes on:
 
 | Task | Instructions | Takes | Writes | Checker |
 |---|---|---|---|---|
-| Rewrite lifted functions into clean C++ | `tools/rewrite/AGENT.md` | `build/rewrite/packets/*.md` (queue: `build/rewrite/queue.txt`) | `build/rewrite/answers/<packet>/sub_X.cpp` | `python tools/rewrite/check.py <packet>` |
+| Rewrite lifted functions into clean C++ | `tools/rewrite/AGENT.md` | `build/rewrite/packets/*.md` (queue: `build/rewrite/queue.txt`) | `build/rewrite/answers/<packet>/sub_X.cpp` | `python tools/rewrite/agent_check.py <packet>` |
 | Name functions, classes, fields, locals | `tools/naming/AGENT.md` | `build/naming/batches/*.md` | `build/naming/answers/*.tsv` | `python tools/naming/merge.py --dry-run` |
 
 `tools/rewrite/run_worker.ps1` keeps a worker going on a CLI that runs one-shot sessions (`-p`): it starts a new
-session with the same instruction whenever the previous one ends, until the queue is done.
+session with the same instruction whenever the previous one ends, until the queue is done (not for a CLI whose
+terms require a person to start each session, such as [Freebuff](#free-hour-sessions-freebuff)).
 
 A suitable prompt for it: "Read tools/rewrite/AGENT.md and follow it until it prints DONE." Several copies can
 run at once: `next_packet.py` hands each one a different packet (it marks a packet as taken by creating its
-answer directory).
+answer directory). An agent takes packets with `next_packet.py --agent` (since 2026-10-17): a packet a session
+left unfinished, because the session ended, goes to the next agent session once nothing in it has changed for 10
+minutes, with the answers already written. `agent_check.py` is the check `run_api.py` makes (the promotion
+check, six profiles, and the `NOT REWRITTEN` guard), with a hint per failure; `--done` records in `notes.txt`
+what still fails, and the packet counts as done. It also ends a packet by itself (since 2026-10-18), when every
+failing function has failed three checks or after 15 minutes of fixing (`checks.log` in the answer directory):
+in the first Freebuff sessions six or seven of a packet's nine functions passed within minutes and the last
+two or three took from half an hour to three hours. The functions left that way wait for a later pass.
 
 Rules for it, which the instruction files repeat: it writes only under `build/rewrite/answers/` or
 `build/naming/answers/`; it never edits `tools/`, `Fable2Recomp/`, `research/`; it never builds or runs the
-game. The checkers use their own build directory (`tools/lift/difftest/build_relaxed`), so they do not collide
-with the main session's tester.
+game. The checkers use their own build directories (`tools/lift/difftest/build_relaxed`, `build_relaxed_out`), so
+they do not collide with the main session's tester, and they take turns with each other across processes
+(`build/rewrite/check.lock`, since 2026-10-17): an agent session can run while `run_api.py`, `promote.py` or
+`review_api.py` checks, and each check waits for the one before.
+
+### Free hour sessions (Freebuff)
+
+[Freebuff](https://freebuff.com) is a free, ad-supported agent CLI; its free use comes in one-hour sessions, with
+DeepSeek V4 Pro as the default model while the day's premium sessions last and V4 Flash after them (its README,
+version 0.0.150, read 2026-10-17). Inside its sessions it can run the rewrite loop at no cost. In the repository
+root:
+
+```
+freebuff
+```
+
+and as the session's first message: "Read tools/rewrite/AGENT.md and follow it until the session ends or it
+prints DONE."
+
+- Start each session yourself and stay with it while it runs. Freebuff's terms (the version in effect from
+  2026-11-12, read 2026-10-17) allow the automation Freebuff performs inside a session a person started; they do
+  not allow scripts, bots or wrappers that start or operate it, or calls to its servers from other software. The
+  project's tools never start or drive Freebuff.
+- A session that ends in the middle of a packet loses nothing: the next session's `next_packet.py --agent` goes
+  on with that packet (or, when the session starts sooner than 10 minutes after the last one, takes a new
+  packet and comes back to the unfinished one after it).
+- The accepted answers go on like `run_api.py`'s: `apply.py`, `promote.py build`, the review. A session can run
+  while `run_api.py` works on other packets.
+- Look-alike packets first (since 2026-10-18): `python tools/rewrite/lookalikes.py` groups the functions whose
+  code is the same apart from names, addresses and numbers, and `python tools/rewrite/make_packets.py
+  --representatives --per-packet 9` puts one function per group of ten or more at the front of the queue
+  (`NNNN_lookalikes`, with extra rules: the rewrite is copied to the whole group). The first 129 stand for 8,624
+  functions ([findings](../research/findings/2026-10-18-lookalike-functions.md)). Each representative is
+  reviewed before it is copied (verdicts in `build/rewrite/review_lookalikes.tsv`); `make_packets.py --review`
+  sends the rejected ones back as `NNNN_lookalike_review` packets at the front of the queue, and
+  `python tools/rewrite/copy_lookalikes.py NNNN_lookalikes` copies the approved ones and checks every copy
+  (about 3 seconds a copy; batches leave room for a session's checks).
+- Data: Freebuff uses prompts, code and files to provide the service and may analyse prompts and messages to
+  personalise ads; some models may keep submissions for training (its README). The packets contain game code
+  lifted from your copy.
 
 ## API keys
 
@@ -41,7 +87,34 @@ python tools/api_keys.py set deepseek --clipboard   # or copy the key, then take
 python tools/api_keys.py list                       # stored keys, last four characters only
 python tools/rewrite/run_api.py --list-models       # the key works: the models it may use
 python tools/rewrite/run_api.py --model <model> --jobs 4
+python tools/rewrite/run_api.py --workers 3 --jobs 6 --keep-balance 3.5   # three packets at a time
+python tools/rewrite/run_api.py --effort low --workers 3 --jobs 6        # less hidden reasoning (cheaper)
 ```
+
+`run_api.py` (2026-10-16) checks answers as `promote.py` does (six profiles, the registers callers read after
+the return; `--quick` for the older relaxed check), so what it accepts can be promoted as it is. An answer that
+is still the lifted code (90% of its lines unchanged, for functions over 15 lines) passes that check because it
+is the same code, so it counts as `NOT REWRITTEN` and goes back to the model. With
+`--workers N` it works on N packets at a time; their checks take turns. On `api.deepseek.com` it shows the
+account balance after every packet and, with `--keep-balance X`, takes no new packet below X (money left for
+the review). When the provider refuses the key or the balance runs out (HTTP 401/402) it stops at once: the
+packet is not marked done, and the next run offers it again without asking again for the answers it has.
+
+**Thinking effort** (2026-10-17). DeepSeek's models think before they answer, at high effort unless the request
+says otherwise, and the hidden reasoning is billed as output: in the 2026-10-16/17 rewrite round more than 95%
+of the output tokens paid for were reasoning
+([finding](../research/findings/2026-10-17-deepseek-round-491.md#cost-hidden-reasoning)). The three tools take
+`--effort none|low|high|max` (`tools/model_api.py`); without it they send nothing and the provider's default
+applies. With `--effort none` they ask for an output limit of 32,768 tokens (DeepSeek's default without
+thinking is 8K, short for a long function); `--max-tokens N` sets another. `run_api.py` reports a reply cut off
+at the limit instead of checking it. Their token counts show how much of the output was reasoning and how much
+of the prompt came from the provider's cache. DeepSeek charges half outside 01:00-04:00 and 06:00-10:00 UTC on
+weekdays (api-docs.deepseek.com, Models & Pricing, read 2026-10-17).
+
+A pilot on the same 18 functions ([finding](../research/findings/2026-10-17-deepseek-round-491.md#pilot-the-same-18-functions-at-three-efforts))
+found `--effort none` unsuitable for rewrites (half the functions accepted, and those left close to the lifted
+code) and `--effort low` as good as the default `high` on acceptance at about a fifth less cost, with slightly
+less cleanup.
 
 - The key is kept outside the repository, so no commit can include it: on Windows in
   `%APPDATA%\Fable2RE\api_keys.json`, encrypted for your Windows account (it cannot be read by another account

@@ -52,7 +52,8 @@ stages anything and `check` among its checks. `src/game/promoted/` is ignored by
 2. **Differential check.** `tools/rewrite/check.py` runs the rewrite and the recompiled original on the same
    inputs (six input profiles: sparse, dense, zero, small numbers, three mixed) and compares memory writes,
    calls with their arguments and the return value
-   ([relaxed mode](../research/findings/2026-10-07-difftest-wrapped-pointer-timeouts.md)).
+   ([relaxed mode](../research/findings/2026-10-07-difftest-wrapped-pointer-timeouts.md)). Since 2026-10-16
+   `run_api.py` checks with the promotion check of step 4 and feeds its failures back to the model.
 3. **Game checks.** The build with the rewrite runs the menu, save-load and play scenarios
    (`tools/autotest.py`).
 4. **Promotion** (`tools/rewrite/promote.py build`). Names in effect are written into the source; comments
@@ -86,7 +87,9 @@ have reached). The reviewer works through this checklist:
    differences and to chains of dependent loads (`LOAD32(LOAD32(p + 8) + 4)` must not become one load).
    Arguments include the values the lifter hands over through the CPU state before a call
    (`ctx.rN.u64 = x;`): a callee may pass them on to a call through a pointer. Registers the lifter sets
-   right before a return are read by callers and must be set the same way on every return path. Keep
+   right before a return are read by callers and must be set the same way on every return path. A load
+   stays on the same side of a call as in the lifter's output: the callee may write that memory, and the
+   differential check cannot show it (its stand-in callees write nothing). Keep
    floating-point mode switches (`ctx.fpscr`), traps, 32-bit wraparound and signed/unsigned comparisons.
 2. Names say what the code does; a name that contradicts the code is a defect (wrong is worse than none).
 3. Comments are true and do not restate the code; no quoted game text, no pasted decompiler output.
@@ -102,7 +105,17 @@ its unchanged `PROMOTED_ENTRY` line). `python tools/rewrite/promote.py record --
 them: fixes are checked again (a fix that fails is reported and left out), demoted functions return to the lifter,
 and `Fable2Recomp/src/game/promoted/REVIEW.tsv` (published with the modules) records every function reviewed OK
 with reviewer and date. Then `promote.py check` over all modules, a build and the game checks. A module is
-published when every function in it is recorded OK.
+published when every function in it is recorded OK. `record --partial` records a review that did not reach every
+function (for example when the model account ran out): the functions without a verdict get no row, and
+`promoted_text.py publish` leaves each module that still has one exactly as it was published before, file and
+manifest row, until a later round reviews the rest.
+
+**Look-alike copies** (since 2026-10-19). A function that is the same code as a reviewed representative of its
+look-alike group, with its own addresses, numbers and names, gets the representative's rewrite with its own values
+(`tools/rewrite/copy_lookalikes.py`) and the same strict check as any rewrite. Such copies are recorded as copies
+of their representative (reviewer `lookalike-copy+claude`, note `copy of sub_X ...`) after a sampled review: three
+per group, each read against its own lifted text
+([finding](../research/findings/2026-10-18-lookalike-functions.md)).
 
 **Reviewing with a model, in tiers** (`tools/rewrite/review_api.py`, since 2026-10-13). A cheap model does the
 bulk; a second reviewer looks only at what it lists:
@@ -115,10 +128,16 @@ python tools/rewrite/review_api.py status
 python tools/rewrite/review_api.py collect            # verdicts/, fixes/, escalate.tsv
 ```
 
+- `prepare` leaves out every function whose review `REVIEW.tsv` records for the text it has now (since
+  2026-10-16; the digests are kept locally in `build/rewrite/promote/reviewed_texts.json`, started from the
+  published modules). `collect` lists those as `RECORDED` and `record` keeps their rows, so a new round costs
+  only the new or changed functions. `prepare --all` reviews everything again.
 - `prepare` takes over an earlier review in the form above (default `build/rewrite/review_2026-10-10`, with
   `verified.txt` naming the verdicts a second reviewer confirmed) for functions whose module text is unchanged:
   confirmed verdicts stand and their fixes are only checked; single verdicts are verified by the model, which
   sees the earlier verdict, note and fix; the rest get a full review.
+- `run --effort none|low` asks the model for less hidden reasoning, which DeepSeek bills as output
+  ([API keys](parallel-work.md#api-keys)); without it the provider's default applies.
 - `run` sends each chunk (up to five functions of one module) with the checklist, the static flags, the result of
   the strict check, the module text and the lifter's exact output. Every fix is checked as `record` checks it
   (`check.py --outputs`, six profiles); a failing fix, an OK for a function that fails the check, or an answer
@@ -126,7 +145,9 @@ python tools/rewrite/review_api.py collect            # verdicts/, fixes/, escal
 - `collect` writes `verdicts/<Module>.tsv` and lists in `escalate.tsv` what the second reviewer must look at:
   functions the model could not settle, its demotions, its disagreements with a single earlier verdict, and one
   in ten of the functions it decided alone. It also leaves the fixes' check results where `record` reuses them.
-- Then the second review of `escalate.tsv` (corrections go into `verdicts/` and `fixes/`), and
+- Then the second review of `escalate.tsv`: corrections go into `verdicts/` and `fixes/`, or into a decisions file
+  that `review_api.py second DECISIONS` applies (`sub_X<TAB>OK|MODEL|FIX|DEMOTE<TAB>note`: the module text is right,
+  the model is right, the reviewer's own fix in `second_fixes/sub_X.cpp`, or back to the lifter), and
   `promote.py record --dir build/rewrite/review_api --reviewer <who>`.
 
 ## Names

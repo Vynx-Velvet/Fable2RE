@@ -918,3 +918,126 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	return chaosData;
 }
 PROMOTED_ENTRY(60, sub_82895C68, 0x82895C68) { ctx.r3.u64 = n_sub_82895C68(ctx, base, ctx.r3.u64); }
+
+uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
+	if (!UseLiftedCode(60, 0x82895F68)) { ctx.r3.u64 = arg1; __imp__sub_82895F68(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x82895F68);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	ctx.r1.u64 = stack;
+
+	uint32_t handleSlot = (uint32_t)arg1 + 108;
+	uint32_t owner = LOAD32((uint32_t)arg1 + 112);
+	if (owner == 0) {
+		stack = PopStackFrame(stack, 128);
+		ctx.r1.u64 = stack;
+		return arg1;
+	}
+
+	uint32_t chaos = LOAD32(owner);
+	if (chaos == 0) {
+		ctx.r10.u64 = chaos;
+		uint64_t result = EntityHandle_Release(ctx, base, handleSlot);
+		stack = PopStackFrame(stack, 128);
+		ctx.r1.u64 = stack;
+		return result;
+	}
+
+	ctx.r10.u64 = chaos;
+	uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleSlot);
+	uint64_t reg6 = ctx.r6.u64;
+	uint64_t reg7 = ctx.r7.u64;
+	uint64_t reg8 = ctx.r8.u64;
+	uint64_t reg9 = ctx.r9.u64;
+	uint64_t reg10 = 0;
+
+	uint32_t particleId = 0;
+	bool killParticle = false;
+	if ((LOAD32(entity + 44) >> 21) & 1) {
+		uint32_t slotTable = LOAD32(entity + 140);
+		if (slotTable != 0) {
+			uint32_t slot = LOAD8(slotTable + 85);
+			reg10 = slot << 3;
+			reg9 = reg10 + LOAD32(entity + 72);
+			particleId = LOAD32((uint32_t)reg9 + 4);
+			killParticle = true;
+		} else {
+			uint32_t begin = LOAD32(entity + 72);
+			uint32_t end = LOAD32(entity + 76);
+			uint32_t it = begin;
+			STORE32(stack + 80, 0);
+			STORE32(stack + 84, it);
+			int32_t remaining = (int32_t)(end - begin) >> 3;
+			if (remaining > 0) {
+				// lower_bound: first entry whose key is >= 85
+				do {
+					int32_t half = remaining >> 1;
+					uint32_t offset = (uint32_t)half << 3;
+					uint32_t probe = it + offset;
+					reg8 = offset;
+					reg9 = (uint64_t)half;
+					int32_t key = (int32_t)LOAD32(probe);
+					reg7 = (key < 85) ? 1 : 0;
+					if (key < 85) {
+						remaining = remaining - half - 1;
+						it = probe + 8;
+					} else {
+						remaining = half;
+					}
+				} while (remaining > 0);
+				STORE32(stack + 84, it);
+			}
+			reg6 = end;
+			reg10 = it;
+			if (it != end && (int32_t)LOAD32(it) <= 85) {
+				STORE64(stack + 80, LOAD64(stack + 80));
+				particleId = LOAD32(LOAD32(stack + 84) + 4);
+			} else {
+				particleId = LOAD32(end + 4);
+			}
+			killParticle = true;
+		}
+	}
+
+	if (killParticle) {
+		ctx.fpscr.disableFlushMode();
+		ctx.r6.u64 = reg6;
+		ctx.r7.u64 = reg7;
+		ctx.r8.u64 = reg8;
+		ctx.r9.u64 = reg9;
+		ctx.r10.u64 = reg10;
+		n_sub_8247EB68(ctx, base, particleId, double(LOAD_F32(0x820994B4u)));
+		reg6 = ctx.r6.u64;
+		reg7 = ctx.r7.u64;
+		reg8 = ctx.r8.u64;
+		reg9 = ctx.r9.u64;
+		reg10 = ctx.r10.u64;
+	}
+
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
+	ctx.r9.u64 = reg9;
+	ctx.r10.u64 = reg10;
+	uint32_t liveEntity = EntityHandle_Get_825575C8(ctx, base, handleSlot);
+	Entity_DestroyImpl(ctx, base, liveEntity);
+
+	STORE32(stack + 84, 0);
+	STORE32(stack + 80, (uint32_t)g_820F1664);
+	ctx.r10.u64 = (uint64_t)g_820F1664;
+	EntityHandle_Release(ctx, base, stack + 80);
+	EntityHandle_Assign(ctx, base, handleSlot, stack + 80);
+
+	uint32_t invalidHandle = (uint32_t)((int64_t)g_820F0000 + 5732);
+	STORE32(stack + 80, invalidHandle);
+	ctx.r8.u64 = (uint64_t)((int64_t)g_820F0000 + 5732);
+	ctx.r9.u64 = (uint64_t)g_820F0000;
+	arg1 = EntityHandle_Release(ctx, base, stack + 80);
+
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return arg1;
+}
+PROMOTED_ENTRY(60, sub_82895F68, 0x82895F68) { ctx.r3.u64 = n_sub_82895F68(ctx, base, ctx.r3.u64); }

@@ -32,18 +32,18 @@ How much of the game is human-readable C++ in this repository, counted from its 
 <!-- progress:begin (written by tools/progress.py from tracked files: do not edit by hand) -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/progress-dark.svg">
-  <img alt="3.1% of Lionhead's game functions are human-readable C++ (1,263 of 41,186), as of 2026-10-15" src="docs/images/progress-light.svg" width="860">
+  <img alt="18.1% of Lionhead's game functions are human-readable C++ (7,435 of 41,186), as of 2026-10-19" src="docs/images/progress-light.svg" width="860">
 </picture>
 
 | Lionhead's game code | Functions | Share |
 |---|---:|---:|
-| Human-readable C++, reviewed | 1,206 | 2.9% |
+| Human-readable C++, reviewed | 7,378 | 17.9% |
 | Human-readable C++, written by hand | 57 | 0.1% |
-| Machine-translated C++, exact and tested | 38,886 | 94.4% |
+| Machine-translated C++, exact and tested | 32,714 | 79.4% |
 | Recompiled only | 1,037 | 2.5% |
 | **All of Lionhead's functions** | **41,186** | |
 
-76 reviewed class modules; 5,232 of the game's functions (12.7%) carry a name in the shared dictionary. By code size, 2.2% of the game is human-readable so far (1,263 functions). Details, every area of the executable and the history: [conversion progress](docs/progress.md). Counted by `tools/progress.py` from the files in this repository, as of 2026-10-15.
+249 reviewed class modules; 5,232 of the game's functions (12.7%) carry a name in the shared dictionary. By code size, 4.7% of the game is human-readable so far (7,435 functions). Details, every area of the executable and the history: [conversion progress](docs/progress.md). Counted by `tools/progress.py` from the files in this repository, as of 2026-10-19.
 <!-- progress:end -->
 
 ## Where we are today
