@@ -11,8 +11,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = "Fable2Recomp/"   # the runtime tree (a folder of this repository since 2026-10-11, before: a submodule)
+# the hand-written headers in Fable2Recomp/lifted/ (everything else there is the lifter's local output)
+LIFTED_SOURCES = {"lifted/lifted.h", "lifted/readable_support.h"}
 REQUIRED = {
-    ".": {RUNTIME + p for p in ("lifted/lifted.h", "sdk/include/fable2/sdk.h",
+    ".": {RUNTIME + p for p in ("lifted/lifted.h", "lifted/readable_support.h", "sdk/include/fable2/sdk.h",
                                 "sdk/include/fable2/mod_api.h", "sdk/include/fable2/verify.h")},
 }
 
@@ -189,7 +191,7 @@ def audit(repo, label="."):
         forbidden = (Path(path).suffix.lower() in BLOCKED_SUFFIXES
                      or any(p in {"decomp", "rewritten", "iso", "extracted"} for p in parts)
                      or any(p.startswith("generated") for p in parts[:-1])
-                     or (rpath is not None and rpath.split("/")[0] == "lifted" and rpath != "lifted/lifted.h"))
+                     or (rpath is not None and rpath.split("/")[0] == "lifted" and rpath not in LIFTED_SOURCES))
         derived = mod_material(path)
         if label == "." and path == "research/names/globals.tsv":
             derived = ("names of global string objects made from the game's text: tools/naming/global_strings.py "
