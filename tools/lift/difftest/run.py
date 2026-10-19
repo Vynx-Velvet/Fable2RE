@@ -346,6 +346,7 @@ def build_batch(tag, idx, blocks, sm):
         f'lift_{tag}.cpp': f'#define F2_LIFTED_FILE {idx}\n#define F2_NATIVE(name) f2t_native_##name\n'
                            '#define F2_NAMED(name) f2t_native_##name\n'
                            '#include "lifted/lifted.h"\n#include "lifted/classes.h"\n#include "lifted/native_decls.h"\n'
+                           '#include "lifted/readable_support.h"\n'
                            '#undef F2_LIFTED\n'
                            '#define F2_LIFTED(name, address) extern "C" void f2t_lifted_##name('
                            '[[maybe_unused]] PPCContext& __restrict ctx, uint8_t* base)\n\n'

@@ -56,6 +56,17 @@ Within that, make it readable:
   `ctx.r1.u64 = stack;` before calls that use the game stack, on every path, and keep the stack frame if any
   stack memory is used (addresses of stack temporaries handed to calls must stay the same offsets). Every
   store into a stack slot whose address goes to a call stays, both words of an 8-byte value included.
+- The readable form (`Fable2Recomp/lifted/readable_support.h`): a body that keeps nothing in its stack frame
+  writes the frame as one line, `GameStackFrame stackFrame(ctx, base, N);`, instead of `PushStackFrame` /
+  `PopStackFrame` and the `ctx.r1` lines (not before a tail call made after the pop). atexit called with the
+  r8 it was handed (`n_sub_82CA3700(ctx, base, f, ctx.r8.u64)`) is `RegisterAtExit(ctx, base, f)`. A function
+  counts as human-readable only without CPU state in its body and with every name given
+  (`tools/rewrite/readability.py`): the function, its callees, globals, variables, parameters and fields.
+- Name what an address is: a 64 KiB page base plus an offset handed to a call (`(int64_t)g_832A0000 + 12536`)
+  is one function's or one string's address. Declare it like the lifter's constants, named after what is
+  there (`constexpr int32_t Destroy_g_X_address = int32_t(0x832A30F8);`, or the string's `str_` name), and
+  pass that. No placeholder names: not `arg1`, `local7`, `r31`, `flag144` (a name made from an offset) or
+  `self->m_1C`; when the code does not show what a value is, say what it is used for.
 - Remove the lifter's noise: compare/flag machinery (`compare6.compare(...)`, `flags.ca`: write the signed or
   unsigned comparison itself), `(clz(x) >> 5) & 1` (that is `x == 0`), `rotateleft32(x, 0)`, a rotate of a
   value whose top bits are clear (`__builtin_rotateleft32(byte, 3)` is `byte << 3`), gotos to the next line,

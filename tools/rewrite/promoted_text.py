@@ -84,10 +84,31 @@ _TEXT_GLOBALS = None
 
 def text_globals():
     """name -> address of the globals named after their text (research/decomp/global_names.tsv)."""
-    global _TEXT_GLOBALS
+    global _TEXT_GLOBALS, _EMBEDDED
     if _TEXT_GLOBALS is None:
         _TEXT_GLOBALS = {n: a for a, n in readable.global_names().items() if not re.fullmatch(r'g_[0-9A-F]{8}', n)}
+        _EMBEDDED = None
     return _TEXT_GLOBALS
+
+
+_EMBEDDED = None
+
+
+def embedded_globals():
+    """The pattern of a global named after its text inside a longer name, after an underscore
+    (Destroy_g_<Text>: tools/rewrite/name_globals.py), or None."""
+    global _EMBEDDED
+    names = text_globals()
+    if _EMBEDDED is None and names:
+        _EMBEDDED = re.compile(r'(?<=_)(' + '|'.join(re.escape(n) for n in sorted(names, key=len, reverse=True))
+                               + r')(?![A-Za-z0-9])')
+    return _EMBEDDED
+
+
+def embed_refs(word):
+    """A name with every global named after its text inside it replaced by its reference."""
+    emb = embedded_globals()
+    return emb.sub(lambda m: ref(text_globals()[m.group(1)], 'G'), word) if emb else word
 
 
 def resolve(addr, kind):
@@ -231,6 +252,8 @@ def encode(text, context=None, prose=False):
         w = m.group(0)
         if w in globals_:
             return ref(globals_[w], 'G')
+        if embed_refs(w) != w:
+            return embed_refs(w)   # (a name made around a global's name: Destroy_g_<Text>)
         lm = re.fullmatch(r'([A-Za-z]\w*?)(\d*)', w)
         if lm and lm.group(1) in locals_:
             return ref(locals_[lm.group(1)], 'L') + lm.group(2)
@@ -241,7 +264,7 @@ def encode(text, context=None, prose=False):
     def prose_part(s):
         s = STR_TOKEN.sub(str_token, s)
         s = re.sub(r'\b(?!TXT_)[A-Za-z_]\w*\b', lambda m: ref(globals_[m.group(0)], 'G')
-                   if m.group(0) in globals_ else m.group(0), s)
+                   if m.group(0) in globals_ else embed_refs(m.group(0)), s)
         if span_re:
             pieces = REF.split(s)   # (never inside a reference already placed)
             out = []
@@ -275,6 +298,7 @@ def leftovers(published, context=None, prose=False):
     found = {'str_' + f for f in STR_TOKEN.findall(published)
              if not f.startswith('TXT_') and not re.fullmatch(r'[0-9A-F]{8}(?:_\d+)?', f)}
     found |= set(IDENT.findall(published)) & set(text_globals())
+    found |= {w for w in IDENT.findall(published) if embed_refs(w) != w}   # (a global's name inside a longer name)
     _, spans, locals_ = declared(render_text(context if context is not None else published))
     spans = [s for s in spans if s not in dictionary_names()]
     names = dictionary_names()

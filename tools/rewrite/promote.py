@@ -168,14 +168,25 @@ def refresh_header(head):
     return '\n'.join(lines[:i] + MODULE_HEADER_LINES + lines[j:])
 
 
+MODULE_INCLUDES = ['#include "lifted/lifted.h"', '#include "lifted/classes.h"', '#include "lifted/native_decls.h"',
+                   '#include "lifted/readable_support.h"']   # (the last: helpers of the readable form)
+
+
+def ensure_includes(head):
+    """A module header with every include of MODULE_INCLUDES (an older module lacks the last ones)."""
+    for i, inc in enumerate(MODULE_INCLUDES):
+        if inc not in head:
+            prev = MODULE_INCLUDES[i - 1] if i else None
+            head = head.replace(prev, prev + '\n' + inc, 1) if prev and prev in head else head + '\n' + inc
+    return head
+
+
 def header_for(struct, key, info):
     return '\n'.join([
         f'// {struct} (vtable 0x{key}): methods of the class as readable C++.',
         '//',
         *MODULE_HEADER_LINES,
-        '#include "lifted/lifted.h"',
-        '#include "lifted/classes.h"',
-        '#include "lifted/native_decls.h"',
+        *MODULE_INCLUDES,
     ])
 
 
@@ -211,8 +222,7 @@ def write_modules(new):
     for key, funcs in by_key.items():
         if key.startswith('free:'):
             struct = key[5:]
-            head = '\n'.join([free_heads[struct], '//', *MODULE_HEADER_LINES, '#include "lifted/lifted.h"',
-                              '#include "lifted/classes.h"', '#include "lifted/native_decls.h"'])
+            head = '\n'.join([free_heads[struct], '//', *MODULE_HEADER_LINES, *MODULE_INCLUDES])
         else:
             struct = structs.get(key, f'C_{key}')
             head = header_for(struct, key, classes.get(key))
@@ -455,6 +465,12 @@ def flags(name, text, lifted):
     fa, fb = lifted.count('ctx.fpscr.'), text.count('ctx.fpscr.')
     if fa > fb:
         out.append(f'floating-point mode switches (ctx.fpscr) in the lifted code: {fa}, here: {fb}')
+    import readability   # (what still keeps it from being readable C++ with every name)
+    for _, fname, lines in readability.functions(text):
+        found = readability.issues(fname, lines)
+        if found:
+            out.append(f'readability: {readability.level(found)}; still has ' + '; '.join(
+                f'{k} ({", ".join(sorted(set(v))[:4])})' for k, v in found.items()))
     return out
 
 

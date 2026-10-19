@@ -412,6 +412,7 @@ generated/*
 generated*/
 /lifted/*
 !/lifted/lifted.h
+!/lifted/readable_support.h
 rewritten/
 generated_entries.toml
 

@@ -73,6 +73,18 @@ class PromotedTextTests(unittest.TestCase):
         with self.assertRaises(pt.TextError):
             pt.encode(MODULE + '// TXT_82000100_B_\n')
 
+    def test_global_inside_a_name(self):
+        module = ('uint64_t Destroy_g_Example_Global_Text(CpuState& ctx, uint8_t* base) {\n'
+                  '\treturn CCharString_Release(ctx, base, g_Example_Global_Text);   // Destroy_g_Example_Global_Text\n'
+                  '}\nPROMOTED_ENTRY(1, sub_82100000, 0x82100000) { ctx.r3.u64 = '
+                  'Destroy_g_Example_Global_Text(ctx, base); }\n')
+        pub = pt.encode(module)
+        self.assertNotIn('Example_Global_Text', pub)
+        self.assertIn('uint64_t Destroy_TXT_83000010_G_(CpuState& ctx', pub)
+        self.assertEqual(pt.render_text(pub), module)
+        self.assertEqual(pt.leftovers(pub), [])
+        self.assertEqual(pt.leftovers(module), ['Destroy_g_Example_Global_Text', 'g_Example_Global_Text'])
+
     def test_review_notes(self):
         review = ('module\tfunction\tverdict\treviewer\tdate\tnote\n'
                   'Thing\tsub_82100000\tOK\tx\t2026-10-15\tfixed: str_GreenLantern holds GreenLantern; '

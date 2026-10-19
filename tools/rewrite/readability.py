@@ -27,7 +27,10 @@ ROOT = Path(__file__).resolve().parents[2]
 PUBLISHED = ROOT / 'Fable2Recomp' / 'promoted'
 
 ENTRY = re.compile(r'^PROMOTED_ENTRY\(\d+, (sub_[0-9A-F]{8}), 0x[0-9A-F]{8}\).*$', re.M)
-BOILERPLATE = re.compile(r'\bUseLiftedCode\(|\bLiftedFrame\b|^\s*#include\b')
+# (the fallback to the original, the frame markers and includes: the same in every function; GameStackFrame is
+# the function's frame on the game's stack, Fable2Recomp/lifted/readable_support.h)
+BOILERPLATE = re.compile(r'\bUseLiftedCode\(|\bLiftedFrame\b|^\s*GameStackFrame \w+\(ctx, base, \d+\);\s*$|'
+                         r'^\s*#include\b')
 DEFINITION = re.compile(r'^[A-Za-z_][\w:<>,\s\*&]*?\b([A-Za-z_]\w*)\s*\(\s*CpuState\s*&', re.M)
 
 STRUCTURE = {
@@ -36,10 +39,13 @@ STRUCTURE = {
 }
 UNNAMED = r'(?:n_)?sub_[0-9A-F]{8}'
 NAMING = {
-    'unnamed callee': re.compile(rf'\b({UNNAMED})\s*\('),
+    'unnamed callee': re.compile(rf'\b({UNNAMED})\s*\(|\b(\w*sub_[0-9A-F]{{8}}\w*)\b(?!\s*\()'),
     'address': re.compile(r'\b(g_[0-9A-F]{8})\b|\b((?:str_)?TXT_[0-9A-F]{8}_[A-Z]_)\s*[-+]\s*(?:0x[0-9A-Fa-f]+|\d)'
                           r'|(?<![\w.])(0x8[0-9A-Fa-f]{7})(?:[uU][lL]{0,2})?\b'),
     'machine variable name': re.compile(r'(?<![\w.])((?:local|arg|var|temp|tmp|stack|v|r|f)\d+)\b'),
+    # a name made from an offset or a position is a placeholder too: flag144, GetField8, GetByte31, unk_10
+    'placeholder name': re.compile(r'\b((?:[A-Za-z_]\w*?)?(?:[Ff]ield|[Bb]yte|[Dd]?[Ww]ord|[Ff]lag|[Oo]ffset|[Uu]nk'
+                                   r'(?:nown)?)_?(?:0x)?[0-9A-Fa-f]*[0-9][0-9A-Fa-f]*)\b'),
     'field offset': re.compile(r'\b(?:LOAD|STORE)\w*\(\s*([A-Za-z_]\w*(?:\.\w+)*)\s*[-+]\s*(?:0x[0-9A-Fa-f]+|\d+)'
                                r'\s*[,)]|(?:->|\.)(m_[0-9A-Fa-f]{1,5}|field_?[0-9A-Fa-f]+|unk_?[0-9A-Fa-f]+)\b'),
 }
@@ -76,9 +82,18 @@ def issues(name, lines):
         found[what] += [m.group(0) for m in rx.finditer(body)]
     if re.fullmatch(UNNAMED, name):
         found['unnamed function'].append(name)
+    elif NAMING['placeholder name'].fullmatch(name):
+        found['placeholder name'].append(name)
     for what, rx in NAMING.items():
         found[what] += [next(g for g in m.groups() if g) if m.groups() and any(m.groups()) else m.group(0)
                         for m in rx.finditer(body)]
+    # a name that still says which global it means by address (DestroyGlobalList_8349AD9C); a reference to a
+    # name made from the game's text (TXT_<address>_G_) is a name
+    for ident in set(re.findall(r'\b[A-Za-z_]\w*\b', body)) | {name}:
+        if 'TXT_' not in ident and not re.search(r'sub_[0-9A-F]{8}', ident) and \
+                not re.fullmatch(r'g_[0-9A-F]{8}', ident) and \
+                re.search(r'(?<![0-9A-Fa-f])8[0-9A-F]{7}(?![0-9A-Fa-f])', ident):
+            found['address'].append(ident)
     return {k: v for k, v in found.items() if v}
 
 

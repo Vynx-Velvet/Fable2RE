@@ -100,6 +100,14 @@ class ReadabilityTests(unittest.TestCase):
             self.assertIn(issue, found, line)
         lvl, found = self.level(body('n_sub_82000000', '\treturn self;'))
         self.assertEqual((lvl, list(found)), ('readable', ['unnamed function']))
+        for name, line in [('CAKElementBuilder_GetByte31', '\treturn self;'),
+                           ('Lua_Get', '\tuint32_t flag144 = self;'), ('Lua_Get', '\treturn self + unk10;')]:
+            lvl, found = self.level(body(name, line))
+            self.assertEqual((lvl, list(found)), ('readable', ['placeholder name']), name + line)
+        lvl, _ = self.level(body('Vector_Get', '\tuint32_t byteCount = self;', '\treturn float32 + byteCount;'))
+        self.assertEqual(lvl, 'named')
+        lvl, found = self.level(body('Lua_Get', '\treturn RegisterAtExit(ctx, base, n_sub_832A30F8_address);'))
+        self.assertEqual((lvl, list(found)), ('readable', ['unnamed callee']))
 
     def test_named(self):
         lvl, found = self.level(body('CChest_IsOpen', '\tCChest* chest = GameObject<CChest>(base, self);',
@@ -107,6 +115,10 @@ class ReadabilityTests(unittest.TestCase):
         self.assertEqual((lvl, found), ('named', {}))
         lvl, _ = self.level(body('Lua_GetName', '\treturn TXT_834973A8_G_;'))   # a global named after its text
         self.assertEqual(lvl, 'named')
+        lvl, found = self.level(body('Construct_TXT_834985C4_G_', '\tGameStackFrame stackFrame(ctx, base, 96);',
+                                     '\tCCharString_ConstructFromCStr(ctx, base, TXT_834985C4_G_, str_TXT_820BD244_B_, -1);',
+                                     '\treturn RegisterAtExit(ctx, base, Destroy_TXT_834985C4_G__address);'))
+        self.assertEqual((lvl, found), ('named', {}))
 
 
 if __name__ == '__main__':
