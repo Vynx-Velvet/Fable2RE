@@ -134,13 +134,20 @@ def write_needed(fn, lines, i, reg, value, params):
 def frame_form(lines):
     """Lines with the standard frame push/pop replaced by GameStackFrame, or None."""
     text = '\n'.join(lines)
-    m = re.search(r'^(\s*)uint32_t stack = ctx\.r1\.u64;\n\s*stack = PushStackFrame\(base, stack, (\d+)\);\n'
-                  r'\s*ctx\.r1\.u64 = stack;\n', text, re.M)
+    # (the lifter declares its locals between reading the stack pointer and the push, and sets ctx.r1 again
+    # before every call; while `stack` keeps the pushed frame, those settings repeat the same value)
+    m = re.search(r'^(\s*)uint32_t stack = ctx\.r1\.u(?:64|32);\n((?:\s*[\w:<>]+ \w+\{\};\n)*)'
+                  r'\s*stack = PushStackFrame\(base, stack, (\d+)\);\n', text, re.M)
     if not m:
         return None
-    size = m.group(2)
+    size = m.group(3)
     pop = re.compile(rf'^\s*stack = PopStackFrame\(stack, {size}\);\n\s*ctx\.r1\.u64 = stack;\n', re.M)
     rest = text[m.end():]
+    if len(re.findall(r'^\s*stack = ', rest, re.M)) != len(pop.findall(rest)):
+        return None   # (the frame variable changes elsewhere)
+    rest = pop.sub('\x00POP\x00', rest)
+    rest = re.sub(r'^\s*ctx\.r1\.u64 = stack;\n', '', rest, flags=re.M)
+    rest = rest.replace('\x00POP\x00', f'\tstack = PopStackFrame(stack, {size});\n\tctx.r1.u64 = stack;\n')
     pops = list(pop.finditer(rest))
     if not pops:
         return None
@@ -157,7 +164,8 @@ def frame_form(lines):
     rest = pop.sub('', rest)
     if re.search(r'\bstack\b', rest):
         return None   # (the body uses its frame: records on the stack)
-    return (text[:m.start()] + f'{m.group(1)}GameStackFrame stackFrame(ctx, base, {size});\n' + rest).split('\n')
+    return (text[:m.start()] + (m.group(2) or '') + f'{m.group(1)}GameStackFrame stackFrame(ctx, base, {size});\n'
+            + rest).split('\n')
 
 
 def constants(lines):

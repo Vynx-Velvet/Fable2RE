@@ -94,6 +94,8 @@ class ReadabilityTests(unittest.TestCase):
                             ('\tobject->vtable = 0x8200E3C0u;', 'address'),
                             ('\tuint32_t local12 = self;', 'machine variable name'),
                             ('\treturn LOAD32(self + 144);', 'field offset'),
+                            ('\tSTORE32((uint32_t)self + 8, 0u);', 'field offset'),
+                            ('\treturn LOAD32(uint32_t(self) + 8);', 'field offset'),
                             ('\treturn object->m_1C;', 'field offset')]:
             lvl, found = self.level(body('Lua_Get', line))
             self.assertEqual(lvl, 'readable', line)

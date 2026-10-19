@@ -108,16 +108,49 @@ def issues_of(text):
     return readability.issues(name, lines)
 
 
+LIFTED_NAMING = {'unnamed function', 'unnamed callee', 'machine variable name', 'placeholder name'}
+
+
+def lifted_candidates(blocks, promoted):
+    """{sub_X: (pseudo module, text)} of lifted game functions that the readable form leaves plain C++ and that
+    miss only names a naming round gives (the function's, its callees', its variables'): after the names are
+    applied (tools/lift/apply_names.py), the lifter's own exact text is readable and named."""
+    import csv
+    import readable_form
+    with open(os.path.join(ROOT, 'research', 'catalog', 'scope.tsv'), encoding='utf-8') as f:
+        scope = [(int(r['start'], 16), int(r['end'], 16), r['category']) for r in csv.DictReader(f, delimiter='\t')]
+    out = {}
+    for n, b in blocks.items():
+        if n in promoted or not re.fullmatch(r'sub_[0-9A-F]{8}', n):
+            continue
+        a = int(n[4:], 16)
+        if not any(s <= a < e and c in ('game', 'game-static') for s, e, c in scope):
+            continue
+        text = re.sub(r'^CPU_STATE_ENTRY\((sub_[0-9A-F]{8}), (0x[0-9A-F]{8})\)', r'PROMOTED_ENTRY(1, \1, \2)',
+                      '\n'.join(l for l in b.split('\n')[1:] if not l.startswith('// ')), flags=re.M)
+        new, _ = readable_form.transform(n, text, {})
+        fs = readability.functions(new)
+        if len(fs) != 1:
+            continue
+        found = readability.issues(fs[0][1], fs[0][2])
+        if found and readability.level(found) == 'readable' and set(found) <= LIFTED_NAMING:
+            out[n] = (f'lifted_{a >> 20:03X}', b.split('\n', 1)[1])
+    return out
+
+
 def cmd_prepare(a):
     funcs = promote.module_functions()
     this, structs, _ = promote.class_of()
     blocks = lifted_blocks()
     todo = []
+    if a.lifted:   # (lifted functions the naming round can finish: named in the dictionary, then promoted)
+        funcs = lifted_candidates(blocks, set(funcs))
     for n, (path, text) in funcs.items():
-        found = issues_of(text)
+        found = issues_of(text) if not a.lifted else {'unnamed function': [n]}
         if any(k in found for k in NAMING):
             level = readability.level(found)
-            todo.append((level != 'readable', os.path.basename(path)[:-4], int(n[4:], 16), n, found))
+            todo.append((level != 'readable', os.path.basename(path)[:-4] if not a.lifted else path,
+                         int(n[4:], 16), n, found))
     todo.sort()
     if a.limit:
         todo = todo[:a.limit]
@@ -274,11 +307,14 @@ def cmd_collect(a):
 
 
 def main():
+    global WORK, PACKETS, ANSWERS, MERGE_IN
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    ap.add_argument('--work', default=WORK, help='the round\'s directory (packets/, answers/)')
     sub = ap.add_subparsers(dest='cmd', required=True)
     p = sub.add_parser('prepare')
     p.add_argument('--limit', type=int, default=0)
     p.add_argument('--tokens', type=int, default=6000)
+    p.add_argument('--lifted', action='store_true', help='lifted functions a naming round can finish')
     r = sub.add_parser('run')
     r.add_argument('--url', default='https://api.deepseek.com')
     r.add_argument('--model', default='deepseek-flash')
@@ -289,6 +325,9 @@ def main():
     c = sub.add_parser('collect')
     c.add_argument('--dry-run', action='store_true')
     a = ap.parse_args()
+    WORK = os.path.abspath(a.work)
+    PACKETS, ANSWERS = os.path.join(WORK, 'packets'), os.path.join(WORK, 'answers')
+    MERGE_IN = os.path.join(ROOT, 'build', 'naming', 'answers_' + os.path.basename(WORK))
     return {'prepare': cmd_prepare, 'run': cmd_run, 'collect': cmd_collect}[a.cmd](a)
 
 

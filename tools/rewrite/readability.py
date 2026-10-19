@@ -46,8 +46,10 @@ NAMING = {
     # a name made from an offset or a position is a placeholder too: flag144, GetField8, GetByte31, unk_10
     'placeholder name': re.compile(r'\b((?:[A-Za-z_]\w*?)?(?:[Ff]ield|[Bb]yte|[Dd]?[Ww]ord|[Ff]lag|[Oo]ffset|[Uu]nk'
                                    r'(?:nown)?)_?(?:0x)?[0-9A-Fa-f]*[0-9][0-9A-Fa-f]*)\b'),
-    'field offset': re.compile(r'\b(?:LOAD|STORE)\w*\(\s*([A-Za-z_]\w*(?:\.\w+)*)\s*[-+]\s*(?:0x[0-9A-Fa-f]+|\d+)'
-                               r'\s*[,)]|(?:->|\.)(m_[0-9A-Fa-f]{1,5}|field_?[0-9A-Fa-f]+|unk_?[0-9A-Fa-f]+)\b'),
+    # (a cast before the base does not hide the offset: LOAD32((uint32_t)self + 8), LOAD32(uint32_t(self) + 8))
+    'field offset': re.compile(r'\b(?:LOAD|STORE)\w*\(\s*(?:\(\s*u?int\d+_t\s*\)\s*)?(?:u?int\d+_t\(\s*)?'
+                               r'([A-Za-z_]\w*(?:\.\w+)*)\s*\)?\s*[-+]\s*(?:0x[0-9A-Fa-f]+|\d+)\s*[,)]'
+                               r'|(?:->|\.)(m_[0-9A-Fa-f]{1,5}|field_?[0-9A-Fa-f]+|unk_?[0-9A-Fa-f]+)\b'),
 }
 CONSTEXPR = re.compile(r'^\s*constexpr\b')
 

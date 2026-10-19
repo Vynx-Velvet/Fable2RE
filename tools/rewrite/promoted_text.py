@@ -105,6 +105,18 @@ def embedded_globals():
     return _EMBEDDED
 
 
+def constant_tail(word, parts):
+    """(prefix, name part, suffix) when a name ends in the name part of one of the module's string constants
+    after an underscore, with an optional `_<number>` (HashName_<Part>, g_HashOf_<Part>_2: tools/rewrite/
+    templates.py), else None. The longest such part wins."""
+    m = re.fullmatch(r'(.*?)(_\d+)?', word)
+    stem, suffix = m.group(1), m.group(2) or ''
+    for i, ch in enumerate(stem):
+        if ch == '_' and i + 1 < len(stem) and stem[i + 1:] in parts and parts[stem[i + 1:]][1] in ('B', 'W', 'R'):
+            return stem[:i + 1], stem[i + 1:], suffix
+    return None
+
+
 def embed_refs(word):
     """A name with every global named after its text inside it replaced by its reference."""
     emb = embedded_globals()
@@ -254,6 +266,9 @@ def encode(text, context=None, prose=False):
             return ref(globals_[w], 'G')
         if embed_refs(w) != w:
             return embed_refs(w)   # (a name made around a global's name: Destroy_g_<Text>)
+        tail = constant_tail(w, parts)
+        if tail and w not in dictionary_names():
+            return tail[0] + ref(*parts[tail[1]]) + tail[2]   # (HashName_<constant's name part>)
         lm = re.fullmatch(r'([A-Za-z]\w*?)(\d*)', w)
         if lm and lm.group(1) in locals_:
             return ref(locals_[lm.group(1)], 'L') + lm.group(2)
@@ -299,7 +314,9 @@ def leftovers(published, context=None, prose=False):
              if not f.startswith('TXT_') and not re.fullmatch(r'[0-9A-F]{8}(?:_\d+)?', f)}
     found |= set(IDENT.findall(published)) & set(text_globals())
     found |= {w for w in IDENT.findall(published) if embed_refs(w) != w}   # (a global's name inside a longer name)
-    _, spans, locals_ = declared(render_text(context if context is not None else published))
+    parts, spans, locals_ = declared(render_text(context if context is not None else published))
+    found |= {w for w in IDENT.findall(published) if constant_tail(w, parts) and w not in dictionary_names()
+              and not w.startswith('str_')}
     spans = [s for s in spans if s not in dictionary_names()]
     names = dictionary_names()
     for line in ([published] if prose else published.split('\n')):

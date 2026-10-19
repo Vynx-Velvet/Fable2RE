@@ -85,6 +85,21 @@ class PromotedTextTests(unittest.TestCase):
         self.assertEqual(pt.leftovers(pub), [])
         self.assertEqual(pt.leftovers(module), ['Destroy_g_Example_Global_Text', 'g_Example_Global_Text'])
 
+    def test_constant_inside_a_name(self):
+        module = ('uint64_t HashName_qrs(CpuState& ctx, uint8_t* base) {\n'
+                  '\tconstexpr int32_t str_qrs = int32_t(0x82000300);\n'
+                  '\tconstexpr uint32_t g_HashOf_qrs_2 = 0x83000040u;\n'
+                  '\tuint64_t hash = HashNameFnv1(ctx, base, str_qrs);\n'
+                  '\tSTORE32(g_HashOf_qrs_2, (uint32_t)hash);\n\treturn hash;\n'
+                  '}\nPROMOTED_ENTRY(1, sub_82100000, 0x82100000) { ctx.r3.u64 = HashName_qrs(ctx, base); }\n')
+        pub = pt.encode(module)
+        self.assertNotIn('qrs', pub)
+        self.assertIn('uint64_t HashName_TXT_82000300_R_(CpuState& ctx', pub)
+        self.assertIn('g_HashOf_TXT_82000300_R__2', pub)
+        self.assertEqual(pt.render_text(pub), module)
+        self.assertEqual(pt.leftovers(pub), [])
+        self.assertIn('HashName_qrs', pt.leftovers(module))
+
     def test_review_notes(self):
         review = ('module\tfunction\tverdict\treviewer\tdate\tnote\n'
                   'Thing\tsub_82100000\tOK\tx\t2026-10-15\tfixed: str_GreenLantern holds GreenLantern; '
