@@ -624,7 +624,8 @@ def cmd_sync(a):
         text = open(p, encoding='utf-8').read()
         canon = re.sub(r'\b[A-Za-z_]\w*\b', lambda m: subs.get(m.group(0), m.group(0)), text)
         new = chunks.current_names(canon)
-        new = re.sub(r'(->|\.)\s*([A-Za-z_]\w*)\b', lambda m: m.group(1) + fsubs.get(m.group(2), m.group(2)), new)
+        # (a field access only: no whitespace between, or a comment's full stop takes the next line with it)
+        new = re.sub(r'(->|\.)([A-Za-z_]\w*)\b', lambda m: m.group(1) + fsubs.get(m.group(2), m.group(2)), new)
         if new != text:
             with open(p, 'w', encoding='utf-8', newline='\n') as fh:
                 fh.write(new)
