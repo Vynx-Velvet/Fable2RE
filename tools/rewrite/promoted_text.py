@@ -18,7 +18,9 @@ checked against the reference hash) and the global names (setup step `globals`),
 the SHA-256 recorded by `publish`, so the result is the same text, byte for byte, as on the machine that
 published it.
 
-    python tools/rewrite/promoted_text.py publish   src/game/promoted/ -> Fable2Recomp/promoted/ (+ manifest.tsv)
+    python tools/rewrite/promoted_text.py publish   src/game/promoted/ -> Fable2Recomp/promoted/ (+ manifest.tsv);
+                                                    a module with a function not reviewed OK in REVIEW.tsv yet
+                                                    stays as it was published (file and manifest row)
     python tools/rewrite/promoted_text.py render    Fable2Recomp/promoted/ + your copy -> src/game/promoted/
     python tools/rewrite/promoted_text.py check     the published form carries no game text and renders back
 """
@@ -321,13 +323,37 @@ def encode_review(text, modules):
     return '\n'.join(out) + '\n'
 
 
+ENTRY = re.compile(r'^PROMOTED_ENTRY\(\d+, (sub_[0-9A-F]{8})', re.M)
+
+
+def manifest_rows():
+    """{file: (sha256, references)} as published."""
+    p = os.path.join(PUBLISHED, MANIFEST)
+    if not os.path.exists(p):
+        return {}
+    _, rows = review_rows(read(p))
+    return {c[0]: (c[1], int(c[2]) if len(c) > 2 and c[2].isdigit() else 0) for c in rows if len(c) >= 2}
+
+
 def cmd_publish(a):
     if not os.path.isdir(LOCAL):
         sys.exit(f'publish: no local modules ({LOCAL})')
     local = module_texts(LOCAL)
     os.makedirs(PUBLISHED, exist_ok=True)
-    rows, problems, refs = [], [], 0
+    review = os.path.join(LOCAL, 'REVIEW.tsv')
+    reviewed = {c[1] for c in review_rows(read(review))[1] if len(c) >= 3 and c[2] == 'OK'} \
+        if os.path.exists(review) else set()
+    before = manifest_rows()
+    rows, problems, refs, held = [], [], 0, []
     for f, text in local.items():
+        # a module is published once every function in it is reviewed OK; until then it stays as published before
+        waiting = [n for n in ENTRY.findall(text) if n not in reviewed]
+        if waiting:
+            held.append((f, len(waiting), f in before))
+            if f in before and os.path.exists(os.path.join(PUBLISHED, f)):
+                rows.append((f,) + before[f])
+                refs += before[f][1]
+            continue
         try:
             pub = encode(text)
         except TextError as e:
@@ -360,7 +386,10 @@ def cmd_publish(a):
             os.remove(os.path.join(PUBLISHED, f))
     write(os.path.join(PUBLISHED, MANIFEST),
           'file\tsha256\treferences\n' + ''.join(f'{f}\t{h}\t{n}\n' for f, h, n in rows))
-    print(f'published {len(rows)} files to {os.path.relpath(PUBLISHED, ROOT)} ({refs} references to the game\'s text)')
+    print(f'published {len(rows)} files to {os.path.relpath(PUBLISHED, ROOT)} ({refs} references to the game\'s text)'
+          + (f'; {len(held)} module(s) not reviewed throughout yet left as they were published' if held else ''))
+    for f, n, was in held:
+        print(f'  {f}: {n} function(s) without an OK review row' + ('' if was else ' (not published yet)'))
     return 0
 
 
@@ -450,9 +479,14 @@ def cmd_check(a):
                 if left:
                     problems.append(f'REVIEW.tsv {cells[1]}: game text left: {", ".join(left[:5])}')
     if os.path.isdir(LOCAL):
+        review = os.path.join(LOCAL, 'REVIEW.tsv')
+        reviewed = {c[1] for c in review_rows(read(review))[1] if len(c) >= 3 and c[2] == 'OK'} \
+            if os.path.exists(review) else set()
         for f, pub in published.items():
             p = os.path.join(LOCAL, f)
             if os.path.exists(p) and read(p) != render_text(pub):
+                if f.endswith('.cpp') and any(n not in reviewed for n in ENTRY.findall(read(p))):
+                    continue   # (functions in review: publish leaves the module as published until they pass)
                 problems.append(f'{f}: the local module differs from the published one (publish it, or render)')
     for p in problems:
         print('  ' + p)

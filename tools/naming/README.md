@@ -21,6 +21,7 @@ Two ways to have a model answer the batches:
   `run_local.py --url https://openrouter.ai/api/v1 --allow-remote --model <provider/model>` with the key stored
   once by `python tools/api_keys.py set openrouter` (without a stored key: `OPENROUTER_API_KEY`); for DeepSeek,
   `--url https://api.deepseek.com` and `set deepseek`. See [API keys](../../docs/parallel-work.md#api-keys).
+  `--effort none|low|high|max` sets how much a thinking model reasons first (DeepSeek bills it as output).
 
 - One batch is about 6,000 tokens of input (`--tokens`); the answer is a few lines per function.
 - Work in rounds. `make_batches.py` offers functions bottom-up (functions whose callees are already named

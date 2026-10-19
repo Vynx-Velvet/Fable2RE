@@ -5,6 +5,10 @@
         (hosted: needs --allow-remote and a key: python tools/api_keys.py set openrouter, once; the key's name
         comes from the URL - openrouter.ai, api.deepseek.com - or --key NAME; one request per batch)
 
+--effort none|low|high|max sets how much a thinking model thinks before it answers (default: the provider's
+own; DeepSeek thinks at high effort and bills the reasoning as output; tools/model_api.py), --max-tokens the
+output limit per answer.
+
 Works with any server that speaks the OpenAI chat-completions protocol on this machine (Ollama, LM Studio,
 llama.cpp server, vLLM ...). Reads build/naming/batches/batch_NNNN.md, writes build/naming/answers/
 batch_NNNN.tsv; batches that already have an answer are skipped, so the run can be stopped and continued.
@@ -26,6 +30,7 @@ import urllib.request
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
 import api_keys  # noqa: E402
+import model_api  # noqa: E402
 _CONF = ('high', 'medium', 'low')
 
 
@@ -53,13 +58,16 @@ def records(text):
     return out
 
 
-def ask(url, model, prompt, timeout, temperature, key='local'):
+def ask(url, model, prompt, timeout, temperature, key='local', effort=None, max_tokens=0, usage=None):
     body = json.dumps({'model': model, 'temperature': temperature, 'stream': False,
-                       'messages': [{'role': 'user', 'content': prompt}]}).encode()
+                       'messages': [{'role': 'user', 'content': prompt}],
+                       **model_api.request_fields(effort, max_tokens)}).encode()
     req = urllib.request.Request(url.rstrip('/') + '/chat/completions', data=body,
                                  headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {key}'})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         doc = json.load(r)
+    if usage is not None:
+        model_api.count(usage, doc.get('usage'))
     return doc['choices'][0]['message']['content']
 
 
@@ -72,6 +80,9 @@ def main():
     ap.add_argument('--max', type=int, default=0, help='stop after this many batches (0: all)')
     ap.add_argument('--timeout', type=int, default=900)
     ap.add_argument('--temperature', type=float, default=0.2)
+    model_api.add_effort_arg(ap)
+    ap.add_argument('--max-tokens', type=int, default=0, help='output limit per answer (0: 32768 with --effort none, '
+                                                              'else the provider\'s own)')
     ap.add_argument('--allow-remote', action='store_true',
                     help='allow a hosted endpoint (for example https://openrouter.ai/api/v1): the batches, which '
                          'contain lifted game code, are sent to that provider')
@@ -87,6 +98,7 @@ def main():
         key = api_keys.key_for(a.url, a.key, a.api_key_env)
     os.makedirs(a.answers, exist_ok=True)
     done = total = 0
+    usage = {}
     for path in sorted(glob.glob(os.path.join(a.batches, 'batch_*.md'))):
         name = os.path.basename(path)[:-3]
         out = os.path.join(a.answers, name + '.tsv')
@@ -97,7 +109,7 @@ def main():
         prompt = open(path, encoding='utf-8').read()
         t0 = time.time()
         try:
-            reply = ask(a.url, a.model, prompt, a.timeout, a.temperature, key)
+            reply = ask(a.url, a.model, prompt, a.timeout, a.temperature, key, a.effort, a.max_tokens, usage)
         except (urllib.error.URLError, TimeoutError, KeyError, json.JSONDecodeError) as e:
             print(f'{name}: failed ({e}); stopping. Is the server running at {a.url} with model {a.model}?')
             break
@@ -110,7 +122,8 @@ def main():
         done += 1
         total += len(recs)
         print(f'{name}: {len(recs)} records for {offered} functions ({time.time() - t0:.0f} s)', flush=True)
-    print(f'{done} batches answered, {total} records. Next: python tools/naming/merge.py')
+    print(f'{done} batches answered, {total} records' + (f'; tokens {model_api.describe(usage)}' if usage else '') +
+          '. Next: python tools/naming/merge.py')
 
 
 if __name__ == '__main__':

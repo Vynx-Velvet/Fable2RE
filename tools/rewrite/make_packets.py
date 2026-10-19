@@ -10,6 +10,19 @@ build/rewrite/answers/<packet>/sub_X.cpp, and checks them with tools/rewrite/che
 in relaxed mode). Packets contain lifted game code: local files (build/ is not committed).
 
 Order: game code only (research/catalog/scope.tsv), classes with a name first, then the rest by address.
+
+    python tools/rewrite/make_packets.py --representatives [--min-group 10] [--per-packet 9]
+
+One function per group of look-alikes (tools/rewrite/lookalikes.py, run it first), the biggest groups first,
+for groups that have no converted member yet; the packets go to the front of the queue. Their rewrites are
+written to be copied to the whole group (LOOKALIKE_RULES).
+
+    python tools/rewrite/make_packets.py --review build/rewrite/review_<...>.tsv [--per-packet 9]
+
+Packets for the functions a review sent back (verdict FIX or REDO), each with the review's note and the path
+of the earlier answer, queued after the look-alike packets. Representatives of look-alike groups (from a
+`*_lookalikes` packet) get packets of their own with the look-alike rules, at the front of the queue. The earlier
+answers' verdicts must be revoked first (results.txt `REVOKED: review ...`, so that apply.py does not take them).
 """
 import argparse
 import collections
@@ -27,6 +40,24 @@ import scope  # noqa: E402
 import make_batches as mb  # noqa: E402
 
 RULES = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'RULES.md'), encoding='utf-8').read()
+LOOKALIKE_RULES = """
+## Look-alike packet
+
+Every function in this packet stands for a group of look-alikes: functions with the same code apart from their
+addresses, numbers, globals, strings, the functions they call and the class they belong to. A tool copies your
+rewrite to every look-alike with that function's own values, and each copy is tested like your answer. Write it
+so that the copies are right and read right (these rules come before the ones above where they differ):
+
+- Keep every number and address as the lifted code spells it (`g_820A0000 + 6400`, not a combined constant you
+  worked out), and call every function by the name the lifted code uses: the tool swaps these values, and a
+  value you computed it cannot swap.
+- No names that belong to one class or one object: the look-alikes are in other classes (the line under each
+  function says how many). Name values by their role (`object`, `owner`, `flags`, `name`, `result`, `count`).
+- Fields: `LOAD`/`STORE` at the lifted code's offsets, with a named address or value, unless the lifted code
+  itself uses `GameObject<...>`. A class type you add would be wrong for the other look-alikes.
+- No `// name:` line (each look-alike has a name of its own) and no comment about one class or one string; one
+  comment on what the pattern does is welcome.
+"""
 _GHIDRA = {}
 _TYPES = None
 
@@ -114,18 +145,20 @@ def ghidra(addr):
     return _GHIDRA[key].get(f'sub_{addr:08X}', '')
 
 
-def section(n, b, known, cl, cname, note=None):
-    """The packet text for one function."""
+def section(n, b, known, cl, cname, note=None, lookalike=False):
+    """The packet text for one function (for a look-alike group's representative without its class and inferred
+    types: its rewrite has to fit look-alikes in other classes)."""
     addr = int(n[4:], 16)
     head = [f'### {n}' + (f'  ({known[addr]})' if addr in known else '')]
     if note:
         head.append(note)
     k = cl['this'].get(n)
-    if k:
+    if k and not lookalike:
         head.append(f'class of the first argument: {cname.get(int(k, 16), cl["classes"][k]["struct"])}')
     g = ghidra(addr)
     code = b.split('\n', 1)[1].rstrip('\n') if '\n' in b else b   # (without the marker's name line)
-    return ('\n'.join(head) + '\n' + types_section(n, cname) + '\n**Lifted (exact):**\n```cpp\n' + code + '\n```\n'
+    types = '' if lookalike else types_section(n, cname)
+    return ('\n'.join(head) + '\n' + types + '\n**Lifted (exact):**\n```cpp\n' + code + '\n```\n'
             + ('\n**Ghidra (approximate, for reading only):**\n```c\n' + g[:6000] + '\n```\n' if g else ''))
 
 
@@ -139,6 +172,13 @@ def main():
     ap.add_argument('--out', default=os.path.join(ROOT, 'build', 'rewrite', 'packets'))
     ap.add_argument('--refresh', action='store_true',
                     help='rewrite the waiting packets with the current code and names (after a naming round)')
+    ap.add_argument('--representatives', action='store_true',
+                    help='one function per group of look-alikes (build/rewrite/lookalikes.json), biggest groups '
+                         'first, at the front of the queue')
+    ap.add_argument('--min-group', type=int, default=10, help='with --representatives: smallest group')
+    ap.add_argument('--review', help='a review file (TSV: packet, function, verdict, note): packets for its FIX '
+                                     'and REDO functions with the note and the earlier answer, queued after the '
+                                     'look-alike packets')
     ap.add_argument('--retry', action='store_true',
                     help='new packets for the functions whose rewrite was revoked, with the reason as a warning')
     a = ap.parse_args()
@@ -169,12 +209,17 @@ def main():
             path = os.path.join(a.out, tag + '.md')
             if not os.path.exists(path):
                 continue
-            fns = re.findall(r'^### (sub_[0-9A-F]{8})', open(path, encoding='utf-8').read(), re.M)
+            old = open(path, encoding='utf-8').read()
+            fns = re.findall(r'^### (sub_[0-9A-F]{8})', old, re.M)
+            # the warning a retry packet gives with a function (--retry) and a look-alike packet's notes stay
+            warned = dict(re.findall(r'^### (sub_[0-9A-F]{8})[^\n]*\n'
+                                     r'(\*\*(?:Warning|Look-alikes|Review):\*\*[^\n]*)$', old, re.M))
+            lookalike = '\n## Look-alike packet\n' in old
             gname = tag.split('_', 1)[1] if '_' in tag else tag
-            parts = [RULES, f'\n# Packet: {gname}\n']
+            parts = [RULES] + ([LOOKALIKE_RULES] if lookalike else []) + [f'\n# Packet: {gname}\n']
             for fn in fns:
                 if fn in blocks:
-                    parts.append(section(fn, blocks[fn], known, cl, cname))
+                    parts.append(section(fn, blocks[fn], known, cl, cname, warned.get(fn), lookalike))
             with open(path, 'w', encoding='utf-8') as f:
                 f.write('\n'.join(parts))
             n += 1
@@ -198,6 +243,55 @@ def main():
                         '`. Read the lifted code again line by line before writing; keep every load in a chain and '
                         'every call argument.')
         groups = [('retry', wanted)]
+    elif a.review:
+        wanted, wanted_lookalikes = [], []
+        for line in open(a.review, encoding='utf-8').read().split('\n')[1:]:
+            c = line.split('\t')
+            if len(c) < 4 or c[2] not in ('FIX', 'REDO') or c[1] not in blocks:
+                continue
+            n, earlier = c[1], f'build/rewrite/answers/{c[0]}/{c[1]}.cpp'
+            if c[2] == 'FIX':
+                notes[n] = (f'**Review:** an earlier answer (`{earlier}`) passed the checker, but review found: '
+                            f'{c[3]}. Start from that answer, fix this, and keep what it does right.')
+            else:
+                notes[n] = (f'**Review:** an earlier answer (`{earlier}`) passed the checker but review rejected '
+                            f'it: {c[3]}. Write it afresh from the lifted code.')
+            if c[0].endswith('_lookalikes'):
+                # (a representative: its look-alike note stays, on the same line, which --refresh keeps)
+                old = open(os.path.join(a.out, c[0] + '.md'), encoding='utf-8').read()
+                m = re.search(r'^### ' + n + r'\b[^\n]*\n(\*\*Look-alikes:\*\*[^\n]*)$', old, re.M)
+                notes[n] = (m.group(1) + ' ' if m else '') + notes[n]
+                wanted_lookalikes.append(n)
+            else:
+                wanted.append(n)
+        groups = [('review', wanted), ('lookalike_review', wanted_lookalikes)]
+    elif a.representatives:
+        la = json.load(open(os.path.join(ROOT, 'build', 'rewrite', 'lookalikes.json'), encoding='utf-8'))
+        wanted = []
+        for g in la['groups']:
+            if g['converted'] or len(g['members']) < a.min_group:
+                continue
+            names = ['sub_' + m for m in g['members']]
+            if any(n in offered for n in names):
+                continue   # (a representative is in a packet already)
+            fits = [n for n in names if n in blocks and len(blocks[n]) <= a.max_function]
+            # (a member of the group's own area: a group can mix game code and start-up code)
+            rep = next((n for n in fits if scope.category(int(n[4:], 16)) == g['area']), fits[0] if fits else None)
+            if not rep:
+                continue
+            classes = collections.Counter(cname.get(int(cl['this'][n], 16), cl['classes'][cl['this'][n]]['struct'])
+                                          for n in names if n in cl['this'])
+            unknown = len(names) - sum(classes.values())
+            if classes:
+                where = (f'in {len(classes)} classes ({", ".join(c for c, _ in classes.most_common(4))}'
+                         + (', ...' if len(classes) > 4 else '') + ')'
+                         + (f', {unknown} without a known class' if unknown else ''))
+            else:
+                where = 'none of them in a known class'
+            notes[rep] = (f'**Look-alikes:** this code is shared by {len(names):,} functions (this one and '
+                          f'{len(names) - 1:,} more), {where}. Your rewrite is copied to the others.')
+            wanted.append(rep)
+        groups = [('lookalikes', wanted)]
     elif a.funcs:
         wanted = [l.strip() for l in open(a.funcs) if l.strip()]
         groups = [('list', wanted)]
@@ -230,9 +324,10 @@ def main():
             if total >= a.limit:
                 break
             chunk = fns[i:i + a.per_packet]
-            parts = [RULES, f'\n# Packet: {gname}\n']
+            lookalike = a.representatives or gname == 'lookalike_review'
+            parts = [RULES] + ([LOOKALIKE_RULES] if lookalike else []) + [f'\n# Packet: {gname}\n']
             for n in chunk:
-                parts.append(section(n, blocks[n], known, cl, cname, notes.get(n)))
+                parts.append(section(n, blocks[n], known, cl, cname, notes.get(n), lookalike))
             total += len(chunk)
             written += 1
             tag = f'{existing + written:04}_{re.sub(r"[^A-Za-z0-9]+", "_", gname)[:40]}'
@@ -244,8 +339,21 @@ def main():
     if os.path.normpath(a.out) != os.path.normpath(os.path.join(ROOT, 'build', 'rewrite', 'packets')):
         print(f'{total} functions in {written} packets -> {a.out} (not queued: not the standard packet directory)')
         return
-    with open(os.path.join(ROOT, 'build', 'rewrite', 'queue.txt'), 'a', encoding='utf-8') as f:
-        f.write('\n'.join(queue) + ('\n' if queue else ''))
+    qpath = os.path.join(ROOT, 'build', 'rewrite', 'queue.txt')
+    if a.representatives:   # (to the front: one rewrite there is worth a group of functions)
+        old = open(qpath, encoding='utf-8').read() if os.path.exists(qpath) else ''
+        with open(qpath, 'w', encoding='utf-8') as f:
+            f.write(''.join(t + '\n' for t in queue) + old)
+    elif a.review:   # (representatives sent back to the front, the others right after the look-alike packets)
+        old = [l for l in open(qpath, encoding='utf-8').read().split('\n') if l] if os.path.exists(qpath) else []
+        front = [t for t in queue if t.endswith('_lookalike_review')]
+        rest = [t for t in queue if t not in front]
+        at = max((i + 1 for i, t in enumerate(old) if t.endswith('_lookalikes')), default=0)
+        with open(qpath, 'w', encoding='utf-8') as f:
+            f.write(''.join(t + '\n' for t in front + old[:at] + rest + old[at:]))
+    else:
+        with open(qpath, 'a', encoding='utf-8') as f:
+            f.write('\n'.join(queue) + ('\n' if queue else ''))
     print(f'{total} functions in {written} packets -> {a.out} (queue: build/rewrite/queue.txt)')
 
 

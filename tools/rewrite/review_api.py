@@ -6,10 +6,18 @@ a sample of the rest are listed for a second reviewer. The result is in the form
     python tools/api_keys.py set deepseek                             (once)
     python tools/rewrite/review_api.py prepare [--earlier DIR]        the work list, from the modules as they are
     python tools/rewrite/review_api.py run [--jobs 4] [--max N]       stop and start again any time
+        [--effort none|low|high|max]   how much the model thinks first (default: the provider's own; DeepSeek
+                                       bills its reasoning as output, tools/model_api.py)
     python tools/rewrite/review_api.py status
     python tools/rewrite/review_api.py collect                        verdicts/, fixes/, escalate.tsv
-    (second reviewer: the functions in escalate.tsv; correct verdicts/ and fixes/ where needed)
+    (second reviewer: the functions in escalate.tsv; correct verdicts/ and fixes/ where needed, or write the
+    decisions down and apply them:)
+    python tools/rewrite/review_api.py second DECISIONS [--fixes DIR]   sub_X<TAB>OK|MODEL|FIX|DEMOTE<TAB>note
     python tools/rewrite/promote.py record --dir build/rewrite/review_api --reviewer <who>
+
+A function whose review is recorded in REVIEW.tsv for the text it has now (promote.py keeps the digests,
+build/rewrite/promote/reviewed_texts.json) is left out; collect lists it as RECORDED and record keeps its row.
+`prepare --all` reviews those again too.
 
 Work directory build/rewrite/review_api/ (local: it holds lifted code). An earlier review in the same form
 (DIR/verdicts/<Module>.tsv, DIR/fixes/sub_X.cpp, DIR/verified.txt = the functions a second reviewer confirmed)
@@ -44,6 +52,7 @@ ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.dirname(HERE))
 import api_keys  # noqa: E402
+import model_api  # noqa: E402
 import promote  # noqa: E402
 
 WORK = os.path.join(ROOT, 'build', 'rewrite', 'review_api')
@@ -157,24 +166,20 @@ USAGE = collections.Counter()
 _ULOCK = threading.Lock()
 
 
-def chat(url, key, model, messages, timeout=1800, retries=5, max_tokens=0):
-    """(answer, finish reason). No output limit by default: a reasoning model spends part of it on its hidden
-    reasoning first, and a limit that is too small leaves an empty answer."""
-    payload = {'model': model, 'temperature': 0.1, 'stream': False, 'messages': messages}
-    if max_tokens:
-        payload['max_tokens'] = max_tokens
+def chat(url, key, model, messages, timeout=1800, retries=5, max_tokens=0, effort=None):
+    """(answer, finish reason). No output limit by default (with effort none, model_api.NO_THINKING_LIMIT): a
+    reasoning model spends part of it on its hidden reasoning first, and a limit that is too small leaves an
+    empty answer."""
+    payload = {'model': model, 'temperature': 0.1, 'stream': False, 'messages': messages,
+               **model_api.request_fields(effort, max_tokens)}
     for attempt in range(retries):
         req = urllib.request.Request(url.rstrip('/') + '/chat/completions', data=json.dumps(payload).encode(),
                                      headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {key}'})
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 doc = json.load(r)
-            u = doc.get('usage', {})
             with _ULOCK:
-                USAGE['prompt'] += u.get('prompt_tokens', 0)
-                USAGE['completion'] += u.get('completion_tokens', 0)
-                USAGE['cached'] += u.get('prompt_cache_hit_tokens', 0)
-                USAGE['requests'] += 1
+                model_api.count(USAGE, doc.get('usage'))
             choice = doc['choices'][0]
             return choice['message'].get('content') or '', choice.get('finish_reason', '')
         except urllib.error.HTTPError as e:
@@ -232,9 +237,20 @@ def cmd_prepare(a):
     for sub in ('lifted', 'earlier_fixes', 'results', 'answers', 'fixes'):
         os.makedirs(os.path.join(a.dir, sub))
     funcs = promote.module_functions()
-    print(f'{len(funcs)} promoted functions; lifting them for the comparison text ...', flush=True)
+    # a function whose review is recorded (REVIEW.tsv) for the text it has now is left out (--all: reviewed again)
+    recorded = {}
+    if not a.all:
+        ok, reviewed = promote.recorded_ok(), promote.reviewed_texts()
+        recorded = {n: (p, t) for n, (p, t) in funcs.items() if n in ok and reviewed.get(n) == promote.text_digest(t)}
+        funcs = {n: v for n, v in funcs.items() if n not in recorded}
+    print(f'{len(funcs) + len(recorded)} promoted functions, {len(recorded)} with a recorded review of their text '
+          f'(left out); lifting the other {len(funcs)} for the comparison text ...', flush=True)
     lifted = promote.lifter_texts(list(funcs))
-    checked = promote.earlier_results('recheck-o', {n: promote.check_form(n, t) for n, (p, t) in funcs.items()})
+    # the strict check of exactly this text: by promote.py build (the cleaner or the plain form) or promote.py check
+    forms = {n: promote.check_form(n, t) for n, (p, t) in funcs.items()}
+    checked = {}
+    for tag in ('base-o', 'clean-o', 'recheck-o'):
+        checked.update(promote.earlier_results(tag, forms))
     ev, confirmed, seen = {}, set(), {}
     if a.earlier and os.path.isdir(a.earlier):
         ev, confirmed = read_earlier(a.earlier)
@@ -274,7 +290,8 @@ def cmd_prepare(a):
             chunk_list.append({'id': f'{mod}.{k}', 'module': mod, 'funcs': cur})
     with open(os.path.join(a.dir, 'work.json'), 'w', encoding='utf-8') as f:
         json.dump({'prepared': time.strftime('%Y-%m-%d %H:%M'), 'earlier': a.earlier, 'functions': info,
-                   'chunks': chunk_list}, f, indent=1)
+                   'chunks': chunk_list,
+                   'recorded': {n: os.path.basename(p)[:-4] for n, (p, t) in sorted(recorded.items())}}, f, indent=1)
     kinds = collections.Counter(i['kind'] for i in info.values())
     failing = sum(1 for i in info.values() if i['check'] != 'OK')
     print(f'{len(info)} functions in {len(chunk_list)} chunks: {kinds["review"]} to review, {kinds["verify"]} to '
@@ -392,7 +409,8 @@ class Runner:
         raw = open(os.path.join(self.a.dir, 'answers', cid + '.txt'), 'a', encoding='utf-8')
         for rnd in range(self.a.rounds + 1):
             try:
-                reply, finish = chat(self.a.url, self.key, self.a.model, messages, max_tokens=self.a.max_tokens)
+                reply, finish = chat(self.a.url, self.key, self.a.model, messages, max_tokens=self.a.max_tokens,
+                                     effort=self.a.effort)
             except RuntimeError as e:
                 self.say(f'{cid}: request failed ({e}); the chunk stays open')
                 raise
@@ -470,7 +488,8 @@ class Runner:
         if self.a.max:
             chunks_ = chunks_[:self.a.max]
         self.say(f'{total - open_} of {total} chunks done before; {len(chunks_)} now with {self.a.model} '
-                 f'({self.a.jobs} at a time, checks with {self.a.check_jobs} jobs)')
+                 f'(effort {self.a.effort or "default"}, {self.a.jobs} at a time, checks with '
+                 f'{self.a.check_jobs} jobs)')
         t0 = time.time()
         done = 0
         with cf.ThreadPoolExecutor(self.a.jobs) as pool:
@@ -482,8 +501,8 @@ class Runner:
                 except Exception as e:   # noqa: BLE001  (the chunk stays open for the next run)
                     msg = f'FAILED: {e}'
                 done += 1
-                self.say(f'[{done}/{len(chunks_)}] {cid}: {msg}; tokens in {USAGE["prompt"]:,} out '
-                         f'{USAGE["completion"]:,}, {(time.time() - t0) / 60:.0f} min')
+                self.say(f'[{done}/{len(chunks_)}] {cid}: {msg}; tokens {model_api.describe(USAGE)}, '
+                         f'{(time.time() - t0) / 60:.0f} min')
         self.say('run finished; next: python tools/rewrite/review_api.py collect')
 
 
@@ -532,7 +551,8 @@ def cmd_status(a):
     v = collections.Counter(r['verdict'] or 'unresolved' for r in res.values())
     esc = sum(1 for fn, r in res.items() if escalation(fn, r))
     print(f'chunks {done}/{n_chunks}; functions {len(res)}/{len(work["functions"])}: {dict(v)}; '
-          f'for the second reviewer so far: {esc}')
+          f'for the second reviewer so far: {esc}' +
+          (f'; {len(work.get("recorded", {}))} keep their recorded review' if work.get('recorded') else ''))
 
 
 def cmd_collect(a):
@@ -545,9 +565,15 @@ def cmd_collect(a):
     by_mod = collections.defaultdict(list)
     for fn, r in res.items():
         by_mod[r['module']].append(fn)
+    recorded = work.get('recorded', {})   # (prepare left these out: their recorded review stands)
+    for fn, mod in recorded.items():
+        by_mod[mod].append(fn)
     for mod, fns in by_mod.items():
         with open(os.path.join(vd, mod + '.tsv'), 'w', encoding='utf-8', newline='\n') as f:
             for fn in sorted(fns, key=lambda x: int(x[4:], 16)):
+                if fn in recorded:
+                    f.write(f'{fn}\tRECORDED\t-\n')
+                    continue
                 r = res[fn]
                 if r['verdict']:
                     note = ' '.join((r['note'] or '-').split())[:300].rstrip()
@@ -574,12 +600,78 @@ def cmd_collect(a):
         f.write(''.join(f'{fn}\tOK\n' for fn in passed))
     v = collections.Counter(r['verdict'] or 'unresolved' for r in res.values())
     reasons = collections.Counter(why.split(':')[0].split(' (')[0] for why in esc.values())
-    print(f'{len(res)} of {len(work["functions"])} functions have a result: {dict(v)}')
+    print(f'{len(res)} of {len(work["functions"])} functions have a result: {dict(v)}' +
+          (f'; {len(recorded)} keep their recorded review' if recorded else ''))
     print(f'{len(esc)} for the second reviewer ({a.dir}/escalate.tsv): {dict(reasons)}')
     if missing:
         print(f'{len(missing)} functions not reviewed yet: run `review_api.py run` again')
     print('verdicts -> ' + vd + '; when the second review is done: python tools/rewrite/promote.py record --dir '
           + a.dir + ' --reviewer <who>')
+
+
+def cmd_second(a):
+    """A second reviewer's decisions (after collect): DECISIONS = sub_X<TAB>OK|MODEL|FIX|DEMOTE<TAB>note, one line per
+    function looked at (OK: the module text is right, MODEL: the model's verdict and fix are right, FIX: the
+    reviewer's own fix FIXES/sub_X.cpp, DEMOTE: back to the lifter). verdicts/ and fixes/ change accordingly;
+    verified.txt lists every function the second reviewer confirmed or decided (an earlier review that
+    `prepare --earlier` takes over as settled)."""
+    vd = os.path.join(a.dir, 'verdicts')
+    if not os.path.isdir(vd):
+        sys.exit('no verdicts yet: run collect first')
+    decisions = {}
+    for line in open(a.decisions, encoding='utf-8'):
+        cells = line.rstrip('\n').split('\t')
+        if len(cells) >= 2 and re.fullmatch(r'sub_[0-9A-F]{8}', cells[0]):
+            decisions[cells[0]] = (cells[1].strip().upper(), cells[2].strip() if len(cells) > 2 else '')
+    rows = {}   # function -> (module file, [cells])
+    for f in sorted(os.listdir(vd)):
+        if f.endswith('.tsv'):
+            for line in open(os.path.join(vd, f), encoding='utf-8'):
+                cells = line.rstrip('\n').split('\t')
+                if cells and cells[0].startswith('sub_'):
+                    rows[cells[0]] = (f, cells)
+    problems = []
+    for fn, (v, note) in decisions.items():
+        if fn not in rows:
+            problems.append(f'{fn}: no verdict from collect')
+            continue
+        f, cells = rows[fn]
+        model_verdict = cells[1] if len(cells) > 1 else ''
+        if v == 'OK':
+            if model_verdict == 'FIX' and os.path.exists(os.path.join(a.dir, 'fixes', fn + '.cpp')):
+                os.remove(os.path.join(a.dir, 'fixes', fn + '.cpp'))   # (the module text is right as it is)
+            rows[fn] = (f, [fn, 'OK', note or (cells[2] if len(cells) > 2 else '-')])
+        elif v == 'MODEL':
+            if model_verdict not in ('OK', 'FIX', 'DEMOTE'):
+                problems.append(f'{fn}: MODEL, but the model has no verdict ({model_verdict or "-"})')
+                continue
+            if note:
+                rows[fn] = (f, [fn, model_verdict, note])
+        elif v == 'FIX':
+            src = os.path.join(a.fixes, fn + '.cpp')
+            if not os.path.exists(src):
+                problems.append(f'{fn}: FIX without {src}')
+                continue
+            shutil.copy(src, os.path.join(a.dir, 'fixes', fn + '.cpp'))
+            rows[fn] = (f, [fn, 'FIX', note or '-'])
+        elif v == 'DEMOTE':
+            rows[fn] = (f, [fn, 'DEMOTE', note or '-'])
+        else:
+            problems.append(f'{fn}: unknown decision {v}')
+    by_file = collections.defaultdict(list)
+    for fn, (f, cells) in rows.items():
+        by_file[f].append(cells)
+    for f, cl in by_file.items():
+        with open(os.path.join(vd, f), 'w', encoding='utf-8', newline='\n') as out:
+            for cells in sorted(cl, key=lambda c: int(c[0][4:], 16)):
+                out.write('\t'.join(cells) + '\n')
+    with open(os.path.join(a.dir, 'verified.txt'), 'w', encoding='utf-8', newline='\n') as out:
+        out.write(''.join(fn + '\n' for fn in sorted(decisions) if fn in rows))
+    c = collections.Counter(v for v, _ in decisions.values())
+    print(f'{len(decisions)} second-review decisions applied: {dict(c)}')
+    for p in problems:
+        print('  ' + p)
+    return 1 if problems else 0
 
 
 def main():
@@ -589,6 +681,8 @@ def main():
     p = sub.add_parser('prepare')
     p.add_argument('--earlier', default=EARLIER, help='an earlier review to take over (default the 2026-10-10 one)')
     p.add_argument('--force', action='store_true')
+    p.add_argument('--all', action='store_true', help='also the functions whose recorded review applies to their '
+                                                      'text as it is (left out by default)')
     r = sub.add_parser('run')
     r.add_argument('--url', default='https://api.deepseek.com')
     r.add_argument('--key', help='stored key name (tools/api_keys.py); default: from the URL')
@@ -597,14 +691,22 @@ def main():
     r.add_argument('--jobs', type=int, default=4, help='chunks asked for at a time')
     r.add_argument('--check-jobs', type=int, default=2, help='processes per check (checks run one at a time)')
     r.add_argument('--rounds', type=int, default=3, help='feedback rounds per chunk')
-    r.add_argument('--max-tokens', type=int, default=0, help='output limit per answer (0: the provider\'s own)')
+    r.add_argument('--max-tokens', type=int, default=0, help='output limit per answer (0: 32768 with --effort none, '
+                                                             'else the provider\'s own)')
+    model_api.add_effort_arg(r)
     r.add_argument('--max', type=int, default=0, help='stop after this many chunks (0: all)')
     r.add_argument('--chunks', help='only these chunks (comma-separated ids from work.json)')
     sub.add_parser('status')
     sub.add_parser('collect')
+    s = sub.add_parser('second')
+    s.add_argument('decisions', help='sub_X<TAB>OK|MODEL|FIX|DEMOTE<TAB>note per function the second reviewer decided')
+    s.add_argument('--fixes', help='directory of the second reviewer\'s fixes (sub_X.cpp; default DIR/second_fixes)')
     a = ap.parse_args()
     a.dir = os.path.abspath(a.dir)
-    {'prepare': cmd_prepare, 'run': cmd_run, 'status': cmd_status, 'collect': cmd_collect}[a.cmd](a)
+    if a.cmd == 'second' and not a.fixes:
+        a.fixes = os.path.join(a.dir, 'second_fixes')
+    sys.exit({'prepare': cmd_prepare, 'run': cmd_run, 'status': cmd_status, 'collect': cmd_collect,
+              'second': cmd_second}[a.cmd](a))
 
 
 if __name__ == '__main__':

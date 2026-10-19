@@ -54,7 +54,10 @@ FIELDS = ['date', 'game_functions', 'game_bytes', 'reviewed', 'hand', 'translate
 DEFINITIONS = {
     'reviewed': 'A language model rewrote the lifter\'s exact code for the function into readable C++; it passes a '
                 'strict differential check against the original on six input profiles, a review, a build and the '
-                'game checks ([promoted code](promoted-code.md)).',
+                'game checks ([promoted code](promoted-code.md)). A look-alike (code the same as another '
+                'function\'s apart from its addresses, numbers and callees) can instead carry its group '
+                'representative\'s reviewed rewrite with its own values; it passes the same check, and its review '
+                'record names the representative ([look-alikes](../research/findings/2026-10-18-lookalike-functions.md)).',
     'hand': 'Written by hand for this port and checked against the original ([conversion guide](conversion-guide.md)).',
     'translated': 'The lifter\'s structured C++ with real signatures and every name the dictionary knows. It is '
                   'exact (the differential tester compares it with the original), but mechanical to read '
@@ -104,7 +107,10 @@ def measure():
         size[a][kind] += int(r['size'] or 0)
     names = {f: len(read_tsv(NAMES / f'{f}.tsv')) for f in ('functions', 'classes', 'fields', 'locals')}
     named = sum(1 for r in read_tsv(NAMES / 'functions.tsv') if area(int(r['address'], 16)) in LIONHEAD)
-    return {'count': count, 'size': size, 'names': names, 'named': named, 'modules': modules}
+    review = PUBLISHED / 'REVIEW.tsv'
+    copies = sum(1 for r in read_tsv(review) if r['function'] in reviewed and r['verdict'] == 'OK'
+                 and r['note'].startswith('copy of ')) if review.exists() else 0
+    return {'count': count, 'size': size, 'names': names, 'named': named, 'modules': modules, 'copies': copies}
 
 
 def summary(m):
@@ -263,8 +269,11 @@ def page(m, history):
         b = sum(m['size'][a][k] for a in LIONHEAD)
         out.append(f'| {label} | {n(row[k])} | {pct(row[k], row["game_functions"])} | {n(b)} | '
                    f'{pct(b, row["game_bytes"])} |')
-    out += [f'| **Total** | **{n(row["game_functions"])}** | | **{n(row["game_bytes"])}** | |', '',
-            '## The whole executable', '',
+    out += [f'| **Total** | **{n(row["game_functions"])}** | | **{n(row["game_bytes"])}** | |', '']
+    if m.get('copies'):
+        out += [f'Of the reviewed functions, {n(m["copies"])} are look-alikes that carry the reviewed rewrite of '
+                'their group\'s representative with their own values (see what is counted, below).', '']
+    out += ['## The whole executable', '',
             'Every function of `default.xex`, by area ([scope](../research/catalog/scope.tsv)). Middleware and '
             'system libraries are not reconstructed as readable code; they are to be replaced by native PC '
             'equivalents ([roadmap](roadmap.md)).', '',

@@ -9,6 +9,10 @@ line of the lifted code (tools/rewrite/RULES.md). Every function is compared on 
 memory, then dense inputs - the second catches a wrong load chain that reads zeros in sparse memory) and is
 OK only when both agree. Prints one line per function and writes <dir>/results.txt (the combined verdict;
 the per-profile files stay next to it).
+
+Checks take turns, also across processes (build/rewrite/check.lock): the test programs are built in one directory
+(tools/lift/difftest build_relaxed, build_relaxed_out), which run_api.py, promote.py, review_api.py and agent
+sessions (agent_check.py) share. A check that finds another one running waits for it.
 """
 import argparse
 import glob
@@ -16,9 +20,34 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 LIFT = os.path.join(ROOT, 'tools', 'lift')
+LOCK = os.path.join(ROOT, 'build', 'rewrite', 'check.lock')
+
+
+def check_lock():
+    """Waits until no other check runs and returns the open lock file (held until it is closed or the process
+    ends)."""
+    os.makedirs(os.path.dirname(LOCK), exist_ok=True)
+    f = open(LOCK, 'a+')
+    waiting = False
+    while True:
+        try:
+            if os.name == 'nt':
+                import msvcrt
+                f.seek(0)
+                msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return f
+        except OSError:
+            if not waiting:
+                print('waiting for another check to finish (one tester build directory)', flush=True)
+                waiting = True
+            time.sleep(3)
 
 
 def validate(path):
@@ -62,6 +91,7 @@ def main():
     files = sorted(glob.glob(os.path.join(d, 'sub_*.cpp')))
     if not files:
         sys.exit('no sub_X.cpp files in ' + d)
+    lock = check_lock()   # noqa: F841  (held until the process ends)
     bad = {}
     for p in files:
         pr = validate(p)

@@ -16,7 +16,9 @@ the differential checker. Promotion turns it into published replacement code (CO
         applies a review: DIR/verdicts/<Module>.tsv (sub_X<TAB>OK|FIX|DEMOTE<TAB>note, one line per function of
         every module) and DIR/fixes/sub_X.cpp (FIX: the whole function, ending in its unchanged PROMOTED_ENTRY
         line); fixes are checked again (a failing fix is reported and left out), DEMOTE verdicts are demoted, and
-        Fable2Recomp/src/game/promoted/REVIEW.tsv records every function reviewed OK
+        Fable2Recomp/src/game/promoted/REVIEW.tsv records every function reviewed OK. RECORDED keeps the row of a
+        review recorded earlier, when the function's text is still the one reviewed (digests: local
+        build/rewrite/promote/reviewed_texts.json, started from the published modules the first time)
     python tools/rewrite/promote.py lint                       what is still left to clean, per module
     python tools/rewrite/promote.py demote sub_X ... --reason  back to the lifter (the text is kept, revoked)
     python tools/rewrite/promote.py sync                       (run by tools/lift/apply_names.py: names given or
@@ -29,6 +31,7 @@ Then tools/lift/update.ps1 -Build and the game checks. Review: docs/promoted-cod
 """
 import argparse
 import collections
+import hashlib
 import json
 import os
 import re
@@ -176,18 +179,43 @@ def header_for(struct, key, info):
     ])
 
 
+def free_module(n):
+    """(module, header line) of a function without a class: the functions of the start-up and shut-down areas of
+    global objects (thousands of look-alikes) by 64 KiB page, the others free_functions."""
+    import scope
+    addr = int(n[4:], 16)
+    for lo, hi, area, what in scope.ranges():
+        if lo <= addr < hi and area == 'game-static':
+            kind = 'startup_area' if what.startswith('Start-up') else 'shutdown_area'
+            return (f'{kind}_{addr >> 16:04X}',
+                    f'// Functions of the area "{what}" at 0x{addr >> 16:04X}xxxx, as readable C++.')
+    return 'free_functions', '// Functions of no known class, as readable C++.'
+
+
 def write_modules(new):
     """Adds {function: module text} to the modules of their classes; returns {function: module path}."""
     this, structs, classes = class_of()
     by_key = collections.defaultdict(dict)
+    free_heads = {}
     for n, t in new.items():
-        by_key[this.get(n, 'free')][n] = t
+        key = this.get(n)
+        if key is None:
+            module, line = free_module(n)
+            free_heads[module] = line
+            key = 'free:' + module
+        by_key[key][n] = t
     os.makedirs(PROMOTED, exist_ok=True)
     where = {}
     for key, funcs in by_key.items():
-        struct = structs.get(key, f'C_{key}') if key != 'free' else 'free_functions'
+        if key.startswith('free:'):
+            struct = key[5:]
+            head = '\n'.join([free_heads[struct], '//', *MODULE_HEADER_LINES, '#include "lifted/lifted.h"',
+                              '#include "lifted/classes.h"', '#include "lifted/native_decls.h"'])
+        else:
+            struct = structs.get(key, f'C_{key}')
+            head = header_for(struct, key, classes.get(key))
         path = module_path(struct)
-        head, have = header_for(struct, key, classes.get(key)), {}
+        have = {}
         if os.path.exists(path):
             head, have = split_module(open(path, encoding='utf-8').read())
             head = refresh_header(head)
@@ -640,6 +668,51 @@ def cmd_demote(a):
 
 
 REVIEW_RECORD = os.path.join(PROMOTED, 'REVIEW.tsv')
+REVIEWED_TEXTS = os.path.join(WORK, 'reviewed_texts.json')   # local: the text each recorded review applies to
+
+
+def text_digest(text):
+    return hashlib.sha1(text.strip('\n').replace('\r', '').encode('utf-8')).hexdigest()[:16]
+
+
+def recorded_ok():
+    """{function: its REVIEW.tsv row} of the functions recorded OK."""
+    out = {}
+    if os.path.exists(REVIEW_RECORD):
+        for line in open(REVIEW_RECORD, encoding='utf-8').read().splitlines()[1:]:
+            cells = line.split('\t')
+            if len(cells) >= 3 and cells[2] == 'OK':
+                out[cells[1]] = cells
+    return out
+
+
+def reviewed_texts():
+    """{function: digest of the module text its recorded review applies to}, kept by `record`. Started, the first
+    time, from the modules identical to their published form (Fable2Recomp/promoted/manifest.tsv): those hold
+    exactly the texts REVIEW.tsv records."""
+    if os.path.exists(REVIEWED_TEXTS):
+        return json.load(open(REVIEWED_TEXTS, encoding='utf-8'))
+    import promoted_text
+    published = promoted_text.manifest()
+    ok = recorded_ok()
+    out = {}
+    for f in sorted(os.listdir(PROMOTED)) if os.path.isdir(PROMOTED) else []:
+        p = os.path.join(PROMOTED, f)
+        if not f.endswith('.cpp') or f not in published:
+            continue
+        if promoted_text.sha(open(p, encoding='utf-8', newline='').read()) != published[f]:
+            continue
+        for n, t in split_module(open(p, encoding='utf-8').read())[1].items():
+            if n in ok:
+                out[n] = text_digest(t)
+    save_reviewed_texts(out)
+    return out
+
+
+def save_reviewed_texts(texts):
+    os.makedirs(WORK, exist_ok=True)
+    with open(REVIEWED_TEXTS, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(dict(sorted(texts.items())), f, indent=0)
 
 
 def write_module(p, head, funcs):
@@ -666,15 +739,24 @@ def cmd_record(a):
                 if len(cells) >= 2 and re.fullmatch(r'sub_[0-9A-F]{8}', cells[0]):
                     verdicts[cells[0]] = (cells[1].strip().upper(), cells[2].strip() if len(cells) > 2 else '')
     missing = sorted(n for n in funcs if n not in verdicts)
-    if missing:
-        print(f'{len(missing)} module functions have no verdict: {" ".join(missing[:20])}')
+    if missing and not a.partial:
+        print(f'{len(missing)} module functions have no verdict: {" ".join(missing[:20])} (--partial: record the '
+              'others and leave these without a review row)')
         return 1
-    bad = sorted(n for n, (v, _) in verdicts.items() if v not in ('OK', 'FIX', 'DEMOTE'))
+    bad = sorted(n for n, (v, _) in verdicts.items() if v not in ('OK', 'FIX', 'DEMOTE', 'RECORDED'))
     if bad:
         print(f'unknown verdicts: {" ".join(bad)}')
         return 1
-    # fixes
+    # RECORDED: the review recorded earlier stands (review_api.py prepare leaves such functions out)
     fixes, problems = {}, {}
+    ok_rows, reviewed = recorded_ok(), reviewed_texts()
+    for n, (v, _) in verdicts.items():
+        if v == 'RECORDED' and n in funcs:
+            if n not in ok_rows:
+                problems[n] = 'RECORDED, but REVIEW.tsv has no OK row for it'
+            elif reviewed.get(n) != text_digest(funcs[n][1]):
+                problems[n] = 'RECORDED, but its text changed since that review'
+    # fixes
     for n, (v, note) in verdicts.items():
         if v != 'FIX' or n not in funcs:
             continue
@@ -731,9 +813,13 @@ def cmd_record(a):
         f.write('module\tfunction\tverdict\treviewer\tdate\tnote\n')
         for r in rows:
             f.write('\t'.join(r) + '\n')
+    # the texts these reviews apply to: new verdicts on the text as it is now, earlier ones as they were
+    save_reviewed_texts({r[1]: text_digest(left[r[1]][1]) if verdicts.get(r[1], ('',))[0] in ('OK', 'FIX')
+                         else reviewed.get(r[1], text_digest(left[r[1]][1])) for r in rows})
     c = collections.Counter(v for v, _ in verdicts.values())
     print(f'verdicts {dict(c)}; {len(fixes)} fixes applied, {len(demote)} demoted; '
-          f'{len(rows)} of {len(left)} module functions recorded OK in {REVIEW_RECORD}')
+          f'{len(rows)} of {len(left)} module functions recorded OK in {REVIEW_RECORD}' +
+          (f'; {len(missing)} without a verdict not recorded (--partial)' if missing else ''))
     for n, why in sorted(problems.items()):
         print(f'  needs attention: {n}: {why}')
     return 1 if problems else 0
@@ -760,6 +846,8 @@ def main():
     rc.add_argument('--dir', default=os.path.join(ROOT, 'build', 'rewrite', 'review'))
     rc.add_argument('--reviewer', required=True)
     rc.add_argument('--jobs', type=int, default=3)
+    rc.add_argument('--partial', action='store_true', help='functions without a verdict get no review row (a '
+                                                           'module is published once all of its functions have one)')
     a = ap.parse_args()
     fn = {'build': cmd_build, 'check': cmd_check, 'review': cmd_review, 'lint': cmd_lint, 'sync': cmd_sync,
           'demote': cmd_demote, 'record': cmd_record}[a.cmd]
