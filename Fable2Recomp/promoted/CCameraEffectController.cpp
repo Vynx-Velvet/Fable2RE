@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821C3320(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr) {
 	if (!UseLiftedCode(2, 0x821C3320)) { ctx.r3.u64 = cameraEffectControllerAddr; __imp__sub_821C3320(ctx, base); return ctx.r3.u64; }
@@ -62,7 +63,6 @@ uint64_t n_sub_821C3320(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 	uint32_t vectorBufferAddr = stack + 80;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.f13.f64 = f13Value;
 	uint32_t vectorAddr = n_sub_821DE960(ctx, base, vectorBufferAddr, cameraEffectControllerAddr);
 	PPCVRegister vector{};
 	SET_V8(vector, VLOAD(vectorAddr & ~0xFu));
@@ -119,7 +119,6 @@ uint64_t CCameraEffectController_Destruct(CpuState& ctx, uint8_t* base, uint64_t
 	cameraEffectController->vtable = 0x820028E4u;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	CCameraEffectController_ReleaseHandles(ctx, base, cameraEffectControllerAddr);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, cameraEffectControllerAddr + 148);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, cameraEffectControllerAddr + 140);
@@ -159,7 +158,6 @@ uint64_t n_sub_827D1090(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 		} else {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.f13.f64 = valueA0;
 			uint64_t vec4Addr = n_sub_827D0FC0(ctx, base, stack + 80, effectDataAddr);
 			sourceAddr = n_sub_821DECC8(ctx, base, stack + 112, effectDataAddr, vec4Addr);
 			callerR4 = ctx.r4.u64;
@@ -296,14 +294,9 @@ PROMOTED_ENTRY(54, sub_827D1338, 0x827D1338) { ctx.r3.u64 = CCameraEffectControl
 uint64_t CCameraEffectController_SetNames(CpuState& ctx, uint8_t* base, uint64_t cameraEffectController, uint64_t firstName, uint64_t secondName) {
 	if (!UseLiftedCode(54, 0x827D1340)) { ctx.r3.u64 = cameraEffectController; ctx.r4.u64 = firstName; ctx.r5.u64 = secondName; __imp__sub_827D1340(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827D1340);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	CCharString_AssignShared(ctx, base, cameraEffectController + 0x8C, firstName);
-	uint64_t result = CCharString_AssignShared(ctx, base, cameraEffectController + 0x94, secondName);
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
-	return result;
+	return CCharString_AssignShared(ctx, base, cameraEffectController + 0x94, secondName);
 }
 PROMOTED_ENTRY(54, sub_827D1340, 0x827D1340) { ctx.r3.u64 = CCameraEffectController_SetNames(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
@@ -335,7 +328,6 @@ uint32_t n_sub_827D2EE8(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 	if (targetFlagged) {
 		// state the callee may pass on: r10 still holds the flag bit tested above
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = 64;
 		result = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		uint32_t entityAddr = (uint32_t)result;
 
@@ -438,9 +430,6 @@ uint64_t n_sub_827D3A08(CpuState& ctx, uint8_t* base, uint64_t effectController)
 		} else {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = stateR8;
-			ctx.r9.u64 = stateR9;
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, result);
 			stateR8 = ctx.r8.u64;
 			stateR9 = ctx.r9.u64;
@@ -475,10 +464,6 @@ uint64_t n_sub_827D3A08(CpuState& ctx, uint8_t* base, uint64_t effectController)
 		callTarget.u64 = ownerMethod;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = stack + 80;
-		ctx.r4.u64 = ownerTarget;
-		ctx.r8.u64 = stateR8;
-		ctx.r9.u64 = stateR9;
-		ctx.r10.u64 = ownerMethod;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		uint64_t ownEntity = EntityHandle_Get_825575C8(ctx, base, ownHandle);

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECBreadcrumber_HasMovedBeyondThreshold(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
 	if (!UseLiftedCode(0, 0x82174C18)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_82174C18(ctx, base); return ctx.r3.u64; }
@@ -164,7 +165,6 @@ uint32_t n_sub_82189B58(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr,
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = breadcrumberAddr;
 	const uint32_t aboveThreshold = Entity_IsComponent33ValueAboveThreshold(ctx, base);
 	if ((aboveThreshold & 0xFF) != 0) {
 		breadcrumber->m_19C = 5u;
@@ -300,7 +300,6 @@ uint32_t n_sub_82192D88(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		selectedValue = double(LOAD_F32(0x83496A48u));
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = entityFlag40;
 		const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		result = entity;
 
@@ -384,7 +383,6 @@ uint32_t n_sub_82192D88(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 				}
 			}
 			// state the callee may pass on
-			ctx.f13.f64 = f13ForRelease;
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchAddr);
 		}
 	}
@@ -433,10 +431,6 @@ uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr)
 		if (entity == 0) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r7.u64 = arrayBegin;
-			ctx.r8.u64 = arrayHolder;
-			ctx.r9.u64 = rootData;
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, handleAddr);
 			passR6 = ctx.r6.u64;
 			passR7 = ctx.r7.u64;
@@ -496,9 +490,6 @@ uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr)
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
 		ctx.cr0 = passCr0;
 		ctx.xer.ca = passXer.ca;
 		result = n_sub_821D81C0(ctx, base, component, 0);
@@ -523,12 +514,10 @@ uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr)
 	const PPCCRRegister cr0BeforeSine = ctx.cr0;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = arrayHolderNow;
 	const double approxSine = Math_SinApprox(ctx, base, angle);
 	ctx.fpscr.disableFlushMode();
 	const double approxSineRounded = double(float(approxSine));
 	// state the callee may pass on
-	ctx.f12.f64 = approxSineRounded;
 	const double sine = Math_Sin(ctx, base, angle);
 	ctx.fpscr.disableFlushMode();
 	const double sineRounded = double(float(sine));
@@ -593,7 +582,6 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 					entity = LOAD32(handleTarget);
 					if (entity == 0) {
 						// state the callee may pass on
-						ctx.r10.u64 = 0;
 						EntityHandle_Release(ctx, base, uint64_t(node) + 8);
 					}
 				}
@@ -853,8 +841,6 @@ uint32_t n_sub_822A3728(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		breadcrumber->m_184 = float(verticalOffset);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r9.u64 = r9State;
-		ctx.r10.u64 = r10State;
 		result = n_sub_824DCDA8(ctx, base, breadcrumberAddr, 0u);
 	}
 
@@ -913,12 +899,8 @@ uint64_t CECBreadcrumber_GetClassName(CpuState& ctx, uint8_t* base, uint64_t cla
 	constexpr int32_t str_TXT_820B7CE4_B_ = int32_t(0x820B7CE4);
 	if (!UseLiftedCode(29, 0x824D4570)) { ctx.r3.u64 = classNameString; __imp__sub_824D4570(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824D4570);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820B7CE4_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(29, sub_824D4570, 0x824D4570) { ctx.r3.u64 = CECBreadcrumber_GetClassName(ctx, base, ctx.r3.u64); }
@@ -927,16 +909,12 @@ PROMOTED_ENTRY(29, sub_824D4570, 0x824D4570) { ctx.r3.u64 = CECBreadcrumber_GetC
 uint64_t n_sub_824D4A68(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t flags) {
 	if (!UseLiftedCode(29, 0x824D4A68)) { ctx.r3.u64 = objectAddr; ctx.r4.u64 = flags; __imp__sub_824D4A68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824D4A68);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = flags;  // state the callee may pass on
 	n_sub_824D4AB8(ctx, base, objectAddr);
 	if ((uint32_t(flags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return objectAddr;
 }
 PROMOTED_ENTRY(29, sub_824D4A68, 0x824D4A68) { ctx.r3.u64 = n_sub_824D4A68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -960,8 +938,6 @@ uint64_t n_sub_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		uint32_t pieceListOwner = LOAD32(registryEntry + 4);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r9.u64 = registryEntry;
-		ctx.r10.u64 = registry;
 		BreakablePieceList_RemoveById(ctx, base, pieceListOwner, pieceHandleAddr);
 		SharedHandle_Release(ctx, base, pieceHandleAddr);
 		breadcrumber->m_1C4 = 0;
@@ -989,8 +965,6 @@ uint64_t n_sub_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	uint32_t handleVtable = uint32_t(g_820F0000) + 5732;
 	STORE32(tempHandleAddr, handleVtable);
 	// state the callee may pass on
-	ctx.r8.u64 = handleVtable;
-	ctx.r9.u64 = uint32_t(g_820F0000);
 	uint64_t result = EntityHandle_Release(ctx, base, tempHandleAddr);
 
 	PPCVRegister zeroVec{};
@@ -1015,6 +989,7 @@ uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	constexpr int32_t str_TXT_820B7D48_B_ = int32_t(0x820B7D48);
 	constexpr int32_t str_TXT_820B7D58_B_ = int32_t(0x820B7D58);
 	constexpr int32_t g_83319040 = int32_t(0x83319040);
+	constexpr int32_t str_TXT_820B59DC_B_ = int32_t(0x820B59DC);
 	if (!UseLiftedCode(29, 0x824D4CE0)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = stream; ctx.r5.u64 = mode; ctx.r6.u64 = saving; __imp__sub_824D4CE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824D4CE0);
 	uint32_t stack = ctx.r1.u64;
@@ -1036,7 +1011,7 @@ uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
 	ctx.r10.s64 = g_820B0000;  // state the callee may pass on
-	CCharString_ConstructFromCStr(ctx, base, stack + 80, g_820B0000 + 23004, -1);  // the name string at 0x820B59DC
+	CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B59DC_B_, -1);  // the name string at 0x820B59DC
 	IStream_SerializeString(ctx, base, stack + 80, stream, breadcrumberAddr + 330);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -1459,7 +1434,6 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 			// r9 handed to the first fetch of each list: keptCount, later what the calls left there
 			uint32_t r9AtFetch = keptCount;
 			do {
-				ctx.r9.u64 = r9AtFetch;
 				const uint32_t handleList = (uint32_t)n_sub_821E9150(ctx, base, handleLists, stack + 80);
 				r9AtFetch = ctx.r9.u32;
 				result = handleList;
@@ -1507,7 +1481,6 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 						entity = LOAD32(handleTarget);
 						if (entity == 0) {
 							// the copied handle points at no entity: release it
-							ctx.r10.u64 = handleTarget;
 							EntityHandle_Release(ctx, base, stack + 88);
 							r6Value = ctx.r6.u64;
 							r7Value = ctx.r7.u64;
@@ -1578,11 +1551,6 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 							if (emitter != 0) {
 								ctx.fpscr.disableFlushMode();
 								// state the callee may pass on
-								ctx.r6.u64 = r6Value;
-								ctx.r7.u64 = r7Value;
-								ctx.r8.u64 = r8Value;
-								ctx.r9.u64 = r9Value;
-								ctx.r10.u64 = r10Value;
 								ctx.xer.ca = carry;
 								ParticleEmitter_ApplyAlphaToChildren(ctx, base, emitter, alpha);
 								r6Value = ctx.r6.u64;
@@ -1598,11 +1566,6 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 					// destroy the copied handle
 					STORE32(stack + 88, entityHandleVtable);
 					// state the callee may pass on
-					ctx.r6.u64 = r6Value;
-					ctx.r7.u64 = r7Value;
-					ctx.r8.u64 = r8Value;
-					ctx.r9.u64 = r9Value;
-					ctx.r10.u64 = r10Value;
 					ctx.xer.ca = carry;
 					result = (uint32_t)EntityHandle_Release(ctx, base, stack + 88);
 					r9AtFetch = ctx.r9.u32;
@@ -1656,16 +1619,9 @@ uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint32_t storedHash = LOAD32(subjectRecord + 180);
 
 		// state the callee may pass on
-		ctx.r3.u64 = subject;
-		ctx.r6.u64 = subjectRecord;
-		ctx.r7.u64 = subjectInfo;
-		ctx.r8.u64 = nodeC;
-		ctx.r9.u64 = nodeB;
-		ctx.r10.u64 = nodeA;
 		const uint64_t textHash = Path_NormalizeAndHash(ctx, base, (uint64_t)subject + 20, textAddr);
 		if (storedHash == (uint32_t)textHash) {
 			// state the callee may pass on
-			ctx.r5.u64 = textHash;
 			const uint64_t resetResult = CECBreadcrumber_Reset(ctx, base, breadcrumberAddr);
 			stack = PopStackFrame(stack, 128);
 			ctx.r1.u64 = stack;
@@ -1679,10 +1635,6 @@ uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint32_t subject2 = LOAD32(nodeC2 + 4);
 		const uint32_t subjectTarget = LOAD32(subject2 + 8);
 		// state the callee may pass on
-		ctx.r7.u64 = subject2;
-		ctx.r8.u64 = nodeC2;
-		ctx.r9.u64 = nodeB2;
-		ctx.r10.u64 = nodeA2;
 		result = n_sub_825F6150(ctx, base, subjectTarget, storedHash, textHash);
 		r4Value = result;
 		if ((uint32_t)result != 0) {
@@ -1720,16 +1672,11 @@ uint64_t CECBreadcrumber_Reset(CpuState& ctx, uint8_t* base, uint64_t breadcrumb
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, (uint32_t)entityHandleVtable);
 	// state the callee may pass on
-	ctx.r8.u64 = entityHandleVtable;
-	ctx.r9.u64 = 0;
-	ctx.r10.s64 = g_820F0000;
 	EntityHandle_Release(ctx, base, stack + 80);
 	EntityHandle_Assign(ctx, base, breadcrumberAddr + 128, stack + 80);
 
 	STORE32(stack + 80, (uint32_t)entityHandleVtable);
 	// state the callee may pass on
-	ctx.r6.u64 = (uint32_t)entityHandleVtable;
-	ctx.r7.u64 = uint32_t(g_820F0000);
 	const uint64_t result = EntityHandle_Release(ctx, base, stack + 80);
 
 	stack = PopStackFrame(stack, 112);
@@ -1765,25 +1712,25 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	// r7-r10 and f9-f13 as the original holds them at the calls below; r7, r8, f9-f13, CR0 and CA are
 	// also what callers read after the call
 	uint64_t r7Value = (uint64_t)(int64_t)g_83490000;
-	uint64_t r8Value = (uint64_t)(int64_t)(int32_t)(rawValue << 2);
+	uint64_t scaledRawValue = (uint64_t)(int64_t)(int32_t)(rawValue << 2);
 	uint32_t r9Value = uint32_t(g_83320000);
 	uint32_t r10Value = uint32_t(g_820F0000);
 
 	// wanted handle count = float(rawValue * 4) * factor * factor, each product rounded to single precision;
 	// the integer goes to the FPU through stack+104
-	STORE64(stack + 104, r8Value);
+	STORE64(stack + 104, scaledRawValue);
 	ctx.fpscr.disableFlushMode();
-	double f12Value = double(float((int64_t)r8Value));
-	const double firstFactor = double(LOAD_F32(r9Value - 25200));
-	double f13Value = double(LOAD_F32((uint32_t)r7Value + 27168));
+	double scaledRawValueFloat = double(float((int64_t)scaledRawValue));
+	const double firstScaleFactor = double(LOAD_F32(r9Value - 25200));
+	double secondScaleFactor = double(LOAD_F32((uint32_t)r7Value + 27168));
 	const uint32_t listCountAddr = uint32_t(g_834982B8) + 8;
 	uint32_t index = 0;
 	STORE32(stack + 80, index);
-	double f11Value = double(float(f12Value * firstFactor));
-	double f10Value = double(float(f11Value * f13Value));
-	PPCRegister f9Value{};
-	f9Value.s64 = std::isnan(f10Value) ? int64_t(0x80000000U) : f10Value > double(INT_MAX) ? INT_MAX : simde_mm_cvttsd_si32(simde_mm_load_sd(&f10Value));
-	breadcrumber->m_1B8 = f9Value.u32;
+	double f11Value = double(float(scaledRawValueFloat * firstScaleFactor));
+	double breadcrumbCountFloat = double(float(f11Value * secondScaleFactor));
+	PPCRegister breadcrumbCount{};
+	breadcrumbCount.s64 = std::isnan(breadcrumbCountFloat) ? int64_t(0x80000000U) : breadcrumbCountFloat > double(INT_MAX) ? INT_MAX : simde_mm_cvttsd_si32(simde_mm_load_sd(&breadcrumbCountFloat));
+	breadcrumber->m_1B8 = breadcrumbCount.u32;
 
 	if (LOAD32(listCountAddr) != 0) {
 		const uint64_t handleLists = breadcrumberAddr + 228;
@@ -1794,37 +1741,29 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 			STORE32(stack + 88, entityHandleVtable);
 			STORE32(stack + 92, 0);
 			// state the callee may pass on
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = r9Value;
-			ctx.r10.u64 = r10Value;
-			ctx.f9 = f9Value;
-			ctx.f10.f64 = f10Value;
-			ctx.f11.f64 = f11Value;
-			ctx.f12.f64 = f12Value;
-			ctx.f13.f64 = f13Value;
+			ctx.f9 = breadcrumbCount;
 			ctx.cr0 = cr0State;
 			ctx.xer.ca = xerState.ca;
 			EntityHandle_Release(ctx, base, stack + 88);
-			f9Value = ctx.f9;
-			f10Value = ctx.f10.f64;
+			breadcrumbCount = ctx.f9;
+			breadcrumbCountFloat = ctx.f10.f64;
 			f11Value = ctx.f11.f64;
-			f12Value = ctx.f12.f64;
-			f13Value = ctx.f13.f64;
+			scaledRawValueFloat = ctx.f12.f64;
+			secondScaleFactor = ctx.f13.f64;
 			cr0State = ctx.cr0;
 			xerState.ca = ctx.xer.ca;
 
 			const uint32_t wanted = breadcrumber->m_1B8;
 			const uint64_t handleList = n_sub_821E9150(ctx, base, handleLists, stack + 80);
 			r7Value = ctx.r7.u64;
-			r8Value = ctx.r8.u64;
+			scaledRawValue = ctx.r8.u64;
 			r9Value = ctx.r9.u32;
 			r10Value = ctx.r10.u32;
-			f9Value = ctx.f9;
-			f10Value = ctx.f10.f64;
+			breadcrumbCount = ctx.f9;
+			breadcrumbCountFloat = ctx.f10.f64;
 			f11Value = ctx.f11.f64;
-			f12Value = ctx.f12.f64;
-			f13Value = ctx.f13.f64;
+			scaledRawValueFloat = ctx.f12.f64;
+			secondScaleFactor = ctx.f13.f64;
 			cr0State = ctx.cr0;
 			xerState.ca = ctx.xer.ca;
 			const uint32_t current = LOAD32((uint32_t)handleList + 8);
@@ -1839,19 +1778,18 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 				const uint64_t endIterator = LOAD64(stack + 96);
 				do {
 					// state the callee may pass on
-					ctx.r10.u64 = r10Value;
 					ctx.cr0 = cr0State;
 					ctx.xer.ca = xerState.ca;
 					List_InsertNodeWithCopyConstruct(ctx, base, (uint32_t)handleList, endIterator, stack + 88);
 					r7Value = ctx.r7.u64;
-					r8Value = ctx.r8.u64;
+					scaledRawValue = ctx.r8.u64;
 					r9Value = ctx.r9.u32;
 					r10Value = ctx.r10.u32;
-					f9Value = ctx.f9;
-					f10Value = ctx.f10.f64;
+					breadcrumbCount = ctx.f9;
+					breadcrumbCountFloat = ctx.f10.f64;
 					f11Value = ctx.f11.f64;
-					f12Value = ctx.f12.f64;
-					f13Value = ctx.f13.f64;
+					scaledRawValueFloat = ctx.f12.f64;
+					secondScaleFactor = ctx.f13.f64;
 					xerState.ca = missing != 0;
 					--missing;
 					cr0State.compare<int32_t>((int32_t)missing, 0, xerState);
@@ -1868,17 +1806,16 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 					}
 					const uint64_t lastIterator = LOAD64(stack + 104);
 					// state the callee may pass on
-					ctx.r10.u64 = endNode;
 					EntityHandleList_EraseNode(ctx, base, stack + 112, handleList, lastIterator);
 					r7Value = ctx.r7.u64;
-					r8Value = ctx.r8.u64;
+					scaledRawValue = ctx.r8.u64;
 					r9Value = ctx.r9.u32;
 					r10Value = ctx.r10.u32;
-					f9Value = ctx.f9;
-					f10Value = ctx.f10.f64;
+					breadcrumbCount = ctx.f9;
+					breadcrumbCountFloat = ctx.f10.f64;
 					f11Value = ctx.f11.f64;
-					f12Value = ctx.f12.f64;
-					f13Value = ctx.f13.f64;
+					scaledRawValueFloat = ctx.f12.f64;
+					secondScaleFactor = ctx.f13.f64;
 					cr0State = ctx.cr0;
 					xerState.ca = ctx.xer.ca;
 				} while (wanted < LOAD32((uint32_t)handleList + 8));
@@ -1896,19 +1833,18 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 				STORE32((uint32_t)result + 4, newCount);
 				if (newCount == 0 && LOAD32((uint32_t)result) == 0) {
 					// state the callee may pass on
-					ctx.r10.u64 = r10Value;
 					ctx.cr0 = cr0State;
 					ctx.xer.ca = xerState.ca;
 					result = HandleTarget_Free(ctx, base, result);
 					r7Value = ctx.r7.u64;
-					r8Value = ctx.r8.u64;
+					scaledRawValue = ctx.r8.u64;
 					r9Value = ctx.r9.u32;
 					r10Value = ctx.r10.u32;
-					f9Value = ctx.f9;
-					f10Value = ctx.f10.f64;
+					breadcrumbCount = ctx.f9;
+					breadcrumbCountFloat = ctx.f10.f64;
 					f11Value = ctx.f11.f64;
-					f12Value = ctx.f12.f64;
-					f13Value = ctx.f13.f64;
+					scaledRawValueFloat = ctx.f12.f64;
+					secondScaleFactor = ctx.f13.f64;
 					cr0State = ctx.cr0;
 					xerState.ca = ctx.xer.ca;
 				}
@@ -1925,12 +1861,12 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	ctx.r1.u64 = stack;
 	// callers read these registers after the call
 	ctx.r7.u64 = r7Value;
-	ctx.r8.u64 = r8Value;
-	ctx.f9 = f9Value;
-	ctx.f10.f64 = f10Value;
+	ctx.r8.u64 = scaledRawValue;
+	ctx.f9 = breadcrumbCount;
+	ctx.f10.f64 = breadcrumbCountFloat;
 	ctx.f11.f64 = f11Value;
-	ctx.f12.f64 = f12Value;
-	ctx.f13.f64 = f13Value;
+	ctx.f12.f64 = scaledRawValueFloat;
+	ctx.f13.f64 = secondScaleFactor;
 	ctx.cr0 = cr0State;
 	ctx.xer.ca = xerState.ca;
 	return result;
@@ -1954,7 +1890,6 @@ uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = vectorAddr;
 	const uint64_t firstResult = n_sub_8226AF00(ctx, base, vectorAddr);
 
 	SET_V8(vector, VLOAD(vectorBlock));
@@ -1973,10 +1908,6 @@ uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 	if (firstLink != 0) {
 		const uint32_t firstTarget = LOAD32(firstLink + 4);
 		// state the callee may pass on
-		ctx.r5.u64 = r5Value;
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = nodeB;
-		ctx.r8.u64 = nodeA;
 		ctx.v1 = vector;
 		n_sub_821EED10(ctx, base, firstTarget);
 		r5Value = ctx.r5.u64;
@@ -1998,10 +1929,6 @@ uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 	if (secondLink != 0) {
 		const uint32_t secondTarget = LOAD32(secondLink + 4);
 		// state the callee may pass on
-		ctx.r5.u64 = r5Value;
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
 		ctx.v1 = vector;
 		n_sub_821EEB28(ctx, base, secondTarget);
 		r5Value = ctx.r5.u64;
@@ -2065,19 +1992,19 @@ uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 PROMOTED_ENTRY(30, sub_824DC890, 0x824DC890) { ctx.r3.u64 = n_sub_824DC890(ctx, base, ctx.r4.u64); }
 
 // Returns 0 unless the entity handle at +0xC points at an entity flagged 0x40 at +144 and, when the low byte
-// of arg2 is 0, the point its +124 object gives (virtual +64) is navigable. Otherwise clears m_144's free
+// of ignoreNavigableCheck is 0, the point its +124 object gives (virtual +64) is navigable. Otherwise clears m_144's free
 // nodes, hands that point to the +124 object of the owner entity m_4 (virtual +100), sets the owner's facing
 // from n_sub_821F5A90, calls n_sub_821B01D0 with the owner's component 60, sets m_148 and returns 1.
-uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t arg2) {
-	if (!UseLiftedCode(30, 0x824DCDA8)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = arg2; __imp__sub_824DCDA8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t ignoreNavigableCheck) {
+	if (!UseLiftedCode(30, 0x824DCDA8)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = ignoreNavigableCheck; __imp__sub_824DCDA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824DCDA8);
 	uint32_t stack = ctx.r1.u64;
 	CECBreadcrumber* breadcrumber = GameObject<CECBreadcrumber>(base, breadcrumberAddr);
 	// SO keeps its entry value for the CR0 compare below, as in the original
 	const PPCXERRegister entryXer = ctx.xer;
 	// r4, r7 and r10 as the original holds them for the calls and the early returns
-	uint64_t r4Value = arg2;
-	uint64_t r7Value = ctx.r7.u64;
+	uint64_t r4Value = ignoreNavigableCheck;
+	uint64_t isNavigable = ctx.r7.u64;
 	uint64_t r10Value = ctx.r10.u64;
 	PPCVRegister vector{};
 	PPCRegister callTarget{};
@@ -2096,12 +2023,12 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 			// the handle points at no entity: release it
 			EntityHandle_Release(ctx, base, handleAddr);
 			r4Value = ctx.r4.u64;
-			r7Value = ctx.r7.u64;
+			isNavigable = ctx.r7.u64;
 			r10Value = ctx.r10.u64;
 		} else {
 			const uint32_t entity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, handleAddr);
 			r4Value = ctx.r4.u64;
-			r7Value = ctx.r7.u64;
+			isNavigable = ctx.r7.u64;
 			r10Value = LOAD8(entity + 144) & 0x40;
 			usable = r10Value != 0;
 		}
@@ -2111,16 +2038,14 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		ctx.r1.u64 = stack;
 		// callers read r4, r7 and r10 after the call
 		ctx.r4.u64 = r4Value;
-		ctx.r7.u64 = r7Value;
+		ctx.r7.u64 = isNavigable;
 		ctx.r10.u64 = r10Value;
 		return 0;
 	}
 
-	if ((arg2 & 0xFF) == 0) {
+	if ((ignoreNavigableCheck & 0xFF) == 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4Value;
-		ctx.r10.u64 = r10Value;
 		const uint32_t entity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		// virtual +64 of the entity's +124 object writes its result to stack+96
 		const uint32_t object = LOAD32(entity + 124);
@@ -2128,24 +2053,20 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint32_t method = LOAD32(vtable + 64);
 		callTarget.u64 = method;
 		ctx.r3.u64 = stack + 96;
-		ctx.r4.u64 = object;
-		ctx.r9.u64 = method;
-		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		SET_V8(vector, VLOAD((stack + 96) & ~0xF));
 		// state the callee may pass on
-		ctx.r8.u64 = stack + 96;
 		ctx.v1 = vector;
 		const uint64_t navigable = n_sub_821EC948(ctx, base, 0);  // Lua_Kynapse_IsPointNavigable
 		r4Value = ctx.r4.u64;
 		r10Value = ctx.r10.u64;
-		r7Value = navigable & 0xFF;
-		if (r7Value == 0) {
+		isNavigable = navigable & 0xFF;
+		if (isNavigable == 0) {
 			stack = PopStackFrame(stack, 160);
 			ctx.r1.u64 = stack;
 			// callers read r4, r7 and r10 after the call
 			ctx.r4.u64 = r4Value;
-			ctx.r7.u64 = r7Value;
+			ctx.r7.u64 = isNavigable;
 			ctx.r10.u64 = r10Value;
 			return 0;
 		}
@@ -2154,9 +2075,6 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	const uint32_t freeList = breadcrumber->m_144;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = r4Value;
-	ctx.r7.u64 = r7Value;
-	ctx.r10.u64 = r10Value;
 	List_ClearFreeNodes(ctx, base, freeList);
 
 	// virtual +64 of the handle entity's +124 object writes its result to stack+112 ...
@@ -2165,10 +2083,6 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	const uint32_t vtable = LOAD32(object);
 	const uint32_t method = LOAD32(vtable + 64);
 	callTarget.u64 = method;
-	ctx.r3.u64 = stack + 112;
-	ctx.r4.u64 = object;
-	ctx.r9.u64 = method;
-	ctx.r10.u64 = vtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 	// ... which virtual +100 of the owner's +124 object receives in v1
@@ -2180,10 +2094,6 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	callTarget.u64 = ownerMethod;
 	// r3: the object; r5-r8 and v1 are state the callee may pass on
 	ctx.r3.u64 = ownerObject;
-	ctx.r5.u64 = ownerMethod;
-	ctx.r6.u64 = ownerVtable;
-	ctx.r7.u64 = owner;
-	ctx.r8.u64 = stack + 112;
 	ctx.v1 = vector;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -2193,12 +2103,11 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	const uint64_t direction = n_sub_821F5A90(ctx, base, stack + 80, LOAD32(entityAgain + 124));
 	SET_V8(vector, VLOAD((uint32_t)direction & ~0xF));
 	// state the callee may pass on
-	ctx.r10.u64 = direction;
 	ctx.v1 = vector;
 	Entity_SetFacingDirectionNormalized(ctx, base, facingObject);
 	// r6-r10, CR0 and CA handed to n_sub_821B01D0: what the last call left, or the values of the lookup below
 	uint64_t r6Value = ctx.r6.u64;
-	r7Value = ctx.r7.u64;
+	isNavigable = ctx.r7.u64;
 	r10Value = ctx.r10.u64;
 	PPCCRRegister cr0State = ctx.cr0;
 	uint8_t carry = ctx.xer.ca;
@@ -2234,7 +2143,7 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 					r8Value = (uint32_t)half << 3;
 					pos += r8Value;
 					const bool keyBelow = (int32_t)LOAD32((uint32_t)pos) < 60;
-					r7Value = keyBelow ? 1 : 0;
+					isNavigable = keyBelow ? 1 : 0;
 					if (keyBelow) {
 						pos += 8;
 						count = count - half - 1;
@@ -2258,11 +2167,7 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		}
 	}
 	// state the callee may pass on
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = r8Value;
-	ctx.r9.u64 = r9Value;
-	ctx.r10.u64 = r10Value;
 	ctx.cr0 = cr0State;
 	ctx.xer.ca = carry;
 	n_sub_821B01D0(ctx, base, component);
@@ -2320,7 +2225,6 @@ uint32_t n_sub_824DDF30(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
 	if (entityFlag != 0) {
 		// state the callee may pass on (r9 and f13 still hold what the first call left)
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = entityFlag;
 		const uint32_t entity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, entityHandleAddr);
 		returnValue = entity;
 
@@ -2395,7 +2299,6 @@ uint32_t n_sub_824DDF30(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
 				}
 			}
 			// state the callee may pass on
-			ctx.f13.f64 = f13Value;
 			returnValue = (uint32_t)CCharString_ReleaseAndDecGlobalCountA(ctx, base, questNameAddr);
 		}
 	}

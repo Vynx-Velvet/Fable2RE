@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECLevelExit_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8A38_B_ = int32_t(0x820C8A38);
@@ -28,11 +29,11 @@ uint64_t CECLevelExit_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classN
 }
 PROMOTED_ENTRY(55, sub_827E9860, 0x827E9860) { ctx.r3.u64 = CECLevelExit_GetClassName(ctx, base, ctx.r3.u64); }
 
-void n_sub_827E98A8(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32_t arg2) {
-	if (!UseLiftedCode(55, 0x827E98A8)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = arg2; __imp__sub_827E98A8(ctx, base); return; }
+void n_sub_827E98A8(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32_t ownerEntity) {
+	if (!UseLiftedCode(55, 0x827E98A8)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = ownerEntity; __imp__sub_827E98A8(ctx, base); return; }
 	LiftedFrame frame(0x827E98A8);
 	CECLevelExit* levelExit = GameObject<CECLevelExit>(base, levelExitAddr);
-	levelExit->m_4 = arg2;
+	levelExit->m_4 = ownerEntity;
 	levelExit->m_8 = 0;
 	levelExit->vtable = 0x82003408u;
 	levelExit->m_C = 0;
@@ -75,9 +76,9 @@ void n_sub_827E98A8(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32
 }
 PROMOTED_ENTRY(55, sub_827E98A8, 0x827E98A8) { n_sub_827E98A8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t flags) {
+uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t destroyFlag) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(55, 0x827E99B0)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = flags; __imp__sub_827E99B0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(55, 0x827E99B0)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = destroyFlag; __imp__sub_827E99B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827E99B0);
 	uint32_t stack = ctx.r1.u64;
 	CECLevelExit* levelExit = GameObject<CECLevelExit>(base, levelExitAddr);
@@ -85,8 +86,6 @@ uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 
 	levelExit->m_1C = g_820F1664;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = flags;
-	ctx.r10.u64 = uint32_t(g_820F1664);
 	EntityHandle_Release(ctx, base, levelExitAddr + 28);
 
 	levelExit->m_20 = 0u;
@@ -96,7 +95,7 @@ uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, levelExitAddr + 12);
 
 	levelExit->vtable = 0x820A8D10u;
-	if ((uint32_t(flags) & 0x1) != 0) {
+	if ((uint32_t(destroyFlag) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, levelExitAddr);
 	}
 
@@ -155,7 +154,6 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		savedF12 = ctx.f12.f64;
 		savedF13 = ctx.f13.f64;
 
-		ctx.r9.u64 = (uint32_t)g_820E0000;
 		n_sub_8239CD28(ctx, base, dbHandle, entityConnectingTo, levelExitAddr + 20);
 		savedF1 = ctx.f1.f64;
 		savedF10 = ctx.f10.f64;
@@ -163,13 +161,10 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		savedF12 = ctx.f12.f64;
 		savedF13 = ctx.f13.f64;
 
-		ctx.r8.u64 = (uint32_t)g_820E0000;
 		GameDB_ReadBool(ctx, base, dbHandle, activatedOnInteraction, levelExitAddr + 60);
 
-		ctx.r7.u64 = (uint32_t)str_TXT_820B0000_B_;
 		GameDB_ReadFloatField(ctx, base, dbHandle, radiusKey, levelExitAddr + 36);
 
-		ctx.r6.u64 = (uint32_t)g_820E0000;
 		uint64_t TXT_820D857C_L_ = n_sub_82345978(ctx, base, dbHandle, overriddenTextTagKey);
 		CCharString_AssignFromCStr(ctx, base, levelExitAddr + 24, TXT_820D857C_L_);
 		savedF1 = ctx.f1.f64;
@@ -229,8 +224,6 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		uint32_t callback = LOAD32(component + 4);
 		PPCVRegister vec{};
 		SET_V8(vec, VLOAD((stack + 80) & ~0xFu));
-		ctx.r4.u64 = trackedObject;
-		ctx.r5.u64 = playerManager;
 		ctx.v1 = vec;
 		n_sub_821EEB28(ctx, base, callback);
 
@@ -260,9 +253,6 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				uint32_t callback2 = LOAD32(component2 + 4);
 				PPCVRegister vec2{};
 				SET_V8(vec2, VLOAD((stack + 80) & ~0xFu));
-				ctx.r7.u64 = level3;
-				ctx.r8.u64 = level2;
-				ctx.r9.u64 = level1;
 				ctx.v1 = vec2;
 				n_sub_821EED10(ctx, base, callback2);
 
@@ -303,8 +293,6 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		uint64_t messageRadiusAddr = levelExitAddr + 40;
 		uint64_t messageRadiusKey = str_TXT_820D8590_B_;
 		uint64_t applyTXT_820D8590_B_Key = str_TXT_820D85A0_B_;
-		ctx.r7.u64 = savedR7;
-		ctx.r8.u64 = savedR8;
 		GameDB_ReadFloatField(ctx, base, dbHandle, messageRadiusKey, messageRadiusAddr);
 		uint32_t TXT_820D85A0_L_ = (uint32_t)GameDB_ReadBoolField_82303F38(ctx, base, dbHandle, applyTXT_820D8590_B_Key) & 0xFF;
 		savedR5 = ctx.r5.u64;
@@ -327,15 +315,8 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		}
 	}
 
-	ctx.r5.u64 = savedR5;
-	ctx.r7.u64 = savedR7;
 	ctx.r8.u64 = savedR8;
-	ctx.r9.u64 = savedR9;
 	ctx.f1.f64 = savedF1;
-	ctx.f10.f64 = savedF10;
-	ctx.f11.f64 = savedF11;
-	ctx.f12.f64 = savedF12;
-	ctx.f13.f64 = savedF13;
 	uint64_t result = n_sub_827EA258(ctx, base, levelExitAddr, 1);
 	stack = PopStackFrame(stack, 176);
 	ctx.r1.u64 = stack;
@@ -344,7 +325,7 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 PROMOTED_ENTRY(55, sub_827E9A48, 0x827E9A48) { ctx.r3.u64 = n_sub_827E9A48(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827E9CB0  [420 bytes]
-uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t arg2, uint32_t arg3, uint64_t arg4) {
+uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t stream, uint32_t version, uint64_t flags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820ADDD8_B_ = int32_t(0x820ADDD8);
 	constexpr int32_t str_TXT_820B59DC_B_ = int32_t(0x820B59DC);
@@ -352,7 +333,7 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	constexpr int32_t str_TXT_820D85B4_B_ = int32_t(0x820D85B4);
 	constexpr int32_t str_TXT_820D85D0_B_ = int32_t(0x820D85D0);
 	constexpr int32_t str_TXT_820D85F8_B_ = int32_t(0x820D85F8);
-	if (!UseLiftedCode(55, 0x827E9CB0)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_827E9CB0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(55, 0x827E9CB0)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = stream; ctx.r5.u64 = version; ctx.r6.u64 = flags; __imp__sub_827E9CB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827E9CB0);
 	uint32_t stack = ctx.r1.u64;
 	CECLevelExit* levelExit = GameObject<CECLevelExit>(base, levelExitAddr);
@@ -360,16 +341,16 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	ctx.r1.u64 = stack;
 
 	const uint64_t tagName = stack + 84;  // CCharString temporary holding the field name
-	const uint32_t flagsByte = (uint32_t)(arg4 & 0xFF);
+	const uint32_t flagsByte = (uint32_t)(flags & 0xFF);
 
-	ctx.r6.u64 = arg4;
+	ctx.r6.u64 = flags;
 	CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820D857C_B_, -1);
-	n_sub_82A16EC0(ctx, base, tagName, arg2, levelExitAddr + 24);
+	n_sub_82A16EC0(ctx, base, tagName, stream, levelExitAddr + 24);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 	uint64_t r8Value = ctx.r8.u64;
 
-	if ((int32_t)arg3 == 1) {
+	if ((int32_t)version == 1) {
 		CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820D85B4_B_, -1);
 		const uint32_t stringData = LOAD32(tagName);
 		uint64_t savedValue;
@@ -379,19 +360,19 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 			savedValue = (uint64_t)LOAD32(stringData);
 		}
 		ctx.r4.u64 = savedValue;
-		IStream_SerializeU32(ctx, base, arg2, levelExitAddr + 44);
+		IStream_SerializeU32(ctx, base, stream, levelExitAddr + 44);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 		CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820D85D0_B_, -1);
-		IStream_SerializeString(ctx, base, tagName, arg2, levelExitAddr + 52);
+		IStream_SerializeString(ctx, base, tagName, stream, levelExitAddr + 52);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 		CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820D85F8_B_, -1);
-		IStream_SerializeString(ctx, base, tagName, arg2, levelExitAddr + 58);
+		IStream_SerializeString(ctx, base, tagName, stream, levelExitAddr + 58);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 		CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820ADDD8_B_, -1);
-		IStream_SerializeString(ctx, base, tagName, arg2, levelExitAddr + 56);
+		IStream_SerializeString(ctx, base, tagName, stream, levelExitAddr + 56);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 		r8Value = flagsByte;
@@ -403,7 +384,7 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 
 	if (flagsByte != 0) {
 		CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820B59DC_B_, -1);
-		IStream_SerializeString(ctx, base, tagName, arg2, levelExitAddr + 55);
+		IStream_SerializeString(ctx, base, tagName, stream, levelExitAddr + 55);
 		uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -413,7 +394,7 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	STORE8(stack + 80, 0);
 	ctx.r8.u64 = r8Value;
 	CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820B59DC_B_, -1);
-	IStream_SerializeString(ctx, base, tagName, arg2, stack + 80);
+	IStream_SerializeString(ctx, base, tagName, stream, stack + 80);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 	uint32_t isActive = LOAD8(stack + 80);
 	uint64_t result = n_sub_827EA258(ctx, base, levelExitAddr, isActive);
@@ -441,8 +422,8 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	// Follow the game-loop manager down to the entity handle slot.
 	uint32_t manager = LOAD32(g_83490000 + 26912);
 	uint32_t loopContext = LOAD32(LOAD32(manager + 12) + 88);
-	uint64_t arg2 = LOAD32(loopContext + 4);          // address of the handle pointer, later reused as the second call argument
-	uint32_t handleOwner = LOAD32((uint32_t)arg2);
+	uint64_t entityHandleRef = LOAD32(loopContext + 4);          // address of the handle pointer, later reused as the second call argument
+	uint32_t handleOwner = LOAD32((uint32_t)entityHandleRef);
 	uint64_t result = (uint64_t)handleOwner + 104;
 	uint32_t handleSlot = LOAD32(handleOwner + 108);
 
@@ -453,12 +434,9 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 		uint32_t entityPtr = LOAD32(handleSlot);
 		if (entityPtr == 0) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = arg2;
-			ctx.r9.u64 = loopContext;
-			ctx.r10.u64 = entityPtr;
 			result = EntityHandle_Release(ctx, base, result);
 			r7 = ctx.r7.u64;
-			arg2 = ctx.r8.u64;
+			entityHandleRef = ctx.r8.u64;
 			compare0.lt = ctx.cr0.lt;
 			compare0.gt = ctx.cr0.gt;
 			compare0.eq = ctx.cr0.eq;
@@ -486,21 +464,21 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 					uint32_t begin = LOAD32(entity + 72);
 					uint32_t end = LOAD32(entity + 76);
 					STORE32(stack + 80, 0u);
-					arg2 = (uint64_t)end - begin;
+					entityHandleRef = (uint64_t)end - begin;
 					STORE32(stack + 84, begin);
 
 					uint32_t it = begin;
-					int32_t count = (int32_t)arg2 >> 3;
+					int32_t count = (int32_t)entityHandleRef >> 3;
 					if (count > 0) {
 						do {
 							int32_t half = count >> 1;
-							arg2 = (uint64_t)(uint32_t(half) << 3);
-							it = it + (uint32_t)arg2;
+							entityHandleRef = (uint64_t)(uint32_t(half) << 3);
+							it = it + (uint32_t)entityHandleRef;
 							if ((int32_t)LOAD32(it) < 33) {
 								count = count - half - 1;
 								it = it + 8;
 							} else {
-								it = it - (uint32_t)arg2;
+								it = it - (uint32_t)entityHandleRef;
 								count = half;
 							}
 						} while (count > 0);
@@ -519,15 +497,14 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 		}
 		if (haveIndex) {
 			ctx.r1.u64 = stack;
-			ctx.r7.u64 = r7;
 			ctx.cr0.lt = compare0.lt;
 			ctx.cr0.gt = compare0.gt;
 			ctx.cr0.eq = compare0.eq;
 			ctx.cr0.so = compare0.so;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_823D1FE8(ctx, base, result, arg2);   // Lua_Player_DisableFullPauseMenu
+			result = n_sub_823D1FE8(ctx, base, result, entityHandleRef);   // Lua_Player_DisableFullPauseMenu
 			r7 = ctx.r7.u64;
-			arg2 = ctx.r8.u64;
+			entityHandleRef = ctx.r8.u64;
 			compare0.lt = ctx.cr0.lt;
 			compare0.gt = ctx.cr0.gt;
 			compare0.eq = ctx.cr0.eq;
@@ -540,7 +517,7 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	ctx.r7.u64 = r7;
-	ctx.r8.u64 = arg2;
+	ctx.r8.u64 = entityHandleRef;
 	ctx.cr0.lt = compare0.lt;
 	ctx.cr0.gt = compare0.gt;
 	ctx.cr0.eq = compare0.eq;
@@ -566,8 +543,6 @@ uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 		uint32_t entityRef = LOAD32(LOAD32(manager + 12) + 88);
 		uint32_t handleHolder = LOAD32(entityRef + 4);
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = handleHolder;
-		ctx.r9.u64 = entityRef;
 		result = EntityHandle_Get(ctx, base, LOAD32(handleHolder));
 		uint32_t entity = uint32_t(result);
 		compareResult = ctx.r7.u64;
@@ -624,7 +599,6 @@ uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 			}
 			if (hasEntry) {
 				STORE32(stack + 80, LOAD32(levelExitPtr + 48));
-				ctx.r7.u64 = compareResult;
 				ctx.xer.ca = flags.ca;
 				result = n_sub_824ED8F0(ctx, base, uint64_t(entryId) + 232, uint64_t(stack + 80));
 				flags.ca = ctx.xer.ca;
@@ -669,23 +643,22 @@ uint64_t n_sub_827EA1D8(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 }
 PROMOTED_ENTRY(55, sub_827EA1D8, 0x827EA1D8) { ctx.r3.u64 = n_sub_827EA1D8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827EA250(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(55, 0x827EA250)) { ctx.r3.u64 = arg1; __imp__sub_827EA250(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_827EA250(CpuState& ctx, uint8_t* base, uint64_t levelExit) {
+	if (!UseLiftedCode(55, 0x827EA250)) { ctx.r3.u64 = levelExit; __imp__sub_827EA250(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827EA250);
-	return n_sub_827EA020(ctx, base, arg1);
+	return n_sub_827EA020(ctx, base, levelExit);
 }
 PROMOTED_ENTRY(55, sub_827EA250, 0x827EA250) { ctx.r3.u64 = n_sub_827EA250(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t arg2) {
+uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t isActivated) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820A335C_B_ = int32_t(0x820A335C);
 	constexpr int32_t str_TXT_820D8614_B_ = int32_t(0x820D8614);
 	constexpr int32_t str_TXT_820D8640_B_ = int32_t(0x820D8640);
 	constexpr int32_t g_820E0000 = int32_t(0x820E0000);
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(55, 0x827EA258)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = arg2; __imp__sub_827EA258(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(55, 0x827EA258)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = isActivated; __imp__sub_827EA258(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827EA258);
 	PPCRegister scratch{};
 	uint32_t stack = ctx.r1.u64;
@@ -699,8 +672,8 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	stack = PushStackFrame(base, stack, 208);
 	uint64_t levelExitAddr2 = levelExitAddr;
 
-	if (uint8_t(arg2 & 0xFF) != LOAD8((uint32_t)levelExitAddr2 + 55)) {
-		levelExit->m_37 = (uint8_t)arg2;
+	if (uint8_t(isActivated & 0xFF) != LOAD8((uint32_t)levelExitAddr2 + 55)) {
+		levelExit->m_37 = (uint8_t)isActivated;
 		uint64_t entityHandleAddr = levelExitAddr2 + 28;
 		uint32_t handleOwner = levelExit->m_20;
 		bool shouldDestroy = false;
@@ -708,24 +681,19 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 			uint32_t handleTarget = LOAD32(handleOwner);
 			if (handleTarget == 0) {
 				ctx.r1.u64 = stack;
-				ctx.r4.u64 = arg2;
-				ctx.r10.u64 = handleTarget;
 				levelExitAddr = EntityHandle_Release(ctx, base, entityHandleAddr);
-				arg2 = ctx.r4.u64;
+				isActivated = ctx.r4.u64;
 			} else {
 				ctx.r1.u64 = stack;
-				ctx.r4.u64 = arg2;
-				ctx.r10.u64 = handleTarget;
+				ctx.r4.u64 = isActivated;
 				levelExitAddr = EntityHandle_Get_825575C8(ctx, base, entityHandleAddr);
-				arg2 = ctx.r4.u64;
+				isActivated = ctx.r4.u64;
 				shouldDestroy = (LOAD8((uint32_t)levelExitAddr + 144) & 64) != 0;
 			}
 		}
 		if (shouldDestroy) {
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = arg2;
-			ctx.r9.u64 = 1;
-			ctx.r10.s64 = int32_t(0x820F0000);
+			ctx.r4.u64 = isActivated;
 			uint64_t entity = EntityHandle_Get_825575C8(ctx, base, entityHandleAddr);
 			Entity_DestroyImpl(ctx, base, entity);
 			STORE32(stack + 88, g_820F1664);
@@ -734,7 +702,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 			EntityHandle_Assign(ctx, base, entityHandleAddr, stack + 88);
 			STORE32(stack + 88, g_820F1664);
 			levelExitAddr = EntityHandle_Release(ctx, base, stack + 88);
-			arg2 = ctx.r4.u64;
+			isActivated = ctx.r4.u64;
 		}
 
 		if (levelExit->m_37 != 0) {
@@ -743,7 +711,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 			built = n_sub_821D9F40(ctx, base, stack + 96, levelExitAddr2);
 			uint64_t idRef = IdRef_Get(ctx, base, built);
 			levelExitAddr = GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820D8640_B_);
-			arg2 = ctx.r4.u64;
+			isActivated = ctx.r4.u64;
 
 			if ((levelExitAddr & 0xFF) != 0) {
 				// TXT_820D8640_B_ is active: spawn the inactive-teleporter FX.
@@ -803,7 +771,6 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				if (local82 != 0) {
 					uint32_t local38 = LOAD32(local82 + 4);
 					SET_V8(local94, VLOAD((stack + 112) & ~0xF));
-					ctx.r4.u64 = local58;
 					ctx.v1 = local94;
 					n_sub_821EED10(ctx, base, local38);
 					local58 = ctx.r4.u32;
@@ -821,7 +788,6 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				if (local85 != 0) {
 					uint32_t local39 = LOAD32(local85 + 4);
 					SET_V8(local94, VLOAD((stack + 112) & ~0xF));
-					ctx.r4.u64 = local58;
 					ctx.v1 = local94;
 					n_sub_821EEB28(ctx, base, local39);
 					f1Value = ctx.f1.f64;
@@ -842,9 +808,6 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				SET_V8(local95, rex::ppc::simde_mm_perm_epi8_(V8(local97), V8(local96), V8(local93)));
 				VSTORE((stack + 112) & ~0xF, V8(local95));
 
-				ctx.r6.s64 = local72;
-				ctx.r8.u64 = local75;
-				ctx.f1.f64 = f1Value;
 				ctx.v11 = local95;
 				ctx.v12 = local96;
 				ctx.v13 = local97;
@@ -886,7 +849,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				uint64_t local64 = (uint64_t)levelExit->m_4 + 128;
 				uint32_t local50 = LOAD32(LOAD32(LOAD32(local91 + 26788) + 28) + 52);
 				levelExitAddr = GUIDisplayBoxLists_RemoveByName(ctx, base, local50, local64, ctx.r8.u64);
-				arg2 = ctx.r4.u64;
+				isActivated = ctx.r4.u64;
 				levelExit->m_39 = 0;
 			}
 			levelExit->m_35 = 0;
@@ -895,7 +858,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	}
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = isActivated;
 	return levelExitAddr;
 }
 PROMOTED_ENTRY(55, sub_827EA258, 0x827EA258) { ctx.r3.u64 = n_sub_827EA258(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -968,7 +931,6 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 
 	uint32_t exitEntity = levelExit->m_4;
 	uint32_t hudBase = LOAD32(LOAD32(gameGlobal + 26788) + 32);
-	ctx.r8.u64 = hudBase;
 	n_sub_823B7058(ctx, base, LOAD32(hudBase + 28), exitEntity, levelExitField16);
 
 	uint32_t boxList = LOAD32(LOAD32(gameGlobal + 26788) + 28);

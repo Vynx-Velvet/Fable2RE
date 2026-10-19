@@ -10,11 +10,11 @@
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
 
-uint64_t CCompositeComponent_Update(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(1, 0x82192160)) { ctx.r3.u64 = arg1; __imp__sub_82192160(ctx, base); return ctx.r3.u64; }
+uint64_t CCompositeComponent_Update(CpuState& ctx, uint8_t* base, uint64_t compositeComponent) {
+	if (!UseLiftedCode(1, 0x82192160)) { ctx.r3.u64 = compositeComponent; __imp__sub_82192160(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82192160);
 	uint32_t stack = ctx.r1.u64;
-	const uint32_t self = (uint32_t)arg1;
+	const uint32_t self = (uint32_t)compositeComponent;
 	const uint32_t msrBits = ctx.r13.u32;
 	// Every element call receives v1 as it was on entry.
 	const PPCVRegister entryV1 = ctx.v1;
@@ -28,7 +28,7 @@ uint64_t CCompositeComponent_Update(CpuState& ctx, uint8_t* base, uint64_t arg1)
 	// First virtual call, made on the component itself (vtable slot 5).
 	callTarget.u64 = LOAD32(LOAD32(self) + 20);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg1;
+	ctx.r3.u64 = compositeComponent;
 	ctx.r10.u64 = callTarget.u64;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t result = ctx.r3.u64;
@@ -124,8 +124,8 @@ void CCompositeComponent_SetVector(CpuState& ctx, uint8_t* base, uint32_t compon
 }
 PROMOTED_ENTRY(6, sub_8222A5B0, 0x8222A5B0) { CCompositeComponent_SetVector(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t CCompositeComponent_DestroyChildren(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(7, 0x8223E5C0)) { ctx.r3.u64 = arg1; __imp__sub_8223E5C0(ctx, base); return ctx.r3.u64; }
+uint64_t CCompositeComponent_DestroyChildren(CpuState& ctx, uint8_t* base, uint64_t compositeComponent) {
+	if (!UseLiftedCode(7, 0x8223E5C0)) { ctx.r3.u64 = compositeComponent; __imp__sub_8223E5C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8223E5C0);
 	uint32_t stack = ctx.r1.u64;
 	const uint32_t msrBits = ctx.r13.u32;
@@ -138,12 +138,12 @@ uint64_t CCompositeComponent_DestroyChildren(CpuState& ctx, uint8_t* base, uint6
 	VSTORE((stack + 0xFFFFFFD0u) & ~0xF, V8(savedV127));
 	stack = PushStackFrame(base, stack, 144);
 
-	// arg1 + 4 is a vector-like container of (child, sharedHandleControl) pairs; walk it.
-	uint32_t childIt = LOAD32((uint32_t)arg1 + 8);
-	uint32_t cachedEnd = LOAD32((uint32_t)arg1 + 12);
-	const uint32_t childList = (uint32_t)arg1 + 4;
-	// arg1 is returned when the list is empty, otherwise the last release's result.
-	uint64_t result = arg1;
+	// compositeComponent + 4 is a vector-like container of (child, sharedHandleControl) pairs; walk it.
+	uint32_t childIt = LOAD32((uint32_t)compositeComponent + 8);
+	uint32_t cachedEnd = LOAD32((uint32_t)compositeComponent + 12);
+	const uint32_t childList = (uint32_t)compositeComponent + 4;
+	// compositeComponent is returned when the list is empty, otherwise the last release's result.
+	uint64_t result = compositeComponent;
 	if (childIt > cachedEnd) {
 		ctx.r1.u64 = stack;
 		ppc_trap(ctx, base, 22);
@@ -213,19 +213,19 @@ uint64_t CCompositeComponent_DestroyChildren(CpuState& ctx, uint8_t* base, uint6
 }
 PROMOTED_ENTRY(7, sub_8223E5C0, 0x8223E5C0) { ctx.r3.u64 = CCompositeComponent_DestroyChildren(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82670098(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(43, 0x82670098)) { ctx.r3.u64 = arg1; __imp__sub_82670098(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82670098(CpuState& ctx, uint8_t* base, uint64_t compositeComponent) {
+	if (!UseLiftedCode(43, 0x82670098)) { ctx.r3.u64 = compositeComponent; __imp__sub_82670098(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82670098);
 	uint32_t stack = ctx.r1.u64;
 	const uint32_t msrBits = ctx.r13.u32;
 	PPCRegister callTarget{};
 	stack = PushStackFrame(base, stack, 112);
 
-	// arg1 + 4 is a vector-like container of (object, sharedHandleControl) pairs; walk it.
-	const uint32_t owner = (uint32_t)arg1;
+	// compositeComponent + 4 is a vector-like container of (object, sharedHandleControl) pairs; walk it.
+	const uint32_t owner = (uint32_t)compositeComponent;
 	const uint32_t handleList = owner + 4;
-	// arg1 is returned when the list is empty, otherwise the last release's result.
-	uint64_t result = arg1;
+	// compositeComponent is returned when the list is empty, otherwise the last release's result.
+	uint64_t result = compositeComponent;
 
 	STORE32(owner + 20, 0u);
 
@@ -367,26 +367,26 @@ uint64_t n_sub_82670180(CpuState& ctx, uint8_t* base, uint32_t compositeComponen
 }
 PROMOTED_ENTRY(43, sub_82670180, 0x82670180) { ctx.r3.u64 = n_sub_82670180(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_828A7778(CpuState& ctx, uint8_t* base, uint64_t object, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(61, 0x828A7778)) { ctx.r3.u64 = object; ctx.r5.u64 = arg2; ctx.r9.u64 = arg3; __imp__sub_828A7778(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_828A7778(CpuState& ctx, uint8_t* base, uint64_t compositeComponent, uint64_t sourceObject, uint64_t map) {
+	if (!UseLiftedCode(61, 0x828A7778)) { ctx.r3.u64 = compositeComponent; ctx.r5.u64 = sourceObject; ctx.r9.u64 = map; __imp__sub_828A7778(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A7778);
 	uint32_t stack = ctx.r1.u64;
-	const uint64_t dataAt64 = (int64_t)object + 64;
-	const uint32_t dataAt80 = (int64_t)object + 80;
+	const uint64_t positionPtr = (int64_t)compositeComponent + 64;
+	const uint32_t rotationPtr = (int64_t)compositeComponent + 80;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82878960(ctx, base, (uint32_t)dataAt64, dataAt80, arg2);
-	uint64_t result = Map_Find_823942A0(ctx, base, arg3, dataAt64, dataAt80);
+	n_sub_82878960(ctx, base, (uint32_t)positionPtr, rotationPtr, sourceObject);
+	uint64_t result = Map_Find_823942A0(ctx, base, map, positionPtr, rotationPtr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	// callers read r4 after the call
-	ctx.r4.u64 = dataAt64;
+	ctx.r4.u64 = positionPtr;
 	return result;
 }
 PROMOTED_ENTRY(61, sub_828A7778, 0x828A7778) { ctx.r3.u64 = n_sub_828A7778(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r9.u64); }
 
-uint64_t n_sub_828A77B8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(61, 0x828A77B8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_828A77B8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_828A77B8(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint64_t arg2) {
+	if (!UseLiftedCode(61, 0x828A77B8)) { ctx.r3.u64 = boundingSphere; ctx.r4.u64 = arg2; __imp__sub_828A77B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A77B8);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -404,16 +404,16 @@ uint64_t n_sub_828A77B8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		uint32_t method = LOAD32(LOAD32(activeComponent) + 76);
 		PPCRegister callTarget{};
 		callTarget.u64 = (uint64_t)method;
-		ctx.r3.u64 = arg1;
+		ctx.r3.u64 = boundingSphere;
 		ctx.r4.u64 = activeComponent;
 		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	} else {
-		C_820C9A80_GetBoundingSphere(ctx, base, arg1, arg2);
+		C_820C9A80_GetBoundingSphere(ctx, base, boundingSphere, arg2);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return boundingSphere;
 }
 PROMOTED_ENTRY(61, sub_828A77B8, 0x828A77B8) { ctx.r3.u64 = n_sub_828A77B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // Turns a trigger's travel past a 5-unit dead zone into a 0..254 level. When the level changed and the trigger
 // crossed between released and engaged, queues a kind-13 (engaged) or kind-15 (released) event for the button;
@@ -53,8 +54,6 @@ uint32_t CGamePad_QueueTriggerEvents(CpuState& ctx, uint8_t* base, uint32_t game
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = scaled;
-		ctx.f1.f64 = timeStamp;
 		ctx.xer.ca = carry;
 		result = Time_GetElapsedSeconds(ctx, base);
 		double elapsedSeconds = ctx.f1.f64;
@@ -86,11 +85,7 @@ uint32_t CGamePad_QueueTriggerEvents(CpuState& ctx, uint8_t* base, uint32_t game
 			STORE_F64(stack + 224, timeStamp);
 			STORE8(stack + 216, 0);
 			// state the callee may pass on
-			ctx.f9.f64 = magnitude;
-			ctx.f10.f64 = levelValue;
 			ctx.f11 = f11Value;
-			ctx.f12.f64 = elapsedF;
-			ctx.f13.f64 = levelScale;
 			result = n_sub_829FA5E8(ctx, base, eventQueue, queuedEvent);
 			f1Value = ctx.f1.f64;
 			f11Value = ctx.f11;
@@ -236,11 +231,7 @@ uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 		double tickRate = LOAD_F64(0x83496EC8u);
 		double elapsed = tickDelta / tickRate;
 		// state the callee may pass on
-		ctx.f9.f64 = elapsed;
-		ctx.f10.f64 = tickDelta;
-		ctx.f11.f64 = ticks;
 		ctx.f12 = timebase;
-		ctx.f13.f64 = tickRate;
 		n_sub_8218C500(ctx, base, gamePadAddr + 72, double(float(elapsed)));
 
 		// Branch-free compares: index 4 when value < limit or unordered, else 0, into the table at 0x82100170
@@ -293,23 +284,8 @@ uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 		uint32_t vibrationToSend = gamePad->m_VibrationState;
 		uint32_t padIndex = gamePad->m_PadIndex;
 		// state the callee may pass on
-		ctx.r6.u64 = signTable;
-		ctx.r7.u64 = leftMaxIndex;
-		ctx.r8.u64 = rightMotorValue;
-		ctx.r9.u64 = vibrationForRight;
-		ctx.f1.f64 = rightOverMax;
-		ctx.f2.f64 = leftOverMax;
-		ctx.f3.f64 = rightFloored;
-		ctx.f4.f64 = rightMinSign;
 		ctx.f5 = rightMotorBits;
 		ctx.f6 = leftMotorBits;
-		ctx.f7.f64 = rightScaled;
-		ctx.f8.f64 = leftScaled;
-		ctx.f9.f64 = rightClamped;
-		ctx.f10.f64 = rightMaxSign;
-		ctx.f11.f64 = leftClamped;
-		ctx.f12.f64 = motorScale;
-		ctx.f13.f64 = maxSpeed;
 		result = GamePad_XamInputSetVibration(ctx, base, padIndex, vibrationToSend);
 	}
 
@@ -427,7 +403,6 @@ uint64_t CGamePad_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t game
 	uint32_t padIndex = gamePad->m_PadIndex;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = gamePadVtable;
 	GamePad_XamInputSetVibration(ctx, base, padIndex, stopVibration);
 
 	uint32_t vibrationState = gamePad->m_VibrationState;
@@ -597,9 +572,6 @@ uint64_t CGamePad_ResetVibration(CpuState& ctx, uint8_t* base, uint32_t gamePadA
 	uint32_t padIndex = gamePad->m_PadIndex;
 	uint32_t stateBufferAddr = stack + 80;
 	// state the callee may pass on: the input query takes the pad index from r3
-	ctx.r3.u64 = padIndex;
-	ctx.r8.u64 = vibrationStateAgain;
-	ctx.r9.u64 = vibrationState;
 	ctx.r10.s64 = int32_t(0x820A0000);  // high half of the motor-speed constant's address
 	uint32_t getStateResult = GamePad_XamInputGetState(ctx, base, stateBufferAddr);
 	if (getStateResult != 0) {
@@ -617,13 +589,13 @@ uint64_t CGamePad_ResetVibration(CpuState& ctx, uint8_t* base, uint32_t gamePadA
 }
 PROMOTED_ENTRY(88, sub_82BE3E80, 0x82BE3E80) { ctx.r3.u64 = CGamePad_ResetVibration(ctx, base, ctx.r3.u32); }
 
-void CGamePad_SetLeftStick(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr, uint64_t arg2) {
-	if (!UseLiftedCode(88, 0x82BE3F18)) { ctx.r3.u64 = gamePadAddr; ctx.r4.u64 = arg2; __imp__sub_82BE3F18(ctx, base); return; }
+void CGamePad_SetLeftStick(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr, uint64_t stickPair) {
+	if (!UseLiftedCode(88, 0x82BE3F18)) { ctx.r3.u64 = gamePadAddr; ctx.r4.u64 = stickPair; __imp__sub_82BE3F18(ctx, base); return; }
 	LiftedFrame frame(0x82BE3F18);
 	uint32_t stack = ctx.r1.u32;
 	CGamePad* gamePad = GameObject<CGamePad>(base, gamePadAddr);
-	// arg2 is the raw 8-byte stick pair: high half = X, low half = Y.
-	STORE64(stack + 24, arg2);
+	// stickPair is the raw 8-byte stick pair: high half = X, low half = Y.
+	STORE64(stack + 24, stickPair);
 	ctx.fpscr.disableFlushMode();
 	gamePad->m_LeftStickX = LOAD_F32(stack + 24);
 	gamePad->m_LeftStickY = LOAD_F32(stack + 28);

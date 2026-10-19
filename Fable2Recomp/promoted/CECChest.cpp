@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -47,8 +48,6 @@ uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 				uint32_t a = LOAD32(LOAD32(global + 12) + 88);
 				uint32_t b = LOAD32(a + 4);
 				uint32_t c = LOAD32(b);
-				ctx.r8.u64 = b;
-				ctx.r9.u64 = a;
 				uint32_t handle = EntityHandle_Get(ctx, base, c);
 				double value = n_sub_82207928(ctx, base, handle);
 				uint32_t curTarget = chest->m_10;
@@ -188,7 +187,6 @@ uint64_t n_sub_8253D218(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	}
 
 	uint32_t chestOwner = chest->m_4;
-	ctx.r9.u64 = flagA;
 	return n_sub_82392C88(ctx, base, chestOwner, chestAddr);
 }
 PROMOTED_ENTRY(33, sub_8253D218, 0x8253D218) { ctx.r3.u64 = n_sub_8253D218(ctx, base, ctx.r3.u64); }
@@ -226,7 +224,6 @@ uint64_t n_sub_8253D268(CpuState& ctx, uint8_t* base, uint64_t chestAddr, uint64
 
 	uint32_t isOpen = chest->m_C;
 	if (isOpen != 0 && (flags & 0xFF) == 0) {
-		ctx.r7.u64 = isOpen;
 		result = n_sub_8253DC80(ctx, base, chestAddr);
 	}
 
@@ -277,8 +274,8 @@ uint32_t n_sub_8253D758(CpuState& ctx, uint8_t* base, uint32_t chestAddr) {
 }
 PROMOTED_ENTRY(33, sub_8253D758, 0x8253D758) { ctx.r3.u64 = n_sub_8253D758(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64_t arg2, uint32_t arg3) {
-	if (!UseLiftedCode(33, 0x8253D7C8)) { ctx.r3.u64 = chestAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_8253D7C8(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64_t actionName, uint32_t arg3) {
+	if (!UseLiftedCode(33, 0x8253D7C8)) { ctx.r3.u64 = chestAddr; ctx.r4.u64 = actionName; ctx.r5.u64 = arg3; __imp__sub_8253D7C8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8253D7C8);
 	uint32_t stack = ctx.r1.u64;
 	PPCXERRegister flags = ctx.xer;
@@ -340,12 +337,9 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 
 	if (hasComponent) {
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.xer.ca = flags.ca;
-		chestAddr = n_sub_822A1A50(ctx, base, stack + 80, component, arg2);
-		arg2 = ctx.r4.u64;
+		chestAddr = n_sub_822A1A50(ctx, base, stack + 80, component, actionName);
+		actionName = ctx.r4.u64;
 		uint64_t local40 = ctx.r6.u64;
 		uint64_t local44 = ctx.r7.u64;
 		uint64_t local47 = ctx.r8.u64;
@@ -410,14 +404,10 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 				STORE32(stack + 96, firstObject);
 				STORE32(stack + 80, 0);
 				uint32_t componentData = LOAD32(otherComponent + 0x94);
-				ctx.r6.u64 = local40;
-				ctx.r7.u64 = local44;
 				ctx.r8.u64 = local47;
-				ctx.r9.u64 = local53;
-				ctx.r10.u64 = local60;
 				ctx.xer.ca = flags.ca;
 				chestAddr = n_sub_822001F8(ctx, base, stack + 96, stack + 80);
-				arg2 = ctx.r4.u64;
+				actionName = ctx.r4.u64;
 				flags.ca = ctx.xer.ca;
 				uint64_t countArg = ctx.r8.u64;
 				uint32_t secondObject = LOAD32(stack + 80);
@@ -460,7 +450,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 					n_sub_82B6F5A0(ctx, base, component + 24, stack + 96, ctx.r8.u64);
 					flags.ca = ctx.xer.ca;
 					chestAddr = Vector_FreeAndReset(ctx, base, stack + 96);
-					arg2 = ctx.r4.u64;
+					actionName = ctx.r4.u64;
 					flags.ca = ctx.xer.ca;
 				}
 				if (secondObject != 0) {
@@ -475,7 +465,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 						ctx.r3.u64 = secondObject;
 						REX_CALL_INDIRECT_FUNC(destructor);
 						chestAddr = ctx.r3.u32;
-						arg2 = ctx.r4.u64;
+						actionName = ctx.r4.u64;
 						flags.ca = ctx.xer.ca;
 					}
 				}
@@ -534,7 +524,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 
 	stack = PopStackFrame(stack, 192);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = actionName;
 	ctx.xer.ca = flags.ca;
 	return chestAddr;
 }
@@ -633,11 +623,6 @@ uint64_t n_sub_8253DD60(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 		}
 		if (hasResult) {
 			ctx.r1.u64 = stack;
-			ctx.r5.u64 = 0;
-			ctx.r6.u64 = passR6;
-			ctx.r7.u64 = passR7;
-			ctx.r8.u64 = passR8;
-			ctx.r9.u64 = passR9;
 			ctx.xer.ca = flags.ca;
 			n_sub_822ADE58(ctx, base, lookupResult, handle);
 			passR6 = ctx.r6.u64;
@@ -692,7 +677,6 @@ uint64_t n_sub_8253DD60(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 
 	uint64_t handleAddr = chestAddr + 16;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = handle;
 	uint64_t released = SharedHandle_Release(ctx, base, handleAddr);
 	chest->m_10 = 0;
 	stack = PopStackFrame(stack, 112);
@@ -717,7 +701,6 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 		uint32_t handle = LOAD32(handleSlot);
 
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = handleSlot;
 		uint64_t entityHandle = EntityHandle_Get(ctx, base, handle);
 		result = entityHandle;
 		uint32_t entity = uint32_t(entityHandle);
@@ -775,7 +758,6 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 				uint64_t ownerField = uint64_t(owner) + 172;
 				uint32_t container = LOAD32(owner + 172);
 				if (container != 0 && LOAD32(container + 4) != 0) {
-					ctx.r3.u64 = itemId;
 					uint64_t reward = n_sub_828924A8(ctx, base, ownerField);
 					uint32_t slot = uint32_t(n_sub_828923B8(ctx, base, itemId, ownerField));
 					STORE32(stack + 80, slot);
@@ -793,9 +775,9 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 }
 PROMOTED_ENTRY(33, sub_8253DF30, 0x8253DF30) { ctx.r3.u64 = n_sub_8253DF30(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8253E168(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(33, 0x8253E168)) { ctx.r3.u64 = arg1; __imp__sub_8253E168(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8253E168(CpuState& ctx, uint8_t* base, uint64_t chest) {
+	if (!UseLiftedCode(33, 0x8253E168)) { ctx.r3.u64 = chest; __imp__sub_8253E168(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8253E168);
-	return n_sub_8253DD60(ctx, base, arg1);
+	return n_sub_8253DD60(ctx, base, chest);
 }
 PROMOTED_ENTRY(33, sub_8253E168, 0x8253E168) { ctx.r3.u64 = n_sub_8253E168(ctx, base, ctx.r3.u64); }

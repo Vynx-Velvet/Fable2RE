@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CPhysicsRagdollEntity_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
 	if (!UseLiftedCode(32, 0x825214A8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_825214A8(ctx, base); return ctx.r3.u64; }
@@ -138,15 +139,15 @@ void n_sub_82521818(CpuState& ctx, uint8_t* base, uint32_t entity) {
 }
 PROMOTED_ENTRY(32, sub_82521818, 0x82521818) { n_sub_82521818(ctx, base, ctx.r3.u32); }
 
-void n_sub_82521828(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEntityAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(32, 0x82521828)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82521828(ctx, base); return; }
+void n_sub_82521828(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEntityAddr, uint64_t quaternionLow, uint64_t quaternionHigh) {
+	if (!UseLiftedCode(32, 0x82521828)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = quaternionLow; ctx.r5.u64 = quaternionHigh; __imp__sub_82521828(ctx, base); return; }
 	LiftedFrame frame(0x82521828);
 	uint32_t stack = ctx.r1.u32;
 	CPhysicsRagdollEntity* physicsRagdollEntity = GameObject<CPhysicsRagdollEntity>(base, physicsRagdollEntityAddr);
-	STORE64(stack + 32, arg2);
-	STORE64(stack + 40, arg3);
-	physicsRagdollEntity->m_100 = arg2;
-	physicsRagdollEntity->m_108 = arg3;
+	STORE64(stack + 32, quaternionLow);
+	STORE64(stack + 40, quaternionHigh);
+	physicsRagdollEntity->m_100 = quaternionLow;
+	physicsRagdollEntity->m_108 = quaternionHigh;
 	return;
 }
 PROMOTED_ENTRY(32, sub_82521828, 0x82521828) { n_sub_82521828(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
@@ -247,9 +248,6 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 	STORE32(buf96 + 8, limbValue | 0x80000000u);
 	uint32_t limbTableAgain = LOAD32(pRagdoll + 44);
 
-	ctx.r7.u64 = limbValue;
-	ctx.r8.u64 = limbTable;
-	ctx.r9.u64 = buf80;
 	ctx.v11 = vecSource;
 	ctx.v12 = vecBroadcast;
 	ctx.v13 = vecConstant;
@@ -276,11 +274,6 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 		uint32_t entryIndex = 22;
 		uint32_t scaled = (uint32_t)combined << 4;
 		uint32_t entry = LOAD32(stride + tableBase);
-		ctx.r6.u64 = entryIndex;
-		ctx.r7.u64 = combined;
-		ctx.r8.u64 = stride;
-		ctx.r9.u64 = tableBase;
-		ctx.r10.u64 = index;
 		result = n_sub_82D4ECA8(ctx, base, entry, value, scaled);
 	}
 
@@ -290,11 +283,11 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 }
 PROMOTED_ENTRY(32, sub_82521850, 0x82521850) { ctx.r3.u64 = n_sub_82521850(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_825219C8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(32, 0x825219C8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_825219C8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_825219C8(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr, uint64_t arg2) {
+	if (!UseLiftedCode(32, 0x825219C8)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = arg2; __imp__sub_825219C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825219C8);
 	uint32_t stack = ctx.r1.u64;
-	uint32_t entityAddr = (uint32_t)arg1;
+	uint32_t entityAddr = (uint32_t)physicsRagdollEntityAddr;
 	uint32_t transformAddr = (uint32_t)arg2;
 	const uint32_t translationOffset = 0xF0;
 
@@ -311,10 +304,8 @@ uint64_t n_sub_825219C8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	SET_V8(translation, VLOAD((transformAddr + 0x30u) & ~0xFu));
 	VSTORE((entityAddr + translationOffset & ~0xFu), V8(translation));
 
-	ctx.r4.u64 = arg2;
-	ctx.r9.u64 = translationOffset;
 	ctx.f1.f64 = quatValue;
-	uint64_t result = n_sub_82521850(ctx, base, arg1);
+	uint64_t result = n_sub_82521850(ctx, base, physicsRagdollEntityAddr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -333,12 +324,12 @@ void n_sub_82521A28(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t
 }
 PROMOTED_ENTRY(32, sub_82521A28, 0x82521A28) { n_sub_82521A28(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-void n_sub_82521A38(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(32, 0x82521A38)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82521A38(ctx, base); return; }
+void n_sub_82521A38(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
+	if (!UseLiftedCode(32, 0x82521A38)) { ctx.r3.u64 = destination; ctx.r4.u64 = source; __imp__sub_82521A38(ctx, base); return; }
 	LiftedFrame frame(0x82521A38);
-	uint64_t secondHalf = LOAD64(arg2 + 264);
-	STORE64(arg1, LOAD64(arg2 + 256));
-	STORE64(arg1 + 8, secondHalf);
+	uint64_t secondHalf = LOAD64(source + 264);
+	STORE64(destination, LOAD64(source + 256));
+	STORE64(destination + 8, secondHalf);
 	return;
 }
 PROMOTED_ENTRY(32, sub_82521A38, 0x82521A38) { n_sub_82521A38(ctx, base, ctx.r3.u32, ctx.r4.u32); }

@@ -9,15 +9,16 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t arg1, double lowerBound, double upperBound, double amount) {
-	if (!UseLiftedCode(90, 0x82C37408)) { ctx.r4.u64 = arg1; ctx.f1.f64 = lowerBound; ctx.f2.f64 = upperBound; ctx.f3.f64 = amount; __imp__sub_82C37408(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t layerEntry, double lowerBound, double upperBound, double amount) {
+	if (!UseLiftedCode(90, 0x82C37408)) { ctx.r4.u64 = layerEntry; ctx.f1.f64 = lowerBound; ctx.f2.f64 = upperBound; ctx.f3.f64 = amount; __imp__sub_82C37408(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C37408);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
 
-	// arg1 points at a slot holding the target object.
-	const uint32_t targetSlot = (uint32_t)arg1;
+	// layerEntry points at a slot holding the target object.
+	const uint32_t targetSlot = (uint32_t)layerEntry;
 	ctx.fpscr.disableFlushMode();
 	if (LOAD32(targetSlot) == 0) {
 		stack = PopStackFrame(stack, 96);
@@ -53,11 +54,9 @@ uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t arg1, double lowe
 		const double rangeEnd = LOAD_F32(targetSlot + 16);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg1;
-		ctx.f13.f64 = upperBound;
 		n_sub_82C509A8(ctx, base, 0, rangeStart, rangeEnd, callF3);
 		// the virtual call gets the registers sub_82C509A8 leaves
-		arg1 = ctx.r4.u64;
+		layerEntry = ctx.r4.u64;
 		callF1 = ctx.f1.f64;
 		callF2 = ctx.f2.f64;
 		callF3 = ctx.f3.f64;
@@ -68,7 +67,7 @@ uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t arg1, double lowe
 	const uint32_t virtualFunction = LOAD32(LOAD32(target) + 12);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = target;
-	ctx.r4.u64 = arg1;
+	ctx.r4.u64 = layerEntry;
 	ctx.r5.u64 = 50;
 	ctx.r10.u64 = virtualFunction;
 	ctx.f1.f64 = callF1;
@@ -429,7 +428,6 @@ uint64_t CLayerManager_Shutdown(CpuState& ctx, uint8_t* base, uint64_t layerMana
 			result = iteratorAddr;
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r9.u64 = r9Value;
 			StdMapIterator_Increment_Node41(ctx, base, iteratorAddr);
 			r9Value = ctx.r9.u64;
 			node = LOAD32(iteratorAddr + 4);
@@ -767,7 +765,6 @@ uint64_t CLayerManager_FindOrCreateEntry(CpuState& ctx, uint8_t* base, uint64_t 
 	uint32_t childMapAddr = (uint32_t)layerManagerAddr + 0x1C;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = r8Value;
 	Map_LowerBound_UIntKey(ctx, base, stack + 80, childMapAddr, stack + 172);
 
 	// The result is an iterator {owning map, node}; the traps are the checked-iterator tests.
@@ -833,7 +830,6 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 			STORE_F32(stack + 96, LOAD_F32(stack + 128));
 			STORE_F32(stack + 100, float(thirdFloat));
 			// state the callee may pass on
-			ctx.f13.f64 = thirdFloat;
 			n_sub_82C37C48(ctx, base, listAddr);
 
 			n_sub_82C04B58(ctx, base, layerManager->m_2C, LOAD64(stack + 96), (uint64_t)listAddr);
@@ -929,9 +925,6 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 				}
 
 				// state the callee may pass on
-				ctx.r3.u64 = layerManagerAddr;
-				ctx.r8.u64 = r8ForCall;
-				ctx.r9.u64 = r9ForCall;
 				ctx.v1 = vec;
 				n_sub_82C37490(ctx, base, entry, kindArg);
 				ctx.fpscr.disableFlushMode();
@@ -941,7 +934,6 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 				VSTORE((stack + 160) & ~0xF, V8(v59));
 				double bufferFloat = double(LOAD_F32(stack + 164));
 				// state the callee may pass on
-				ctx.r3.u64 = layerManagerAddr;
 				n_sub_82C37408(ctx, base, entry, itemFloat1, itemFloat2, bufferFloat);
 				r8Value = ctx.r8.u64;
 				if (node == LOAD32(iterList + 4)) {
@@ -1003,7 +995,6 @@ uint32_t CLayerManager_Destruct(CpuState& ctx, uint8_t* base, uint64_t layerMana
 	uint64_t templateMapEnd = LOAD64(stack + 88);
 	uint64_t templateMapBegin = LOAD64(stack + 80);
 	// state the callee may pass on
-	ctx.r7.u64 = templateMapHead;
 	n_sub_82C36EB8(ctx, base, stack + 88, templateMapAddr, templateMapBegin, templateMapEnd);
 
 	HandleTarget_FreeThunk(ctx, base, layerManager->m_templateMap);
@@ -1027,7 +1018,6 @@ uint64_t CLayerManager_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	CLayerManager_Destruct(ctx, base, layerManagerAddr);
 	if (((uint32_t)deleteFlags & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, layerManagerAddr);

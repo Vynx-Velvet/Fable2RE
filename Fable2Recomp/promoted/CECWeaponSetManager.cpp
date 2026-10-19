@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECWeaponSetManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820B5498_B_ = int32_t(0x820B5498);
@@ -92,11 +93,9 @@ uint64_t n_sub_824914D8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 					if (handleTarget != 0) {
 						uint32_t targetFirst = LOAD32(handleTarget);
 						if (targetFirst == 0) {
-							ctx.r10.u64 = targetFirst;
 							ctx.r1.u64 = stack;
 							EntityHandle_Release(ctx, base, handleAddr);
 						} else {
-							ctx.r10.u64 = targetFirst;
 							ctx.r1.u64 = stack;
 							uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 							skipIteration = (LOAD8(entity + 144) & 64) != 0;
@@ -124,7 +123,6 @@ uint64_t n_sub_824914D8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 
 					uint32_t outBufferAddr = stack + 160;
 					SET_V8(vecState, VLOAD(outBufferAddr & ~0xF));
-					ctx.r8.u64 = outBufferAddr;
 					ctx.v1 = vecState;
 					uint64_t newEntity = n_sub_8248FC78(ctx, base, current, stack + 80);
 
@@ -148,7 +146,6 @@ uint64_t n_sub_824914D8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 							// reuse the slot that already exists for this weapon
 							STORE32(stack + 88, emptyEntityTag);
 							STORE32(stack + 92, 0);
-							ctx.r10.u64 = entityFlags;
 							ctx.r1.u64 = stack;
 							EntityHandle_SetTarget(ctx, base, stack + 88, newEntity);
 							if (setOwner == 0 || foundNode == LOAD32(setOwner + 4)) {
@@ -205,16 +202,16 @@ uint64_t n_sub_824914D8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 }
 PROMOTED_ENTRY(27, sub_824914D8, 0x824914D8) { ctx.r3.u64 = n_sub_824914D8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_824919A0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(27, 0x824919A0)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_824919A0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_824919A0(CpuState& ctx, uint8_t* base, uint64_t weaponSetManager, uint64_t deleteFlags) {
+	if (!UseLiftedCode(27, 0x824919A0)) { ctx.r3.u64 = weaponSetManager; ctx.r4.u64 = deleteFlags; __imp__sub_824919A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824919A0);
 	uint32_t stack = ctx.r1.u64;
-	uint32_t flags = arg2;
+	uint32_t flags = deleteFlags;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
-	n_sub_824919F0(ctx, base, arg1);
-	uint64_t object = arg1;
+	ctx.r4.u64 = deleteFlags;
+	n_sub_824919F0(ctx, base, weaponSetManager);
+	uint64_t object = weaponSetManager;
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
 	}
@@ -257,7 +254,6 @@ uint32_t n_sub_824919F0(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 	uint32_t handleBlock = weaponSetManagerAddr + 40;
 	if (handleRange != 0) {
 		uint32_t rangeEnd = LOAD32(handleBlock + 8);
-		ctx.r3.u64 = handleBlock;
 		HandleRange_ReleaseAll(ctx, base, handleRange, rangeEnd);
 		HandleTarget_Free(ctx, base, LOAD32(handleBlock + 4));
 	}
@@ -278,9 +274,9 @@ uint32_t n_sub_824919F0(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 }
 PROMOTED_ENTRY(27, sub_824919F0, 0x824919F0) { ctx.r3.u64 = n_sub_824919F0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82491AC8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t n_sub_82491AC8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerAddr, uint64_t entity, uint64_t arg3) {
 	constexpr int32_t str_TXT_820B5534_B_ = int32_t(0x820B5534);
-	if (!UseLiftedCode(27, 0x82491AC8)) { ctx.r3.u64 = weaponSetManagerAddr; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82491AC8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(27, 0x82491AC8)) { ctx.r3.u64 = weaponSetManagerAddr; ctx.r4.u64 = entity; ctx.r8.u64 = arg3; __imp__sub_82491AC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82491AC8);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -291,12 +287,12 @@ uint64_t n_sub_82491AC8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 	uint64_t weaponSetValue = 0;
 	bool hasWeaponSetValue = false;
 
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)entity != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82491058(ctx, base, weaponSetManagerAddr, arg2, arg3);
+		n_sub_82491058(ctx, base, weaponSetManagerAddr, entity, arg3);
 		carryCa = ctx.xer.ca;
-		GameDB_ReadBool(ctx, base, arg2, str_TXT_820B5534_B_, weaponSetManagerAddr + 125);
-		arg2 = ctx.r4.u64;
+		GameDB_ReadBool(ctx, base, entity, str_TXT_820B5534_B_, weaponSetManagerAddr + 125);
+		entity = ctx.r4.u64;
 		searchProbeR7 = ctx.r7.u64;
 		arg3 = ctx.r8.u64;
 	}
@@ -351,16 +347,15 @@ uint64_t n_sub_82491AC8(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 
 	if (hasWeaponSetValue) {
 		ctx.r1.u64 = stack;
-		ctx.r7.u64 = searchProbeR7;
 		ctx.r8.u64 = arg3;
 		ctx.xer.ca = carryCa;
 		weaponSetValue = n_sub_82483858(ctx, base, weaponSetValue, weaponSetManagerAddr + 112, weaponSetManagerAddr + 12, 20);
-		arg2 = ctx.r4.u64;
+		entity = ctx.r4.u64;
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = entity;
 	return weaponSetValue;
 }
 PROMOTED_ENTRY(27, sub_82491AC8, 0x82491AC8) { ctx.r3.u64 = n_sub_82491AC8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
@@ -396,8 +391,6 @@ uint64_t n_sub_82492428(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 				uint32_t registry = LOAD32(LOAD32(LOAD32(entityManagerRoot + 26912) + 12) + 88);
 				uint32_t lookupKey = LOAD32(LOAD32(registry + 4));
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = r6Value;
-				ctx.r8.u64 = registry;
 				uint32_t entity = (uint32_t)n_sub_82264448(ctx, base, lookupKey, entryAddr + 4);
 				r6Value = ctx.r6.u64;
 
@@ -435,8 +428,6 @@ uint64_t n_sub_82492428(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 				uint32_t registry = LOAD32(LOAD32(LOAD32(entityManagerRoot + 26912) + 12) + 88);
 				uint32_t lookupKey = LOAD32(LOAD32(registry + 4));
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = r6Value;
-				ctx.r8.u64 = registry;
 				uint32_t entity = (uint32_t)n_sub_82264448(ctx, base, lookupKey, entryAddr);
 				r6Value = ctx.r6.u64;
 
@@ -461,9 +452,6 @@ uint64_t n_sub_82492428(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = (uint64_t)(int64_t)targetListCount;
-		ctx.r8.u64 = targetListSpan;
 		n_sub_824914D8(ctx, base, managerAddr);
 
 		result = SharedHandle_Release(ctx, base, containerSlot);
@@ -494,8 +482,6 @@ uint64_t n_sub_82492648(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 		uint32_t ownerEntity = weaponSetManager->m_4;
 
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = playerSlot;
-		ctx.r9.u64 = playerOwner;
 		uint32_t isPlayer = Players_IsPlayer(ctx, base, playerEntity, ownerEntity);
 
 		if ((isPlayer & 0xFF) == 0) {
@@ -596,8 +582,6 @@ uint64_t n_sub_82495320(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 		STORE32(stack + 168, 0);
 
 		ctx.r1.u64 = stack;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.xer.ca = flags.ca;
 		int32_t itemCount = ItemList_SumCount(ctx, base, weaponItemList);
 		uint64_t rngQuotient = ctx.r7.u64;
@@ -607,7 +591,6 @@ uint64_t n_sub_82495320(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 			uint32_t TXT_820AED00_L_ = str_TXT_820AED00_B_;
 			int32_t nextCount = 0;
 			do {
-				ctx.r5.s64 = -1;
 				Inventory_SelectItemByWeight(ctx, base, stack + 128, weaponItemList, itemIndex);
 				reg4 = ctx.r4.u64;
 				reg5 = ctx.r5.u64;
@@ -634,7 +617,6 @@ uint64_t n_sub_82495320(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 							uint32_t descriptorType = LOAD32(stack + 100);
 							STORE32(stack + 104, descriptorId);
 							STORE32(stack + 108, descriptorType);
-							ctx.r4.u64 = property;
 							uint32_t isMelee = n_sub_8250BBC0(ctx, base, stack + 104);
 							uint32_t pushTarget = 0;
 							uint32_t weaponId = 0;
@@ -725,10 +707,6 @@ uint64_t n_sub_82495320(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 			weaponSetManager->m_58 = LOAD32((pick << 2) + rangedHandle);
 		}
 
-		ctx.r4.u64 = reg4;
-		ctx.r5.u64 = reg5;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = rngQuotient;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -751,7 +729,6 @@ uint64_t n_sub_82495320(CpuState& ctx, uint8_t* base, uint64_t weaponSetManagerA
 	}
 
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_82495FE8(ctx, base, weaponSetManagerAddr);
 	stack = PopStackFrame(stack, 256);
@@ -815,13 +792,11 @@ uint64_t n_sub_82495FE8(CpuState& ctx, uint8_t* base, uint32_t weaponSetManagerA
 			uint32_t primarySlot = weaponSetManager->m_54;
 			STORE32(stack + 80, 0);
 			STORE32(stack + 84, primarySlot);
-			ctx.r8.u64 = 0;
 			uint32_t primaryEntity = n_sub_82264448(ctx, base, entitySource, stack + 80);
 
 			uint32_t secondarySlot = weaponSetManager->m_58;
 			STORE32(stack + 80, 0);
 			STORE32(stack + 84, secondarySlot);
-			ctx.r8.u64 = 0;
 			uint32_t secondaryEntity = n_sub_82264448(ctx, base, entitySource, stack + 80);
 
 			// Replication message: type tag followed by the two weapon entity unique ids.

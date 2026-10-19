@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t CObjectBase_ReleaseHandles(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(7, 0x8223CF20)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_8223CF20(ctx, base); return ctx.r3.u32; }
@@ -62,7 +63,6 @@ uint64_t n_sub_8241E5A0(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_82517EF0(ctx, base, objectBaseAddr + 8);
 	objectBase->vtable = 0x820F3A24u;
 	// bit 0: also free the object itself
@@ -91,7 +91,6 @@ uint32_t n_sub_82514430(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 		uint32_t rangeEnd = LOAD32(rangeRecordAddr + 8);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = rangeRecordAddr;
 		n_sub_8243B230(ctx, base, rangeBegin, rangeEnd);
 		result = HandleTarget_Free(ctx, base, LOAD32(rangeRecordAddr + 4));
 	}
@@ -202,9 +201,6 @@ uint64_t n_sub_82515C60(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = source1C;
-	ctx.r6.u64 = source18;
-	ctx.r7.u64 = source14;
 	n_sub_82517FC0(ctx, base, objectBaseAddr + 40, sourceAddr + 40, source10);
 
 	stack = PopStackFrame(stack, 96);
@@ -221,7 +217,6 @@ uint64_t n_sub_8272C918(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_82A773E0(ctx, base, objectBaseAddr + 24);
 	objectBase->vtable = 0x820F3A24u;
 	// bit 0: also free the object itself
@@ -250,7 +245,6 @@ uint64_t n_sub_8272C978(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	if (allocation != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = passR4;
 		HandleTarget_Free(ctx, base, allocation);
 		passR4 = ctx.r4.u64;
 	}
@@ -297,7 +291,6 @@ uint64_t n_sub_8272C978(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	if ((deleteFlags & 0x1) != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = passR4;
 		HandleTarget_Free(ctx, base, objectBaseAddr);
 		passR4 = ctx.r4.u64;
 	}
@@ -344,7 +337,6 @@ uint64_t CObjectBase_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t o
 	if ((flags & 0x1) != 0) {
 		// bit 0: also free the object itself
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = passR4;
 		HandleTarget_Free(ctx, base, objectBaseAddr);
 		passR4 = ctx.r4.u64;
 	}
@@ -500,7 +492,6 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 
 	// Build the replacement object at 0xE5C.
 	ctx.r1.u64 = stack;
-	ctx.r7.u64 = arg2;
 	ctx.r8.u64 = arg3;
 	uint64_t newObject = operator_new(ctx, base, 7728);
 
@@ -514,8 +505,6 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		PPCVRegister vec;
 		SET_V8(vec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 		SET_V8(vec, simde_mm_shuffle_epi32(V8(vec), 0xFF));
-		ctx.r9.u64 = uint64_t(g_82090000 + 24732);
-		ctx.f1.f64 = constructorValue;
 		ctx.v1 = vec;
 		newE5C = n_sub_82AAF5A0(ctx, base, newObject);
 	}
@@ -571,8 +560,6 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		}
 	}
 
-	ctx.r4.u64 = loopValue;
-	ctx.r9.u64 = r9Value;
 	uint32_t newTarget = Heap_Alloc(ctx, base, 4416);
 
 	uint32_t target;
@@ -588,8 +575,6 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 			newTarget = ctx.r3.u64;
 			badAllocHandler = ctx.r10.u64;
 		}
-		ctx.r3.u64 = newTarget;
-		ctx.r10.u64 = badAllocHandler;
 		ThrowBadAlloc(ctx, base);
 		target = 0;
 	}
@@ -618,7 +603,6 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	if (key != endMarker) {
 		if (found == 0) ppc_trap(ctx, base, 22);
 		if (key == LOAD32(found + 4)) ppc_trap(ctx, base, 22);
-		ctx.r9.u64 = key;
 		result = n_sub_82B4CDE0(ctx, base, stack + 88, node, LOAD64(stack + 88), ctx.r8.u64);
 		r4Value = ctx.r4.u64;
 		key = ctx.r9.u64;
@@ -685,8 +669,8 @@ uint64_t n_sub_82B1F1D8(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 }
 PROMOTED_ENTRY(82, sub_82B1F1D8, 0x82B1F1D8) { ctx.r3.u64 = n_sub_82B1F1D8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t arg2) {
-	if (!UseLiftedCode(82, 0x82B22600)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = arg2; __imp__sub_82B22600(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t deleteFlags) {
+	if (!UseLiftedCode(82, 0x82B22600)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82B22600(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B22600);
 	uint32_t stack = ctx.r1.u64;
 	CObjectBase* objectBase = GameObject<CObjectBase>(base, objectBaseAddr);
@@ -722,7 +706,7 @@ uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	objectBase->vtable = 0x820F3A24u;
 
 	uint64_t result = objectBaseAddr;
-	if ((arg2 & 0x1) != 0) {
+	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, (uint32_t)result);
 		result = objectBaseAddr;
 	}
@@ -776,10 +760,8 @@ uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 	objectBase->m_44 = 0;
 
 	// a global word read under a lock, compared with a word of the current thread block (r13 + 256 -> +332)
-	ctx.r3.u64 = freed44;
 	uint32_t globalWord = n_sub_82B69040(ctx, base);
 	uint64_t r9Value = ctx.r9.u64;
-	ctx.r3.u64 = globalWord;
 	uint32_t threadWord = n_sub_8221EE38(ctx, base);
 
 	if (threadWord != globalWord) {
@@ -807,7 +789,6 @@ uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 		}
 		// lock guard at stack + 88 (String_Construct enters critical section g_834A6028; byte at +4 = held)
 		ctx.r9.u64 = r9Value; // state the callee may pass on
-		ctx.r10.u64 = r10Value;
 		String_Construct(ctx, base, stack + 88, g_834A6028, 0);
 		ctx.r4.u64 = g_834A601C; // the callee reads r4 from the state
 		n_sub_82B6BF20(ctx, base, stack + 96, stack + 80, ctx.r8.u64);

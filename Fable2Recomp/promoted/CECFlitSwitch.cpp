@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_825337D8  [60 bytes]
 uint64_t CECFlitSwitch_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
@@ -30,17 +31,13 @@ PROMOTED_ENTRY(32, sub_825337D8, 0x825337D8) { ctx.r3.u64 = CECFlitSwitch_GetCla
 uint64_t n_sub_82533DA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t destroyFlags) {
 	if (!UseLiftedCode(32, 0x82533DA0)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = destroyFlags; __imp__sub_82533DA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82533DA0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = destroyFlags;  // state the callee may pass on
 	n_sub_82533DF0(ctx, base, flitSwitchAddr);
 	// bit 0: also free the object's memory
 	if ((destroyFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, flitSwitchAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return flitSwitchAddr;
 }
 PROMOTED_ENTRY(32, sub_82533DA0, 0x82533DA0) { ctx.r3.u64 = n_sub_82533DA0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -383,8 +380,6 @@ uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	if (destroyFlag != 0) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r4.u64 = r4AfterGet;
-		ctx.r10.u64 = destroyFlag;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, target);
 	}
@@ -412,10 +407,9 @@ uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 }
 PROMOTED_ENTRY(33, sub_82536500, 0x82536500) { ctx.r3.u64 = n_sub_82536500(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t arg2) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t particleValue) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(33, 0x82536628)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = arg2; __imp__sub_82536628(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(33, 0x82536628)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = particleValue; __imp__sub_82536628(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82536628);
 	uint32_t stack = ctx.r1.u64;
 	CECFlitSwitch* flitSwitch = GameObject<CECFlitSwitch>(base, flitSwitchAddr);
@@ -427,14 +421,14 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 
 	// Release the handle when the first word of its control block is 0; otherwise destroy the
 	// handle's target when bit 0x40 of the target's byte at +144 is set.
-	uint64_t r4AfterGet = arg2;
+	uint64_t r4AfterGet = particleValue;
 	uint32_t destroyFlag = 0;
 	uint32_t controlBlock = flitSwitch->m_84;
 	if (controlBlock != 0) {
 		uint32_t blockTarget = LOAD32(controlBlock);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = particleValue;
 		ctx.r10.u64 = blockTarget;
 		if (blockTarget == 0) {
 			EntityHandle_Release(ctx, base, handleAddr);
@@ -447,8 +441,6 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	if (destroyFlag != 0) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r4.u64 = r4AfterGet;
-		ctx.r10.u64 = destroyFlag;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, target);
 	}
@@ -456,7 +448,7 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	// Point a temporary EntityHandle on the stack at the new target, copy it into the switch's
 	// handle, then reset its vtable and release it.
 	ctx.r1.u64 = stack;
-	uint64_t newTarget = n_sub_82537768(ctx, base, flitSwitchAddr, arg2);
+	uint64_t newTarget = n_sub_82537768(ctx, base, flitSwitchAddr, particleValue);
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, entityHandleVtable);
 	ctx.r10.s64 = g_820F1664;  // state the callee may pass on
@@ -464,15 +456,13 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	EntityHandle_Assign(ctx, base, handleAddr, tempHandleAddr);
 	STORE32(stack + 80, entityHandleVtable);
 	// state the callee may pass on
-	ctx.r8.u64 = entityHandleVtable;
-	ctx.r9.u64 = uint32_t(g_820F0000);
 	EntityHandle_Release(ctx, base, tempHandleAddr);
 	uint8_t carry = ctx.xer.ca;
 
 	// When bit 27 of the owner's (m_4) word at +44 is set, find the value stored under key 91: through
 	// the slot table at +140 if there is one, else by a lower-bound search of the sorted {key, value}
 	// pairs at +72..+76 (when the key is missing, the value slot just past the end, end + 4, is read).
-	// That value and arg2 go to n_sub_82388FD8, whose result is returned.
+	// That value and particleValue go to n_sub_82388FD8, whose result is returned.
 	uint32_t owner = flitSwitch->m_4;
 	uint32_t result = 0;
 	if ((LOAD32(owner + 44) >> 27) & 1) {
@@ -511,7 +501,7 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 			}
 		}
 		ctx.xer.ca = carry;  // state the callee may pass on
-		result = n_sub_82388FD8(ctx, base, entry91, arg2);
+		result = n_sub_82388FD8(ctx, base, entry91, particleValue);
 	}
 
 	stack = PopStackFrame(stack, 128);
@@ -580,11 +570,9 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 	if (flitSwitch->m_92 == 0) {
 		uint32_t owner = flitSwitch->m_4;
 		if ((LOAD32(owner + 40) >> 17) & 1) {
-			uint32_t entry49 = lookup(owner, 49);
+			uint32_t openEntry = lookup(owner, 49);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = r6Out;
-			ctx.r8.u64 = r8Out;
 			ctx.cr0 = cr0Out;
 			ctx.xer.ca = flags.ca;
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820BCDBC_B_, -1);
@@ -593,14 +581,14 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 			const int64_t holderVtable = (int64_t)g_820C0000 - 10248;
 			STORE32(stack + 112, (uint32_t)holderVtable);
 
-			// Virtual call through slot 16 (+64) of entry49's vtable with (stack + 88, entry49,
+			// Virtual call through slot 16 (+64) of openEntry's vtable with (stack + 88, openEntry,
 			// the object at stack + 112, 0); r7-r10 hold what the original leaves in them.
-			uint32_t entryVtable = LOAD32(entry49);
+			uint32_t entryVtable = LOAD32(openEntry);
 			uint32_t method = LOAD32(entryVtable + 64);
 			PPCRegister callTarget{};
 			callTarget.u64 = method;
 			ctx.r3.u64 = stack + 88;
-			ctx.r4.u64 = entry49;
+			ctx.r4.u64 = openEntry;
 			ctx.r5.u64 = stack + 112;
 			ctx.r6.u64 = 0;
 			ctx.r7.u64 = method;
@@ -614,8 +602,6 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 			const uint32_t entityHandleVtable = uint32_t(g_820F0000 + 5732);
 			STORE32(stack + 88, entityHandleVtable);
 			// state the callee may pass on
-			ctx.r5.u64 = entityHandleVtable;
-			ctx.r6.s64 = g_820F0000;
 			EntityHandle_Release(ctx, base, stack + 88);
 			STORE32(stack + 92, 0);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 196);
@@ -628,17 +614,15 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 		uint32_t owner2 = flitSwitch->m_4;
 		result = 0;
 		flitSwitch->m_92 = 1;
-		const uint32_t hasKey91 = (LOAD32(owner2 + 44) >> 27) & 1;
-		r8Out = hasKey91;
-		if (hasKey91 != 0) {
-			uint32_t entry91 = lookup(owner2, 91);
+		const uint32_t hasStateEntry = (LOAD32(owner2 + 44) >> 27) & 1;
+		r8Out = hasStateEntry;
+		if (hasStateEntry != 0) {
+			uint32_t stateEntry = lookup(owner2, 91);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = r6Out;
-			ctx.r8.u64 = r8Out;
 			ctx.cr0 = cr0Out;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_82388EB0(ctx, base, entry91, 1);
+			result = n_sub_82388EB0(ctx, base, stateEntry, 1);
 			r6Out = ctx.r6.u64;
 			r8Out = ctx.r8.u64;
 			cr0Out = ctx.cr0;
@@ -739,10 +723,9 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (flitSwitch->m_92 != 0) {
 		uint32_t owner = flitSwitch->m_4;
 		if ((LOAD32(owner + 40) >> 17) & 1) {
-			uint32_t entry49 = lookup(owner, 49, &r6Out);
+			uint32_t closeEntry = lookup(owner, 49, &r6Out);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = r6Out;
 			ctx.xer.ca = carry;
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820BCE3C_B_, -1);
 			n_sub_827F05D0(ctx, base, stack + 112, 4, stack + 80, 0);
@@ -750,14 +733,14 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 			const int64_t holderVtable = (int64_t)g_820C0000 - 10168;
 			STORE32(stack + 112, (uint32_t)holderVtable);
 
-			// Virtual call through slot 16 (+64) of entry49's vtable with (stack + 88, entry49,
+			// Virtual call through slot 16 (+64) of closeEntry's vtable with (stack + 88, closeEntry,
 			// the object at stack + 112, 0); r7-r10 hold what the original leaves in them.
-			uint32_t entryVtable = LOAD32(entry49);
+			uint32_t entryVtable = LOAD32(closeEntry);
 			uint32_t method = LOAD32(entryVtable + 64);
 			PPCRegister callTarget{};
 			callTarget.u64 = method;
 			ctx.r3.u64 = stack + 88;
-			ctx.r4.u64 = entry49;
+			ctx.r4.u64 = closeEntry;
 			ctx.r5.u64 = stack + 112;
 			ctx.r6.u64 = 0;
 			ctx.r7.u64 = method;
@@ -771,8 +754,6 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 			const uint32_t entityHandleVtable = uint32_t(g_820F0000 + 5732);
 			STORE32(stack + 88, entityHandleVtable);
 			// state the callee may pass on
-			ctx.r5.u64 = entityHandleVtable;
-			ctx.r6.u64 = uint32_t(g_820F0000);
 			EntityHandle_Release(ctx, base, stack + 88);
 			STORE32(stack + 92, 0);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 196);
@@ -784,10 +765,10 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 		result = 0;
 		flitSwitch->m_92 = 0;
 		if ((LOAD32(owner2 + 44) >> 27) & 1) {
-			uint32_t entry91 = lookup(owner2, 91, nullptr);
+			uint32_t stateEntry = lookup(owner2, 91, nullptr);
 			ctx.r1.u64 = stack;
 			ctx.xer.ca = carry;  // state the callee may pass on
-			result = n_sub_82388EB0(ctx, base, entry91, 0);
+			result = n_sub_82388EB0(ctx, base, stateEntry, 0);
 			carry = ctx.xer.ca;
 		}
 	}

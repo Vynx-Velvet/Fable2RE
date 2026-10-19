@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 	if (!UseLiftedCode(11, 0x82294C68)) { ctx.r3.u64 = targetedAddr; __imp__sub_82294C68(ctx, base); return ctx.r3.u64; }
@@ -33,37 +34,34 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 	uint32_t handleValueAddr = handleNode + 104;
 	uint32_t nextNode = LOAD32(handleNode + 108);
 
-	uint32_t entity = 0;
-	bool active = false;
+	uint32_t targetEntity = 0;
+	bool isTargetActive = false;
 	if (nextNode != 0) {
-		entity = LOAD32(nextNode);
-		if (entity == 0) {
+		targetEntity = LOAD32(nextNode);
+		if (targetEntity == 0) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = savedR8;
-			ctx.r9.u64 = handleList;
-			ctx.r10.u64 = entity;
 			EntityHandle_Release(ctx, base, handleValueAddr);
 			savedR6 = ctx.r6.u64;
 			savedR7 = ctx.r7.u64;
 			savedR8 = ctx.r8.u32;
 			savedF13 = ctx.f13.f64;
 			flags.ca = ctx.xer.ca;
-		} else if ((LOAD8(entity + 144) & 0x40) != 0) {
-			active = true;
+		} else if ((LOAD8(targetEntity + 144) & 0x40) != 0) {
+			isTargetActive = true;
 		}
 	}
 
 	// TXT_820A87D4_B_ion table: sorted {int key; uint32_t value} pairs at +72..+76, with an
 	// optional byte index at +140 that maps a key straight to the pair.
 	auto lookupEntry = [&](int32_t key) -> uint32_t {
-		uint32_t indexTable = LOAD32(entity + 140);
+		uint32_t indexTable = LOAD32(targetEntity + 140);
 		if (indexTable != 0) {
-			uint32_t slot = LOAD32(entity + 72) + uint32_t(LOAD8(indexTable + uint32_t(key))) * 8;
+			uint32_t slot = LOAD32(targetEntity + 72) + uint32_t(LOAD8(indexTable + uint32_t(key))) * 8;
 			savedR9 = slot;
 			return LOAD32(slot + 4);
 		}
-		uint32_t begin = LOAD32(entity + 72);
-		savedR6 = LOAD32(entity + 76);
+		uint32_t begin = LOAD32(targetEntity + 72);
+		savedR6 = LOAD32(targetEntity + 76);
 		uint32_t end = uint32_t(savedR6);
 		STORE32(stack + 80, 0);
 		uint32_t diff = end - begin;
@@ -96,16 +94,12 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 	};
 
 	uint64_t result = 0;
-	if (active && (LOAD32(entity + 44) & 0x2000) != 0) {
+	if (isTargetActive && (LOAD32(targetEntity + 44) & 0x2000) != 0) {
 		savedR9 = 1;
 		uint32_t interactableHandle = lookupEntry(0x4D);
 		uint32_t interactableAddr = interactableHandle + 196;
 		uint32_t targetValue = uint32_t(targeted->m_4);
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = savedR6;
-		ctx.r7.u64 = savedR7;
-		ctx.r8.u64 = savedR8;
-		ctx.r9.u64 = savedR9;
 		ctx.xer.ca = flags.ca;
 		uint8_t canTXT_820A87D4_B_ = uint8_t(n_sub_82488F30(ctx, base, interactableAddr, targetValue));
 		savedR6 = ctx.r6.u64;
@@ -113,7 +107,7 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 		savedR8 = ctx.r8.u32;
 		savedF13 = ctx.f13.f64;
 		flags.ca = ctx.xer.ca;
-		if (canTXT_820A87D4_B_ != 0 && (LOAD32(entity + 40) & 2) != 0) {
+		if (canTXT_820A87D4_B_ != 0 && (LOAD32(targetEntity + 40) & 2) != 0) {
 			uint32_t statBlock = lookupEntry(0x21);
 			ctx.fpscr.disableFlushMode();
 			savedF13 = double(LOAD_F32(statBlock + 136));
@@ -132,15 +126,15 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 }
 PROMOTED_ENTRY(11, sub_82294C68, 0x82294C68) { ctx.r3.u64 = n_sub_82294C68(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t targeted) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(13, 0x822D50B8)) { ctx.r3.u64 = arg1; __imp__sub_822D50B8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(13, 0x822D50B8)) { ctx.r3.u64 = targeted; __imp__sub_822D50B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822D50B8);
 	uint32_t stack = ctx.r1.u64;
-	uint32_t sourceId{};
-	uint32_t entityHandle{};
-	uint32_t eraseKey{};
-	uint64_t erasePos{};
+	uint32_t sourceEntityId{};
+	uint32_t sourceEntity{};
+	uint32_t eraseRecordId{};
+	uint64_t eraseElement{};
 	uint64_t reg6{};
 	uint64_t reg7{};
 	uint32_t lookupObj{};
@@ -151,22 +145,22 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	uint64_t outR10 = ctx.r10.u64;
 	uint32_t level3Obj{};
 	uint64_t reg10{};
-	uint32_t hasHandle{};
+	uint32_t hasSuggestionHandle{};
 	uint32_t searchCount{};
-	uint32_t listEnd{};
+	uint32_t vectorEnd{};
 	uint32_t listBegin{};
 	uint32_t registry{};
-	uint32_t eligible{};
+	uint32_t isEligible{};
 	uint32_t component{};
 	uint64_t container{};
-	uint32_t handleValue{};
-	uint32_t iterator{};
+	uint32_t suggestionHandle{};
+	uint32_t currentElement{};
 	PPCCRRegister compare6{};
 	PPCXERRegister flags = ctx.xer;
 	stack = PushStackFrame(base, stack, 128);
-	listBegin = LOAD32((uint32_t)arg1 + 112);
-	container = (int64_t)arg1 + 108;
-	uint64_t returnValue = arg1;
+	listBegin = LOAD32((uint32_t)targeted + 112);
+	container = (int64_t)targeted + 108;
+	uint64_t returnValue = targeted;
 	if (listBegin != 0) {
 		outR10 = LOAD32((uint32_t)container + 8);
 		outR9 = outR10 - (uint64_t)listBegin;
@@ -176,42 +170,39 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 			level3Obj = LOAD32(registry + 12);
 			listObj = LOAD32(level3Obj + 88);
 			lookupObj = LOAD32(listObj + 4);
-			sourceId = LOAD32(lookupObj);
+			sourceEntityId = LOAD32(lookupObj);
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = lookupObj;
-			ctx.r9.u64 = listObj;
-			ctx.r10.u64 = level3Obj;
 			ctx.xer.ca = flags.ca;
-			entityHandle = EntityHandle_Get(ctx, base, sourceId);
+			sourceEntity = EntityHandle_Get(ctx, base, sourceEntityId);
 			reg6 = ctx.r6.u64;
 			reg7 = ctx.r7.u64;
 			reg8 = ctx.r8.u64;
 			reg9 = ctx.r9.u64;
 			reg10 = ctx.r10.u64;
 			flags.ca = ctx.xer.ca;
-			handleValue = 0;
-			eligible = 0;
-			if (entityHandle != 0) {
-				reg10 = LOAD8(entityHandle + 144) & 64;
+			suggestionHandle = 0;
+			isEligible = 0;
+			if (sourceEntity != 0) {
+				reg10 = LOAD8(sourceEntity + 144) & 64;
 				if (reg10 != 0) {
-					eligible = 1;
+					isEligible = 1;
 				}
 			}
-			eligible = eligible & 0xFF;
-			if (eligible != 0) {
-				reg10 = (LOAD32(entityHandle + 40) >> 1) & 1;
+			isEligible = isEligible & 0xFF;
+			if (isEligible != 0) {
+				reg10 = (LOAD32(sourceEntity + 40) >> 1) & 1;
 				if ((uint32_t)reg10 != 0) {
-					component = LOAD32(entityHandle + 140);
+					component = LOAD32(sourceEntity + 140);
 					if (component != 0) {
 						reg10 = __builtin_rotateleft32((uint32_t)LOAD8(component + 33), 3);
-						reg9 = reg10 + (uint64_t)LOAD32(entityHandle + 72);
-						handleValue = LOAD32((uint32_t)reg9 + 4);
-						hasHandle = 1;
+						reg9 = reg10 + (uint64_t)LOAD32(sourceEntity + 72);
+						suggestionHandle = LOAD32((uint32_t)reg9 + 4);
+						hasSuggestionHandle = 1;
 					} else {
 						// Lower-bound search in the sorted handle table for the first key >= 33.
-						reg10 = LOAD32(entityHandle + 72);
-						reg6 = LOAD32(entityHandle + 76);
-						STORE32(stack + 80, handleValue);
+						reg10 = LOAD32(sourceEntity + 72);
+						reg6 = LOAD32(sourceEntity + 76);
+						STORE32(stack + 80, suggestionHandle);
 						searchCount = (uint32_t)reg6 - (uint32_t)reg10;
 						STORE32(stack + 84, reg10);
 						flags.ca = (int32_t)searchCount < 0 & (searchCount & 0x7) != 0;
@@ -225,7 +216,7 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 								compare6.compare<int32_t>(int32_t(LOAD32((uint32_t)reg10)), 33, flags);
 								reg7 = 1;
 								if (!compare6.lt) {
-									reg7 = (uint64_t)handleValue;
+									reg7 = (uint64_t)suggestionHandle;
 								}
 								reg7 = (uint32_t)reg7 & 0xFF;
 								if ((uint32_t)reg7 != 0) {
@@ -244,29 +235,29 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 							compare6.compare<int32_t>(int32_t(LOAD32((uint32_t)reg10)), 33, flags);
 							uint32_t notGreater = 1;
 							if (!compare6.gt) {
-								notGreater = handleValue;
+								notGreater = suggestionHandle;
 							}
 							notGreater = notGreater & 0xFF;
 							if (notGreater == 0) {
 								STORE64(stack + 80, LOAD64(stack + 80));
-								handleValue = LOAD32(LOAD32(stack + 84) + 4);
-								hasHandle = 1;
+								suggestionHandle = LOAD32(LOAD32(stack + 84) + 4);
+								hasSuggestionHandle = 1;
 								foundExact = true;
 							}
 						}
 						if (!foundExact) {
-							handleValue = LOAD32((uint32_t)reg6 + 4);
-							hasHandle = 1;
+							suggestionHandle = LOAD32((uint32_t)reg6 + 4);
+							hasSuggestionHandle = 1;
 						}
 					}
 				} else {
-					hasHandle = handleValue;
+					hasSuggestionHandle = suggestionHandle;
 				}
-				hasHandle = hasHandle & 0xFF;
-				if (hasHandle != 0) {
-					iterator = LOAD32((uint32_t)container + 4);
-					listEnd = LOAD32((uint32_t)container + 8);
-					if (iterator > listEnd) {
+				hasSuggestionHandle = hasSuggestionHandle & 0xFF;
+				if (hasSuggestionHandle != 0) {
+					currentElement = LOAD32((uint32_t)container + 4);
+					vectorEnd = LOAD32((uint32_t)container + 8);
+					if (currentElement > vectorEnd) {
 						ppc_trap(ctx, base, 22);
 					}
 					for (;;) {
@@ -275,37 +266,27 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 						if ((uint32_t)reg9 > (uint32_t)reg10) {
 							ppc_trap(ctx, base, 22);
 						}
-						if (iterator == (uint32_t)reg10) break;
-						if (iterator >= listEnd) {
+						if (currentElement == (uint32_t)reg10) break;
+						if (currentElement >= vectorEnd) {
 							ppc_trap(ctx, base, 22);
 						}
-						erasePos = iterator;
-						eraseKey = handleValue;
-						ctx.r6.u64 = reg6;
-						ctx.r7.u64 = reg7;
-						ctx.r8.u64 = reg8;
-						ctx.r9.u64 = reg9;
-						ctx.r10.u64 = reg10;
+						eraseElement = currentElement;
+						eraseRecordId = suggestionHandle;
 						ctx.xer.ca = flags.ca;
-						SharedHandleList_EraseMatching(ctx, base, eraseKey, erasePos);
+						SharedHandleList_EraseMatching(ctx, base, eraseRecordId, eraseElement);
 						reg6 = ctx.r6.u64;
 						reg7 = ctx.r7.u64;
 						reg8 = ctx.r8.u64;
 						flags.ca = ctx.xer.ca;
-						listEnd = LOAD32((uint32_t)container + 8);
-						if (iterator >= listEnd) {
+						vectorEnd = LOAD32((uint32_t)container + 8);
+						if (currentElement >= vectorEnd) {
 							ppc_trap(ctx, base, 22);
 						}
-						iterator = iterator + 8;
+						currentElement = currentElement + 8;
 					}
 				}
 			}
 			returnValue = container;
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
-			ctx.r9.u64 = reg9;
-			ctx.r10.u64 = reg10;
 			ctx.xer.ca = flags.ca;
 			Vector_ClearPOD(ctx, base, (uint32_t)container);
 			outR9 = ctx.r9.u64;
@@ -326,12 +307,8 @@ uint64_t CECTargeted_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNa
 	constexpr int32_t str_TXT_820A8788_B_ = int32_t(0x820A8788);
 	if (!UseLiftedCode(19, 0x823974E8)) { ctx.r3.u64 = classNameString; __imp__sub_823974E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823974E8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820A8788_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(19, sub_823974E8, 0x823974E8) { ctx.r3.u64 = CECTargeted_GetClassName(ctx, base, ctx.r3.u64); }
@@ -349,26 +326,26 @@ uint64_t n_sub_82397818(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 	n_sub_82399988(ctx, base, targetedAddr, arg2);
 
 	uint32_t targetData = targeted->m_4;
-	uint32_t highWord = LOAD32(targetData + 24);
-	uint64_t mask = (uint64_t)LOAD32(targetData + 20) | (uint64_t)highWord;
-	if (highWord != 0) {
-		mask |= 0x80000000;
+	uint32_t flagsHigh = LOAD32(targetData + 24);
+	uint64_t targetFlags = (uint64_t)LOAD32(targetData + 20) | (uint64_t)flagsHigh;
+	if (flagsHigh != 0) {
+		targetFlags |= 0x80000000;
 	}
 
 	uint32_t gameGlobals = uint32_t(g_83490000);
-	uint32_t firstHandle = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 88);
-	n_sub_822D0688(ctx, base, firstHandle, mask);
+	uint32_t counterHandle = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 88);
+	n_sub_822D0688(ctx, base, counterHandle, targetFlags);
 
-	uint32_t secondHandle = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 88);
-	uint64_t result = n_sub_82176010(ctx, base, secondHandle, mask);
+	uint32_t counterHandleAlt = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 88);
+	uint64_t result = n_sub_82176010(ctx, base, counterHandleAlt, targetFlags);
 
 	if (LOAD8(targetedAddr2 + 40) != 0) {
-		uint32_t textBuffer = stack + 80;
-		CCharString_ConstructFromCStr(ctx, base, textBuffer, str_TXT_820A87D4_B_, -1);
+		uint32_t interactString = stack + 80;
+		CCharString_ConstructFromCStr(ctx, base, interactString, str_TXT_820A87D4_B_, -1);
 		uint32_t targetData2 = targeted->m_4;
-		uint32_t interactHandle = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 28);
-		n_sub_821BD998(ctx, base, interactHandle, targetData2, textBuffer);
-		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, textBuffer);
+		uint32_t interactStringManager = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 28);
+		n_sub_821BD998(ctx, base, interactStringManager, targetData2, interactString);
+		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, interactString);
 		targeted->m_28 = uint8_t(0);
 	}
 
@@ -378,7 +355,7 @@ uint64_t n_sub_82397818(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 }
 PROMOTED_ENTRY(19, sub_82397818, 0x82397818) { ctx.r3.u64 = n_sub_82397818(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2, uint64_t isSaving) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820A8864_B_ = int32_t(0x820A8864);
 	constexpr int32_t str_TXT_820A8958_B_ = int32_t(0x820A8958);
@@ -389,7 +366,7 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 	constexpr int32_t str_TXT_820A89B0_B_ = int32_t(0x820A89B0);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
-	if (!UseLiftedCode(19, 0x82398520)) { ctx.r3.u64 = targetedAddr; ctx.r4.u64 = arg2; ctx.r6.u64 = arg3; __imp__sub_82398520(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(19, 0x82398520)) { ctx.r3.u64 = targetedAddr; ctx.r4.u64 = arg2; ctx.r6.u64 = isSaving; __imp__sub_82398520(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82398520);
 	uint32_t stack = ctx.r1.u64;
 	const uint32_t savedMsr = ctx.r13.u64;
@@ -397,47 +374,44 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 	stack = PushStackFrame(base, stack, 192);
 	ctx.r1.u64 = stack;
 
-	const uint32_t nameString = stack + 80;        // CCharString scratch for the current field name
+	const uint32_t fieldNameString = stack + 80;        // CCharString scratch for the current field name
 	const uint32_t recordIdTemp = stack + 84;      // record id read back from the stream
 	const uint32_t suggestionIdTemp = stack + 88;  // record id handed to the stream
-	const uint32_t recordPair = stack + 96;        // { record id, value } appended to the target
-	const uint32_t suggestionList = uint32_t(targetedAddr) + 108;
+	const uint32_t suggestionRecord = stack + 96;        // { record id, recordValue } appended to the target
+	const uint32_t TXT_820A899C_L_ = uint32_t(targetedAddr) + 108;
 
 	uint64_t result = 0;
 
 	auto beginName = [&](int32_t name) {
-		CCharString_ConstructFromCStr(ctx, base, nameString, name, -1);
+		CCharString_ConstructFromCStr(ctx, base, fieldNameString, name, -1);
 	};
 	auto internedName = [&]() -> uint64_t {
-		uint32_t text = LOAD32(nameString);
+		uint32_t text = LOAD32(fieldNameString);
 		return text != 0 ? uint64_t(LOAD32(text)) : uint64_t(g_8209003F);
 	};
 
-	ctx.r6.u64 = arg3;
+	ctx.r6.u64 = isSaving;
 	beginName(str_TXT_820A8958_B_);
-	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 64);
-	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8974_B_);
-	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 68);
-	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8864_B_);
-	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 72);
-	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8984_B_);
-	IStream_SerializeString(ctx, base, nameString, arg2, targetedAddr + 35);
-	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+	IStream_SerializeString(ctx, base, fieldNameString, arg2, targetedAddr + 35);
+	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8990_B_);
-	IStream_SerializeString(ctx, base, nameString, arg2, targetedAddr + 37);
-	result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+	IStream_SerializeString(ctx, base, fieldNameString, arg2, targetedAddr + 37);
+	result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
-	if ((arg3 & 0xFF) != 0) {
+	if ((isSaving & 0xFF) != 0) {
 		// saving: write the suggestion records already stored on the target to the stream
 		uint32_t begin = targeted->m_70;
 		if (begin == 0) {
@@ -445,29 +419,29 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 			ctx.r1.u64 = stack;
 			return result;
 		}
-		uint32_t end = LOAD32(suggestionList + 8);
+		uint32_t end = LOAD32(TXT_820A899C_L_ + 8);
 		if ((int32_t(end - begin) >> 3) == 0) {
 			stack = PopStackFrame(stack, 192);
 			ctx.r1.u64 = stack;
 			return result;
 		}
-		uint32_t element = LOAD32(suggestionList + 4);
-		if (element > end) {
+		uint32_t suggestionIterator = LOAD32(TXT_820A899C_L_ + 4);
+		if (suggestionIterator > end) {
 			ppc_trap(ctx, base, 22);
 		}
 		for (;;) {
-			uint32_t currentEnd = LOAD32(suggestionList + 8);
-			if (LOAD32(suggestionList + 4) > currentEnd) {
+			uint32_t currentEnd = LOAD32(TXT_820A899C_L_ + 8);
+			if (LOAD32(TXT_820A899C_L_ + 4) > currentEnd) {
 				ppc_trap(ctx, base, 22);
 			}
-			if (element == currentEnd) {
+			if (suggestionIterator == currentEnd) {
 				break;
 			}
-			if (element >= end) {
+			if (suggestionIterator >= end) {
 				ppc_trap(ctx, base, 22);
 			}
 
-			uint32_t suggestionId = LOAD32(element);
+			uint32_t suggestionId = LOAD32(suggestionIterator);
 			uint32_t vtable = LOAD32(uint32_t(arg2));
 			uint32_t beginCallback = LOAD32(vtable + 4);
 			STORE32(suggestionIdTemp, suggestionId);
@@ -478,9 +452,8 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 			REX_CALL_INDIRECT_FUNC(beginCallback);
 
 			beginName(str_TXT_820A89B0_B_);
-			ctx.r4.u64 = internedName();
 			IStream_SerializeId(ctx, base, arg2, suggestionIdTemp);
-			CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
+			CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 			uint32_t nextCallback = LOAD32(LOAD32(uint32_t(arg2)) + 12);
 			ctx.r3.u64 = arg2;
@@ -488,11 +461,11 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 			REX_CALL_INDIRECT_FUNC(nextCallback);
 			result = ctx.r3.u64;
 
-			end = LOAD32(suggestionList + 8);
-			if (element >= end) {
+			end = LOAD32(TXT_820A899C_L_ + 8);
+			if (suggestionIterator >= end) {
 				ppc_trap(ctx, base, 22);
 			}
-			element += 8;
+			suggestionIterator += 8;
 		}
 
 		stack = PopStackFrame(stack, 192);
@@ -513,13 +486,12 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 
 	if ((uint32_t(result) & 0xFF) != 0) {
 		const uint32_t globalBase = uint32_t(g_83490000);
-		const uint32_t refCount = uint32_t(g_83496EB8);
+		const uint32_t stringRefCount = uint32_t(g_83496EB8);
 		do {
 			STORE32(recordIdTemp, 0);
 			beginName(str_TXT_820A89B0_B_);
-			ctx.r4.u64 = internedName();
 			IStream_SerializeId(ctx, base, arg2, recordIdTemp);
-			CCharString_Release(ctx, base, nameString);
+			CCharString_Release(ctx, base, fieldNameString);
 
 			// release the reference the record map held on the string just consumed
 			for (;;) {
@@ -528,29 +500,29 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 				std::atomic_thread_fence(std::memory_order_seq_cst);
 				ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
 				REX_ENTER_GLOBAL_LOCK();
-				ctx.reserved.u32 = *reinterpret_cast<uint32_t*>(RAW(refCount));
-				uint32_t newCount = (int32_t)__builtin_bswap32(ctx.reserved.u32) - 1;
-				bool swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(refCount)), ctx.reserved.s32,
-				                                            __builtin_bswap32((int32_t)newCount));
+				ctx.reserved.u32 = *reinterpret_cast<uint32_t*>(RAW(stringRefCount));
+				uint32_t newRefCount = (int32_t)__builtin_bswap32(ctx.reserved.u32) - 1;
+				bool didSwap = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringRefCount)), ctx.reserved.s32,
+				                                            __builtin_bswap32((int32_t)newRefCount));
 				std::atomic_thread_fence(std::memory_order_seq_cst);
 				ctx.msr = globalLock & 0x8020 | ctx.msr & ~0x8020;
 				REX_LEAVE_GLOBAL_LOCK();
-				if (swapped) break;
+				if (didSwap) break;
 			}
 
 			uint32_t recordId = LOAD32(recordIdTemp);
-			STORE32(nameString, 0);
-			STORE32(recordPair + 4, 0);
-			STORE32(recordPair, recordId);
+			STORE32(fieldNameString, 0);
+			STORE32(suggestionRecord + 4, 0);
+			STORE32(suggestionRecord, recordId);
 			if (recordId != 0) {
 				if (LOAD32(globalBase + 26912) != 0 || LOAD32(globalBase + 26920) != 0) {
 					uint32_t recordTable = LOAD32(globalBase + 27600);
-					uint32_t value = HashMapU32_FindValue(ctx, base, recordTable, recordId);
-					STORE32(recordPair + 4, value);
+					uint32_t recordValue = HashMapU32_FindValue(ctx, base, recordTable, recordId);
+					STORE32(suggestionRecord + 4, recordValue);
 				}
 			}
 
-			n_sub_8239BC88(ctx, base, suggestionList, recordPair);
+			n_sub_8239BC88(ctx, base, TXT_820A899C_L_, suggestionRecord);
 
 			uint32_t nextCallback = LOAD32(LOAD32(uint32_t(arg2)) + 12);
 			ctx.r3.u64 = arg2;
@@ -589,16 +561,16 @@ uint64_t n_sub_8239B7A8(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	uint32_t stack = ctx.r1.u64;
 	CECTargeted* targeted = GameObject<CECTargeted>(base, targetedAddr);
 	stack = PushStackFrame(base, stack, 96);
-	uint32_t v4 = targeted->m_4;
-	uint32_t highFlags = LOAD32(v4 + 0x18);
-	uint64_t flags = (uint64_t)LOAD32(v4 + 0x14) | (uint64_t)highFlags;
+	uint32_t targetData = targeted->m_4;
+	uint32_t highFlags = LOAD32(targetData + 0x18);
+	uint64_t targetFlags = (uint64_t)LOAD32(targetData + 0x14) | (uint64_t)highFlags;
 	if (highFlags != 0) {
-		flags = flags | 0x80000000;
+		targetFlags = targetFlags | 0x80000000;
 	}
-	uint32_t singleton = LOAD32(uint32_t(g_83490000) + 26788);
-	uint32_t targetCtx = LOAD32(LOAD32(singleton + 32) + 88);
+	uint32_t gameSingleton = LOAD32(uint32_t(g_83490000) + 26788);
+	uint32_t guiCounterManager = LOAD32(LOAD32(gameSingleton + 32) + 88);
 	ctx.r1.u64 = stack;
-	n_sub_82176010(ctx, base, targetCtx, flags);
+	n_sub_82176010(ctx, base, guiCounterManager, targetFlags);
 	uint64_t result = n_sub_822D50B8(ctx, base, targetedAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -606,33 +578,33 @@ uint64_t n_sub_8239B7A8(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 }
 PROMOTED_ENTRY(19, sub_8239B7A8, 0x8239B7A8) { ctx.r3.u64 = n_sub_8239B7A8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8239B808(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(19, 0x8239B808)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_8239B808(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8239B808(CpuState& ctx, uint8_t* base, uint64_t targeted, uint64_t interactionState) {
+	if (!UseLiftedCode(19, 0x8239B808)) { ctx.r3.u64 = targeted; ctx.r4.u64 = interactionState; __imp__sub_8239B808(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8239B808);
 	uint32_t stack = ctx.r1.u64;
 
 	stack = PushStackFrame(base, stack, 112);
 
 	// First state query through the object's virtual accessor at vtable + 4.
-	uint32_t stateGetter = LOAD32(LOAD32((uint32_t)arg2) + 4);
+	uint32_t getTXT_820A87D4_B_ionState = LOAD32(LOAD32((uint32_t)interactionState) + 4);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
-	ctx.r10.u64 = stateGetter;
-	REX_CALL_INDIRECT_FUNC(stateGetter);
+	ctx.r3.u64 = interactionState;
+	ctx.r4.u64 = interactionState;
+	ctx.r10.u64 = getTXT_820A87D4_B_ionState;
+	REX_CALL_INDIRECT_FUNC(getTXT_820A87D4_B_ionState);
 
 	uint64_t result;
 	if ((int32_t)ctx.r3.u32 == 8) {
-		result = n_sub_8239B880(ctx, base, arg1);
+		result = n_sub_8239B880(ctx, base, targeted);
 	} else {
 		// Re-read the accessor: the previous call may have changed the vtable.
-		uint32_t stateGetter2 = LOAD32(LOAD32((uint32_t)arg2) + 4);
-		ctx.r3.u64 = arg2;
+		uint32_t stateGetter2 = LOAD32(LOAD32((uint32_t)interactionState) + 4);
+		ctx.r3.u64 = interactionState;
 		ctx.r10.u64 = stateGetter2;
 		REX_CALL_INDIRECT_FUNC(stateGetter2);
 		result = ctx.r3.u64;
 		if ((int32_t)result == 9) {
-			result = n_sub_8239B880(ctx, base, arg1);
+			result = n_sub_8239B880(ctx, base, targeted);
 		}
 	}
 
@@ -653,31 +625,31 @@ uint64_t n_sub_8239B880(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	ctx.r1.u64 = stack;
 	n_sub_822D50B8(ctx, base, targetedAddr);
 	uint32_t targetData = targeted->m_4;
-	uint32_t highFlag = LOAD32(targetData + 24);
-	uint64_t flags = (uint64_t)LOAD32(targetData + 20) | (uint64_t)highFlag;
-	if (highFlag != 0) {
-		flags |= 0x80000000u;
+	uint32_t flagsHigh = LOAD32(targetData + 24);
+	uint64_t targetFlags = (uint64_t)LOAD32(targetData + 20) | (uint64_t)flagsHigh;
+	if (flagsHigh != 0) {
+		targetFlags |= 0x80000000u;
 	}
-	uint32_t gameGlobalAddr = uint32_t(g_83490000);
-	uint32_t fieldSet = LOAD32(gameGlobalAddr + 26788);
-	fieldSet = LOAD32(fieldSet + 32);
-	uint32_t handle = LOAD32(fieldSet + 88);
-	n_sub_822D0688(ctx, base, handle, flags);
-	uint32_t fieldSet2 = LOAD32(LOAD32(gameGlobalAddr + 26788) + 32);
-	uint32_t handle2 = LOAD32(fieldSet2 + 88);
-	uint64_t result = n_sub_82176010(ctx, base, handle2, flags);
+	uint32_t gameGlobals = uint32_t(g_83490000);
+	uint32_t guiManager = LOAD32(gameGlobals + 26788);
+	guiManager = LOAD32(guiManager + 32);
+	uint32_t counterHandle = LOAD32(guiManager + 88);
+	n_sub_822D0688(ctx, base, counterHandle, targetFlags);
+	uint32_t guiManager2 = LOAD32(LOAD32(gameGlobals + 26788) + 32);
+	uint32_t counterHandleAlt = LOAD32(guiManager2 + 88);
+	uint64_t result = n_sub_82176010(ctx, base, counterHandleAlt, targetFlags);
 	uint8_t wasTXT_820A87D4_B_ing = targeted->m_28;
 	targeted->m_29 = 0;
 	if (wasTXT_820A87D4_B_ing != 0) {
 		int32_t nameLength = -1;
-		uint64_t TXT_820A87D4_L_ = (uint64_t)str_TXT_820A87D4_B_;
-		uint64_t charStringAddr = (uint64_t)stack + 80;
-		CCharString_ConstructFromCStr(ctx, base, charStringAddr, TXT_820A87D4_L_, nameLength);
+		uint64_t interactString = (uint64_t)str_TXT_820A87D4_B_;
+		uint64_t interactStringBuffer = (uint64_t)stack + 80;
+		CCharString_ConstructFromCStr(ctx, base, interactStringBuffer, interactString, nameLength);
 		uint32_t targetData2 = targeted->m_4;
-		uint32_t manager = LOAD32(LOAD32(gameGlobalAddr + 26788) + 32);
-		uint32_t callback = LOAD32(manager + 28);
-		n_sub_821BD998(ctx, base, callback, targetData2, charStringAddr);
-		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, charStringAddr);
+		uint32_t interactStringManager = LOAD32(LOAD32(gameGlobals + 26788) + 32);
+		uint32_t callback = LOAD32(interactStringManager + 28);
+		n_sub_821BD998(ctx, base, callback, targetData2, interactStringBuffer);
+		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, interactStringBuffer);
 		targeted->m_28 = 0;
 	}
 	stack = PopStackFrame(stack, 128);

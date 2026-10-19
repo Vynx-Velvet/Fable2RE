@@ -9,10 +9,11 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t arg2, double floatArg1) {
+uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t arg2, double deltaTime) {
 	constexpr int32_t g_82000F94 = int32_t(0x82000F94);
-	if (!UseLiftedCode(5, 0x821FC858)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = arg2; ctx.f1.f64 = floatArg1; __imp__sub_821FC858(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(5, 0x821FC858)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = arg2; ctx.f1.f64 = deltaTime; __imp__sub_821FC858(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FC858);
 	uint32_t stack = ctx.r1.u64;
 	CECPhysicsSimulationKeyframed* physicsSimulationKeyframed = GameObject<CECPhysicsSimulationKeyframed>(base, physicsSimulationKeyframedAddr);
@@ -25,7 +26,7 @@ uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r3.u64 = physicsSimulationKeyframedAddr;
 	ctx.r4.u64 = arg2;
 	ctx.r10.u64 = getInnerFn;
-	ctx.f1.f64 = floatArg1;
+	ctx.f1.f64 = deltaTime;
 	REX_CALL_INDIRECT_FUNC(getInnerFn);
 
 	if (ctx.r3.u32 != 0) {
@@ -41,7 +42,7 @@ uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		ctx.r4.u64 = arg2;
 		ctx.r8.u64 = method48;
 		ctx.r9.u64 = innerVtable;
-		ctx.f1.f64 = floatArg1;
+		ctx.f1.f64 = deltaTime;
 		REX_CALL_INDIRECT_FUNC(method48);
 	}
 
@@ -51,7 +52,6 @@ uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	STORE8(stack + 84, uint8_t(0));
 	STORE32(stack + 80, (uint32_t)tempObjectVtable);
 	// state the callee may pass on
-	ctx.r9.u64 = tempObjectVtable;
 	uint64_t result = n_sub_82202E90(ctx, base, entity, (uint64_t)stack + 80);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -186,9 +186,7 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
-			ctx.r7.u64 = handleVtable;
 			ctx.r8.u64 = 0;
-			ctx.r9.s64 = g_820F0000;
 			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
 			EntityHandleList_Remove_822A8BC8(ctx, base, (int64_t)physicsSimulationKeyframedAddr + 56, handleBuf);
 
@@ -196,8 +194,6 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint32_t vtableBase = (uint32_t)g_820F0000;
 			uint32_t resetVtable = (int32_t)vtableBase + 5732;
 			STORE32(stack + 80, resetVtable);
-			ctx.r5.u64 = resetVtable;
-			ctx.r6.u64 = vtableBase;
 			uint64_t released = EntityHandle_Release(ctx, base, handleBuf);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -234,10 +230,6 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			if (controlBlock != 0) {
 				nodeEntity = LOAD32(controlBlock);
 				if (nodeEntity == 0) {
-					ctx.r7.u64 = iteratorCopy;
-					ctx.r8.u64 = iterator;
-					ctx.r9.u64 = handedR9;
-					ctx.r10.u64 = nodeEntity;
 					result = EntityHandle_Release(ctx, base, nodeHandle);
 					iteratorCopy = ctx.r7.u64;
 					iterator = ctx.r8.u64;
@@ -261,10 +253,7 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint64_t handleVtable = g_820F1664;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
-			ctx.r7.u64 = iteratorCopy;
 			ctx.r8.u64 = iterator;
-			ctx.r9.u64 = handleVtable;
-			ctx.r10.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
 
 			uint32_t listEndNode = LOAD32(listHead + 4);
@@ -278,8 +267,6 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint32_t vtableBase = (uint32_t)g_820F0000;
 			uint32_t resetVtable = (int32_t)vtableBase + 5732;
 			STORE32(stack + 80, resetVtable);
-			ctx.r6.u64 = resetVtable;
-			ctx.r7.u64 = vtableBase;
 			result = EntityHandle_Release(ctx, base, handleBuf);
 		}
 	}
@@ -379,7 +366,6 @@ uint32_t CECPhysicsSimulationKeyframed_CleanupEntityHandles(CpuState& ctx, uint8
 			uint32_t entity = LOAD32(controlBlock);
 			if (entity == 0) {
 				ctx.r1.u64 = stack;
-				ctx.r10.u64 = entity;
 				result = (uint32_t)EntityHandle_Release(ctx, base, nodeHandle);
 			} else {
 				keepNode = (LOAD8(entity + 144) & 0x40) != 0;
@@ -546,8 +532,6 @@ uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 				uint32_t registry = LOAD32(registrySlots);
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
-				ctx.r7.u64 = registrySlots;
-				ctx.r8.u64 = registryOwner;
 				ctx.xer.ca = flags.ca;
 				uint64_t found = n_sub_82264448(ctx, base, registry, keyAddr);
 				r4AtRelease = found;
@@ -570,9 +554,6 @@ uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		}
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4AtRelease;
-		ctx.r7.u64 = (uint64_t)(int64_t)keyCount;
-		ctx.r8.u64 = byteSize;
 		ctx.xer.ca = flags.ca;
 		result = SharedHandle_Release(ctx, base, physicsSimulationKeyframedAddr + 68);
 		physicsSimulationKeyframed->m_44 = 0u;
@@ -587,12 +568,8 @@ uint64_t CECPhysicsSimulationKeyframed_GetClassName(CpuState& ctx, uint8_t* base
 	constexpr int32_t str_TXT_820BC28C_B_ = int32_t(0x820BC28C);
 	if (!UseLiftedCode(68, 0x82991A48)) { ctx.r3.u64 = classNameResult; __imp__sub_82991A48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82991A48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameResult, str_TXT_820BC28C_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameResult;
 }
 PROMOTED_ENTRY(68, sub_82991A48, 0x82991A48) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_GetClassName(ctx, base, ctx.r3.u64); }

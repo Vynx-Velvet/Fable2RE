@@ -11,18 +11,18 @@
 #include "lifted/native_decls.h"
 
 // sub_82BAD680  [8 bytes]
-uint64_t n_sub_82BAD680(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(86, 0x82BAD680)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82BAD680(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BAD680(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t deleteFlag) {
+	if (!UseLiftedCode(86, 0x82BAD680)) { ctx.r3.u64 = arg1; ctx.r4.u64 = deleteFlag; __imp__sub_82BAD680(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAD680);
 	// CSlideShowControl embeds its CAKElementBuilder at offset 0x4C.
 	uint64_t elementBuilder = arg1 - 0x4C;
-	return CAKElementBuilder_DeletingDestructor(ctx, base, elementBuilder, arg2);
+	return CAKElementBuilder_DeletingDestructor(ctx, base, elementBuilder, deleteFlag);
 }
 PROMOTED_ENTRY(86, sub_82BAD680, 0x82BAD680) { ctx.r3.u64 = n_sub_82BAD680(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t arg2, uint64_t slideIndex, uint64_t arg4) {
+uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t context, uint64_t slideIndex, uint64_t preload) {
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
-	if (!UseLiftedCode(86, 0x82BAF540)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = slideIndex; ctx.r6.u64 = arg4; __imp__sub_82BAF540(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(86, 0x82BAF540)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = context; ctx.r5.u64 = slideIndex; ctx.r6.u64 = preload; __imp__sub_82BAF540(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF540);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t controlAddr = (uint32_t)slideShowControlAddr;
@@ -30,15 +30,15 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 	CSlideShowControl* slideShowControl = GameObject<CSlideShowControl>(base, slideShowControlAddr);
 
 	stack = PushStackFrame(base, stack, 144);
-	STORE32(stack + 172, (uint32_t)arg2);
+	STORE32(stack + 172, (uint32_t)context);
 
 	uint32_t prepareFn = LOAD32(uint32_t(slideShowControl->vtable) + 4);
 	callTarget.u64 = prepareFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = slideShowControlAddr;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = slideIndex;
-	ctx.r6.u64 = arg4;
+	ctx.r6.u64 = preload;
 	ctx.r10.u64 = prepareFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint32_t showState = ctx.r3.u32;
@@ -59,7 +59,7 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 	}
 
 	uint32_t show;
-	if ((uint32_t)arg4 & 0xFF) {
+	if ((uint32_t)preload & 0xFF) {
 		show = LOAD32(controlAddr - 72);
 		uint32_t preloadFn = LOAD32(LOAD32(show) + 116);
 		callTarget.u64 = preloadFn;
@@ -99,7 +99,7 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 	uint32_t firstSlot = ctx.r3.u32;
 	uint32_t setFirstFn = LOAD32(LOAD32(firstSlot) + 8);
 	callTarget.u64 = setFirstFn;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = firstSlideIndex;
 	ctx.r10.u64 = setFirstFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -116,7 +116,7 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 	uint32_t lastVtable = LOAD32(lastSlot);
 	uint32_t setLastFn = LOAD32(lastVtable + 8);
 	callTarget.u64 = setLastFn;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = (uint32_t)targetIndex;
 	ctx.r6.u64 = setLastFn;
 	ctx.r7.u64 = lastVtable;
@@ -236,8 +236,8 @@ uint64_t CSlideShowControl_GetCurrentSlide(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(86, sub_82BAF770, 0x82BAF770) { ctx.r3.u64 = CSlideShowControl_GetCurrentSlide(ctx, base, ctx.r3.u64); }
 
-uint64_t CSlideShowControl_NextSlide(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t arg2, uint64_t slideOffset) {
-	if (!UseLiftedCode(86, 0x82BAF7D0)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = slideOffset; __imp__sub_82BAF7D0(ctx, base); return ctx.r3.u64; }
+uint64_t CSlideShowControl_NextSlide(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t context, uint64_t slideOffset) {
+	if (!UseLiftedCode(86, 0x82BAF7D0)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = context; ctx.r5.u64 = slideOffset; __imp__sub_82BAF7D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF7D0);
 	uint32_t stack = ctx.r1.u64;
 	CSlideShowControl* slideShowControl = GameObject<CSlideShowControl>(base, slideShowControlAddr);
@@ -249,7 +249,7 @@ uint64_t CSlideShowControl_NextSlide(CpuState& ctx, uint8_t* base, uint64_t slid
 	callTarget.u64 = LOAD32(vtable + 4);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = slideShowControlAddr;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = slideOffset;
 	ctx.r10.u64 = callTarget.u64;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -269,7 +269,7 @@ uint64_t CSlideShowControl_NextSlide(CpuState& ctx, uint8_t* base, uint64_t slid
 		uint32_t vtable2 = slideShowControl->vtable;
 		callTarget.u64 = LOAD32(vtable2 + 8);
 		ctx.r3.u64 = slideShowControlAddr;
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = context;
 		ctx.r5.u64 = targetSlide;
 		ctx.r6.u64 = 1;
 		ctx.r9.u64 = callTarget.u64;
@@ -283,8 +283,8 @@ uint64_t CSlideShowControl_NextSlide(CpuState& ctx, uint8_t* base, uint64_t slid
 }
 PROMOTED_ENTRY(86, sub_82BAF7D0, 0x82BAF7D0) { ctx.r3.u64 = CSlideShowControl_NextSlide(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t CSlideShowControl_PreviousSlide(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t arg2, uint64_t slideOffset) {
-	if (!UseLiftedCode(86, 0x82BAF858)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = slideOffset; __imp__sub_82BAF858(ctx, base); return ctx.r3.u64; }
+uint64_t CSlideShowControl_PreviousSlide(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t context, uint64_t slideOffset) {
+	if (!UseLiftedCode(86, 0x82BAF858)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = context; ctx.r5.u64 = slideOffset; __imp__sub_82BAF858(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF858);
 	uint32_t stack = ctx.r1.u64;
 	CSlideShowControl* slideShowControl = GameObject<CSlideShowControl>(base, slideShowControlAddr);
@@ -298,7 +298,7 @@ uint64_t CSlideShowControl_PreviousSlide(CpuState& ctx, uint8_t* base, uint64_t 
 	callTarget.u64 = getCurrentSlideFunc;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = slideShowControlAddr;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = slideOffset;
 	ctx.r10.u64 = getCurrentSlideFunc;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -320,7 +320,7 @@ uint64_t CSlideShowControl_PreviousSlide(CpuState& ctx, uint8_t* base, uint64_t 
 		uint32_t setCurrentSlideFunc = LOAD32(vtable + 8);
 		callTarget.u64 = setCurrentSlideFunc;
 		ctx.r3.u64 = slideShowControlAddr;
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = context;
 		ctx.r5.u64 = targetSlide;
 		ctx.r6.u64 = 1;
 		ctx.r9.u64 = setCurrentSlideFunc;
@@ -371,8 +371,8 @@ uint64_t n_sub_82BAF8E0(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 }
 PROMOTED_ENTRY(86, sub_82BAF8E0, 0x82BAF8E0) { ctx.r3.u64 = n_sub_82BAF8E0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BAF940(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t arg2) {
-	if (!UseLiftedCode(86, 0x82BAF940)) { ctx.r3.u64 = slideShowControlAddr; ctx.r5.u64 = arg2; __imp__sub_82BAF940(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BAF940(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t slideIndex) {
+	if (!UseLiftedCode(86, 0x82BAF940)) { ctx.r3.u64 = slideShowControlAddr; ctx.r5.u64 = slideIndex; __imp__sub_82BAF940(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF940);
 	uint32_t stack = ctx.r1.u64;
 	CSlideShowControl* slideShowControl = GameObject<CSlideShowControl>(base, slideShowControlAddr);
@@ -383,14 +383,14 @@ uint64_t n_sub_82BAF940(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 	callTarget.u64 = getTargetFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = slideShowControlAddr;
-	ctx.r5.u64 = arg2;
+	ctx.r5.u64 = slideIndex;
 	ctx.r10.u64 = getTargetFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 	uint32_t targetAddr = (uint32_t)(ctx.r3.u64 + 48);
 	uint8_t flags = LOAD8(targetAddr + 16);
-	STORE32(targetAddr + 8, (uint32_t)arg2);
-	STORE32(targetAddr, (uint32_t)arg2);
+	STORE32(targetAddr + 8, (uint32_t)slideIndex);
+	STORE32(targetAddr, (uint32_t)slideIndex);
 	STORE8(targetAddr + 16, uint8_t(flags | 16));
 
 	stack = PopStackFrame(stack, 96);
@@ -440,8 +440,8 @@ uint64_t n_sub_82BAF9C8(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 }
 PROMOTED_ENTRY(86, sub_82BAF9C8, 0x82BAF9C8) { ctx.r3.u64 = n_sub_82BAF9C8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BAFA00(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
-	if (!UseLiftedCode(86, 0x82BAFA00)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_82BAFA00(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BAFA00(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t context, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+	if (!UseLiftedCode(86, 0x82BAFA00)) { ctx.r3.u64 = slideShowControlAddr; ctx.r4.u64 = context; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_82BAFA00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAFA00);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -453,7 +453,7 @@ uint64_t n_sub_82BAFA00(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 	callTarget.u64 = getStateFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = slideShowControlAddr;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = arg3;
 	ctx.r6.u64 = arg4;
 	ctx.r7.u64 = arg5;
@@ -482,7 +482,7 @@ uint64_t n_sub_82BAFA00(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 	uint32_t callbackFn = LOAD32(owner + 80);
 	callTarget.u64 = callbackFn;
 	ctx.r3.u64 = ownerAddr;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = context;
 	ctx.r5.u64 = 16384;
 	ctx.r6.u64 = arg6;
 	ctx.r7.u64 = owner;

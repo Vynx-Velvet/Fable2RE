@@ -9,12 +9,13 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_821CDF88  [8 bytes]
-uint64_t n_sub_821CDF88(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(3, 0x821CDF88)) { ctx.r4.u64 = arg1; __imp__sub_821CDF88(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821CDF88(CpuState& ctx, uint8_t* base, uint32_t element) {
+	if (!UseLiftedCode(3, 0x821CDF88)) { ctx.r4.u64 = element; __imp__sub_821CDF88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821CDF88);
-	uint32_t value = LOAD32(arg1 + 8);
+	uint32_t value = LOAD32(element + 8);
 	return value;
 }
 PROMOTED_ENTRY(3, sub_821CDF88, 0x821CDF88) { ctx.r3.u64 = n_sub_821CDF88(ctx, base, ctx.r4.u32); }
@@ -29,11 +30,11 @@ uint64_t CAKElementBuilder_HasFlag(CpuState& ctx, uint8_t* base, uint32_t node, 
 }
 PROMOTED_ENTRY(3, sub_821D2C58, 0x821D2C58) { ctx.r3.u64 = CAKElementBuilder_HasFlag(ctx, base, ctx.r4.u32, ctx.r5.u32); }
 
-uint64_t CAKElementBuilder_GetField12(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(10, 0x82283EC8)) { ctx.r4.u64 = arg1; __imp__sub_82283EC8(ctx, base); return ctx.r3.u64; }
+uint64_t CAKElementBuilder_GetField12(CpuState& ctx, uint8_t* base, uint32_t element) {
+	if (!UseLiftedCode(10, 0x82283EC8)) { ctx.r4.u64 = element; __imp__sub_82283EC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82283EC8);
-	uint32_t field12 = LOAD32(arg1 + 12);
-	return field12;
+	uint32_t value = LOAD32(element + 12);
+	return value;
 }
 PROMOTED_ENTRY(10, sub_82283EC8, 0x82283EC8) { ctx.r3.u64 = CAKElementBuilder_GetField12(ctx, base, ctx.r4.u32); }
 
@@ -47,10 +48,10 @@ uint64_t CAKElementBuilder_GetField24(CpuState& ctx, uint8_t* base, uint32_t nod
 PROMOTED_ENTRY(10, sub_82284200, 0x82284200) { ctx.r3.u64 = CAKElementBuilder_GetField24(ctx, base, ctx.r4.u32); }
 
 // sub_82284208  [12 bytes]
-uint64_t CAKElementBuilder_IsFlag12Set(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(10, 0x82284208)) { ctx.r4.u64 = arg1; __imp__sub_82284208(ctx, base); return ctx.r3.u64; }
+uint64_t CAKElementBuilder_IsFlag12Set(CpuState& ctx, uint8_t* base, uint32_t element) {
+	if (!UseLiftedCode(10, 0x82284208)) { ctx.r4.u64 = element; __imp__sub_82284208(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82284208);
-	uint16_t flags = LOAD16(arg1 + 0x1C);
+	uint16_t flags = LOAD16(element + 0x1C);
 	return (flags >> 12) & 1;
 }
 PROMOTED_ENTRY(10, sub_82284208, 0x82284208) { ctx.r3.u64 = CAKElementBuilder_IsFlag12Set(ctx, base, ctx.r4.u32); }
@@ -268,10 +269,10 @@ uint64_t n_sub_82BAC918(CpuState& ctx, uint8_t* base, uint64_t element, uint64_t
 PROMOTED_ENTRY(86, sub_82BAC918, 0x82BAC918) { ctx.r3.u64 = n_sub_82BAC918(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u32); }
 
 // sub_82BAC978  [8 bytes]
-uint64_t n_sub_82BAC978(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(86, 0x82BAC978)) { ctx.r4.u64 = arg1; __imp__sub_82BAC978(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BAC978(CpuState& ctx, uint8_t* base, uint32_t element) {
+	if (!UseLiftedCode(86, 0x82BAC978)) { ctx.r4.u64 = element; __imp__sub_82BAC978(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAC978);
-	return LOAD8(arg1 + 31);
+	return LOAD8(element + 31);
 }
 PROMOTED_ENTRY(86, sub_82BAC978, 0x82BAC978) { ctx.r3.u64 = n_sub_82BAC978(ctx, base, ctx.r4.u32); }
 
@@ -306,10 +307,10 @@ uint64_t n_sub_82BAC9C8(CpuState& ctx, uint8_t* base, uint32_t element) {
 PROMOTED_ENTRY(86, sub_82BAC9C8, 0x82BAC9C8) { ctx.r3.u64 = n_sub_82BAC9C8(ctx, base, ctx.r4.u32); }
 
 // sub_82BAC9E0  [8 bytes]
-uint64_t n_sub_82BAC9E0(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(86, 0x82BAC9E0)) { ctx.r4.u64 = arg1; __imp__sub_82BAC9E0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BAC9E0(CpuState& ctx, uint8_t* base, uint32_t element) {
+	if (!UseLiftedCode(86, 0x82BAC9E0)) { ctx.r4.u64 = element; __imp__sub_82BAC9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAC9E0);
-	return LOAD32(arg1 + 4);
+	return LOAD32(element + 4);
 }
 PROMOTED_ENTRY(86, sub_82BAC9E0, 0x82BAC9E0) { ctx.r3.u64 = n_sub_82BAC9E0(ctx, base, ctx.r4.u32); }
 
@@ -388,15 +389,15 @@ PROMOTED_ENTRY(86, sub_82BACA70, 0x82BACA70) { n_sub_82BACA70(ctx, base, ctx.r4.
 // sub_82BACB20  [92 bytes]
 // Calls sub_82BAF110 on the member at +0x18 with the node, then virtual slot 0x50 with (node, 0x40, 1); in
 // the CAKElementBuilder vtable that slot is sub_82284750, which sets those bits in the node flags at +0x1C.
-uint64_t n_sub_82BACB20(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderAddr, uint64_t node, uint32_t arg3, uint32_t arg4) {
-	if (!UseLiftedCode(86, 0x82BACB20)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = node; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_82BACB20(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BACB20(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderAddr, uint64_t node, uint32_t callbackFunction, uint32_t callbackArg) {
+	if (!UseLiftedCode(86, 0x82BACB20)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = node; ctx.r5.u64 = callbackFunction; ctx.r6.u64 = callbackArg; __imp__sub_82BACB20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BACB20);
 	uint32_t stack = ctx.r1.u64;
 	CAKElementBuilder* aKElementBuilder = GameObject<CAKElementBuilder>(base, aKElementBuilderAddr);
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82BAF110(ctx, base, aKElementBuilderAddr + 24, node, arg3, arg4);
+	n_sub_82BAF110(ctx, base, aKElementBuilderAddr + 24, node, callbackFunction, callbackArg);
 
 	uint32_t setFlagsFn = LOAD32(uint32_t(aKElementBuilder->vtable) + 80);
 	ctx.r3.u64 = aKElementBuilderAddr;
@@ -416,8 +417,8 @@ PROMOTED_ENTRY(86, sub_82BACB20, 0x82BACB20) { ctx.r3.u64 = n_sub_82BACB20(ctx, 
 // Calls sub_82BAF318 on the member at +0x18 with the node and the address of a byte it may set; if the byte is
 // set, calls virtual slot 0x50 with (node, 0x40, 0); in the CAKElementBuilder vtable that slot is sub_82284750,
 // which clears those bits in the node flags at +0x1C. Returns what sub_82BAF318 returned.
-uint64_t n_sub_82BACB80(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderAddr, uint64_t node, uint32_t arg3, uint32_t arg4) {
-	if (!UseLiftedCode(86, 0x82BACB80)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = node; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_82BACB80(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BACB80(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderAddr, uint64_t node, uint32_t callbackFunction, uint32_t callbackArg) {
+	if (!UseLiftedCode(86, 0x82BACB80)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = node; ctx.r5.u64 = callbackFunction; ctx.r6.u64 = callbackArg; __imp__sub_82BACB80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BACB80);
 	uint32_t stack = ctx.r1.u64;
 	CAKElementBuilder* aKElementBuilder = GameObject<CAKElementBuilder>(base, aKElementBuilderAddr);
@@ -427,7 +428,7 @@ uint64_t n_sub_82BACB80(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 	STORE8(outFlagAddr, uint8_t(0));
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82BAF318(ctx, base, aKElementBuilderAddr + 24, node, arg3, arg4, outFlagAddr);
+	uint64_t result = n_sub_82BAF318(ctx, base, aKElementBuilderAddr + 24, node, callbackFunction, callbackArg, outFlagAddr);
 
 	uint8_t outFlag = LOAD8(outFlagAddr);
 	if (outFlag != 0) {
@@ -447,17 +448,17 @@ uint64_t n_sub_82BACB80(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 }
 PROMOTED_ENTRY(86, sub_82BACB80, 0x82BACB80) { ctx.r3.u64 = n_sub_82BACB80(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u32); }
 
-uint64_t n_sub_82BACC90(CpuState& ctx, uint8_t* base, uint32_t aKElementBuilderAddr, uint32_t searchValue, uint32_t startNode) {
-	if (!UseLiftedCode(86, 0x82BACC90)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = searchValue; ctx.r5.u64 = startNode; __imp__sub_82BACC90(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82BACC90(CpuState& ctx, uint8_t* base, uint32_t builderAddress, uint32_t key, uint32_t startNode) {
+	if (!UseLiftedCode(86, 0x82BACC90)) { ctx.r3.u64 = builderAddress; ctx.r4.u64 = key; ctx.r5.u64 = startNode; __imp__sub_82BACC90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BACC90);
-	CAKElementBuilder* builder = GameObject<CAKElementBuilder>(base, aKElementBuilderAddr);
+	CAKElementBuilder* builder = GameObject<CAKElementBuilder>(base, builderAddress);
 	uint32_t node = startNode;
 	if (node == 0) {
 		node = builder->m_pRoot;
-		if (LOAD32(node) == searchValue) return node;
+		if (LOAD32(node) == key) return node;
 	}
 	for (uint32_t child = LOAD32(node + 20); child != 0; child = LOAD32(child + 16)) {
-		if (LOAD32(child) == searchValue) return child;
+		if (LOAD32(child) == key) return child;
 	}
 	return 0;
 }
@@ -500,7 +501,6 @@ uint64_t n_sub_82BACCE0(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 		r6Value = ctx.r6.u64;
 		r9Value = result & 0xFF;
 		if (r9Value != 0 || (includeAll & 0xFF) != 0) {
-			ctx.r9.u64 = r9Value;
 			result = n_sub_82284810(ctx, base, outNodes, stack + 0x50);
 			r4Value = ctx.r4.u64;
 			r5Value = ctx.r5.u64;
@@ -549,16 +549,12 @@ PROMOTED_ENTRY(86, sub_82BACD60, 0x82BACD60) { ctx.r3.u64 = n_sub_82BACD60(ctx, 
 uint64_t CAKElementBuilder_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(86, 0x82BACE60)) { ctx.r3.u64 = aKElementBuilderAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82BACE60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BACE60);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
 	CAKElementBuilder_Destruct(ctx, base, aKElementBuilderAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, aKElementBuilderAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return aKElementBuilderAddr;
 }
 PROMOTED_ENTRY(86, sub_82BACE60, 0x82BACE60) { ctx.r3.u64 = CAKElementBuilder_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -586,9 +582,6 @@ uint32_t CAKElementBuilder_Destruct(CpuState& ctx, uint8_t* base, uint64_t aKEle
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = aKElementBuilderAddr;
-	ctx.r7.u64 = primaryVtable;
-	ctx.r8.s64 = secondaryVtableBase;
 	const uint64_t allocator = Allocator_GetInstance(ctx, base);
 	n_sub_82BA9068(ctx, base, allocator, root, rootSize);
 
@@ -601,7 +594,6 @@ uint32_t CAKElementBuilder_Destruct(CpuState& ctx, uint8_t* base, uint64_t aKEle
 			const uint32_t block = aKElementBuilder->m_48;
 			nextBlock = LOAD32(block);
 			const uint32_t blockSize = LOAD32(block + 4);
-			ctx.r3.u64 = r3Value;
 			const uint64_t blockAllocator = Allocator_GetInstance(ctx, base);
 			r3Value = n_sub_82BA9068(ctx, base, blockAllocator, block, blockSize);
 			aKElementBuilder->m_48 = nextBlock;
@@ -642,7 +634,6 @@ uint64_t n_sub_82BAD1D8(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 	const double initialF1 = double(LOAD_F32(0x8209BF2Cu));
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.f1.f64 = initialF1;
 	// r3/r4/r7/r8 as the original leaves them; later calls receive them
 	uint64_t r3Value = n_sub_82BAE2E8(ctx, base, sizeList, elementCount, parentElement);
 	uint64_t r4Value = ctx.r4.u64;
@@ -668,8 +659,6 @@ uint64_t n_sub_82BAD1D8(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 		flags.ca = addsExtra == 0;
 		STORE32(valueSlot, (addsExtra != 0 ? 36u : 0u) + 32u + (uint32_t)LOAD8(elementAfterCall + 31) * 8u);
 		// state the callee may pass on
-		ctx.r7.u64 = 0 - (uint64_t)addsExtra;
-		ctx.r8.u64 = elementAfterCall;
 		ctx.xer.ca = flags.ca;
 		r3Value = n_sub_82BAE368(ctx, base, sizeList, valueSlot);
 		r4Value = ctx.r4.u64;
@@ -691,7 +680,6 @@ uint64_t n_sub_82BAD1D8(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 		do {
 			const uint32_t copySize = LOAD32(LOAD32(stack + 128) + offset);
 			// state the callee may pass on
-			ctx.r3.u64 = r3Value;
 			ctx.xer.ca = flags.ca;
 			const uint64_t allocator = Allocator_GetInstance(ctx, base);
 			uint64_t block;
@@ -815,8 +803,6 @@ uint64_t n_sub_82BAD1D8(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 			if (LOAD8(copyElement + 30) == 8) {
 				r4Value = LOAD32((uint32_t)g_834C0000 - 7424);
 				// state the callee may pass on
-				ctx.r7.u64 = r7Value;
-				ctx.r8.u64 = r8Value;
 				ctx.xer.ca = flags.ca;
 				r3Value = CAKElementBuilder_FindByKey(ctx, base, copyElement, (uint32_t)r4Value);
 				r7Value = ctx.r7.u64;
@@ -878,10 +864,6 @@ uint64_t n_sub_82BAD1D8(CpuState& ctx, uint8_t* base, uint64_t aKElementBuilderA
 	const uint32_t sizeCapacity = LOAD32(stack + 132);
 	const uint32_t sizeArray = LOAD32(stack + 128);
 	// state the callee may pass on
-	ctx.r3.u64 = r3Value;
-	ctx.r4.u64 = r4Value;
-	ctx.r7.u64 = r7Value;
-	ctx.r8.u64 = r8Value;
 	ctx.xer.ca = flags.ca;
 	const uint64_t allocator = Allocator_GetInstance(ctx, base);
 	const uint64_t result = n_sub_82BA9068(ctx, base, allocator, sizeArray, sizeCapacity << 2);

@@ -9,12 +9,13 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_824F4A78 = Lua_Block_GetLastCompletedBlockType (Lua Block.GetLastCompletedBlockType)  [8 bytes]
-uint64_t Lua_Block_GetLastCompletedBlockType(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(30, 0x824F4A78)) { ctx.r3.u64 = arg1; __imp__sub_824F4A78(ctx, base); return ctx.r3.u64; }
+uint64_t Lua_Block_GetLastCompletedBlockType(CpuState& ctx, uint8_t* base, uint64_t blockComponent) {
+	if (!UseLiftedCode(30, 0x824F4A78)) { ctx.r3.u64 = blockComponent; __imp__sub_824F4A78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824F4A78);
-	uint32_t block = (uint32_t)arg1;
+	uint32_t block = (uint32_t)blockComponent;
 	return LOAD32(block + 0xA0);
 }
 PROMOTED_ENTRY(30, sub_824F4A78, 0x824F4A78) { ctx.r3.u64 = Lua_Block_GetLastCompletedBlockType(ctx, base, ctx.r3.u64); }
@@ -122,11 +123,11 @@ uint64_t n_sub_82C0BE58(CpuState& ctx, uint8_t* base, uint64_t blockComponent) {
 }
 PROMOTED_ENTRY(89, sub_82C0BE58, 0x82C0BE58) { ctx.r3.u64 = n_sub_82C0BE58(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82C0BE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(89, 0x82C0BE78)) { ctx.r3.u64 = arg1; __imp__sub_82C0BE78(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C0BE78(CpuState& ctx, uint8_t* base, uint64_t blockComponent) {
+	if (!UseLiftedCode(89, 0x82C0BE78)) { ctx.r3.u64 = blockComponent; __imp__sub_82C0BE78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0BE78);
 
-	uint32_t component = LOAD32((uint32_t)arg1 + 76);
+	uint32_t component = LOAD32((uint32_t)blockComponent + 76);
 	if (component == 0) return 0;
 
 	uint32_t vtable = LOAD32(component);
@@ -139,10 +140,10 @@ uint64_t n_sub_82C0BE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 }
 PROMOTED_ENTRY(89, sub_82C0BE78, 0x82C0BE78) { ctx.r3.u64 = n_sub_82C0BE78(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82C0BE98(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(89, 0x82C0BE98)) { ctx.r3.u64 = arg1; __imp__sub_82C0BE98(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C0BE98(CpuState& ctx, uint8_t* base, uint64_t blockComponent) {
+	if (!UseLiftedCode(89, 0x82C0BE98)) { ctx.r3.u64 = blockComponent; __imp__sub_82C0BE98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0BE98);
-	uint32_t target = LOAD32((uint32_t)arg1 + 0x4C);
+	uint32_t target = LOAD32((uint32_t)blockComponent + 0x4C);
 	if (target == 0) return target;
 	uint32_t callTarget = LOAD32(LOAD32(target) + 0x20);
 	ctx.r3.u64 = target;
@@ -282,17 +283,13 @@ PROMOTED_ENTRY(89, sub_82C0E6E8, 0x82C0E6E8) { ctx.r3.u64 = CBlockComponent_Dtor
 uint64_t CBlockComponent_DeletingDtor(CpuState& ctx, uint8_t* base, uint64_t blockComponentAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(89, 0x82C0F648)) { ctx.r3.u64 = blockComponentAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82C0F648(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0F648);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	// state the callee reads: CBlockComponent_Dtor takes r4 from ctx and passes it on
 	ctx.r4.u64 = deleteFlags;
 	CBlockComponent_Dtor(ctx, base, blockComponentAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, blockComponentAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return blockComponentAddr;
 }
 PROMOTED_ENTRY(89, sub_82C0F648, 0x82C0F648) { ctx.r3.u64 = CBlockComponent_DeletingDtor(ctx, base, ctx.r3.u64, ctx.r4.u64); }

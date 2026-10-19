@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_823547D0  [52 bytes]
 uint64_t CBufferedFile_GetFileName(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t bufferedFileAddr) {
@@ -36,8 +37,6 @@ uint64_t CBufferedFile_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t
 	bufferedFile->vtable = (uint32_t)g_820A6A48;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
-	ctx.r10.u64 = g_820A6A48;
 	CBufferedFile_Close(ctx, base, bufferedFileAddr);
 
 	bufferedFile->m_Handle = 0u;
@@ -76,8 +75,6 @@ uint64_t CBufferedFile_Open(CpuState& ctx, uint8_t* base, uint64_t bufferedFileA
 
 	// state the callee may pass on; r8 is read again by the calls below
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = openFlags;
-	ctx.r8.u64 = arg5;
 	CCharString_Assign(ctx, base, bufferedFileAddr + 24, fileName);
 	bufferedFile->m_Handle = 0;
 	uint32_t createFlags = 0;
@@ -143,15 +140,10 @@ uint64_t CBufferedFile_Open(CpuState& ctx, uint8_t* base, uint64_t bufferedFileA
 
 	n_sub_82CC0750(ctx, base, 0x10000001u);
 	// state the callee may pass on
-	ctx.r0.u64 = r0;
-	ctx.r6.u64 = 0;
-	ctx.r9.u64 = 0;
 	uint64_t fileHandle = n_sub_82CBCC00(ctx, base, LOAD32(stringData), accessFlags, shareMode, disposition, createFlags);
-	ctx.r3.u64 = fileHandle;
 	uint64_t status = n_sub_82CC0758(ctx, base);
 
 	if ((int32_t)fileHandle == -1 || ((uint32_t)status & 0x10000000) != 0) {
-		ctx.r3.u64 = status;
 		uint64_t errorCode = n_sub_82CC0758(ctx, base);
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, (uint64_t)str_TXT_820F8C00_B_, -1);
 		RefCountedString_Assign(ctx, base, stack + 88, stack + 80);

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CChainedEntityEffect_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(73, 0x82A10720)) { ctx.r3.u64 = chainedEntityEffectAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82A10720(ctx, base); return ctx.r3.u64; }
@@ -45,8 +46,6 @@ uint32_t CChainedEntityEffect_DestroyMembers(CpuState& ctx, uint8_t* base, uint6
 	chainedEntityEffect->m_F4 = entityHandleVtable;
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r9.u64 = vtable;
-	ctx.r10.u64 = 0x820F0000u;
 	EntityHandle_Release(ctx, base, chainedEntityEffectAddr + 244);
 	chainedEntityEffect->m_F8 = 0;
 
@@ -80,7 +79,6 @@ uint32_t n_sub_83222D78(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r4.u64 = outMatrixAddr;
 	uint32_t ownMatrix = n_sub_821D9D28(ctx, base, chainedEntityEffectAddr);
 	// r4 and r9 as the original code leaves them: handed to the callees below and read by callers.
 	uint64_t r4Value = ctx.r4.u64;
@@ -107,8 +105,6 @@ uint32_t n_sub_83222D78(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 		if (nextEffect != 0) {
 			effectAddr = nextEffect;
 		} else {
-			ctx.r9.u64 = r9Value;
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, result);
 			r4Value = ctx.r4.u64;
 			r9Value = ctx.r9.u64;
@@ -117,8 +113,6 @@ uint32_t n_sub_83222D78(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 
 	// Multiply the matrix of every further effect of the chain into the output buffer.
 	while (static_cast<uint32_t>(effectAddr) != 0) {
-		ctx.r4.u64 = r4Value;
-		ctx.r9.u64 = r9Value;
 		uint64_t effectMatrix = n_sub_821D9D28(ctx, base, effectAddr);
 		r4Value = effectMatrix;
 		Matrix4x4_Multiply_821C0210(ctx, base, static_cast<uint32_t>(outMatrixAddr), effectMatrix);
@@ -132,8 +126,6 @@ uint32_t n_sub_83222D78(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 			if (nextEffect != 0) {
 				effectAddr = nextEffect;
 			} else {
-				ctx.r4.u64 = r4Value;
-				ctx.r10.u64 = 0;
 				result = EntityHandle_Release(ctx, base, result);
 				r4Value = ctx.r4.u64;
 				r9Value = ctx.r9.u64;
@@ -448,10 +440,10 @@ uint64_t n_sub_8323A650(CpuState& ctx, uint8_t* base, uint64_t entity, uint64_t 
 }
 PROMOTED_ENTRY(142, sub_8323A650, 0x8323A650) { ctx.r3.u64 = n_sub_8323A650(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
 
-uint64_t n_sub_8323A658(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t objectAddr, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t n_sub_8323A658(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
-	if (!UseLiftedCode(142, 0x8323A658)) { ctx.r3.u64 = arg1; ctx.r4.u64 = objectAddr; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r8.u64 = arg5; __imp__sub_8323A658(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(142, 0x8323A658)) { ctx.r3.u64 = curve; ctx.r4.u64 = effect; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r8.u64 = arg5; __imp__sub_8323A658(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8323A658);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -464,10 +456,10 @@ uint64_t n_sub_8323A658(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ob
 	uint64_t secondArg = (globalPointer == 0) ? uint64_t(g_8209003F) : uint64_t(LOAD32(globalPointer));
 
 	// virtual method at vtable offset 4; a nonzero low byte of its result enables the rest
-	uint32_t methodAt4 = LOAD32(LOAD32((uint32_t)objectAddr) + 4);
+	uint32_t methodAt4 = LOAD32(LOAD32((uint32_t)effect) + 4);
 	callTarget.u64 = methodAt4;
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = objectAddr;
+	ctx.r3.u64 = effect;
 	ctx.r4.u64 = secondArg;
 	ctx.r5.u64 = arg3;
 	ctx.r6.u64 = arg4;
@@ -479,11 +471,11 @@ uint64_t n_sub_8323A658(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ob
 	if (accepted != 0) {
 		ctx.r9.u64 = accepted; // state the callee may pass on
 		// the last argument is r8 as the virtual call left it
-		n_sub_832235D8(ctx, base, arg1, objectAddr, arg3, arg4, ctx.r8.u64);
+		n_sub_832235D8(ctx, base, curve, effect, arg3, arg4, ctx.r8.u64);
 
-		uint32_t methodAt12 = LOAD32(LOAD32((uint32_t)objectAddr) + 12);
+		uint32_t methodAt12 = LOAD32(LOAD32((uint32_t)effect) + 12);
 		callTarget.u64 = methodAt12;
-		ctx.r3.u64 = objectAddr;
+		ctx.r3.u64 = effect;
 		ctx.r10.u64 = methodAt12;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	}
@@ -559,10 +551,10 @@ uint64_t n_sub_8323A788(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 }
 PROMOTED_ENTRY(142, sub_8323A788, 0x8323A788) { ctx.r3.u64 = n_sub_8323A788(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint64_t n_sub_8323A7C0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectAddr, uint64_t objectAddr, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+uint64_t n_sub_8323A7C0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectAddr, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
-	if (!UseLiftedCode(142, 0x8323A7C0)) { ctx.r3.u64 = chainedEntityEffectAddr; ctx.r4.u64 = objectAddr; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_8323A7C0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(142, 0x8323A7C0)) { ctx.r3.u64 = chainedEntityEffectAddr; ctx.r4.u64 = effect; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_8323A7C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8323A7C0);
 	uint32_t stack = ctx.r1.u64;
 	CChainedEntityEffect* chainedEntityEffect = GameObject<CChainedEntityEffect>(base, chainedEntityEffectAddr);
@@ -573,9 +565,9 @@ uint64_t n_sub_8323A7C0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	uint64_t globalValue = (globalHolder == 0) ? uint64_t(int64_t(g_8209003F)) : uint64_t(LOAD32(globalHolder));
 
 	PPCRegister callTarget{};
-	callTarget.u64 = LOAD32(LOAD32((uint32_t)objectAddr) + 4);
+	callTarget.u64 = LOAD32(LOAD32((uint32_t)effect) + 4);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = objectAddr;
+	ctx.r3.u64 = effect;
 	ctx.r4.u64 = globalValue;
 	ctx.r5.u64 = arg3;
 	ctx.r6.u64 = arg4;
@@ -586,11 +578,10 @@ uint64_t n_sub_8323A7C0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	uint32_t proceed = ctx.r3.u32 & 0xFF;
 	if (proceed != 0) {
 		// state the callee may pass on
-		ctx.r9.u64 = proceed;
-		n_sub_83224FD0(ctx, base, chainedEntityEffectAddr, objectAddr, arg3, arg4, arg5, arg6);
+		n_sub_83224FD0(ctx, base, chainedEntityEffectAddr, effect, arg3, arg4, arg5, arg6);
 		n_sub_8321F668(ctx, base, chainedEntityEffect->m_pChild, chainedEntityEffect->m_D0);
-		callTarget.u64 = LOAD32(LOAD32((uint32_t)objectAddr) + 12);
-		ctx.r3.u64 = objectAddr;
+		callTarget.u64 = LOAD32(LOAD32((uint32_t)effect) + 12);
+		ctx.r3.u64 = effect;
 		ctx.r10.u64 = callTarget.u64;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	}

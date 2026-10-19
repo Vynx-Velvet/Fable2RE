@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECTargetingPlayer_HasTarget(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr) {
 	if (!UseLiftedCode(0, 0x82173E48)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_82173E48(ctx, base); return ctx.r3.u64; }
@@ -94,9 +95,6 @@ uint32_t n_sub_82183058(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 	if (linked != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
 		ctx.xer.ca = carry;
 		answer = (uint8_t)n_sub_821E8870(ctx, base, linked, 18);
 		passR6 = ctx.r6.u64;
@@ -114,9 +112,6 @@ uint32_t n_sub_82183058(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 	if (linked != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
 		ctx.xer.ca = carry;
 		answer = (uint8_t)n_sub_821E8870(ctx, base, linked, 17);
 		passR6 = ctx.r6.u64;
@@ -145,8 +140,6 @@ uint32_t n_sub_82183058(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 	answer = 0;
 	if (linked != 0) {
 		// state the callee may pass on
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
 		answer = (uint8_t)n_sub_821E8870(ctx, base, linked, 4);
 		carry = ctx.xer.ca;
 	}
@@ -167,10 +160,10 @@ uint64_t n_sub_8218B9C0(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 PROMOTED_ENTRY(0, sub_8218B9C0, 0x8218B9C0) { ctx.r3.u64 = n_sub_8218B9C0(ctx, base, ctx.r3.u64); }
 
 // sub_821966B8  [508 bytes]
-uint32_t n_sub_821966B8(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, double floatArg1) {
+uint32_t n_sub_821966B8(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, double deltaTime) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(1, 0x821966B8)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; ctx.f1.f64 = floatArg1; __imp__sub_821966B8(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(1, 0x821966B8)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; ctx.f1.f64 = deltaTime; __imp__sub_821966B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821966B8);
 	uint32_t stack = ctx.r1.u64;
 	// xer.so as on entry: the target-list count below copies it into cr0
@@ -186,7 +179,7 @@ uint32_t n_sub_821966B8(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 	ctx.r1.u64 = stack;
 	ctx.r6.u64 = arg2;
 	ctx.r7.u64 = arg3;
-	ctx.f1.f64 = floatArg1;
+	ctx.f1.f64 = deltaTime;
 	n_sub_8227F590(ctx, base, targetingPlayerAddr, arg4);
 
 	uint32_t getTargetFn = LOAD32(uint32_t(targetingPlayer->vtable) + 68);
@@ -402,11 +395,6 @@ uint32_t n_sub_821AA3F0(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 			uint32_t linked = LOAD32(component + 20);
 			if (linked != 0) {
 				// state the callee may pass on
-				ctx.r6.u64 = passR6;
-				ctx.r7.u64 = passR7;
-				ctx.r8.u64 = passR8;
-				ctx.r9.u64 = passR9;
-				ctx.r10.u64 = passR10;
 				ctx.cr0 = passCr0;
 				ctx.xer.ca = passXer.ca;
 				uint32_t result = (uint32_t)n_sub_821E8870(ctx, base, linked, 21);
@@ -440,9 +428,10 @@ uint64_t CECTargetingPlayer_GetTarget(CpuState& ctx, uint8_t* base, uint64_t tar
 }
 PROMOTED_ENTRY(6, sub_82224690, 0x82224690) { ctx.r3.u64 = CECTargetingPlayer_GetTarget(ctx, base, ctx.r3.u64); }
 
-uint64_t SharedPtr_CreateInventoryItem(CpuState& ctx, uint8_t* base, uint64_t sharedPtrAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t SharedPtr_CreateInventoryItem(CpuState& ctx, uint8_t* base, uint64_t sharedPtrAddr, uint64_t itemType, uint64_t itemName, uint64_t arg4, uint64_t arg5) {
 	constexpr int32_t g_821A0000 = int32_t(0x821A0000);
-	if (!UseLiftedCode(12, 0x822B9510)) { ctx.r3.u64 = sharedPtrAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_822B9510(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_821981B0_address = int32_t(0x821981B0);
+	if (!UseLiftedCode(12, 0x822B9510)) { ctx.r3.u64 = sharedPtrAddr; ctx.r4.u64 = itemType; ctx.r5.u64 = itemName; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_822B9510(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822B9510);
 	uint32_t stack = ctx.r1.u64;
 	// a two-word smart pointer: the managed object at +0 (the class view's vtable field) and its control block at +4
@@ -451,15 +440,14 @@ uint64_t SharedPtr_CreateInventoryItem(CpuState& ctx, uint8_t* base, uint64_t sh
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on; n_sub_822B95B0 below takes r6 and r7 as the allocation leaves them
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r4.u64 = itemType;
+	ctx.r5.u64 = itemName;
 	ctx.r6.u64 = arg4;
-	ctx.r7.u64 = arg5;
 	uint64_t itemStorage = operator_new(ctx, base, 16);
 
 	uint32_t item = 0;
 	if ((uint32_t)itemStorage != 0) {
-		item = n_sub_822B95B0(ctx, base, itemStorage, arg2, arg3, ctx.r6.u64, ctx.r7.u64);
+		item = n_sub_822B95B0(ctx, base, itemStorage, itemType, itemName, ctx.r6.u64, ctx.r7.u64);
 	}
 	sharedPtr->vtable = item;
 
@@ -468,7 +456,7 @@ uint64_t SharedPtr_CreateInventoryItem(CpuState& ctx, uint8_t* base, uint64_t sh
 		if (controlBlock != 0) {
 			// SharedPtr control block: { refCount = 1, deleter, managed item }
 			uint32_t managedItem = sharedPtr->vtable;
-			uint64_t deleter = (uint64_t)((int64_t)g_821A0000 - 32336);
+			uint64_t deleter = (uint64_t)(n_sub_821981B0_address);
 			STORE32(controlBlock, 1);
 			STORE32(controlBlock + 4, (uint32_t)deleter);
 			STORE32(controlBlock + 8, managedItem);
@@ -604,9 +592,6 @@ uint32_t n_sub_822C80A8(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 		}
 	}
 	// state the callee may pass on
-	ctx.r6.u64 = passR6;
-	ctx.r7.u64 = passR7;
-	ctx.r8.u64 = passR8;
 	ctx.xer.ca = carry;
 	uint8_t checkResult = (uint8_t)n_sub_822C6940(ctx, base, component24, g_8349B180);
 	passR6 = ctx.r6.u64;
@@ -637,9 +622,6 @@ uint32_t n_sub_822C80A8(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 				continue;
 			}
 			// state the callee may pass on
-			ctx.r6.u64 = passR6;
-			ctx.r7.u64 = passR7;
-			ctx.r8.u64 = passR8;
 			ctx.xer.ca = carry;
 			uint8_t answer = (uint8_t)n_sub_821E8870(ctx, base, linked, queryId);
 			passR6 = ctx.r6.u64;
@@ -671,10 +653,6 @@ uint32_t n_sub_822C80A8(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 			component = search.component;
 		}
 		// state the callee may pass on
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
-		ctx.r9.u64 = passR9;
 		ctx.xer.ca = carry;
 		uint8_t hasMode = (uint8_t)CECEntityModeManager_HasMode(ctx, base, component, 6);
 		carry = ctx.xer.ca;
@@ -770,9 +748,6 @@ uint32_t n_sub_822C8608(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		// state the callee may pass on
 		ctx.r3.u64 = methodVectorAddr;
 		ctx.r4.u64 = ownerObject;
-		ctx.r8.u64 = method;
-		ctx.r9.u64 = vtable;
-		ctx.r10.u64 = owner;
 		ctx.cr0.lt = cond.lt; ctx.cr0.gt = cond.gt; ctx.cr0.eq = cond.eq; ctx.cr0.so = cond.so;
 		ctx.xer.ca = flags.ca;
 		REX_CALL_INDIRECT_FUNC(method);
@@ -785,8 +760,6 @@ uint32_t n_sub_822C8608(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		PPCVRegister methodVector;
 		SET_V8(methodVector, VLOAD((uint32_t)methodVectorAddr & ~0xF));
 		// state the callee may pass on
-		ctx.r6.u64 = ownerAgain;
-		ctx.r7.u64 = methodVectorAddr;
 		n_sub_82268BE0(ctx, base, helperVectorAddr, ownerObjectAgain);
 		regR6 = ctx.r6.u64;
 		regR7 = ctx.r7.u64;
@@ -873,9 +846,6 @@ uint32_t n_sub_822C8608(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 	if ((uint32_t)regR4 == 0)
 		return finish(0);
 	// state the callee may pass on
-	ctx.r6.u64 = regR6;
-	ctx.r7.u64 = regR7;
-	ctx.r8.u64 = regR8;
 	ctx.v12 = regV12;
 	ctx.cr0.lt = cond.lt; ctx.cr0.gt = cond.gt; ctx.cr0.eq = cond.eq; ctx.cr0.so = cond.so;
 	uint32_t pairCheck = n_sub_8289F5A0(ctx, base, objectAt88, (uint32_t)regR4, stack + 112);
@@ -1108,28 +1078,26 @@ uint32_t n_sub_822D9A98(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAd
 }
 PROMOTED_ENTRY(13, sub_822D9A98, 0x822D9A98) { ctx.r3.u64 = n_sub_822D9A98(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8253CD60(CpuState& ctx, uint8_t* base, uint32_t bindingSlotAddr, uint64_t fieldName, uint64_t objectAddr, uint64_t passedR6, uint64_t passedR7) {
-	if (!UseLiftedCode(33, 0x8253CD60)) { ctx.r3.u64 = bindingSlotAddr; ctx.r4.u64 = fieldName; ctx.r5.u64 = objectAddr; ctx.r6.u64 = passedR6; ctx.r7.u64 = passedR7; __imp__sub_8253CD60(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_8253CD60(CpuState& ctx, uint8_t* base, uint32_t luaTableRef, uint64_t fieldName, uint64_t luaObject, uint64_t passedR6, uint64_t passedR7) {
+	if (!UseLiftedCode(33, 0x8253CD60)) { ctx.r3.u64 = luaTableRef; ctx.r4.u64 = fieldName; ctx.r5.u64 = luaObject; ctx.r6.u64 = passedR6; ctx.r7.u64 = passedR7; __imp__sub_8253CD60(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8253CD60);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 
 	// without a script binding the first argument is returned and r4/r6/r7 keep their incoming values
-	uint32_t result = bindingSlotAddr;
+	uint32_t result = luaTableRef;
 	uint64_t r4Out = fieldName;
 	uint64_t r6Out = passedR6;
 	uint64_t r7Out = passedR7;
-	uint32_t scriptBinding = LOAD32(bindingSlotAddr);
+	uint32_t scriptBinding = LOAD32(luaTableRef);
 	if (scriptBinding != 0) {
 		// the binding holds the Lua state and a registry reference
 		uint32_t luaState = LOAD32(scriptBinding);
 		uint32_t registryRef = LOAD32(scriptBinding + 4);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = passedR6;
-		ctx.r7.u64 = passedR7;
 		lua_rawgeti(ctx, base, luaState, -10000, registryRef);
-		Lua_PushObjectUserdata(ctx, base, luaState, objectAddr, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64);
+		Lua_PushObjectUserdata(ctx, base, luaState, luaObject, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64);
 		result = lua_setfield(ctx, base, luaState, -2, fieldName);
 		r4Out = ctx.r4.u64;
 		r6Out = ctx.r6.u64;
@@ -1162,11 +1130,11 @@ uint64_t CECTargetingPlayer_GetClassName(CpuState& ctx, uint8_t* base, uint64_t 
 }
 PROMOTED_ENTRY(51, sub_82778CB8, 0x82778CB8) { ctx.r3.u64 = CECTargetingPlayer_GetClassName(ctx, base, ctx.r3.u64); }
 
-void n_sub_82778CF8(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t value) {
-	if (!UseLiftedCode(51, 0x82778CF8)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = value; __imp__sub_82778CF8(ctx, base); return; }
+void n_sub_82778CF8(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t byteValue) {
+	if (!UseLiftedCode(51, 0x82778CF8)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = byteValue; __imp__sub_82778CF8(ctx, base); return; }
 	LiftedFrame frame(0x82778CF8);
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
-	targetingPlayer->m_CC = (uint8_t)value;
+	targetingPlayer->m_CC = (uint8_t)byteValue;
 }
 PROMOTED_ENTRY(51, sub_82778CF8, 0x82778CF8) { n_sub_82778CF8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
@@ -1178,11 +1146,11 @@ uint64_t n_sub_82778D00(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 }
 PROMOTED_ENTRY(51, sub_82778D00, 0x82778D00) { ctx.r3.u64 = n_sub_82778D00(ctx, base, ctx.r3.u64); }
 
-void n_sub_82778D08(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t value) {
-	if (!UseLiftedCode(51, 0x82778D08)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = value; __imp__sub_82778D08(ctx, base); return; }
+void n_sub_82778D08(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t byteValue) {
+	if (!UseLiftedCode(51, 0x82778D08)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = byteValue; __imp__sub_82778D08(ctx, base); return; }
 	LiftedFrame frame(0x82778D08);
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
-	targetingPlayer->m_CD = (uint8_t)value;
+	targetingPlayer->m_CD = (uint8_t)byteValue;
 }
 PROMOTED_ENTRY(51, sub_82778D08, 0x82778D08) { n_sub_82778D08(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
@@ -1194,11 +1162,11 @@ uint64_t n_sub_82778D10(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 }
 PROMOTED_ENTRY(51, sub_82778D10, 0x82778D10) { ctx.r3.u64 = n_sub_82778D10(ctx, base, ctx.r3.u64); }
 
-void n_sub_82778D18(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t value) {
-	if (!UseLiftedCode(51, 0x82778D18)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = value; __imp__sub_82778D18(ctx, base); return; }
+void n_sub_82778D18(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t fieldValue) {
+	if (!UseLiftedCode(51, 0x82778D18)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = fieldValue; __imp__sub_82778D18(ctx, base); return; }
 	LiftedFrame frame(0x82778D18);
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
-	targetingPlayer->m_D0 = value;
+	targetingPlayer->m_D0 = fieldValue;
 }
 PROMOTED_ENTRY(51, sub_82778D18, 0x82778D18) { n_sub_82778D18(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
@@ -1214,16 +1182,12 @@ PROMOTED_ENTRY(51, sub_82778D20, 0x82778D20) { ctx.r3.u64 = n_sub_82778D20(ctx, 
 uint64_t n_sub_82779510(CpuState& ctx, uint8_t* base, uint64_t targetPtr, uint64_t flags) {
 	if (!UseLiftedCode(51, 0x82779510)) { ctx.r3.u64 = targetPtr; ctx.r4.u64 = flags; __imp__sub_82779510(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82779510);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = flags;  // state the callee may pass on
 	n_sub_82779560(ctx, base, targetPtr);
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, targetPtr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return targetPtr;
 }
 PROMOTED_ENTRY(51, sub_82779510, 0x82779510) { ctx.r3.u64 = n_sub_82779510(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -1307,7 +1271,6 @@ uint64_t n_sub_82779B90(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 					method = LOAD32((uint32_t)targetingPlayer->vtable + 68);
 					callTarget.u64 = method;
 					ctx.r3.u64 = targetingPlayerAddr;
-					ctx.r10.u64 = method;
 					REX_CALL_INDIRECT_FUNC(callTarget.u32);
 					stack = PopStackFrame(stack, 128);
 					ctx.r1.u64 = stack;
@@ -1334,14 +1297,7 @@ uint64_t n_sub_82779B90(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 			lowerLimit.f64 = double(LOAD_F32(0x820994B4u));
 			if (elapsed > minElapsed && !(minElapsed < lowerLimit.f64)) {
 				// state the callee may pass on
-				ctx.r7.s64 = ticks;
-				ctx.r8.u64 = tickDelta;
-				ctx.r9.s64 = g_83320000;
-				ctx.f9.f64 = elapsed;
-				ctx.f10.f64 = exactElapsed;
-				ctx.f11.f64 = ticksAsDouble;
 				ctx.f12 = lowerLimit;
-				ctx.f13.f64 = timeScale;
 				uint64_t result = CECTargetingPlayer_GetTarget_822D3EC0(ctx, base, targetingPlayerAddr);
 				stack = PopStackFrame(stack, 128);
 				ctx.r1.u64 = stack;
@@ -1415,7 +1371,6 @@ uint64_t n_sub_82779B90(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 PROMOTED_ENTRY(51, sub_82779B90, 0x82779B90) { ctx.r3.u64 = n_sub_82779B90(ctx, base, ctx.r3.u64); }
 
 uint32_t n_sub_8277A078(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr) {
-	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(51, 0x8277A078)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277A078(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8277A078);
 	uint32_t stack = ctx.r1.u64;
@@ -1527,11 +1482,6 @@ uint32_t n_sub_8277A078(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		uint32_t root = LOAD32(0x83496920u);
 		uint32_t receiver = LOAD32(LOAD32(LOAD32(LOAD32(root + 12) + 88) + 4) + 12);
 		// state the callee may pass on
-		ctx.r6.s64 = g_83490000;
-		ctx.r7.u64 = maxX;
-		ctx.f6.f64 = vecX;
-		ctx.f7.f64 = vecZ;
-		ctx.f8.f64 = vecY;
 		ctx.f9 = radiusSq;
 		ctx.f10 = radiusIntReg;
 		result = n_sub_8277C5D8(ctx, base, receiver, boxBlock, queryBlock);
@@ -1618,11 +1568,6 @@ uint32_t n_sub_8277A078(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		uint32_t level2 = LOAD32(level1 + 88);
 		uint32_t receiver = LOAD32(LOAD32(level2 + 4) + 12);
 		// state the callee may pass on
-		ctx.r6.u64 = level2;
-		ctx.r7.u64 = level1;
-		ctx.f6.f64 = vecY;
-		ctx.f7.f64 = vecX;
-		ctx.f8.f64 = vecZ;
 		ctx.f9 = radiusIntReg;
 		ctx.f10 = radiusSq;
 		result = n_sub_8277C768(ctx, base, receiver, stack + 80, stack + 96);
@@ -1700,10 +1645,6 @@ uint32_t n_sub_8277A330(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		if (sub != 0) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
-			ctx.r9.u64 = reg9;
 			if ((n_sub_821E8870(ctx, base, sub, 4) & 0xFF) != 0) {
 				uint32_t method = LOAD32((uint32_t)targetingPlayer->vtable + 68);
 				callTarget.u64 = method;
@@ -1739,8 +1680,6 @@ uint32_t n_sub_8277A330(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 			uint32_t methodA = LOAD32(vtblA + 64);
 			callTarget.u64 = methodA;
 			// state the callee may pass on
-			ctx.r3.u64 = outA;
-			ctx.r4.u64 = handlerA;
 			ctx.r7.u64 = methodA;
 			ctx.r8.u64 = vtblA;
 			ctx.r9.u64 = obj;
@@ -2511,8 +2450,6 @@ uint64_t n_sub_8277B8F0(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 		}
 
 		// state the callee may pass on
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
 		ctx.xer.ca = flags.ca;
 		n_sub_82397DA8(ctx, base, keyedComponent, 0, targetingPlayer->m_4, passR6);
 		uint64_t handleAddr = targetingPlayerAddr + 188;
@@ -2615,19 +2552,19 @@ uint64_t n_sub_8277BD20(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAd
 PROMOTED_ENTRY(51, sub_8277BD20, 0x8277BD20) { ctx.r3.u64 = n_sub_8277BD20(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_8277BE50  [8 bytes]
-void n_sub_8277BE50(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t value) {
-	if (!UseLiftedCode(51, 0x8277BE50)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = value; __imp__sub_8277BE50(ctx, base); return; }
+void n_sub_8277BE50(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr, uint32_t targetId) {
+	if (!UseLiftedCode(51, 0x8277BE50)) { ctx.r3.u64 = targetingPlayerAddr; ctx.r4.u64 = targetId; __imp__sub_8277BE50(ctx, base); return; }
 	LiftedFrame frame(0x8277BE50);
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
-	targetingPlayer->m_74 = value;
+	targetingPlayer->m_74 = targetId;
 }
 PROMOTED_ENTRY(51, sub_8277BE50, 0x8277BE50) { n_sub_8277BE50(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 // sub_8277BE58  [8 bytes]
-uint64_t n_sub_8277BE58(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(51, 0x8277BE58)) { ctx.r3.u64 = arg1; __imp__sub_8277BE58(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8277BE58(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr) {
+	if (!UseLiftedCode(51, 0x8277BE58)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277BE58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277BE58);
-	uint32_t self = (uint32_t)arg1;
+	uint32_t self = (uint32_t)targetingPlayerAddr;
 	return LOAD32(self + 116);
 }
 PROMOTED_ENTRY(51, sub_8277BE58, 0x8277BE58) { ctx.r3.u64 = n_sub_8277BE58(ctx, base, ctx.r3.u64); }
@@ -2641,23 +2578,22 @@ void n_sub_8277BE60(CpuState& ctx, uint8_t* base, uint32_t targetingPlayerAddr) 
 }
 PROMOTED_ENTRY(51, sub_8277BE60, 0x8277BE60) { n_sub_8277BE60(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8277BE70(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(51, 0x8277BE70)) { ctx.r3.u64 = arg1; __imp__sub_8277BE70(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8277BE70(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr) {
+	if (!UseLiftedCode(51, 0x8277BE70)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277BE70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277BE70);
-	uint64_t subObject = arg1 + 64;
-	uint64_t result = n_sub_8277BCA8(ctx, base, subObject);
-	return result;
+	uint64_t subObject = targetingPlayerAddr + 64;
+	return n_sub_8277BCA8(ctx, base, subObject);
 }
 PROMOTED_ENTRY(51, sub_8277BE70, 0x8277BE70) { ctx.r3.u64 = n_sub_8277BE70(ctx, base, ctx.r3.u64); }
 
 // Returns the entity the handle at +72 refers to, or 0; an empty handle is released.
-uint64_t n_sub_8277BE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(51, 0x8277BE78)) { ctx.r3.u64 = arg1; __imp__sub_8277BE78(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8277BE78(CpuState& ctx, uint8_t* base, uint64_t targetingPlayer) {
+	if (!UseLiftedCode(51, 0x8277BE78)) { ctx.r3.u64 = targetingPlayer; __imp__sub_8277BE78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277BE78);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
 
-	uint64_t entityHandle = arg1 + 72;
+	uint64_t entityHandle = targetingPlayer + 72;
 	uint32_t entitySlot = LOAD32(uint32_t(entityHandle) + 4);
 	if (entitySlot != 0) {
 		uint32_t entity = LOAD32(entitySlot);
@@ -2668,7 +2604,6 @@ uint64_t n_sub_8277BE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 		}
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = 0;
 		EntityHandle_Release(ctx, base, entityHandle);
 	}
 	stack = PopStackFrame(stack, 96);
@@ -2678,17 +2613,17 @@ uint64_t n_sub_8277BE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 PROMOTED_ENTRY(51, sub_8277BE78, 0x8277BE78) { ctx.r3.u64 = n_sub_8277BE78(ctx, base, ctx.r3.u64); }
 
 // sub_8277BED0  [8 bytes]
-uint64_t n_sub_8277BED0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(51, 0x8277BED0)) { ctx.r3.u64 = arg1; __imp__sub_8277BED0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8277BED0(CpuState& ctx, uint8_t* base, uint64_t targetingPlayerAddr) {
+	if (!UseLiftedCode(51, 0x8277BED0)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277BED0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277BED0);
-	uint32_t self = (uint32_t)arg1;
+	uint32_t self = (uint32_t)targetingPlayerAddr;
 	return LOAD8(self + 104);
 }
 PROMOTED_ENTRY(51, sub_8277BED0, 0x8277BED0) { ctx.r3.u64 = n_sub_8277BED0(ctx, base, ctx.r3.u64); }
 
-// Creates a Lua table held by the shared pointer at tableRef and copies the object's fields into it:
+// Creates a Lua table held by the shared pointer at luaTableRef and copies the object's fields into it:
 // the entities behind the handles at +64 and +72, the floats at +80..+100 and the byte at +104.
-uint64_t n_sub_8277BED8(CpuState& ctx, uint8_t* base, uint64_t tableRef, uint64_t objectAddr, uint64_t arg3, uint64_t arg4) {
+uint64_t n_sub_8277BED8(CpuState& ctx, uint8_t* base, uint64_t luaTableRef, uint64_t targetingPlayer, uint64_t arg3, uint64_t arg4) {
 	constexpr int32_t str_TXT_82000EAC_B_ = int32_t(0x82000EAC);
 	constexpr int32_t str_TXT_820C0000_B_ = int32_t(0x820C0000);
 	constexpr int32_t str_TXT_820C78D8_B_ = int32_t(0x820C78D8);
@@ -2698,7 +2633,7 @@ uint64_t n_sub_8277BED8(CpuState& ctx, uint8_t* base, uint64_t tableRef, uint64_
 	constexpr int32_t str_TXT_820D3560_B_ = int32_t(0x820D3560);
 	constexpr int32_t str_TXT_820D358C_B_ = int32_t(0x820D358C);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(51, 0x8277BED8)) { ctx.r3.u64 = tableRef; ctx.r4.u64 = objectAddr; ctx.r6.u64 = arg3; ctx.r7.u64 = arg4; __imp__sub_8277BED8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(51, 0x8277BED8)) { ctx.r3.u64 = luaTableRef; ctx.r4.u64 = targetingPlayer; ctx.r6.u64 = arg3; ctx.r7.u64 = arg4; __imp__sub_8277BED8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277BED8);
 
 	uint32_t stack = ctx.r1.u64;
@@ -2712,94 +2647,86 @@ uint64_t n_sub_8277BED8(CpuState& ctx, uint8_t* base, uint64_t tableRef, uint64_
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = luaContext;
-	ctx.r10.u64 = rootSystems;
 	lua_createtable(ctx, base, L, 0, 0, arg3, arg4, luaStateRef);
 
 	uint64_t refName = uint64_t(int64_t(str_TXT_820C0000_B_) + 19528);
-	SharedPtr_CreateInventoryItem(ctx, base, tableRef, L, refName, ctx.r6.u64, str_TXT_820C0000_B_);
+	SharedPtr_CreateInventoryItem(ctx, base, luaTableRef, L, refName, ctx.r6.u64, str_TXT_820C0000_B_);
 
 	// The target entity is stored only when its handle resolves and bit 0x40 of the entity's byte at +144 is set.
-	uint64_t targetHandle = objectAddr + 64;
+	uint64_t targetHandle = targetingPlayer + 64;
 	uint32_t targetFlag = 0;
-	uint32_t targetSlot = LOAD32(uint32_t(objectAddr) + 68);
+	uint32_t targetSlot = LOAD32(uint32_t(targetingPlayer) + 68);
 	if (targetSlot != 0) {
 		uint32_t targetObject = LOAD32(targetSlot);
 		if (targetObject == 0) {
-			ctx.r10.u64 = 0;
 			EntityHandle_Release(ctx, base, targetHandle);
 		} else {
-			ctx.r10.u64 = targetObject;
 			uint32_t targetEntity = EntityHandle_Get_825575C8(ctx, base, targetHandle);
 			targetFlag = LOAD8(targetEntity + 144) & 64;
 		}
 	}
 	if (targetFlag != 0) {
-		ctx.r10.u64 = targetFlag;
 		uint64_t targetEntity = EntityHandle_Get_825575C8(ctx, base, targetHandle);
-		n_sub_8253CD60(ctx, base, tableRef, str_TXT_82000EAC_B_, targetEntity, ctx.r6.u64, ctx.r7.u64);
+		n_sub_8253CD60(ctx, base, luaTableRef, str_TXT_82000EAC_B_, targetEntity, ctx.r6.u64, ctx.r7.u64);
 	}
 
 	// The source entity, under the same condition.
-	uint64_t sourceHandle = objectAddr + 72;
+	uint64_t sourceHandle = targetingPlayer + 72;
 	uint32_t sourceFlag = 0;
-	uint32_t sourceSlot = LOAD32(uint32_t(objectAddr) + 76);
+	uint32_t sourceSlot = LOAD32(uint32_t(targetingPlayer) + 76);
 	if (sourceSlot != 0) {
 		uint32_t sourceObject = LOAD32(sourceSlot);
 		if (sourceObject == 0) {
-			ctx.r10.u64 = 0;
 			EntityHandle_Release(ctx, base, sourceHandle);
 		} else {
-			ctx.r10.u64 = sourceObject;
 			uint32_t sourceEntity = EntityHandle_Get_825575C8(ctx, base, sourceHandle);
 			sourceFlag = LOAD8(sourceEntity + 144) & 64;
 		}
 	}
 	if (sourceFlag != 0) {
-		ctx.r10.u64 = sourceFlag;
 		uint64_t sourceEntity = EntityHandle_Get_825575C8(ctx, base, sourceHandle);
-		n_sub_8253CD60(ctx, base, tableRef, str_TXT_820D3558_B_, sourceEntity, ctx.r6.u64, ctx.r7.u64);
+		n_sub_8253CD60(ctx, base, luaTableRef, str_TXT_820D3558_B_, sourceEntity, ctx.r6.u64, ctx.r7.u64);
 	}
 
 	ctx.fpscr.disableFlushMode();
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(str_TXT_820D3560_B_), double(LOAD_F32(uint32_t(objectAddr) + 80)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(str_TXT_820D3560_B_), double(LOAD_F32(uint32_t(targetingPlayer) + 80)));
 	ctx.fpscr.disableFlushMode();
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(str_TXT_820CDA70_B_), double(LOAD_F32(uint32_t(objectAddr) + 84)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(str_TXT_820CDA70_B_), double(LOAD_F32(uint32_t(targetingPlayer) + 84)));
 	ctx.fpscr.disableFlushMode();
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(str_TXT_820C78D8_B_), double(LOAD_F32(uint32_t(objectAddr) + 88)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(str_TXT_820C78D8_B_), double(LOAD_F32(uint32_t(targetingPlayer) + 88)));
 
 	// r8 and r7 still hold the high half of the field-name addresses (state the callee may pass on).
 	ctx.fpscr.disableFlushMode();
 	ctx.r8.s64 = str_TXT_820D0000_B_;
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13688), double(LOAD_F32(uint32_t(objectAddr) + 92)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13688), double(LOAD_F32(uint32_t(targetingPlayer) + 92)));
 	ctx.fpscr.disableFlushMode();
 	ctx.r7.s64 = str_TXT_820D0000_B_;
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13692), double(LOAD_F32(uint32_t(objectAddr) + 96)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13692), double(LOAD_F32(uint32_t(targetingPlayer) + 96)));
 
 	ctx.fpscr.disableFlushMode();
-	n_sub_8277C120(ctx, base, tableRef, uint64_t(str_TXT_820D358C_B_), double(LOAD_F32(uint32_t(objectAddr) + 100)));
+	n_sub_8277C120(ctx, base, luaTableRef, uint64_t(str_TXT_820D358C_B_), double(LOAD_F32(uint32_t(targetingPlayer) + 100)));
 
-	n_sub_825E5A00(ctx, base, tableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13720), LOAD8(uint32_t(objectAddr) + 104));
+	n_sub_825E5A00(ctx, base, luaTableRef, uint64_t(int64_t(str_TXT_820D0000_B_) + 13720), LOAD8(uint32_t(targetingPlayer) + 104));
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	return tableRef;
+	return luaTableRef;
 }
 PROMOTED_ENTRY(51, sub_8277BED8, 0x8277BED8) { ctx.r3.u64 = n_sub_8277BED8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64, ctx.r7.u64); }
 
-// Sets table[fieldName] = value on the Lua table referenced by the shared pointer at tableRef.
-uint32_t n_sub_8277C120(CpuState& ctx, uint8_t* base, uint32_t tableRef, uint64_t fieldName, double value) {
-	if (!UseLiftedCode(51, 0x8277C120)) { ctx.r3.u64 = tableRef; ctx.r4.u64 = fieldName; ctx.f1.f64 = value; __imp__sub_8277C120(ctx, base); return ctx.r3.u32; }
+// Sets table[luaFieldName] = fieldValue on the Lua table referenced by the shared pointer at luaTableRef.
+uint32_t n_sub_8277C120(CpuState& ctx, uint8_t* base, uint32_t luaTableRef, uint64_t luaFieldName, double fieldValue) {
+	if (!UseLiftedCode(51, 0x8277C120)) { ctx.r3.u64 = luaTableRef; ctx.r4.u64 = luaFieldName; ctx.f1.f64 = fieldValue; __imp__sub_8277C120(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8277C120);
 	uint32_t stack = ctx.r1.u64;
 	// Values callers read in r3, r4, r8 and f1 after the call; unchanged when there is no table.
-	uint32_t result = tableRef;
-	uint64_t r4Out = fieldName;
+	uint32_t result = luaTableRef;
+	uint64_t r4Out = luaFieldName;
 	uint64_t r8Out = ctx.r8.u64;
-	double f1Out = value;
+	double f1Out = fieldValue;
 	stack = PushStackFrame(base, stack, 112);
 
-	uint32_t luaRef = LOAD32(tableRef);
+	uint32_t luaRef = LOAD32(luaTableRef);
 	if (luaRef != 0) {
 		// Push registry[ref].
 		uint32_t L = LOAD32(luaRef);
@@ -2807,18 +2734,17 @@ uint32_t n_sub_8277C120(CpuState& ctx, uint8_t* base, uint32_t tableRef, uint64_
 		ctx.r1.u64 = stack;
 		lua_rawgeti(ctx, base, L, -10000, refKey);
 
-		// Push the number directly into the top stack slot (value, type tag 3).
+		// Push the number directly into the top stack slot (fieldValue, type tag 3).
 		uint32_t valueSlot = LOAD32(L + 8);
 		ctx.fpscr.disableFlushMode();
-		STORE_F32(valueSlot, float(value));
+		STORE_F32(valueSlot, float(fieldValue));
 		STORE32(valueSlot + 4, 3u);
 		uint64_t pushedTop = uint64_t(LOAD32(L + 8)) + 8;
 		STORE32(L + 8, uint32_t(pushedTop));
 		// state the callee may pass on
 		ctx.r9.u64 = pushedTop;
-		ctx.r10.u64 = valueSlot;
-		ctx.f1.f64 = value;
-		result = lua_setfield(ctx, base, L, -2, fieldName);
+		ctx.f1.f64 = fieldValue;
+		result = lua_setfield(ctx, base, L, -2, luaFieldName);
 		r4Out = ctx.r4.u64;
 		f1Out = ctx.f1.f64;
 

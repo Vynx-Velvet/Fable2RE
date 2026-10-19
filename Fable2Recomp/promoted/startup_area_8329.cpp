@@ -10,1099 +10,715 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_83290198(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334AF8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334AF8_G_ = int32_t(0x83334AF8);
+	constexpr int32_t str_TXT_820A62B4_B_ = int32_t(0x820A62B4);
+	constexpr int32_t Destroy_TXT_83334AF8_G__address = int32_t(0x832AFD30);
 	if (!UseLiftedCode(145, 0x83290198)) { __imp__sub_83290198(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290198);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_820A0000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334AF8_G_, (int64_t)g_820A0000 + 25268, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 - 720, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334AF8_G_, str_TXT_820A62B4_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334AF8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290198, 0x83290198) { ctx.r3.u64 = n_sub_83290198(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290198, 0x83290198) { ctx.r3.u64 = Construct_TXT_83334AF8_G_(ctx, base); }
 
-uint64_t n_sub_83290488(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D38_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D38_G_ = int32_t(0x83334D38);
+	constexpr int32_t str_TXT_8200B3E0_B_ = int32_t(0x8200B3E0);
+	constexpr int32_t Destroy_TXT_83334D38_G__address = int32_t(0x832B0040);
 	if (!UseLiftedCode(145, 0x83290488)) { __imp__sub_83290488(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290488);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D38_G_, (int64_t)g_82010000 - 19488, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 64, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D38_G_, str_TXT_8200B3E0_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D38_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290488, 0x83290488) { ctx.r3.u64 = n_sub_83290488(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290488, 0x83290488) { ctx.r3.u64 = Construct_TXT_83334D38_G_(ctx, base); }
 
-uint64_t n_sub_832904C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D3C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D3C_G_ = int32_t(0x83334D3C);
+	constexpr int32_t str_TXT_8200B3F0_B_ = int32_t(0x8200B3F0);
+	constexpr int32_t Destroy_TXT_83334D3C_G__address = int32_t(0x832B0050);
 	if (!UseLiftedCode(145, 0x832904C8)) { __imp__sub_832904C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832904C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D3C_G_, (int64_t)g_82010000 - 19472, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 80, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D3C_G_, str_TXT_8200B3F0_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D3C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832904C8, 0x832904C8) { ctx.r3.u64 = n_sub_832904C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832904C8, 0x832904C8) { ctx.r3.u64 = Construct_TXT_83334D3C_G_(ctx, base); }
 
-uint64_t n_sub_83290508(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D40_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D40_G_ = int32_t(0x83334D40);
+	constexpr int32_t str_TXT_8200B53C_B_ = int32_t(0x8200B53C);
+	constexpr int32_t Destroy_TXT_83334D40_G__address = int32_t(0x832B0060);
 	if (!UseLiftedCode(145, 0x83290508)) { __imp__sub_83290508(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290508);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D40_G_, (int64_t)g_82010000 - 19140, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 96, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D40_G_, str_TXT_8200B53C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D40_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290508, 0x83290508) { ctx.r3.u64 = n_sub_83290508(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290508, 0x83290508) { ctx.r3.u64 = Construct_TXT_83334D40_G_(ctx, base); }
 
-uint64_t n_sub_83290548(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D44_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D44_G_ = int32_t(0x83334D44);
+	constexpr int32_t str_TXT_8200B548_B_ = int32_t(0x8200B548);
+	constexpr int32_t Destroy_TXT_83334D44_G__address = int32_t(0x832B0070);
 	if (!UseLiftedCode(145, 0x83290548)) { __imp__sub_83290548(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290548);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D44_G_, (int64_t)g_82010000 - 19128, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 112, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D44_G_, str_TXT_8200B548_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D44_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290548, 0x83290548) { ctx.r3.u64 = n_sub_83290548(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290548, 0x83290548) { ctx.r3.u64 = Construct_TXT_83334D44_G_(ctx, base); }
 
-uint64_t n_sub_83290588(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D48_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D48_G_ = int32_t(0x83334D48);
+	constexpr int32_t str_TXT_8200B780_B_ = int32_t(0x8200B780);
+	constexpr int32_t Destroy_TXT_83334D48_G__address = int32_t(0x832B0080);
 	if (!UseLiftedCode(145, 0x83290588)) { __imp__sub_83290588(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290588);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D48_G_, (int64_t)g_82010000 - 18560, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 128, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D48_G_, str_TXT_8200B780_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D48_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290588, 0x83290588) { ctx.r3.u64 = n_sub_83290588(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290588, 0x83290588) { ctx.r3.u64 = Construct_TXT_83334D48_G_(ctx, base); }
 
-uint64_t n_sub_832905C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D4C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D4C_G_ = int32_t(0x83334D4C);
+	constexpr int32_t str_TXT_8200B790_B_ = int32_t(0x8200B790);
+	constexpr int32_t Destroy_TXT_83334D4C_G__address = int32_t(0x832B0090);
 	if (!UseLiftedCode(145, 0x832905C8)) { __imp__sub_832905C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832905C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D4C_G_, (int64_t)g_82010000 - 18544, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 144, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D4C_G_, str_TXT_8200B790_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D4C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832905C8, 0x832905C8) { ctx.r3.u64 = n_sub_832905C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832905C8, 0x832905C8) { ctx.r3.u64 = Construct_TXT_83334D4C_G_(ctx, base); }
 
-uint64_t n_sub_83290608(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D50_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D50_G_ = int32_t(0x83334D50);
+	constexpr int32_t str_TXT_8200B79C_B_ = int32_t(0x8200B79C);
+	constexpr int32_t Destroy_TXT_83334D50_G__address = int32_t(0x832B00A0);
 	if (!UseLiftedCode(145, 0x83290608)) { __imp__sub_83290608(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290608);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D50_G_, (int64_t)g_82010000 - 18532, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 160, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D50_G_, str_TXT_8200B79C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D50_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290608, 0x83290608) { ctx.r3.u64 = n_sub_83290608(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290608, 0x83290608) { ctx.r3.u64 = Construct_TXT_83334D50_G_(ctx, base); }
 
-uint64_t n_sub_83290648(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D54_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D54_G_ = int32_t(0x83334D54);
+	constexpr int32_t str_TXT_8200B880_B_ = int32_t(0x8200B880);
+	constexpr int32_t Destroy_TXT_83334D54_G__address = int32_t(0x832B00B0);
 	if (!UseLiftedCode(145, 0x83290648)) { __imp__sub_83290648(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290648);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D54_G_, (int64_t)g_82010000 - 18304, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 176, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D54_G_, str_TXT_8200B880_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D54_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290648, 0x83290648) { ctx.r3.u64 = n_sub_83290648(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290648, 0x83290648) { ctx.r3.u64 = Construct_TXT_83334D54_G_(ctx, base); }
 
-uint64_t n_sub_83290688(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D58_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D58_G_ = int32_t(0x83334D58);
+	constexpr int32_t str_TXT_8200B898_B_ = int32_t(0x8200B898);
+	constexpr int32_t Destroy_TXT_83334D58_G__address = int32_t(0x832B00C0);
 	if (!UseLiftedCode(145, 0x83290688)) { __imp__sub_83290688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290688);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D58_G_, (int64_t)g_82010000 - 18280, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 192, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D58_G_, str_TXT_8200B898_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D58_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290688, 0x83290688) { ctx.r3.u64 = n_sub_83290688(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290688, 0x83290688) { ctx.r3.u64 = Construct_TXT_83334D58_G_(ctx, base); }
 
-uint64_t n_sub_832906C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D5C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D5C_G_ = int32_t(0x83334D5C);
+	constexpr int32_t str_TXT_8200B8A8_B_ = int32_t(0x8200B8A8);
+	constexpr int32_t Destroy_TXT_83334D5C_G__address = int32_t(0x832B00D0);
 	if (!UseLiftedCode(145, 0x832906C8)) { __imp__sub_832906C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832906C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D5C_G_, (int64_t)g_82010000 - 18264, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 208, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D5C_G_, str_TXT_8200B8A8_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D5C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832906C8, 0x832906C8) { ctx.r3.u64 = n_sub_832906C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832906C8, 0x832906C8) { ctx.r3.u64 = Construct_TXT_83334D5C_G_(ctx, base); }
 
-uint64_t n_sub_83290708(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D60_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D60_G_ = int32_t(0x83334D60);
+	constexpr int32_t str_TXT_8200B9E8_B_ = int32_t(0x8200B9E8);
+	constexpr int32_t Destroy_TXT_83334D60_G__address = int32_t(0x832B00E0);
 	if (!UseLiftedCode(145, 0x83290708)) { __imp__sub_83290708(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290708);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D60_G_, (int64_t)g_82010000 - 17944, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 224, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D60_G_, str_TXT_8200B9E8_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D60_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290708, 0x83290708) { ctx.r3.u64 = n_sub_83290708(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290708, 0x83290708) { ctx.r3.u64 = Construct_TXT_83334D60_G_(ctx, base); }
 
-uint64_t n_sub_83290748(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D64_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D64_G_ = int32_t(0x83334D64);
+	constexpr int32_t str_TXT_8200BA00_B_ = int32_t(0x8200BA00);
+	constexpr int32_t Destroy_TXT_83334D64_G__address = int32_t(0x832B00F0);
 	if (!UseLiftedCode(145, 0x83290748)) { __imp__sub_83290748(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290748);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D64_G_, (int64_t)g_82010000 - 17920, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 240, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D64_G_, str_TXT_8200BA00_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D64_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290748, 0x83290748) { ctx.r3.u64 = n_sub_83290748(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290748, 0x83290748) { ctx.r3.u64 = Construct_TXT_83334D64_G_(ctx, base); }
 
-uint64_t n_sub_83290788(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D68_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D68_G_ = int32_t(0x83334D68);
+	constexpr int32_t str_TXT_8200BA10_B_ = int32_t(0x8200BA10);
+	constexpr int32_t Destroy_TXT_83334D68_G__address = int32_t(0x832B0100);
 	if (!UseLiftedCode(145, 0x83290788)) { __imp__sub_83290788(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290788);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D68_G_, (int64_t)g_82010000 - 17904, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 256, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D68_G_, str_TXT_8200BA10_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D68_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290788, 0x83290788) { ctx.r3.u64 = n_sub_83290788(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290788, 0x83290788) { ctx.r3.u64 = Construct_TXT_83334D68_G_(ctx, base); }
 
-uint64_t n_sub_832907C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D6C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D6C_G_ = int32_t(0x83334D6C);
+	constexpr int32_t str_TXT_8200BA5C_B_ = int32_t(0x8200BA5C);
+	constexpr int32_t Destroy_TXT_83334D6C_G__address = int32_t(0x832B0110);
 	if (!UseLiftedCode(145, 0x832907C8)) { __imp__sub_832907C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832907C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D6C_G_, (int64_t)g_82010000 - 17828, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 272, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D6C_G_, str_TXT_8200BA5C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D6C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832907C8, 0x832907C8) { ctx.r3.u64 = n_sub_832907C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832907C8, 0x832907C8) { ctx.r3.u64 = Construct_TXT_83334D6C_G_(ctx, base); }
 
-uint64_t n_sub_83290808(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D70_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D70_G_ = int32_t(0x83334D70);
+	constexpr int32_t str_TXT_8200BA74_B_ = int32_t(0x8200BA74);
+	constexpr int32_t Destroy_TXT_83334D70_G__address = int32_t(0x832B0120);
 	if (!UseLiftedCode(145, 0x83290808)) { __imp__sub_83290808(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290808);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D70_G_, (int64_t)g_82010000 - 17804, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 288, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D70_G_, str_TXT_8200BA74_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D70_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290808, 0x83290808) { ctx.r3.u64 = n_sub_83290808(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290808, 0x83290808) { ctx.r3.u64 = Construct_TXT_83334D70_G_(ctx, base); }
 
-uint64_t n_sub_83290848(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D74_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D74_G_ = int32_t(0x83334D74);
+	constexpr int32_t str_TXT_8200BA88_B_ = int32_t(0x8200BA88);
+	constexpr int32_t Destroy_TXT_83334D74_G__address = int32_t(0x832B0130);
 	if (!UseLiftedCode(145, 0x83290848)) { __imp__sub_83290848(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290848);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D74_G_, (int64_t)g_82010000 - 17784, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 304, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D74_G_, str_TXT_8200BA88_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D74_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290848, 0x83290848) { ctx.r3.u64 = n_sub_83290848(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290848, 0x83290848) { ctx.r3.u64 = Construct_TXT_83334D74_G_(ctx, base); }
 
-uint64_t n_sub_83290888(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D78_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D78_G_ = int32_t(0x83334D78);
+	constexpr int32_t str_TXT_8200BB4C_B_ = int32_t(0x8200BB4C);
+	constexpr int32_t Destroy_TXT_83334D78_G__address = int32_t(0x832B0140);
 	if (!UseLiftedCode(145, 0x83290888)) { __imp__sub_83290888(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290888);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D78_G_, (int64_t)g_82010000 - 17588, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 320, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D78_G_, str_TXT_8200BB4C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D78_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290888, 0x83290888) { ctx.r3.u64 = n_sub_83290888(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290888, 0x83290888) { ctx.r3.u64 = Construct_TXT_83334D78_G_(ctx, base); }
 
-uint64_t n_sub_832908C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D7C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D7C_G_ = int32_t(0x83334D7C);
+	constexpr int32_t str_TXT_8200BB5C_B_ = int32_t(0x8200BB5C);
+	constexpr int32_t Destroy_TXT_83334D7C_G__address = int32_t(0x832B0150);
 	if (!UseLiftedCode(145, 0x832908C8)) { __imp__sub_832908C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832908C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D7C_G_, (int64_t)g_82010000 - 17572, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 336, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D7C_G_, str_TXT_8200BB5C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D7C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832908C8, 0x832908C8) { ctx.r3.u64 = n_sub_832908C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832908C8, 0x832908C8) { ctx.r3.u64 = Construct_TXT_83334D7C_G_(ctx, base); }
 
-uint64_t n_sub_83290908(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D80_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D80_G_ = int32_t(0x83334D80);
+	constexpr int32_t str_TXT_8200BB68_B_ = int32_t(0x8200BB68);
+	constexpr int32_t Destroy_TXT_83334D80_G__address = int32_t(0x832B0160);
 	if (!UseLiftedCode(145, 0x83290908)) { __imp__sub_83290908(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290908);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D80_G_, (int64_t)g_82010000 - 17560, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 352, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D80_G_, str_TXT_8200BB68_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D80_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290908, 0x83290908) { ctx.r3.u64 = n_sub_83290908(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290908, 0x83290908) { ctx.r3.u64 = Construct_TXT_83334D80_G_(ctx, base); }
 
-uint64_t n_sub_83290948(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D84_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D84_G_ = int32_t(0x83334D84);
+	constexpr int32_t str_TXT_8200BC1C_B_ = int32_t(0x8200BC1C);
+	constexpr int32_t Destroy_TXT_83334D84_G__address = int32_t(0x832B0170);
 	if (!UseLiftedCode(145, 0x83290948)) { __imp__sub_83290948(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290948);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D84_G_, (int64_t)g_82010000 - 17380, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 368, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D84_G_, str_TXT_8200BC1C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D84_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290948, 0x83290948) { ctx.r3.u64 = n_sub_83290948(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290948, 0x83290948) { ctx.r3.u64 = Construct_TXT_83334D84_G_(ctx, base); }
 
-uint64_t n_sub_83290988(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D88_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D88_G_ = int32_t(0x83334D88);
+	constexpr int32_t str_TXT_8200BC30_B_ = int32_t(0x8200BC30);
+	constexpr int32_t Destroy_TXT_83334D88_G__address = int32_t(0x832B0180);
 	if (!UseLiftedCode(145, 0x83290988)) { __imp__sub_83290988(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290988);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D88_G_, (int64_t)g_82010000 - 17360, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 384, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D88_G_, str_TXT_8200BC30_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D88_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290988, 0x83290988) { ctx.r3.u64 = n_sub_83290988(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290988, 0x83290988) { ctx.r3.u64 = Construct_TXT_83334D88_G_(ctx, base); }
 
-uint64_t n_sub_832909C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D8C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D8C_G_ = int32_t(0x83334D8C);
+	constexpr int32_t str_TXT_8200BC40_B_ = int32_t(0x8200BC40);
+	constexpr int32_t Destroy_TXT_83334D8C_G__address = int32_t(0x832B0190);
 	if (!UseLiftedCode(145, 0x832909C8)) { __imp__sub_832909C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832909C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D8C_G_, (int64_t)g_82010000 - 17344, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 400, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D8C_G_, str_TXT_8200BC40_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D8C_G__address);
 }
-PROMOTED_ENTRY(145, sub_832909C8, 0x832909C8) { ctx.r3.u64 = n_sub_832909C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832909C8, 0x832909C8) { ctx.r3.u64 = Construct_TXT_83334D8C_G_(ctx, base); }
 
-uint64_t n_sub_83290A08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D90_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D90_G_ = int32_t(0x83334D90);
+	constexpr int32_t str_TXT_8200BD4C_B_ = int32_t(0x8200BD4C);
+	constexpr int32_t Destroy_TXT_83334D90_G__address = int32_t(0x832B01A0);
 	if (!UseLiftedCode(145, 0x83290A08)) { __imp__sub_83290A08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290A08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D90_G_, (int64_t)g_82010000 - 17076, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 416, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D90_G_, str_TXT_8200BD4C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D90_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290A08, 0x83290A08) { ctx.r3.u64 = n_sub_83290A08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290A08, 0x83290A08) { ctx.r3.u64 = Construct_TXT_83334D90_G_(ctx, base); }
 
-uint64_t n_sub_83290A48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D94_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D94_G_ = int32_t(0x83334D94);
+	constexpr int32_t str_TXT_8200BD64_B_ = int32_t(0x8200BD64);
+	constexpr int32_t Destroy_TXT_83334D94_G__address = int32_t(0x832B01B0);
 	if (!UseLiftedCode(145, 0x83290A48)) { __imp__sub_83290A48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290A48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D94_G_, (int64_t)g_82010000 - 17052, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 432, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D94_G_, str_TXT_8200BD64_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D94_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290A48, 0x83290A48) { ctx.r3.u64 = n_sub_83290A48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290A48, 0x83290A48) { ctx.r3.u64 = Construct_TXT_83334D94_G_(ctx, base); }
 
-uint64_t n_sub_83290A88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D98_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D98_G_ = int32_t(0x83334D98);
+	constexpr int32_t str_TXT_8200BD64_B_ = int32_t(0x8200BD64);
+	constexpr int32_t Destroy_TXT_83334D98_G__address = int32_t(0x832B01C0);
 	if (!UseLiftedCode(145, 0x83290A88)) { __imp__sub_83290A88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290A88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D98_G_, (int64_t)g_82010000 - 17052, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 448, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D98_G_, str_TXT_8200BD64_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D98_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290A88, 0x83290A88) { ctx.r3.u64 = n_sub_83290A88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290A88, 0x83290A88) { ctx.r3.u64 = Construct_TXT_83334D98_G_(ctx, base); }
 
-uint64_t n_sub_83290AC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334D9C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334D9C_G_ = int32_t(0x83334D9C);
+	constexpr int32_t str_TXT_8200BECC_B_ = int32_t(0x8200BECC);
+	constexpr int32_t Destroy_TXT_83334D9C_G__address = int32_t(0x832B01D0);
 	if (!UseLiftedCode(145, 0x83290AC8)) { __imp__sub_83290AC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290AC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334D9C_G_, (int64_t)g_82010000 - 16692, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 464, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334D9C_G_, str_TXT_8200BECC_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334D9C_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290AC8, 0x83290AC8) { ctx.r3.u64 = n_sub_83290AC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290AC8, 0x83290AC8) { ctx.r3.u64 = Construct_TXT_83334D9C_G_(ctx, base); }
 
-uint64_t n_sub_83290B08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DA0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DA0_G_ = int32_t(0x83334DA0);
+	constexpr int32_t str_TXT_8200BEDC_B_ = int32_t(0x8200BEDC);
+	constexpr int32_t Destroy_TXT_83334DA0_G__address = int32_t(0x832B01E0);
 	if (!UseLiftedCode(145, 0x83290B08)) { __imp__sub_83290B08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290B08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA0_G_, (int64_t)g_82010000 - 16676, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 480, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA0_G_, str_TXT_8200BEDC_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DA0_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290B08, 0x83290B08) { ctx.r3.u64 = n_sub_83290B08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290B08, 0x83290B08) { ctx.r3.u64 = Construct_TXT_83334DA0_G_(ctx, base); }
 
-uint64_t n_sub_83290B48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DA4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DA4_G_ = int32_t(0x83334DA4);
+	constexpr int32_t str_TXT_8200C07C_B_ = int32_t(0x8200C07C);
+	constexpr int32_t Destroy_TXT_83334DA4_G__address = int32_t(0x832B01F0);
 	if (!UseLiftedCode(145, 0x83290B48)) { __imp__sub_83290B48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290B48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA4_G_, (int64_t)g_82010000 - 16260, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 496, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA4_G_, str_TXT_8200C07C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DA4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290B48, 0x83290B48) { ctx.r3.u64 = n_sub_83290B48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290B48, 0x83290B48) { ctx.r3.u64 = Construct_TXT_83334DA4_G_(ctx, base); }
 
-uint64_t n_sub_83290B88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DA8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DA8_G_ = int32_t(0x83334DA8);
+	constexpr int32_t str_TXT_8200C094_B_ = int32_t(0x8200C094);
+	constexpr int32_t Destroy_TXT_83334DA8_G__address = int32_t(0x832B0200);
 	if (!UseLiftedCode(145, 0x83290B88)) { __imp__sub_83290B88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290B88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA8_G_, (int64_t)g_82010000 - 16236, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 512, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DA8_G_, str_TXT_8200C094_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DA8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290B88, 0x83290B88) { ctx.r3.u64 = n_sub_83290B88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290B88, 0x83290B88) { ctx.r3.u64 = Construct_TXT_83334DA8_G_(ctx, base); }
 
-uint64_t n_sub_83290BC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DAC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DAC_G_ = int32_t(0x83334DAC);
+	constexpr int32_t str_TXT_8200C0A4_B_ = int32_t(0x8200C0A4);
+	constexpr int32_t Destroy_TXT_83334DAC_G__address = int32_t(0x832B0210);
 	if (!UseLiftedCode(145, 0x83290BC8)) { __imp__sub_83290BC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290BC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DAC_G_, (int64_t)g_82010000 - 16220, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 528, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DAC_G_, str_TXT_8200C0A4_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DAC_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290BC8, 0x83290BC8) { ctx.r3.u64 = n_sub_83290BC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290BC8, 0x83290BC8) { ctx.r3.u64 = Construct_TXT_83334DAC_G_(ctx, base); }
 
-uint64_t n_sub_83290C08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DB0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DB0_G_ = int32_t(0x83334DB0);
+	constexpr int32_t str_TXT_8200C184_B_ = int32_t(0x8200C184);
+	constexpr int32_t Destroy_TXT_83334DB0_G__address = int32_t(0x832B0220);
 	if (!UseLiftedCode(145, 0x83290C08)) { __imp__sub_83290C08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290C08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB0_G_, (int64_t)g_82010000 - 15996, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 544, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB0_G_, str_TXT_8200C184_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DB0_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290C08, 0x83290C08) { ctx.r3.u64 = n_sub_83290C08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290C08, 0x83290C08) { ctx.r3.u64 = Construct_TXT_83334DB0_G_(ctx, base); }
 
-uint64_t n_sub_83290C48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DB4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DB4_G_ = int32_t(0x83334DB4);
+	constexpr int32_t str_TXT_8200C194_B_ = int32_t(0x8200C194);
+	constexpr int32_t Destroy_TXT_83334DB4_G__address = int32_t(0x832B0230);
 	if (!UseLiftedCode(145, 0x83290C48)) { __imp__sub_83290C48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290C48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB4_G_, (int64_t)g_82010000 - 15980, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 560, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB4_G_, str_TXT_8200C194_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DB4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290C48, 0x83290C48) { ctx.r3.u64 = n_sub_83290C48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290C48, 0x83290C48) { ctx.r3.u64 = Construct_TXT_83334DB4_G_(ctx, base); }
 
-uint64_t n_sub_83290C88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DB8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DB8_G_ = int32_t(0x83334DB8);
+	constexpr int32_t str_TXT_8200C1A8_B_ = int32_t(0x8200C1A8);
+	constexpr int32_t Destroy_TXT_83334DB8_G__address = int32_t(0x832B0240);
 	if (!UseLiftedCode(145, 0x83290C88)) { __imp__sub_83290C88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290C88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB8_G_, (int64_t)g_82010000 - 15960, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 576, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DB8_G_, str_TXT_8200C1A8_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DB8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290C88, 0x83290C88) { ctx.r3.u64 = n_sub_83290C88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290C88, 0x83290C88) { ctx.r3.u64 = Construct_TXT_83334DB8_G_(ctx, base); }
 
-uint64_t n_sub_83290CC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DBC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DBC_G_ = int32_t(0x83334DBC);
+	constexpr int32_t str_TXT_8200C250_B_ = int32_t(0x8200C250);
+	constexpr int32_t Destroy_TXT_83334DBC_G__address = int32_t(0x832B0250);
 	if (!UseLiftedCode(145, 0x83290CC8)) { __imp__sub_83290CC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290CC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DBC_G_, (int64_t)g_82010000 - 15792, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 592, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DBC_G_, str_TXT_8200C250_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DBC_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290CC8, 0x83290CC8) { ctx.r3.u64 = n_sub_83290CC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290CC8, 0x83290CC8) { ctx.r3.u64 = Construct_TXT_83334DBC_G_(ctx, base); }
 
-uint64_t n_sub_83290D08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DC0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DC0_G_ = int32_t(0x83334DC0);
+	constexpr int32_t str_TXT_8200C25C_B_ = int32_t(0x8200C25C);
+	constexpr int32_t Destroy_TXT_83334DC0_G__address = int32_t(0x832B0260);
 	if (!UseLiftedCode(145, 0x83290D08)) { __imp__sub_83290D08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290D08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DC0_G_, (int64_t)g_82010000 - 15780, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 608, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DC0_G_, str_TXT_8200C25C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DC0_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290D08, 0x83290D08) { ctx.r3.u64 = n_sub_83290D08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290D08, 0x83290D08) { ctx.r3.u64 = Construct_TXT_83334DC0_G_(ctx, base); }
 
-uint64_t n_sub_83290D48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DC4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DC4_G_ = int32_t(0x83334DC4);
+	constexpr int32_t str_TXT_8200C270_B_ = int32_t(0x8200C270);
+	constexpr int32_t Destroy_TXT_83334DC4_G__address = int32_t(0x832B0270);
 	if (!UseLiftedCode(145, 0x83290D48)) { __imp__sub_83290D48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290D48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DC4_G_, (int64_t)g_82010000 - 15760, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 624, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DC4_G_, str_TXT_8200C270_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DC4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290D48, 0x83290D48) { ctx.r3.u64 = n_sub_83290D48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290D48, 0x83290D48) { ctx.r3.u64 = Construct_TXT_83334DC4_G_(ctx, base); }
 
-uint64_t n_sub_83290D88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DD4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DD4_G_ = int32_t(0x83334DD4);
+	constexpr int32_t str_TXT_8200C320_B_ = int32_t(0x8200C320);
+	constexpr int32_t Destroy_TXT_83334DD4_G__address = int32_t(0x832B0280);
 	if (!UseLiftedCode(145, 0x83290D88)) { __imp__sub_83290D88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290D88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DD4_G_, (int64_t)g_82010000 - 15584, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 640, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DD4_G_, str_TXT_8200C320_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DD4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290D88, 0x83290D88) { ctx.r3.u64 = n_sub_83290D88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290D88, 0x83290D88) { ctx.r3.u64 = Construct_TXT_83334DD4_G_(ctx, base); }
 
-uint64_t n_sub_83290DC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DD8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DD8_G_ = int32_t(0x83334DD8);
+	constexpr int32_t str_TXT_820EDFC0_B_ = int32_t(0x820EDFC0);
+	constexpr int32_t Destroy_TXT_83334DD8_G__address = int32_t(0x832B0290);
 	if (!UseLiftedCode(145, 0x83290DC8)) { __imp__sub_83290DC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290DC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_820F0000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DD8_G_, (int64_t)g_820F0000 - 8256, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 656, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DD8_G_, str_TXT_820EDFC0_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DD8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290DC8, 0x83290DC8) { ctx.r3.u64 = n_sub_83290DC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290DC8, 0x83290DC8) { ctx.r3.u64 = Construct_TXT_83334DD8_G_(ctx, base); }
 
-uint64_t n_sub_83290E08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DDC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DDC_G_ = int32_t(0x83334DDC);
+	constexpr int32_t str_TXT_8200C3B0_B_ = int32_t(0x8200C3B0);
+	constexpr int32_t Destroy_TXT_83334DDC_G__address = int32_t(0x832B02A0);
 	if (!UseLiftedCode(145, 0x83290E08)) { __imp__sub_83290E08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290E08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DDC_G_, (int64_t)g_82010000 - 15440, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 672, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DDC_G_, str_TXT_8200C3B0_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DDC_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290E08, 0x83290E08) { ctx.r3.u64 = n_sub_83290E08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290E08, 0x83290E08) { ctx.r3.u64 = Construct_TXT_83334DDC_G_(ctx, base); }
 
-uint64_t n_sub_83290E48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DE0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DE0_G_ = int32_t(0x83334DE0);
+	constexpr int32_t str_TXT_8200C3B8_B_ = int32_t(0x8200C3B8);
+	constexpr int32_t Destroy_TXT_83334DE0_G__address = int32_t(0x832B02B0);
 	if (!UseLiftedCode(145, 0x83290E48)) { __imp__sub_83290E48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290E48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE0_G_, (int64_t)g_82010000 - 15432, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 688, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE0_G_, str_TXT_8200C3B8_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DE0_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290E48, 0x83290E48) { ctx.r3.u64 = n_sub_83290E48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290E48, 0x83290E48) { ctx.r3.u64 = Construct_TXT_83334DE0_G_(ctx, base); }
 
-uint64_t n_sub_83290E88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DE4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DE4_G_ = int32_t(0x83334DE4);
+	constexpr int32_t str_TXT_8200C3C4_B_ = int32_t(0x8200C3C4);
+	constexpr int32_t Destroy_TXT_83334DE4_G__address = int32_t(0x832B02C0);
 	if (!UseLiftedCode(145, 0x83290E88)) { __imp__sub_83290E88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290E88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE4_G_, (int64_t)g_82010000 - 15420, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 704, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE4_G_, str_TXT_8200C3C4_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DE4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290E88, 0x83290E88) { ctx.r3.u64 = n_sub_83290E88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290E88, 0x83290E88) { ctx.r3.u64 = Construct_TXT_83334DE4_G_(ctx, base); }
 
-uint64_t n_sub_83290EC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DE8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DE8_G_ = int32_t(0x83334DE8);
+	constexpr int32_t str_TXT_8200C54C_B_ = int32_t(0x8200C54C);
+	constexpr int32_t Destroy_TXT_83334DE8_G__address = int32_t(0x832B02D0);
 	if (!UseLiftedCode(145, 0x83290EC8)) { __imp__sub_83290EC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290EC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE8_G_, (int64_t)g_82010000 - 15028, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 720, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DE8_G_, str_TXT_8200C54C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DE8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290EC8, 0x83290EC8) { ctx.r3.u64 = n_sub_83290EC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290EC8, 0x83290EC8) { ctx.r3.u64 = Construct_TXT_83334DE8_G_(ctx, base); }
 
-uint64_t n_sub_83290F08(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DEC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DEC_G_ = int32_t(0x83334DEC);
+	constexpr int32_t str_TXT_8200C564_B_ = int32_t(0x8200C564);
+	constexpr int32_t Destroy_TXT_83334DEC_G__address = int32_t(0x832B02E0);
 	if (!UseLiftedCode(145, 0x83290F08)) { __imp__sub_83290F08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290F08);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DEC_G_, (int64_t)g_82010000 - 15004, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 736, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DEC_G_, str_TXT_8200C564_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DEC_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290F08, 0x83290F08) { ctx.r3.u64 = n_sub_83290F08(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290F08, 0x83290F08) { ctx.r3.u64 = Construct_TXT_83334DEC_G_(ctx, base); }
 
-uint64_t n_sub_83290F48(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DF0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DF0_G_ = int32_t(0x83334DF0);
+	constexpr int32_t str_TXT_8200C660_B_ = int32_t(0x8200C660);
+	constexpr int32_t Destroy_TXT_83334DF0_G__address = int32_t(0x832B02F0);
 	if (!UseLiftedCode(145, 0x83290F48)) { __imp__sub_83290F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290F48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF0_G_, (int64_t)g_82010000 - 14752, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 752, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF0_G_, str_TXT_8200C660_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DF0_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290F48, 0x83290F48) { ctx.r3.u64 = n_sub_83290F48(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290F48, 0x83290F48) { ctx.r3.u64 = Construct_TXT_83334DF0_G_(ctx, base); }
 
-uint64_t n_sub_83290F88(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DF4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DF4_G_ = int32_t(0x83334DF4);
+	constexpr int32_t str_TXT_8200C670_B_ = int32_t(0x8200C670);
+	constexpr int32_t Destroy_TXT_83334DF4_G__address = int32_t(0x832B0300);
 	if (!UseLiftedCode(145, 0x83290F88)) { __imp__sub_83290F88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290F88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF4_G_, (int64_t)g_82010000 - 14736, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 768, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF4_G_, str_TXT_8200C670_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DF4_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290F88, 0x83290F88) { ctx.r3.u64 = n_sub_83290F88(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290F88, 0x83290F88) { ctx.r3.u64 = Construct_TXT_83334DF4_G_(ctx, base); }
 
-uint64_t n_sub_83290FC8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DF8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DF8_G_ = int32_t(0x83334DF8);
+	constexpr int32_t str_TXT_8200C7BC_B_ = int32_t(0x8200C7BC);
+	constexpr int32_t Destroy_TXT_83334DF8_G__address = int32_t(0x832B0310);
 	if (!UseLiftedCode(145, 0x83290FC8)) { __imp__sub_83290FC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83290FC8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF8_G_, (int64_t)g_82010000 - 14404, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 784, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DF8_G_, str_TXT_8200C7BC_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DF8_G__address);
 }
-PROMOTED_ENTRY(145, sub_83290FC8, 0x83290FC8) { ctx.r3.u64 = n_sub_83290FC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_83290FC8, 0x83290FC8) { ctx.r3.u64 = Construct_TXT_83334DF8_G_(ctx, base); }
 
-uint64_t n_sub_83291008(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334DFC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334DFC_G_ = int32_t(0x83334DFC);
+	constexpr int32_t str_TXT_8200C7D0_B_ = int32_t(0x8200C7D0);
+	constexpr int32_t Destroy_TXT_83334DFC_G__address = int32_t(0x832B0320);
 	if (!UseLiftedCode(145, 0x83291008)) { __imp__sub_83291008(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291008);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334DFC_G_, (int64_t)g_82010000 - 14384, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 800, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334DFC_G_, str_TXT_8200C7D0_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334DFC_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291008, 0x83291008) { ctx.r3.u64 = n_sub_83291008(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291008, 0x83291008) { ctx.r3.u64 = Construct_TXT_83334DFC_G_(ctx, base); }
 
-uint64_t n_sub_83291048(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E00_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E00_G_ = int32_t(0x83334E00);
+	constexpr int32_t str_TXT_8200C8BC_B_ = int32_t(0x8200C8BC);
+	constexpr int32_t Destroy_TXT_83334E00_G__address = int32_t(0x832B0330);
 	if (!UseLiftedCode(145, 0x83291048)) { __imp__sub_83291048(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291048);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E00_G_, (int64_t)g_82010000 - 14148, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 816, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E00_G_, str_TXT_8200C8BC_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E00_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291048, 0x83291048) { ctx.r3.u64 = n_sub_83291048(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291048, 0x83291048) { ctx.r3.u64 = Construct_TXT_83334E00_G_(ctx, base); }
 
-uint64_t n_sub_83291088(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E04_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E04_G_ = int32_t(0x83334E04);
+	constexpr int32_t str_TXT_8200C8CC_B_ = int32_t(0x8200C8CC);
+	constexpr int32_t Destroy_TXT_83334E04_G__address = int32_t(0x832B0340);
 	if (!UseLiftedCode(145, 0x83291088)) { __imp__sub_83291088(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291088);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E04_G_, (int64_t)g_82010000 - 14132, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 832, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E04_G_, str_TXT_8200C8CC_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E04_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291088, 0x83291088) { ctx.r3.u64 = n_sub_83291088(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291088, 0x83291088) { ctx.r3.u64 = Construct_TXT_83334E04_G_(ctx, base); }
 
-uint64_t n_sub_832910C8(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E08_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E08_G_ = int32_t(0x83334E08);
+	constexpr int32_t str_TXT_8200C8F8_B_ = int32_t(0x8200C8F8);
+	constexpr int32_t Destroy_TXT_83334E08_G__address = int32_t(0x832B0350);
 	if (!UseLiftedCode(145, 0x832910C8)) { __imp__sub_832910C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832910C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E08_G_, (int64_t)g_82010000 - 14088, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 848, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E08_G_, str_TXT_8200C8F8_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E08_G__address);
 }
-PROMOTED_ENTRY(145, sub_832910C8, 0x832910C8) { ctx.r3.u64 = n_sub_832910C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832910C8, 0x832910C8) { ctx.r3.u64 = Construct_TXT_83334E08_G_(ctx, base); }
 
-uint64_t n_sub_83291108(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E18_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E18_G_ = int32_t(0x83334E18);
+	constexpr int32_t str_TXT_8200C9B4_B_ = int32_t(0x8200C9B4);
+	constexpr int32_t Destroy_TXT_83334E18_G__address = int32_t(0x832B0360);
 	if (!UseLiftedCode(145, 0x83291108)) { __imp__sub_83291108(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291108);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E18_G_, (int64_t)g_82010000 - 13900, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 864, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E18_G_, str_TXT_8200C9B4_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E18_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291108, 0x83291108) { ctx.r3.u64 = n_sub_83291108(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291108, 0x83291108) { ctx.r3.u64 = Construct_TXT_83334E18_G_(ctx, base); }
 
-uint64_t n_sub_83291148(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E1C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E1C_G_ = int32_t(0x83334E1C);
+	constexpr int32_t str_TXT_8200A920_B_ = int32_t(0x8200A920);
+	constexpr int32_t Destroy_TXT_83334E1C_G__address = int32_t(0x832B0370);
 	if (!UseLiftedCode(145, 0x83291148)) { __imp__sub_83291148(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291148);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E1C_G_, (int64_t)g_82010000 - 22240, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 880, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E1C_G_, str_TXT_8200A920_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E1C_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291148, 0x83291148) { ctx.r3.u64 = n_sub_83291148(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291148, 0x83291148) { ctx.r3.u64 = Construct_TXT_83334E1C_G_(ctx, base); }
 
-uint64_t n_sub_83291210(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E48_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E48_G_ = int32_t(0x83334E48);
+	constexpr int32_t str_TXT_8200CA3C_B_ = int32_t(0x8200CA3C);
+	constexpr int32_t Destroy_TXT_83334E48_G__address = int32_t(0x832B0390);
 	if (!UseLiftedCode(145, 0x83291210)) { __imp__sub_83291210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291210);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E48_G_, (int64_t)g_82010000 - 13764, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 912, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E48_G_, str_TXT_8200CA3C_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E48_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291210, 0x83291210) { ctx.r3.u64 = n_sub_83291210(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291210, 0x83291210) { ctx.r3.u64 = Construct_TXT_83334E48_G_(ctx, base); }
 
-uint64_t n_sub_83291250(CpuState& ctx, uint8_t* base) {
-	constexpr int32_t g_82010000 = int32_t(0x82010000);
-	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+uint64_t Construct_TXT_83334E4C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334E4C_G_ = int32_t(0x83334E4C);
+	constexpr int32_t str_TXT_8200CA48_B_ = int32_t(0x8200CA48);
+	constexpr int32_t Destroy_TXT_83334E4C_G__address = int32_t(0x832B03A0);
 	if (!UseLiftedCode(145, 0x83291250)) { __imp__sub_83291250(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291250);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	ctx.r11.s64 = g_82010000;
-	CCharString_ConstructFromCStr(ctx, base, TXT_83334E4C_G_, (int64_t)g_82010000 - 13752, -1);
-	ctx.r9.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 928, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_83334E4C_G_, str_TXT_8200CA48_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_83334E4C_G__address);
 }
-PROMOTED_ENTRY(145, sub_83291250, 0x83291250) { ctx.r3.u64 = n_sub_83291250(ctx, base); }
+PROMOTED_ENTRY(145, sub_83291250, 0x83291250) { ctx.r3.u64 = Construct_TXT_83334E4C_G_(ctx, base); }
 
 uint64_t n_sub_83291B90(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B06A8_address = int32_t(0x832B06A8);
 	if (!UseLiftedCode(145, 0x83291B90)) { ctx.r8.u64 = arg1; __imp__sub_83291B90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291B90);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 1704, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B06A8_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83291B90, 0x83291B90) { ctx.r3.u64 = n_sub_83291B90(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_83291BA0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B0650_address = int32_t(0x832B0650);
 	if (!UseLiftedCode(145, 0x83291BA0)) { ctx.r8.u64 = arg1; __imp__sub_83291BA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291BA0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 1616, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B0650_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83291BA0, 0x83291BA0) { ctx.r3.u64 = n_sub_83291BA0(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_83291BB0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B05F8_address = int32_t(0x832B05F8);
 	if (!UseLiftedCode(145, 0x83291BB0)) { ctx.r8.u64 = arg1; __imp__sub_83291BB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291BB0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 1528, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B05F8_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83291BB0, 0x83291BB0) { ctx.r3.u64 = n_sub_83291BB0(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_83291BC0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B0720_address = int32_t(0x832B0720);
 	if (!UseLiftedCode(145, 0x83291BC0)) { ctx.r8.u64 = arg1; __imp__sub_83291BC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291BC0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 1824, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B0720_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83291BC0, 0x83291BC0) { ctx.r3.u64 = n_sub_83291BC0(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_83291C40(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B0790_address = int32_t(0x832B0790);
 	if (!UseLiftedCode(145, 0x83291C40)) { ctx.r8.u64 = arg1; __imp__sub_83291C40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83291C40);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 1936, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B0790_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83291C40, 0x83291C40) { ctx.r3.u64 = n_sub_83291C40(ctx, base, ctx.r8.u64); }
 
@@ -1609,19 +1225,19 @@ uint64_t n_sub_83294358(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83294358);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202902C;
-	uint64_t object = g_83338240;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202902C;
+	uint64_t classInfo = g_83338240;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_820290A8_B_, 0, 160, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_820290A8_B_, 0, 160, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_820290A8_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294358, 0x83294358) { ctx.r3.u64 = n_sub_83294358(ctx, base); }
 
@@ -1640,12 +1256,12 @@ uint64_t n_sub_832943C8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338270;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_820290CC_B_, (int64_t)g_833390B0, 176, 0, 0, 0);
+	uint64_t classInfo = g_83338270;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_820290CC_B_, (int64_t)g_833390B0, 176, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_820290CC_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832943C8, 0x832943C8) { ctx.r3.u64 = n_sub_832943C8(ctx, base); }
 
@@ -1664,12 +1280,12 @@ uint64_t n_sub_832945F8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338360;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_82029470_B_, (int64_t)g_833390B0, 176, 0, 0, 0);
+	uint64_t classInfo = g_83338360;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_82029470_B_, (int64_t)g_833390B0, 176, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_82029470_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832945F8, 0x832945F8) { ctx.r3.u64 = n_sub_832945F8(ctx, base); }
 
@@ -1688,12 +1304,12 @@ uint64_t n_sub_83294818(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338430;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_820297FC_B_, (int64_t)g_833390B0, 160, 0, 0, 0);
+	uint64_t classInfo = g_83338430;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_820297FC_B_, (int64_t)g_833390B0, 160, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_820297FC_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294818, 0x83294818) { ctx.r3.u64 = n_sub_83294818(ctx, base); }
 
@@ -1712,12 +1328,12 @@ uint64_t n_sub_832948F8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338490;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_820299A4_B_, (int64_t)g_833390B0, 208, 0, 0, 0);
+	uint64_t classInfo = g_83338490;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_820299A4_B_, (int64_t)g_833390B0, 208, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_820299A4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832948F8, 0x832948F8) { ctx.r3.u64 = n_sub_832948F8(ctx, base); }
 
@@ -1736,12 +1352,12 @@ uint64_t n_sub_832949D8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_833384F0;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_82029B08_B_, (int64_t)g_833390B0, 224, 0, 0, 0);
+	uint64_t classInfo = g_833384F0;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_82029B08_B_, (int64_t)g_833390B0, 224, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_82029B08_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832949D8, 0x832949D8) { ctx.r3.u64 = n_sub_832949D8(ctx, base); }
 
@@ -1753,19 +1369,19 @@ uint64_t n_sub_83294A48(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83294A48);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82029B40;
-	uint64_t object = g_83338520;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_82029B40;
+	uint64_t classInfo = g_83338520;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_82029BBC_B_, 0, 112, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_82029BBC_B_, 0, 112, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_82029BBC_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294A48, 0x83294A48) { ctx.r3.u64 = n_sub_83294A48(ctx, base); }
 
@@ -1784,12 +1400,12 @@ uint64_t n_sub_83294AB8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338550;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_82029BDC_B_, (int64_t)g_833390B0, 128, 0, 0, 0);
+	uint64_t classInfo = g_83338550;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_82029BDC_B_, (int64_t)g_833390B0, 128, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_82029BDC_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294AB8, 0x83294AB8) { ctx.r3.u64 = n_sub_83294AB8(ctx, base); }
 
@@ -1808,12 +1424,12 @@ uint64_t n_sub_83294D00(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338640;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_82029FA8_B_, (int64_t)g_833390B0, 192, 0, 0, 0);
+	uint64_t classInfo = g_83338640;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_82029FA8_B_, (int64_t)g_833390B0, 192, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_82029FA8_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294D00, 0x83294D00) { ctx.r3.u64 = n_sub_83294D00(ctx, base); }
 
@@ -1830,13 +1446,13 @@ uint64_t n_sub_83294DD0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338680;
+	uint64_t classInfo = g_83338680;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_82028FA0_B_, g_83338E90, 512, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_82028FA0_B_, g_83338E90, 512, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_82028FA0_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294DD0, 0x83294DD0) { ctx.r3.u64 = n_sub_83294DD0(ctx, base); }
 
@@ -1848,19 +1464,19 @@ uint64_t n_sub_83294E38(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83294E38);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82029FC0;
-	uint64_t object = g_833386B0;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_82029FC0;
+	uint64_t classInfo = g_833386B0;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A03C_B_, 0, 128, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A03C_B_, 0, 128, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A03C_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294E38, 0x83294E38) { ctx.r3.u64 = n_sub_83294E38(ctx, base); }
 
@@ -1879,12 +1495,12 @@ uint64_t n_sub_83294EA8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_833386E0;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A060_B_, (int64_t)g_833390B0, 144, 0, 0, 0);
+	uint64_t classInfo = g_833386E0;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A060_B_, (int64_t)g_833390B0, 144, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A060_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83294EA8, 0x83294EA8) { ctx.r3.u64 = n_sub_83294EA8(ctx, base); }
 
@@ -1903,12 +1519,12 @@ uint64_t n_sub_832950C8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_833387B0;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A188_B_, (int64_t)g_83339310, 352, 0, 0, 0);
+	uint64_t classInfo = g_833387B0;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A188_B_, (int64_t)g_83339310, 352, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A188_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832950C8, 0x832950C8) { ctx.r3.u64 = n_sub_832950C8(ctx, base); }
 
@@ -1920,19 +1536,19 @@ uint64_t n_sub_832951D8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x832951D8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202A4D0;
-	uint64_t object = g_83338810;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202A4D0;
+	uint64_t classInfo = g_83338810;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A5C4_B_, 0, 32, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A5C4_B_, 0, 32, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A5C4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832951D8, 0x832951D8) { ctx.r3.u64 = n_sub_832951D8(ctx, base); }
 
@@ -1949,13 +1565,13 @@ uint64_t n_sub_832952B8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338870;
+	uint64_t classInfo = g_83338870;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202A60C_B_, g_833391E0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202A60C_B_, g_833391E0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202A60C_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832952B8, 0x832952B8) { ctx.r3.u64 = n_sub_832952B8(ctx, base); }
 
@@ -1968,20 +1584,20 @@ uint64_t n_sub_83295320(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83295320);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202A63C;
-	uint64_t object = g_833388A0;
-	uint64_t name = str_TXT_8202A680_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202A63C;
+	uint64_t classInfo = g_833388A0;
+	uint64_t typeName = str_TXT_8202A680_B_;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_833391B0, 28, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, typeName, (uint32_t)g_833391B0, 28, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = typeName;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295320, 0x83295320) { ctx.r3.u64 = n_sub_83295320(ctx, base); }
 
@@ -1998,13 +1614,13 @@ uint64_t n_sub_83295390(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_833388D0;
+	uint64_t classInfo = g_833388D0;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202A6A0_B_, g_83338BA0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202A6A0_B_, g_83338BA0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202A6A0_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295390, 0x83295390) { ctx.r3.u64 = n_sub_83295390(ctx, base); }
 
@@ -2021,13 +1637,13 @@ uint64_t n_sub_832953F8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338900;
+	uint64_t classInfo = g_83338900;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202A6B8_B_, g_83338870, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202A6B8_B_, g_83338870, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202A6B8_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832953F8, 0x832953F8) { ctx.r3.u64 = n_sub_832953F8(ctx, base); }
 
@@ -2040,20 +1656,20 @@ uint64_t n_sub_832954C0(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x832954C0);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202A6F4;
-	uint64_t object = g_83338940;
-	uint64_t name = str_TXT_8202A75C_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202A6F4;
+	uint64_t classInfo = g_83338940;
+	uint64_t typeName = str_TXT_8202A75C_B_;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_833392B0, 208, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, typeName, (uint32_t)g_833392B0, 208, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = typeName;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832954C0, 0x832954C0) { ctx.r3.u64 = n_sub_832954C0(ctx, base); }
 
@@ -2065,19 +1681,19 @@ uint64_t n_sub_83295670(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83295670);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202A888;
-	uint64_t object = g_833389E0;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202A888;
+	uint64_t classInfo = g_833389E0;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A904_B_, 0, 64, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A904_B_, 0, 64, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A904_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295670, 0x83295670) { ctx.r3.u64 = n_sub_83295670(ctx, base); }
 
@@ -2096,12 +1712,12 @@ uint64_t n_sub_832956E0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338A10;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A928_B_, (int64_t)g_833390B0, 80, 0, 0, 0);
+	uint64_t classInfo = g_83338A10;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A928_B_, (int64_t)g_833390B0, 80, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A928_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832956E0, 0x832956E0) { ctx.r3.u64 = n_sub_832956E0(ctx, base); }
 
@@ -2113,19 +1729,19 @@ uint64_t n_sub_83295750(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83295750);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202A948;
-	uint64_t object = g_83338A40;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202A948;
+	uint64_t classInfo = g_83338A40;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A9C4_B_, 0, 64, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A9C4_B_, 0, 64, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A9C4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295750, 0x83295750) { ctx.r3.u64 = n_sub_83295750(ctx, base); }
 
@@ -2144,12 +1760,12 @@ uint64_t n_sub_832957C0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338A70;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202A9E8_B_, (int64_t)g_833390B0, 80, 0, 0, 0);
+	uint64_t classInfo = g_83338A70;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202A9E8_B_, (int64_t)g_833390B0, 80, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202A9E8_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832957C0, 0x832957C0) { ctx.r3.u64 = n_sub_832957C0(ctx, base); }
 
@@ -2161,19 +1777,19 @@ uint64_t n_sub_83295830(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83295830);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202AA08;
-	uint64_t object = g_83338AA0;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classMemberArray = (uint32_t)g_8202AA08;
+	uint64_t classInfo = g_83338AA0;
+	STORE32(stack + 84, classMemberArray);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202AAC8_B_, 0, 32, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202AAC8_B_, 0, 32, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202AAC8_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295830, 0x83295830) { ctx.r3.u64 = n_sub_83295830(ctx, base); }
 
@@ -2190,13 +1806,13 @@ uint64_t n_sub_83295970(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338B10;
+	uint64_t classInfo = g_83338B10;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202AB08_B_, g_83338BA0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202AB08_B_, g_83338BA0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202AB08_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295970, 0x83295970) { ctx.r3.u64 = n_sub_83295970(ctx, base); }
 
@@ -2213,13 +1829,13 @@ uint64_t n_sub_83295AB8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338BA0;
+	uint64_t classInfo = g_83338BA0;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202AD50_B_, g_833391E0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202AD50_B_, g_833391E0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202AD50_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295AB8, 0x83295AB8) { ctx.r3.u64 = n_sub_83295AB8(ctx, base); }
 
@@ -2238,12 +1854,12 @@ uint64_t n_sub_83295CC0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338C50;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202AF94_B_, (int64_t)g_83339310, 352, 0, 0, 0);
+	uint64_t classInfo = g_83338C50;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202AF94_B_, (int64_t)g_83339310, 352, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202AF94_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295CC0, 0x83295CC0) { ctx.r3.u64 = n_sub_83295CC0(ctx, base); }
 
@@ -2260,13 +1876,13 @@ uint64_t n_sub_83295FA0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338D30;
+	uint64_t classInfo = g_83338D30;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202C848_B_, g_833391E0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202C848_B_, g_833391E0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202C848_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83295FA0, 0x83295FA0) { ctx.r3.u64 = n_sub_83295FA0(ctx, base); }
 
@@ -2279,20 +1895,20 @@ uint64_t n_sub_83296008(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83296008);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202C874;
-	uint64_t object = g_83338D60;
-	uint64_t name = str_TXT_8202C8E4_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202C874;
+	uint64_t classInfo = g_83338D60;
+	uint64_t className = str_TXT_8202C8E4_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_83338DC0, 60, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_83338DC0, 60, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296008, 0x83296008) { ctx.r3.u64 = n_sub_83296008(ctx, base); }
 
@@ -2311,12 +1927,12 @@ uint64_t n_sub_83296078(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338D90;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202C950_B_, (int64_t)g_83338F50, 28, 0, 0, 0);
+	uint64_t classInfo = g_83338D90;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202C950_B_, (int64_t)g_83338F50, 28, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202C950_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296078, 0x83296078) { ctx.r3.u64 = n_sub_83296078(ctx, base); }
 
@@ -2328,19 +1944,19 @@ uint64_t n_sub_83296258(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83296258);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202CE98;
-	uint64_t object = g_83338E50;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202CE98;
+	uint64_t classInfo = g_83338E50;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202D0F4_B_, 0, 16, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202D0F4_B_, 0, 16, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202D0F4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296258, 0x83296258) { ctx.r3.u64 = n_sub_83296258(ctx, base); }
 
@@ -2357,13 +1973,13 @@ uint64_t n_sub_832963A0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338EC0;
+	uint64_t classInfo = g_83338EC0;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D138_B_, g_833392E0, 8, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D138_B_, g_833392E0, 8, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D138_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832963A0, 0x832963A0) { ctx.r3.u64 = n_sub_832963A0(ctx, base); }
 
@@ -2382,12 +1998,12 @@ uint64_t n_sub_83296408(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338EF0;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202D180_B_, (int64_t)g_8335ACB4, 12, 0, 0, 0);
+	uint64_t classInfo = g_83338EF0;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202D180_B_, (int64_t)g_8335ACB4, 12, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202D180_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296408, 0x83296408) { ctx.r3.u64 = n_sub_83296408(ctx, base); }
 
@@ -2404,13 +2020,13 @@ uint64_t n_sub_83296478(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83338F20;
+	uint64_t classInfo = g_83338F20;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D1A0_B_, g_83339050, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D1A0_B_, g_83339050, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D1A0_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296478, 0x83296478) { ctx.r3.u64 = n_sub_83296478(ctx, base); }
 
@@ -2423,20 +2039,20 @@ uint64_t n_sub_832965B0(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x832965B0);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202D250;
-	uint64_t object = g_83338F90;
-	uint64_t name = str_TXT_8202D280_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202D250;
+	uint64_t classInfo = g_83338F90;
+	uint64_t className = str_TXT_8202D280_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_833390B0, 88, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_833390B0, 88, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832965B0, 0x832965B0) { ctx.r3.u64 = n_sub_832965B0(ctx, base); }
 
@@ -2455,12 +2071,12 @@ uint64_t n_sub_83296620(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83338FC0;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202D2B4_B_, (int64_t)g_83338F50, 36, 0, 0, 0);
+	uint64_t classInfo = g_83338FC0;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202D2B4_B_, (int64_t)g_83338F50, 36, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202D2B4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296620, 0x83296620) { ctx.r3.u64 = n_sub_83296620(ctx, base); }
 
@@ -2473,20 +2089,20 @@ uint64_t n_sub_83296690(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83296690);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202D2D4;
-	uint64_t object = g_83338FF0;
-	uint64_t name = str_TXT_8202D304_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202D2D4;
+	uint64_t classInfo = g_83338FF0;
+	uint64_t className = str_TXT_8202D304_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_83338F50, 32, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_83338F50, 32, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296690, 0x83296690) { ctx.r3.u64 = n_sub_83296690(ctx, base); }
 
@@ -2503,13 +2119,13 @@ uint64_t n_sub_83296700(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339020;
+	uint64_t classInfo = g_83339020;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D314_B_, g_833390B0, 12, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D314_B_, g_833390B0, 12, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D314_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296700, 0x83296700) { ctx.r3.u64 = n_sub_83296700(ctx, base); }
 
@@ -2526,13 +2142,13 @@ uint64_t n_sub_83296768(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339050;
+	uint64_t classInfo = g_83339050;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D32C_B_, g_833391E0, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D32C_B_, g_833391E0, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D32C_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296768, 0x83296768) { ctx.r3.u64 = n_sub_83296768(ctx, base); }
 
@@ -2549,13 +2165,13 @@ uint64_t n_sub_832967D0(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339080;
+	uint64_t classInfo = g_83339080;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D344_B_, g_83339050, 288, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D344_B_, g_83339050, 288, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D344_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832967D0, 0x832967D0) { ctx.r3.u64 = n_sub_832967D0(ctx, base); }
 
@@ -2572,13 +2188,13 @@ uint64_t n_sub_832969A8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339140;
+	uint64_t classInfo = g_83339140;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202D880_B_, g_8335ACB4, 8, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202D880_B_, g_8335ACB4, 8, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202D880_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832969A8, 0x832969A8) { ctx.r3.u64 = n_sub_832969A8(ctx, base); }
 
@@ -2591,20 +2207,20 @@ uint64_t n_sub_83296AE0(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83296AE0);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202D924;
-	uint64_t object = g_833391B0;
-	uint64_t name = str_TXT_8202D954_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202D924;
+	uint64_t classInfo = g_833391B0;
+	uint64_t className = str_TXT_8202D954_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_833390E0, 20, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_833390E0, 20, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296AE0, 0x83296AE0) { ctx.r3.u64 = n_sub_83296AE0(ctx, base); }
 
@@ -2621,13 +2237,13 @@ uint64_t n_sub_83296C58(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339240;
+	uint64_t classInfo = g_83339240;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202DCA4_B_, g_8335ACB4, 8, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202DCA4_B_, g_8335ACB4, 8, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202DCA4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296C58, 0x83296C58) { ctx.r3.u64 = n_sub_83296C58(ctx, base); }
 
@@ -2640,20 +2256,20 @@ uint64_t n_sub_83296DC0(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83296DC0);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202DE54;
-	uint64_t object = g_833392B0;
-	uint64_t name = str_TXT_8202DE84_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202DE54;
+	uint64_t classInfo = g_833392B0;
+	uint64_t className = str_TXT_8202DE84_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_83339370, 152, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_83339370, 152, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296DC0, 0x83296DC0) { ctx.r3.u64 = n_sub_83296DC0(ctx, base); }
 
@@ -2672,12 +2288,12 @@ uint64_t n_sub_83296E98(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83339310;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202DF54_B_, (int64_t)g_833392B0, 336, 0, 0, 0);
+	uint64_t classInfo = g_83339310;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202DF54_B_, (int64_t)g_833392B0, 336, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202DF54_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296E98, 0x83296E98) { ctx.r3.u64 = n_sub_83296E98(ctx, base); }
 
@@ -2696,12 +2312,12 @@ uint64_t n_sub_83296F08(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	uint64_t object = g_83339340;
-	n_sub_82D4F620(ctx, base, object, (int64_t)str_TXT_8202DF7C_B_, (int64_t)g_83338F50, 28, 0, 0, 0);
+	uint64_t classInfo = g_83339340;
+	n_sub_82D4F620(ctx, base, classInfo, (int64_t)str_TXT_8202DF7C_B_, (int64_t)g_83338F50, 28, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = (int64_t)str_TXT_8202DF7C_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83296F08, 0x83296F08) { ctx.r3.u64 = n_sub_83296F08(ctx, base); }
 
@@ -2714,20 +2330,20 @@ uint64_t n_sub_83297078(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83297078);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8202EF90;
-	uint64_t object = g_833393D0;
-	uint64_t name = str_TXT_8202F78C_B_;
-	STORE32(stack + 84, stackArgument84);
+	uint32_t classFlags = (uint32_t)g_8202EF90;
+	uint64_t classInfo = g_833393D0;
+	uint64_t className = str_TXT_8202F78C_B_;
+	STORE32(stack + 84, classFlags);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
 	STORE32(stack + 100, 0u);
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, name, (uint32_t)g_833393A0, 12, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, className, (uint32_t)g_833393A0, 12, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = name;
-	return object;
+	ctx.r4.u64 = className;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_83297078, 0x83297078) { ctx.r3.u64 = n_sub_83297078(ctx, base); }
 
@@ -2744,13 +2360,13 @@ uint64_t n_sub_832971C8(CpuState& ctx, uint8_t* base) {
 	STORE32(stack + 100, 0u);
 	STORE32(stack + 92, 0u);
 	STORE32(stack + 84, 0u);
-	uint64_t object = g_83339460;
+	uint64_t classInfo = g_83339460;
 	ctx.r1.u64 = stack;
-	n_sub_82D4F620(ctx, base, object, str_TXT_8202F7D4_B_, g_833393A0, 2, 0, 0, 0);
+	n_sub_82D4F620(ctx, base, classInfo, str_TXT_8202F7D4_B_, g_833393A0, 2, 0, 0, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = str_TXT_8202F7D4_B_;
-	return object;
+	return classInfo;
 }
 PROMOTED_ENTRY(145, sub_832971C8, 0x832971C8) { ctx.r3.u64 = n_sub_832971C8(ctx, base); }
 
@@ -3029,11 +2645,11 @@ PROMOTED_ENTRY(145, sub_83297C58, 0x83297C58) { ctx.r3.u64 = n_sub_83297C58(ctx,
 
 uint64_t n_sub_83297CC8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B07E8_address = int32_t(0x832B07E8);
 	if (!UseLiftedCode(145, 0x83297CC8)) { ctx.r8.u64 = arg1; __imp__sub_83297CC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83297CC8);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2024, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B07E8_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_83297CC8, 0x83297CC8) { ctx.r3.u64 = n_sub_83297CC8(ctx, base, ctx.r8.u64); }
 
@@ -3410,9 +3026,9 @@ uint64_t n_sub_832999E0(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x832999E0);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8203229C;
+	uint32_t declaredMembers = (uint32_t)g_8203229C;
 	uint64_t object = g_8333A474;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3435,10 +3051,10 @@ uint64_t n_sub_83299A50(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83299A50);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_820322CC;
+	uint32_t declaredMembers = (uint32_t)g_820322CC;
 	uint64_t object = g_8333A4A4;
 	uint64_t name = str_TXT_82032338_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3461,10 +3077,10 @@ uint64_t n_sub_83299B30(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83299B30);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_820324D0;
+	uint32_t declaredMembers = (uint32_t)g_820324D0;
 	uint64_t object = g_8333A504;
 	uint64_t name = str_TXT_82032530_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3487,10 +3103,10 @@ uint64_t n_sub_83299C10(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x83299C10);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8203256C;
+	uint32_t declaredMembers = (uint32_t)g_8203256C;
 	uint64_t object = g_8333A564;
 	uint64_t name = str_TXT_8203259C_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3550,13 +3166,13 @@ uint64_t n_sub_83299F08(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_83299F08, 0x83299F08) { ctx.r3.u64 = n_sub_83299F08(ctx, base); }
 
-uint64_t n_sub_8329A0B8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329A0B8(CpuState& ctx, uint8_t* base, uint64_t callbackContext) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329A0B8)) { ctx.r8.u64 = arg1; __imp__sub_8329A0B8(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B0800_address = int32_t(0x832B0800);
+	if (!UseLiftedCode(145, 0x8329A0B8)) { ctx.r8.u64 = callbackContext; __imp__sub_8329A0B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329A0B8);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2048, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B0800_address, callbackContext);
 }
 PROMOTED_ENTRY(145, sub_8329A0B8, 0x8329A0B8) { ctx.r3.u64 = n_sub_8329A0B8(ctx, base, ctx.r8.u64); }
 
@@ -3592,9 +3208,9 @@ uint64_t n_sub_8329A218(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A218);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8203497C;
+	uint32_t declaredMembers = (uint32_t)g_8203497C;
 	uint64_t object = g_8333AC28;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3617,10 +3233,10 @@ uint64_t n_sub_8329A2F8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A2F8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_820349C4;
+	uint32_t declaredMembers = (uint32_t)g_820349C4;
 	uint64_t object = g_8333AC88;
 	uint64_t name = str_TXT_82034A38_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3643,10 +3259,10 @@ uint64_t n_sub_8329A418(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A418);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82035CDC;
+	uint32_t declaredMembers = (uint32_t)g_82035CDC;
 	uint64_t object = g_8333AEA8;
 	uint64_t name = str_TXT_82035D1C_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3668,9 +3284,9 @@ uint64_t n_sub_8329A568(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A568);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82035F78;
+	uint32_t declaredMembers = (uint32_t)g_82035F78;
 	uint64_t object = g_8333AF38;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3692,9 +3308,9 @@ uint64_t n_sub_8329A5D8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A5D8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82035FA8;
+	uint32_t declaredMembers = (uint32_t)g_82035FA8;
 	uint64_t object = g_8333AF68;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3716,9 +3332,9 @@ uint64_t n_sub_8329A6B8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A6B8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82036130;
+	uint32_t declaredMembers = (uint32_t)g_82036130;
 	uint64_t object = g_8333B028;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3741,10 +3357,10 @@ uint64_t n_sub_8329A8E8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A8E8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_820363CC;
+	uint32_t declaredMembers = (uint32_t)g_820363CC;
 	uint64_t object = g_8333B0B8;
 	uint64_t name = str_TXT_82036444_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3766,9 +3382,9 @@ uint64_t n_sub_8329A958(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329A958);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_8203646C;
+	uint32_t declaredMembers = (uint32_t)g_8203646C;
 	uint64_t object = g_8333B118;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3814,9 +3430,9 @@ uint64_t n_sub_8329AAA8(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329AAA8);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82036708;
+	uint32_t declaredMembers = (uint32_t)g_82036708;
 	uint64_t object = g_8333B1B8;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3839,10 +3455,10 @@ uint64_t n_sub_8329AB18(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329AB18);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82036738;
+	uint32_t declaredMembers = (uint32_t)g_82036738;
 	uint64_t object = g_8333B178;
 	uint64_t name = str_TXT_820367F0_B_;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3864,9 +3480,9 @@ uint64_t n_sub_8329AD60(CpuState& ctx, uint8_t* base) {
 	LiftedFrame frame(0x8329AD60);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 128);
-	uint32_t stackArgument84 = (uint32_t)g_82036A14;
+	uint32_t declaredMembers = (uint32_t)g_82036A14;
 	uint64_t object = g_8333B258;
-	STORE32(stack + 84, stackArgument84);
+	STORE32(stack + 84, declaredMembers);
 	STORE32(stack + 92, 2u);
 	STORE32(stack + 116, 0u);
 	STORE32(stack + 108, 0u);
@@ -3958,6 +3574,7 @@ uint64_t n_sub_8329B408(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E693C8 = int32_t(0x82E693C8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333B4DC = int32_t(0x8333B4DC);
+	constexpr int32_t n_sub_832B0818_address = int32_t(0x832B0818);
 	if (!UseLiftedCode(145, 0x8329B408)) { __imp__sub_8329B408(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B408);
 	uint32_t stack = ctx.r1.u64;
@@ -3967,7 +3584,7 @@ uint64_t n_sub_8329B408(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	n_sub_82E86010(ctx, base, g_8333B4DC, str_TXT_82038758_B_, g_82E693C8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2072, ctx.r8.u64);
+	uint64_t result = RegisterAtExit(ctx, base, n_sub_832B0818_address);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
@@ -3979,17 +3596,13 @@ uint64_t n_sub_8329B5E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E6E9A8 = int32_t(0x82E6E9A8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333BB58 = int32_t(0x8333BB58);
+	constexpr int32_t n_sub_832B08A8_address = int32_t(0x832B08A8);
 	if (!UseLiftedCode(145, 0x8329B5E0)) { __imp__sub_8329B5E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B5E0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E86010(ctx, base, g_8333BB58, str_TXT_82038998_B_, g_82E6E9A8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2216, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B08A8_address);
 }
 PROMOTED_ENTRY(145, sub_8329B5E0, 0x8329B5E0) { ctx.r3.u64 = n_sub_8329B5E0(ctx, base); }
 
@@ -3998,17 +3611,13 @@ uint64_t n_sub_8329B6C8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72808 = int32_t(0x82E72808);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333BE94 = int32_t(0x8333BE94);
+	constexpr int32_t n_sub_832B08F0_address = int32_t(0x832B08F0);
 	if (!UseLiftedCode(145, 0x8329B6C8)) { __imp__sub_8329B6C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B6C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333BE94, str_TXT_82038BA0_B_, g_82E72808, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2288, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B08F0_address);
 }
 PROMOTED_ENTRY(145, sub_8329B6C8, 0x8329B6C8) { ctx.r3.u64 = n_sub_8329B6C8(ctx, base); }
 
@@ -4017,17 +3626,13 @@ uint64_t n_sub_8329B710(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72870 = int32_t(0x82E72870);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333BFA8 = int32_t(0x8333BFA8);
+	constexpr int32_t n_sub_832B0908_address = int32_t(0x832B0908);
 	if (!UseLiftedCode(145, 0x8329B710)) { __imp__sub_8329B710(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B710);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333BFA8, str_TXT_82038BC8_B_, g_82E72870, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2312, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0908_address);
 }
 PROMOTED_ENTRY(145, sub_8329B710, 0x8329B710) { ctx.r3.u64 = n_sub_8329B710(ctx, base); }
 
@@ -4036,17 +3641,13 @@ uint64_t n_sub_8329B758(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E728F0 = int32_t(0x82E728F0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C0BC = int32_t(0x8333C0BC);
+	constexpr int32_t n_sub_832B0920_address = int32_t(0x832B0920);
 	if (!UseLiftedCode(145, 0x8329B758)) { __imp__sub_8329B758(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B758);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333C0BC, str_TXT_82038BEC_B_, g_82E728F0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2336, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0920_address);
 }
 PROMOTED_ENTRY(145, sub_8329B758, 0x8329B758) { ctx.r3.u64 = n_sub_8329B758(ctx, base); }
 
@@ -4055,17 +3656,13 @@ uint64_t n_sub_8329B7A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E729D0 = int32_t(0x82E729D0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C1D0 = int32_t(0x8333C1D0);
+	constexpr int32_t n_sub_832B0938_address = int32_t(0x832B0938);
 	if (!UseLiftedCode(145, 0x8329B7A0)) { __imp__sub_8329B7A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B7A0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333C1D0, str_TXT_82038C10_B_, g_82E729D0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2360, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0938_address);
 }
 PROMOTED_ENTRY(145, sub_8329B7A0, 0x8329B7A0) { ctx.r3.u64 = n_sub_8329B7A0(ctx, base); }
 
@@ -4074,17 +3671,13 @@ uint64_t n_sub_8329B7E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72AD8 = int32_t(0x82E72AD8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C2E4 = int32_t(0x8333C2E4);
+	constexpr int32_t n_sub_832B0950_address = int32_t(0x832B0950);
 	if (!UseLiftedCode(145, 0x8329B7E8)) { __imp__sub_8329B7E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B7E8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333C2E4, str_TXT_82038C34_B_, g_82E72AD8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2384, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0950_address);
 }
 PROMOTED_ENTRY(145, sub_8329B7E8, 0x8329B7E8) { ctx.r3.u64 = n_sub_8329B7E8(ctx, base); }
 
@@ -4093,17 +3686,13 @@ uint64_t n_sub_8329B830(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72BC8 = int32_t(0x82E72BC8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C3F8 = int32_t(0x8333C3F8);
+	constexpr int32_t n_sub_832B0968_address = int32_t(0x832B0968);
 	if (!UseLiftedCode(145, 0x8329B830)) { __imp__sub_8329B830(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B830);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333C3F8, str_TXT_82038C60_B_, g_82E72BC8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2408, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0968_address);
 }
 PROMOTED_ENTRY(145, sub_8329B830, 0x8329B830) { ctx.r3.u64 = n_sub_8329B830(ctx, base); }
 
@@ -4112,17 +3701,13 @@ uint64_t n_sub_8329B878(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72C38 = int32_t(0x82E72C38);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C50C = int32_t(0x8333C50C);
+	constexpr int32_t n_sub_832B0980_address = int32_t(0x832B0980);
 	if (!UseLiftedCode(145, 0x8329B878)) { __imp__sub_8329B878(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B878);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333C50C, str_TXT_82038C74_B_, g_82E72C38, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2432, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0980_address);
 }
 PROMOTED_ENTRY(145, sub_8329B878, 0x8329B878) { ctx.r3.u64 = n_sub_8329B878(ctx, base); }
 
@@ -4131,17 +3716,13 @@ uint64_t n_sub_8329B8C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72C80 = int32_t(0x82E72C80);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C620 = int32_t(0x8333C620);
+	constexpr int32_t n_sub_832B0998_address = int32_t(0x832B0998);
 	if (!UseLiftedCode(145, 0x8329B8C0)) { __imp__sub_8329B8C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B8C0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333C620, str_TXT_82038C88_B_, g_82E72C80, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2456, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0998_address);
 }
 PROMOTED_ENTRY(145, sub_8329B8C0, 0x8329B8C0) { ctx.r3.u64 = n_sub_8329B8C0(ctx, base); }
 
@@ -4150,17 +3731,13 @@ uint64_t n_sub_8329B908(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72CD8 = int32_t(0x82E72CD8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C734 = int32_t(0x8333C734);
+	constexpr int32_t n_sub_832B09B0_address = int32_t(0x832B09B0);
 	if (!UseLiftedCode(145, 0x8329B908)) { __imp__sub_8329B908(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B908);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333C734, str_TXT_82038CB0_B_, g_82E72CD8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2480, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B09B0_address);
 }
 PROMOTED_ENTRY(145, sub_8329B908, 0x8329B908) { ctx.r3.u64 = n_sub_8329B908(ctx, base); }
 
@@ -4169,17 +3746,13 @@ uint64_t n_sub_8329B950(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72DA0 = int32_t(0x82E72DA0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C848 = int32_t(0x8333C848);
+	constexpr int32_t n_sub_832B09C8_address = int32_t(0x832B09C8);
 	if (!UseLiftedCode(145, 0x8329B950)) { __imp__sub_8329B950(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B950);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333C848, str_TXT_82038CDC_B_, g_82E72DA0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2504, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B09C8_address);
 }
 PROMOTED_ENTRY(145, sub_8329B950, 0x8329B950) { ctx.r3.u64 = n_sub_8329B950(ctx, base); }
 
@@ -4188,17 +3761,13 @@ uint64_t n_sub_8329B998(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72EB0 = int32_t(0x82E72EB0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333C95C = int32_t(0x8333C95C);
+	constexpr int32_t n_sub_832B09E0_address = int32_t(0x832B09E0);
 	if (!UseLiftedCode(145, 0x8329B998)) { __imp__sub_8329B998(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B998);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333C95C, str_TXT_82038D04_B_, g_82E72EB0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2528, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B09E0_address);
 }
 PROMOTED_ENTRY(145, sub_8329B998, 0x8329B998) { ctx.r3.u64 = n_sub_8329B998(ctx, base); }
 
@@ -4207,17 +3776,13 @@ uint64_t n_sub_8329B9E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E72FA0 = int32_t(0x82E72FA0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CA70 = int32_t(0x8333CA70);
+	constexpr int32_t n_sub_832B09F8_address = int32_t(0x832B09F8);
 	if (!UseLiftedCode(145, 0x8329B9E0)) { __imp__sub_8329B9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329B9E0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333CA70, str_TXT_82038D28_B_, g_82E72FA0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2552, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B09F8_address);
 }
 PROMOTED_ENTRY(145, sub_8329B9E0, 0x8329B9E0) { ctx.r3.u64 = n_sub_8329B9E0(ctx, base); }
 
@@ -4226,17 +3791,13 @@ uint64_t n_sub_8329BA28(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73008 = int32_t(0x82E73008);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CB84 = int32_t(0x8333CB84);
+	constexpr int32_t n_sub_832B0A10_address = int32_t(0x832B0A10);
 	if (!UseLiftedCode(145, 0x8329BA28)) { __imp__sub_8329BA28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BA28);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333CB84, str_TXT_82038D54_B_, g_82E73008, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2576, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A10_address);
 }
 PROMOTED_ENTRY(145, sub_8329BA28, 0x8329BA28) { ctx.r3.u64 = n_sub_8329BA28(ctx, base); }
 
@@ -4245,17 +3806,13 @@ uint64_t n_sub_8329BA70(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73060 = int32_t(0x82E73060);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CC98 = int32_t(0x8333CC98);
+	constexpr int32_t n_sub_832B0A28_address = int32_t(0x832B0A28);
 	if (!UseLiftedCode(145, 0x8329BA70)) { __imp__sub_8329BA70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BA70);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333CC98, str_TXT_82038D78_B_, g_82E73060, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2600, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A28_address);
 }
 PROMOTED_ENTRY(145, sub_8329BA70, 0x8329BA70) { ctx.r3.u64 = n_sub_8329BA70(ctx, base); }
 
@@ -4264,17 +3821,13 @@ uint64_t n_sub_8329BAB8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E730B8 = int32_t(0x82E730B8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CDAC = int32_t(0x8333CDAC);
+	constexpr int32_t n_sub_832B0A40_address = int32_t(0x832B0A40);
 	if (!UseLiftedCode(145, 0x8329BAB8)) { __imp__sub_8329BAB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BAB8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333CDAC, str_TXT_82038DA0_B_, g_82E730B8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2624, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A40_address);
 }
 PROMOTED_ENTRY(145, sub_8329BAB8, 0x8329BAB8) { ctx.r3.u64 = n_sub_8329BAB8(ctx, base); }
 
@@ -4283,17 +3836,13 @@ uint64_t n_sub_8329BB00(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73618 = int32_t(0x82E73618);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CEC8 = int32_t(0x8333CEC8);
+	constexpr int32_t n_sub_832B0A58_address = int32_t(0x832B0A58);
 	if (!UseLiftedCode(145, 0x8329BB00)) { __imp__sub_8329BB00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BB00);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333CEC8, str_TXT_82038DD4_B_, g_82E73618, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2648, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A58_address);
 }
 PROMOTED_ENTRY(145, sub_8329BB00, 0x8329BB00) { ctx.r3.u64 = n_sub_8329BB00(ctx, base); }
 
@@ -4302,17 +3851,13 @@ uint64_t n_sub_8329BB48(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E737E0 = int32_t(0x82E737E0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333CFDC = int32_t(0x8333CFDC);
+	constexpr int32_t n_sub_832B0A70_address = int32_t(0x832B0A70);
 	if (!UseLiftedCode(145, 0x8329BB48)) { __imp__sub_8329BB48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BB48);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333CFDC, str_TXT_82038DF8_B_, g_82E737E0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2672, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A70_address);
 }
 PROMOTED_ENTRY(145, sub_8329BB48, 0x8329BB48) { ctx.r3.u64 = n_sub_8329BB48(ctx, base); }
 
@@ -4321,17 +3866,13 @@ uint64_t n_sub_8329BB90(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73898 = int32_t(0x82E73898);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D0F0 = int32_t(0x8333D0F0);
+	constexpr int32_t n_sub_832B0A88_address = int32_t(0x832B0A88);
 	if (!UseLiftedCode(145, 0x8329BB90)) { __imp__sub_8329BB90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BB90);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333D0F0, str_TXT_82038E1C_B_, g_82E73898, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2696, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0A88_address);
 }
 PROMOTED_ENTRY(145, sub_8329BB90, 0x8329BB90) { ctx.r3.u64 = n_sub_8329BB90(ctx, base); }
 
@@ -4340,17 +3881,13 @@ uint64_t n_sub_8329BBD8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73900 = int32_t(0x82E73900);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D204 = int32_t(0x8333D204);
+	constexpr int32_t n_sub_832B0AA0_address = int32_t(0x832B0AA0);
 	if (!UseLiftedCode(145, 0x8329BBD8)) { __imp__sub_8329BBD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BBD8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333D204, str_TXT_82038E48_B_, g_82E73900, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2720, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0AA0_address);
 }
 PROMOTED_ENTRY(145, sub_8329BBD8, 0x8329BBD8) { ctx.r3.u64 = n_sub_8329BBD8(ctx, base); }
 
@@ -4359,17 +3896,13 @@ uint64_t n_sub_8329BC20(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E739D8 = int32_t(0x82E739D8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D318 = int32_t(0x8333D318);
+	constexpr int32_t n_sub_832B0AB8_address = int32_t(0x832B0AB8);
 	if (!UseLiftedCode(145, 0x8329BC20)) { __imp__sub_8329BC20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BC20);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333D318, str_TXT_82038E70_B_, g_82E739D8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2744, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0AB8_address);
 }
 PROMOTED_ENTRY(145, sub_8329BC20, 0x8329BC20) { ctx.r3.u64 = n_sub_8329BC20(ctx, base); }
 
@@ -4378,17 +3911,13 @@ uint64_t n_sub_8329BC68(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73AA8 = int32_t(0x82E73AA8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D42C = int32_t(0x8333D42C);
+	constexpr int32_t n_sub_832B0AD0_address = int32_t(0x832B0AD0);
 	if (!UseLiftedCode(145, 0x8329BC68)) { __imp__sub_8329BC68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BC68);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333D42C, str_TXT_82038E9C_B_, g_82E73AA8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2768, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0AD0_address);
 }
 PROMOTED_ENTRY(145, sub_8329BC68, 0x8329BC68) { ctx.r3.u64 = n_sub_8329BC68(ctx, base); }
 
@@ -4397,17 +3926,13 @@ uint64_t n_sub_8329BCB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73B10 = int32_t(0x82E73B10);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D540 = int32_t(0x8333D540);
+	constexpr int32_t n_sub_832B0AE8_address = int32_t(0x832B0AE8);
 	if (!UseLiftedCode(145, 0x8329BCB0)) { __imp__sub_8329BCB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BCB0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333D540, str_TXT_82038EC8_B_, g_82E73B10, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2792, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0AE8_address);
 }
 PROMOTED_ENTRY(145, sub_8329BCB0, 0x8329BCB0) { ctx.r3.u64 = n_sub_8329BCB0(ctx, base); }
 
@@ -4416,17 +3941,13 @@ uint64_t n_sub_8329BCF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73B68 = int32_t(0x82E73B68);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D654 = int32_t(0x8333D654);
+	constexpr int32_t n_sub_832B0B00_address = int32_t(0x832B0B00);
 	if (!UseLiftedCode(145, 0x8329BCF8)) { __imp__sub_8329BCF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BCF8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333D654, str_TXT_82038EF8_B_, g_82E73B68, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2816, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0B00_address);
 }
 PROMOTED_ENTRY(145, sub_8329BCF8, 0x8329BCF8) { ctx.r3.u64 = n_sub_8329BCF8(ctx, base); }
 
@@ -4435,17 +3956,13 @@ uint64_t n_sub_8329BD40(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73BC0 = int32_t(0x82E73BC0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D768 = int32_t(0x8333D768);
+	constexpr int32_t n_sub_832B0B18_address = int32_t(0x832B0B18);
 	if (!UseLiftedCode(145, 0x8329BD40)) { __imp__sub_8329BD40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BD40);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E77618(ctx, base, g_8333D768, str_TXT_82038F24_B_, g_82E73BC0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2840, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0B18_address);
 }
 PROMOTED_ENTRY(145, sub_8329BD40, 0x8329BD40) { ctx.r3.u64 = n_sub_8329BD40(ctx, base); }
 
@@ -4454,27 +3971,23 @@ uint64_t n_sub_8329BD88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E73C80 = int32_t(0x82E73C80);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8333D87C = int32_t(0x8333D87C);
+	constexpr int32_t n_sub_832B0B30_address = int32_t(0x832B0B30);
 	if (!UseLiftedCode(145, 0x8329BD88)) { __imp__sub_8329BD88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BD88);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E78EB8(ctx, base, g_8333D87C, str_TXT_82038F48_B_, g_82E73C80, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 2864, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0B30_address);
 }
 PROMOTED_ENTRY(145, sub_8329BD88, 0x8329BD88) { ctx.r3.u64 = n_sub_8329BD88(ctx, base); }
 
 uint64_t n_sub_8329BEC0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B0C50_address = int32_t(0x832B0C50);
 	if (!UseLiftedCode(145, 0x8329BEC0)) { ctx.r8.u64 = arg1; __imp__sub_8329BEC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329BEC0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 3152, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B0C50_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_8329BEC0, 0x8329BEC0) { ctx.r3.u64 = n_sub_8329BEC0(ctx, base, ctx.r8.u64); }
 
@@ -4483,17 +3996,13 @@ uint64_t n_sub_8329C178(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E84D70 = int32_t(0x82E84D70);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_83342114 = int32_t(0x83342114);
+	constexpr int32_t n_sub_832B0DA8_address = int32_t(0x832B0DA8);
 	if (!UseLiftedCode(145, 0x8329C178)) { __imp__sub_8329C178(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C178);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E7FA98(ctx, base, g_83342114, str_TXT_82039710_B_, g_82E84D70, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 3496, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0DA8_address);
 }
 PROMOTED_ENTRY(145, sub_8329C178, 0x8329C178) { ctx.r3.u64 = n_sub_8329C178(ctx, base); }
 
@@ -4502,17 +4011,13 @@ uint64_t n_sub_8329C1C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E85050 = int32_t(0x82E85050);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_83342228 = int32_t(0x83342228);
+	constexpr int32_t n_sub_832B0DC0_address = int32_t(0x832B0DC0);
 	if (!UseLiftedCode(145, 0x8329C1C0)) { __imp__sub_8329C1C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C1C0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E7FA98(ctx, base, g_83342228, str_TXT_82039740_B_, g_82E85050, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 3520, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0DC0_address);
 }
 PROMOTED_ENTRY(145, sub_8329C1C0, 0x8329C1C0) { ctx.r3.u64 = n_sub_8329C1C0(ctx, base); }
 
@@ -4521,17 +4026,13 @@ uint64_t n_sub_8329C208(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E854E0 = int32_t(0x82E854E0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334233C = int32_t(0x8334233C);
+	constexpr int32_t n_sub_832B0DD8_address = int32_t(0x832B0DD8);
 	if (!UseLiftedCode(145, 0x8329C208)) { __imp__sub_8329C208(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C208);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E7FA98(ctx, base, g_8334233C, str_TXT_82039794_B_, g_82E854E0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 3544, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0DD8_address);
 }
 PROMOTED_ENTRY(145, sub_8329C208, 0x8329C208) { ctx.r3.u64 = n_sub_8329C208(ctx, base); }
 
@@ -4540,17 +4041,13 @@ uint64_t n_sub_8329C6D8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E92178 = int32_t(0x82E92178);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_83345DD4 = int32_t(0x83345DD4);
+	constexpr int32_t n_sub_832B0FA0_address = int32_t(0x832B0FA0);
 	if (!UseLiftedCode(145, 0x8329C6D8)) { __imp__sub_8329C6D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C6D8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E832E0(ctx, base, g_83345DD4, str_TXT_82039BD8_B_, g_82E92178, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 4000, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0FA0_address);
 }
 PROMOTED_ENTRY(145, sub_8329C6D8, 0x8329C6D8) { ctx.r3.u64 = n_sub_8329C6D8(ctx, base); }
 
@@ -4559,17 +4056,13 @@ uint64_t n_sub_8329C768(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E93978 = int32_t(0x82E93978);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_83346114 = int32_t(0x83346114);
+	constexpr int32_t n_sub_832B0FD0_address = int32_t(0x832B0FD0);
 	if (!UseLiftedCode(145, 0x8329C768)) { __imp__sub_8329C768(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C768);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E9AD10(ctx, base, g_83346114, str_TXT_82039CF8_B_, g_82E93978, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 4048, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0FD0_address);
 }
 PROMOTED_ENTRY(145, sub_8329C768, 0x8329C768) { ctx.r3.u64 = n_sub_8329C768(ctx, base); }
 
@@ -4578,27 +4071,23 @@ uint64_t n_sub_8329C7B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82E946B0 = int32_t(0x82E946B0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334622C = int32_t(0x8334622C);
+	constexpr int32_t n_sub_832B0FE8_address = int32_t(0x832B0FE8);
 	if (!UseLiftedCode(145, 0x8329C7B0)) { __imp__sub_8329C7B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329C7B0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82E9AD10(ctx, base, g_8334622C, str_TXT_82039D70_B_, g_82E946B0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 4072, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B0FE8_address);
 }
 PROMOTED_ENTRY(145, sub_8329C7B0, 0x8329C7B0) { ctx.r3.u64 = n_sub_8329C7B0(ctx, base); }
 
-uint64_t n_sub_8329CBE8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329CBE8(CpuState& ctx, uint8_t* base, uint64_t callbackData) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329CBE8)) { ctx.r8.u64 = arg1; __imp__sub_8329CBE8(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B11A8_address = int32_t(0x832B11A8);
+	if (!UseLiftedCode(145, 0x8329CBE8)) { ctx.r8.u64 = callbackData; __imp__sub_8329CBE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329CBE8);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 4520, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B11A8_address, callbackData);
 }
 PROMOTED_ENTRY(145, sub_8329CBE8, 0x8329CBE8) { ctx.r3.u64 = n_sub_8329CBE8(ctx, base, ctx.r8.u64); }
 
@@ -4607,17 +4096,13 @@ uint64_t n_sub_8329D1B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB74B8 = int32_t(0x82EB74B8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334C9F0 = int32_t(0x8334C9F0);
+	constexpr int32_t n_sub_832B14D8_address = int32_t(0x832B14D8);
 	if (!UseLiftedCode(145, 0x8329D1B0)) { __imp__sub_8329D1B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D1B0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBEF88(ctx, base, g_8334C9F0, str_TXT_8203ACF4_B_, g_82EB74B8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5336, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B14D8_address);
 }
 PROMOTED_ENTRY(145, sub_8329D1B0, 0x8329D1B0) { ctx.r3.u64 = n_sub_8329D1B0(ctx, base); }
 
@@ -4626,17 +4111,13 @@ uint64_t n_sub_8329D1F8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB77C0 = int32_t(0x82EB77C0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334CB04 = int32_t(0x8334CB04);
+	constexpr int32_t n_sub_832B14F0_address = int32_t(0x832B14F0);
 	if (!UseLiftedCode(145, 0x8329D1F8)) { __imp__sub_8329D1F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D1F8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF160(ctx, base, g_8334CB04, str_TXT_8203AD40_B_, g_82EB77C0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5360, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B14F0_address);
 }
 PROMOTED_ENTRY(145, sub_8329D1F8, 0x8329D1F8) { ctx.r3.u64 = n_sub_8329D1F8(ctx, base); }
 
@@ -4645,17 +4126,13 @@ uint64_t n_sub_8329D240(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB79C0 = int32_t(0x82EB79C0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334CC18 = int32_t(0x8334CC18);
+	constexpr int32_t n_sub_832B1508_address = int32_t(0x832B1508);
 	if (!UseLiftedCode(145, 0x8329D240)) { __imp__sub_8329D240(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D240);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF160(ctx, base, g_8334CC18, str_TXT_8203AD70_B_, g_82EB79C0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5384, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1508_address);
 }
 PROMOTED_ENTRY(145, sub_8329D240, 0x8329D240) { ctx.r3.u64 = n_sub_8329D240(ctx, base); }
 
@@ -4664,17 +4141,13 @@ uint64_t n_sub_8329D288(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB7EE0 = int32_t(0x82EB7EE0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334CD2C = int32_t(0x8334CD2C);
+	constexpr int32_t n_sub_832B1520_address = int32_t(0x832B1520);
 	if (!UseLiftedCode(145, 0x8329D288)) { __imp__sub_8329D288(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D288);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF338(ctx, base, g_8334CD2C, str_TXT_8203ADA8_B_, g_82EB7EE0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5408, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1520_address);
 }
 PROMOTED_ENTRY(145, sub_8329D288, 0x8329D288) { ctx.r3.u64 = n_sub_8329D288(ctx, base); }
 
@@ -4683,17 +4156,13 @@ uint64_t n_sub_8329D2D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB8460 = int32_t(0x82EB8460);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334CE40 = int32_t(0x8334CE40);
+	constexpr int32_t n_sub_832B1538_address = int32_t(0x832B1538);
 	if (!UseLiftedCode(145, 0x8329D2D0)) { __imp__sub_8329D2D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D2D0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF338(ctx, base, g_8334CE40, str_TXT_8203AE54_B_, g_82EB8460, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5432, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1538_address);
 }
 PROMOTED_ENTRY(145, sub_8329D2D0, 0x8329D2D0) { ctx.r3.u64 = n_sub_8329D2D0(ctx, base); }
 
@@ -4702,17 +4171,13 @@ uint64_t n_sub_8329D318(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB9128 = int32_t(0x82EB9128);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334CF54 = int32_t(0x8334CF54);
+	constexpr int32_t n_sub_832B1550_address = int32_t(0x832B1550);
 	if (!UseLiftedCode(145, 0x8329D318)) { __imp__sub_8329D318(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D318);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF510(ctx, base, g_8334CF54, str_TXT_8203AEB0_B_, g_82EB9128, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5456, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1550_address);
 }
 PROMOTED_ENTRY(145, sub_8329D318, 0x8329D318) { ctx.r3.u64 = n_sub_8329D318(ctx, base); }
 
@@ -4721,17 +4186,13 @@ uint64_t n_sub_8329D360(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EB95F8 = int32_t(0x82EB95F8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D06C = int32_t(0x8334D06C);
+	constexpr int32_t n_sub_832B1568_address = int32_t(0x832B1568);
 	if (!UseLiftedCode(145, 0x8329D360)) { __imp__sub_8329D360(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D360);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF510(ctx, base, g_8334D06C, str_TXT_8203AF0C_B_, g_82EB95F8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5480, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1568_address);
 }
 PROMOTED_ENTRY(145, sub_8329D360, 0x8329D360) { ctx.r3.u64 = n_sub_8329D360(ctx, base); }
 
@@ -4740,17 +4201,13 @@ uint64_t n_sub_8329D3E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBA338 = int32_t(0x82EBA338);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D180 = int32_t(0x8334D180);
+	constexpr int32_t n_sub_832B1580_address = int32_t(0x832B1580);
 	if (!UseLiftedCode(145, 0x8329D3E0)) { __imp__sub_8329D3E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D3E0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF510(ctx, base, g_8334D180, str_TXT_8203AF44_B_, g_82EBA338, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5504, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1580_address);
 }
 PROMOTED_ENTRY(145, sub_8329D3E0, 0x8329D3E0) { ctx.r3.u64 = n_sub_8329D3E0(ctx, base); }
 
@@ -4759,17 +4216,13 @@ uint64_t n_sub_8329D428(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBA3C8 = int32_t(0x82EBA3C8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D2A4 = int32_t(0x8334D2A4);
+	constexpr int32_t n_sub_832B1598_address = int32_t(0x832B1598);
 	if (!UseLiftedCode(145, 0x8329D428)) { __imp__sub_8329D428(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D428);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF6E8(ctx, base, g_8334D2A4, str_TXT_8203AF88_B_, g_82EBA3C8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5528, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1598_address);
 }
 PROMOTED_ENTRY(145, sub_8329D428, 0x8329D428) { ctx.r3.u64 = n_sub_8329D428(ctx, base); }
 
@@ -4778,17 +4231,13 @@ uint64_t n_sub_8329D470(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBA530 = int32_t(0x82EBA530);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D3B8 = int32_t(0x8334D3B8);
+	constexpr int32_t n_sub_832B15B0_address = int32_t(0x832B15B0);
 	if (!UseLiftedCode(145, 0x8329D470)) { __imp__sub_8329D470(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D470);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF6E8(ctx, base, g_8334D3B8, str_TXT_8203AFA8_B_, g_82EBA530, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5552, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B15B0_address);
 }
 PROMOTED_ENTRY(145, sub_8329D470, 0x8329D470) { ctx.r3.u64 = n_sub_8329D470(ctx, base); }
 
@@ -4797,17 +4246,13 @@ uint64_t n_sub_8329D4B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBAF40 = int32_t(0x82EBAF40);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D4CC = int32_t(0x8334D4CC);
+	constexpr int32_t n_sub_832B15C8_address = int32_t(0x832B15C8);
 	if (!UseLiftedCode(145, 0x8329D4B8)) { __imp__sub_8329D4B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D4B8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF8C0(ctx, base, g_8334D4CC, str_TXT_8203AFBC_B_, g_82EBAF40, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5576, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B15C8_address);
 }
 PROMOTED_ENTRY(145, sub_8329D4B8, 0x8329D4B8) { ctx.r3.u64 = n_sub_8329D4B8(ctx, base); }
 
@@ -4816,17 +4261,13 @@ uint64_t n_sub_8329D500(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBB218 = int32_t(0x82EBB218);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D5E0 = int32_t(0x8334D5E0);
+	constexpr int32_t n_sub_832B15E0_address = int32_t(0x832B15E0);
 	if (!UseLiftedCode(145, 0x8329D500)) { __imp__sub_8329D500(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D500);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF8C0(ctx, base, g_8334D5E0, str_TXT_8203AFFC_B_, g_82EBB218, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5600, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B15E0_address);
 }
 PROMOTED_ENTRY(145, sub_8329D500, 0x8329D500) { ctx.r3.u64 = n_sub_8329D500(ctx, base); }
 
@@ -4835,17 +4276,13 @@ uint64_t n_sub_8329D548(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBB2F8 = int32_t(0x82EBB2F8);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D6F4 = int32_t(0x8334D6F4);
+	constexpr int32_t n_sub_832B15F8_address = int32_t(0x832B15F8);
 	if (!UseLiftedCode(145, 0x8329D548)) { __imp__sub_8329D548(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D548);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBFA98(ctx, base, g_8334D6F4, str_TXT_8203B04C_B_, g_82EBB2F8, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5624, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B15F8_address);
 }
 PROMOTED_ENTRY(145, sub_8329D548, 0x8329D548) { ctx.r3.u64 = n_sub_8329D548(ctx, base); }
 
@@ -4854,17 +4291,13 @@ uint64_t n_sub_8329D590(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBB720 = int32_t(0x82EBB720);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D808 = int32_t(0x8334D808);
+	constexpr int32_t n_sub_832B1610_address = int32_t(0x832B1610);
 	if (!UseLiftedCode(145, 0x8329D590)) { __imp__sub_8329D590(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D590);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBFC70(ctx, base, g_8334D808, str_TXT_8203B088_B_, g_82EBB720, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5648, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1610_address);
 }
 PROMOTED_ENTRY(145, sub_8329D590, 0x8329D590) { ctx.r3.u64 = n_sub_8329D590(ctx, base); }
 
@@ -4873,17 +4306,13 @@ uint64_t n_sub_8329D5D8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBBB40 = int32_t(0x82EBBB40);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334D91C = int32_t(0x8334D91C);
+	constexpr int32_t n_sub_832B1628_address = int32_t(0x832B1628);
 	if (!UseLiftedCode(145, 0x8329D5D8)) { __imp__sub_8329D5D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D5D8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBFE48(ctx, base, g_8334D91C, str_TXT_8203B0A8_B_, g_82EBBB40, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5672, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1628_address);
 }
 PROMOTED_ENTRY(145, sub_8329D5D8, 0x8329D5D8) { ctx.r3.u64 = n_sub_8329D5D8(ctx, base); }
 
@@ -4892,17 +4321,13 @@ uint64_t n_sub_8329D670(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBC008 = int32_t(0x82EBC008);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334DB44 = int32_t(0x8334DB44);
+	constexpr int32_t n_sub_832B1658_address = int32_t(0x832B1658);
 	if (!UseLiftedCode(145, 0x8329D670)) { __imp__sub_8329D670(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D670);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EC0020(ctx, base, g_8334DB44, str_TXT_8203B108_B_, g_82EBC008, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5720, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1658_address);
 }
 PROMOTED_ENTRY(145, sub_8329D670, 0x8329D670) { ctx.r3.u64 = n_sub_8329D670(ctx, base); }
 
@@ -4911,17 +4336,13 @@ uint64_t n_sub_8329D6B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBC278 = int32_t(0x82EBC278);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334DC58 = int32_t(0x8334DC58);
+	constexpr int32_t n_sub_832B1670_address = int32_t(0x832B1670);
 	if (!UseLiftedCode(145, 0x8329D6B8)) { __imp__sub_8329D6B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D6B8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EC0020(ctx, base, g_8334DC58, str_TXT_8203B144_B_, g_82EBC278, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5744, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1670_address);
 }
 PROMOTED_ENTRY(145, sub_8329D6B8, 0x8329D6B8) { ctx.r3.u64 = n_sub_8329D6B8(ctx, base); }
 
@@ -4930,17 +4351,13 @@ uint64_t n_sub_8329D700(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBC930 = int32_t(0x82EBC930);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334DD6C = int32_t(0x8334DD6C);
+	constexpr int32_t n_sub_832B1688_address = int32_t(0x832B1688);
 	if (!UseLiftedCode(145, 0x8329D700)) { __imp__sub_8329D700(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D700);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EC01F8(ctx, base, g_8334DD6C, str_TXT_8203B188_B_, g_82EBC930, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5768, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1688_address);
 }
 PROMOTED_ENTRY(145, sub_8329D700, 0x8329D700) { ctx.r3.u64 = n_sub_8329D700(ctx, base); }
 
@@ -4949,17 +4366,13 @@ uint64_t n_sub_8329D748(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82EBCA30 = int32_t(0x82EBCA30);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_8334DE80 = int32_t(0x8334DE80);
+	constexpr int32_t n_sub_832B16A0_address = int32_t(0x832B16A0);
 	if (!UseLiftedCode(145, 0x8329D748)) { __imp__sub_8329D748(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329D748);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EC01F8(ctx, base, g_8334DE80, str_TXT_8203B1AC_B_, g_82EBCA30, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 5792, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B16A0_address);
 }
 PROMOTED_ENTRY(145, sub_8329D748, 0x8329D748) { ctx.r3.u64 = n_sub_8329D748(ctx, base); }
 
@@ -4968,17 +4381,13 @@ uint64_t n_sub_8329DC38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82ED49F0 = int32_t(0x82ED49F0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_833587E4 = int32_t(0x833587E4);
+	constexpr int32_t n_sub_832B1820_address = int32_t(0x832B1820);
 	if (!UseLiftedCode(145, 0x8329DC38)) { __imp__sub_8329DC38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DC38);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF338(ctx, base, g_833587E4, str_TXT_8203BC34_B_, g_82ED49F0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6176, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1820_address);
 }
 PROMOTED_ENTRY(145, sub_8329DC38, 0x8329DC38) { ctx.r3.u64 = n_sub_8329DC38(ctx, base); }
 
@@ -4987,67 +4396,63 @@ uint64_t n_sub_8329DC80(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_82ED5DE0 = int32_t(0x82ED5DE0);
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
 	constexpr int32_t g_833588F8 = int32_t(0x833588F8);
+	constexpr int32_t n_sub_832B1838_address = int32_t(0x832B1838);
 	if (!UseLiftedCode(145, 0x8329DC80)) { __imp__sub_8329DC80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DC80);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82EBF338(ctx, base, g_833588F8, str_TXT_8203BCF8_B_, g_82ED5DE0, 0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6200, ctx.r8.u64);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return RegisterAtExit(ctx, base, n_sub_832B1838_address);
 }
 PROMOTED_ENTRY(145, sub_8329DC80, 0x8329DC80) { ctx.r3.u64 = n_sub_8329DC80(ctx, base); }
 
-uint64_t n_sub_8329DE68(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329DE68(CpuState& ctx, uint8_t* base, uint64_t callbackData) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329DE68)) { ctx.r8.u64 = arg1; __imp__sub_8329DE68(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B18C8_address = int32_t(0x832B18C8);
+	if (!UseLiftedCode(145, 0x8329DE68)) { ctx.r8.u64 = callbackData; __imp__sub_8329DE68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DE68);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6344, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B18C8_address, callbackData);
 }
 PROMOTED_ENTRY(145, sub_8329DE68, 0x8329DE68) { ctx.r3.u64 = n_sub_8329DE68(ctx, base, ctx.r8.u64); }
 
-uint64_t n_sub_8329DE78(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329DE78(CpuState& ctx, uint8_t* base, uint64_t callbackData) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329DE78)) { ctx.r8.u64 = arg1; __imp__sub_8329DE78(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B1938_address = int32_t(0x832B1938);
+	if (!UseLiftedCode(145, 0x8329DE78)) { ctx.r8.u64 = callbackData; __imp__sub_8329DE78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DE78);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6456, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B1938_address, callbackData);
 }
 PROMOTED_ENTRY(145, sub_8329DE78, 0x8329DE78) { ctx.r3.u64 = n_sub_8329DE78(ctx, base, ctx.r8.u64); }
 
-uint64_t n_sub_8329DE88(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329DE88(CpuState& ctx, uint8_t* base, uint64_t callbackData) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329DE88)) { ctx.r8.u64 = arg1; __imp__sub_8329DE88(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B1950_address = int32_t(0x832B1950);
+	if (!UseLiftedCode(145, 0x8329DE88)) { ctx.r8.u64 = callbackData; __imp__sub_8329DE88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DE88);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6480, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B1950_address, callbackData);
 }
 PROMOTED_ENTRY(145, sub_8329DE88, 0x8329DE88) { ctx.r3.u64 = n_sub_8329DE88(ctx, base, ctx.r8.u64); }
 
-uint64_t n_sub_8329DE98(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329DE98(CpuState& ctx, uint8_t* base, uint64_t callbackData) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329DE98)) { ctx.r8.u64 = arg1; __imp__sub_8329DE98(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B19C0_address = int32_t(0x832B19C0);
+	if (!UseLiftedCode(145, 0x8329DE98)) { ctx.r8.u64 = callbackData; __imp__sub_8329DE98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DE98);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6592, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B19C0_address, callbackData);
 }
 PROMOTED_ENTRY(145, sub_8329DE98, 0x8329DE98) { ctx.r3.u64 = n_sub_8329DE98(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_8329DEA8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B1A18_address = int32_t(0x832B1A18);
 	if (!UseLiftedCode(145, 0x8329DEA8)) { ctx.r8.u64 = arg1; __imp__sub_8329DEA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DEA8);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6680, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B1A18_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_8329DEA8, 0x8329DEA8) { ctx.r3.u64 = n_sub_8329DEA8(ctx, base, ctx.r8.u64); }
 
@@ -5062,21 +4467,21 @@ PROMOTED_ENTRY(145, sub_8329DF30, 0x8329DF30) { ctx.r3.u64 = n_sub_8329DF30(ctx,
 
 uint64_t n_sub_8329DF40(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B1AD8_address = int32_t(0x832B1AD8);
 	if (!UseLiftedCode(145, 0x8329DF40)) { ctx.r8.u64 = arg1; __imp__sub_8329DF40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DF40);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 6872, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B1AD8_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_8329DF40, 0x8329DF40) { ctx.r3.u64 = n_sub_8329DF40(ctx, base, ctx.r8.u64); }
 
 uint64_t n_sub_8329DFA8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B1B98_address = int32_t(0x832B1B98);
 	if (!UseLiftedCode(145, 0x8329DFA8)) { ctx.r8.u64 = arg1; __imp__sub_8329DFA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329DFA8);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 7064, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B1B98_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_8329DFA8, 0x8329DFA8) { ctx.r3.u64 = n_sub_8329DFA8(ctx, base, ctx.r8.u64); }
 
@@ -5640,66 +5045,64 @@ PROMOTED_ENTRY(145, sub_8329F918, 0x8329F918) { ctx.r3.u64 = n_sub_8329F918(ctx,
 
 uint64_t n_sub_8329FC80(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
+	constexpr int32_t n_sub_832B20F8_address = int32_t(0x832B20F8);
 	if (!UseLiftedCode(145, 0x8329FC80)) { ctx.r8.u64 = arg1; __imp__sub_8329FC80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FC80);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 8440, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B20F8_address, arg1);
 }
 PROMOTED_ENTRY(145, sub_8329FC80, 0x8329FC80) { ctx.r3.u64 = n_sub_8329FC80(ctx, base, ctx.r8.u64); }
 
-uint64_t n_sub_8329FCE0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8329FCE0(CpuState& ctx, uint8_t* base, uint64_t stringValue) {
 	constexpr int32_t g_832B0000 = int32_t(0x832B0000);
-	if (!UseLiftedCode(145, 0x8329FCE0)) { ctx.r8.u64 = arg1; __imp__sub_8329FCE0(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t n_sub_832B21E0_address = int32_t(0x832B21E0);
+	if (!UseLiftedCode(145, 0x8329FCE0)) { ctx.r8.u64 = stringValue; __imp__sub_8329FCE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FCE0);
 	ctx.r11.s64 = g_832B0000;
-	uint64_t result = n_sub_82CA3700(ctx, base, (int64_t)g_832B0000 + 8672, arg1);
-	return result;
+	return n_sub_82CA3700(ctx, base, n_sub_832B21E0_address, stringValue);
 }
 PROMOTED_ENTRY(145, sub_8329FCE0, 0x8329FCE0) { ctx.r3.u64 = n_sub_8329FCE0(ctx, base, ctx.r8.u64); }
 
-uint64_t n_sub_8329FD28(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970D4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970D4_G_ = int32_t(0x834970D4);
 	if (!UseLiftedCode(145, 0x8329FD28)) { __imp__sub_8329FD28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD28);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970D4_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD28, 0x8329FD28) { ctx.r3.u64 = n_sub_8329FD28(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD28, 0x8329FD28) { ctx.r3.u64 = Destroy_TXT_834970D4_G_(ctx, base); }
 
 uint64_t n_sub_8329FD38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834970D8 = int32_t(0x834970D8);
 	if (!UseLiftedCode(145, 0x8329FD38)) { __imp__sub_8329FD38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD38);
 	uint64_t object = g_834970D8;
-	ctx.r3.u64 = object;
-	uint64_t result = n_sub_822F0808(ctx, base);
-	return result;
+	return n_sub_822F0808(ctx, base);
 }
 PROMOTED_ENTRY(145, sub_8329FD38, 0x8329FD38) { ctx.r3.u64 = n_sub_8329FD38(ctx, base); }
 
-uint64_t n_sub_8329FD48(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970E4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970E4_G_ = int32_t(0x834970E4);
 	if (!UseLiftedCode(145, 0x8329FD48)) { __imp__sub_8329FD48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970E4_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD48, 0x8329FD48) { ctx.r3.u64 = n_sub_8329FD48(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD48, 0x8329FD48) { ctx.r3.u64 = Destroy_TXT_834970E4_G_(ctx, base); }
 
-uint64_t n_sub_8329FD58(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970E8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970E8_G_ = int32_t(0x834970E8);
 	if (!UseLiftedCode(145, 0x8329FD58)) { __imp__sub_8329FD58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970E8_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD58, 0x8329FD58) { ctx.r3.u64 = n_sub_8329FD58(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD58, 0x8329FD58) { ctx.r3.u64 = Destroy_TXT_834970E8_G_(ctx, base); }
 
-uint64_t n_sub_8329FD68(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970EC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970EC_G_ = int32_t(0x834970EC);
 	if (!UseLiftedCode(145, 0x8329FD68)) { __imp__sub_8329FD68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD68);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970EC_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD68, 0x8329FD68) { ctx.r3.u64 = n_sub_8329FD68(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD68, 0x8329FD68) { ctx.r3.u64 = Destroy_TXT_834970EC_G_(ctx, base); }
 
 uint64_t n_sub_8329FD78(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834970F0 = int32_t(0x834970F0);
@@ -5709,109 +5112,109 @@ uint64_t n_sub_8329FD78(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_8329FD78, 0x8329FD78) { ctx.r3.u64 = n_sub_8329FD78(ctx, base); }
 
-uint64_t n_sub_8329FD88(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970F4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970F4_G_ = int32_t(0x834970F4);
 	if (!UseLiftedCode(145, 0x8329FD88)) { __imp__sub_8329FD88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD88);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970F4_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD88, 0x8329FD88) { ctx.r3.u64 = n_sub_8329FD88(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD88, 0x8329FD88) { ctx.r3.u64 = Destroy_TXT_834970F4_G_(ctx, base); }
 
-uint64_t n_sub_8329FD98(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970F8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970F8_G_ = int32_t(0x834970F8);
 	if (!UseLiftedCode(145, 0x8329FD98)) { __imp__sub_8329FD98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FD98);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970F8_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FD98, 0x8329FD98) { ctx.r3.u64 = n_sub_8329FD98(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FD98, 0x8329FD98) { ctx.r3.u64 = Destroy_TXT_834970F8_G_(ctx, base); }
 
-uint64_t n_sub_8329FDA8(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_834970FC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834970FC_G_ = int32_t(0x834970FC);
 	if (!UseLiftedCode(145, 0x8329FDA8)) { __imp__sub_8329FDA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FDA8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834970FC_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FDA8, 0x8329FDA8) { ctx.r3.u64 = n_sub_8329FDA8(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FDA8, 0x8329FDA8) { ctx.r3.u64 = Destroy_TXT_834970FC_G_(ctx, base); }
 
-uint64_t n_sub_8329FE48(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497118_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497118_G_ = int32_t(0x83497118);
 	if (!UseLiftedCode(145, 0x8329FE48)) { __imp__sub_8329FE48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497118_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE48, 0x8329FE48) { ctx.r3.u64 = n_sub_8329FE48(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE48, 0x8329FE48) { ctx.r3.u64 = Destroy_TXT_83497118_G_(ctx, base); }
 
-uint64_t n_sub_8329FE58(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497170_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497170_G_ = int32_t(0x83497170);
 	if (!UseLiftedCode(145, 0x8329FE58)) { __imp__sub_8329FE58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497170_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE58, 0x8329FE58) { ctx.r3.u64 = n_sub_8329FE58(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE58, 0x8329FE58) { ctx.r3.u64 = Destroy_TXT_83497170_G_(ctx, base); }
 
-uint64_t n_sub_8329FE68(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497174_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497174_G_ = int32_t(0x83497174);
 	if (!UseLiftedCode(145, 0x8329FE68)) { __imp__sub_8329FE68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE68);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497174_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE68, 0x8329FE68) { ctx.r3.u64 = n_sub_8329FE68(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE68, 0x8329FE68) { ctx.r3.u64 = Destroy_TXT_83497174_G_(ctx, base); }
 
-uint64_t n_sub_8329FE78(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497178_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497178_G_ = int32_t(0x83497178);
 	if (!UseLiftedCode(145, 0x8329FE78)) { __imp__sub_8329FE78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE78);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497178_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE78, 0x8329FE78) { ctx.r3.u64 = n_sub_8329FE78(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE78, 0x8329FE78) { ctx.r3.u64 = Destroy_TXT_83497178_G_(ctx, base); }
 
-uint64_t n_sub_8329FE88(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_8349717C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349717C_G_ = int32_t(0x8349717C);
 	if (!UseLiftedCode(145, 0x8329FE88)) { __imp__sub_8329FE88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE88);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_8349717C_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE88, 0x8329FE88) { ctx.r3.u64 = n_sub_8329FE88(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE88, 0x8329FE88) { ctx.r3.u64 = Destroy_TXT_8349717C_G_(ctx, base); }
 
-uint64_t n_sub_8329FE98(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497180_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497180_G_ = int32_t(0x83497180);
 	if (!UseLiftedCode(145, 0x8329FE98)) { __imp__sub_8329FE98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FE98);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497180_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FE98, 0x8329FE98) { ctx.r3.u64 = n_sub_8329FE98(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FE98, 0x8329FE98) { ctx.r3.u64 = Destroy_TXT_83497180_G_(ctx, base); }
 
-uint64_t n_sub_8329FEA8(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497188_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497188_G_ = int32_t(0x83497188);
 	if (!UseLiftedCode(145, 0x8329FEA8)) { __imp__sub_8329FEA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FEA8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497188_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FEA8, 0x8329FEA8) { ctx.r3.u64 = n_sub_8329FEA8(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FEA8, 0x8329FEA8) { ctx.r3.u64 = Destroy_TXT_83497188_G_(ctx, base); }
 
-uint64_t n_sub_8329FEB8(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_8349718C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349718C_G_ = int32_t(0x8349718C);
 	if (!UseLiftedCode(145, 0x8329FEB8)) { __imp__sub_8329FEB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FEB8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_8349718C_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FEB8, 0x8329FEB8) { ctx.r3.u64 = n_sub_8329FEB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FEB8, 0x8329FEB8) { ctx.r3.u64 = Destroy_TXT_8349718C_G_(ctx, base); }
 
-uint64_t n_sub_8329FEC8(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497190_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497190_G_ = int32_t(0x83497190);
 	if (!UseLiftedCode(145, 0x8329FEC8)) { __imp__sub_8329FEC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FEC8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497190_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FEC8, 0x8329FEC8) { ctx.r3.u64 = n_sub_8329FEC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FEC8, 0x8329FEC8) { ctx.r3.u64 = Destroy_TXT_83497190_G_(ctx, base); }
 
-uint64_t n_sub_8329FED8(CpuState& ctx, uint8_t* base) {
+uint64_t Destroy_TXT_83497194_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497194_G_ = int32_t(0x83497194);
 	if (!UseLiftedCode(145, 0x8329FED8)) { __imp__sub_8329FED8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8329FED8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497194_G_);
 }
-PROMOTED_ENTRY(145, sub_8329FED8, 0x8329FED8) { ctx.r3.u64 = n_sub_8329FED8(ctx, base); }
+PROMOTED_ENTRY(145, sub_8329FED8, 0x8329FED8) { ctx.r3.u64 = Destroy_TXT_83497194_G_(ctx, base); }
 
 uint64_t n_sub_8329FEE8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834971D0 = int32_t(0x834971D0);

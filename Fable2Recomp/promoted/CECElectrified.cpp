@@ -9,16 +9,13 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECElectrified_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameResult) {
 	if (!UseLiftedCode(67, 0x829759C0)) { ctx.r3.u64 = classNameResult; __imp__sub_829759C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829759C0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameResult, int32_t(0x820C8E64), -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameResult;
 }
 PROMOTED_ENTRY(67, sub_829759C0, 0x829759C0) { ctx.r3.u64 = CECElectrified_GetClassName(ctx, base, ctx.r3.u64); }
@@ -57,42 +54,34 @@ uint64_t n_sub_82975C20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr, 
 	};
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED3F8_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 40);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E013C_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 48);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED404_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 52);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED414_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 60);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820CFD90_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820CFDA0_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E01B0_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeId(ctx, base, stream, electrifiedAddr + 32);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E01C4_B_, -1);
-	ctx.r4.u64 = nameText();
 	IStream_SerializeU32(ctx, base, stream, electrifiedAddr + 36);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
@@ -132,7 +121,6 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 
 	ctx.r1.u64 = stack;
 	ctx.r7.u64 = newCount;  // state the callee may pass on
-	ctx.r8.u64 = counterBlock;
 	uint32_t healthState = Entity_GetHealthComponent(ctx, base, electrified->m_4);
 	uint64_t r8Value = ctx.r8.u64;
 	if ((int32_t)healthState == 11) {
@@ -144,7 +132,6 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 		uint32_t playersSlot = LOAD32(LOAD32(LOAD32(globalObject + 12) + 88) + 4);
 		uint32_t players = LOAD32(playersSlot);
 		ctx.r5.u64 = globalObject;  // state the callee may pass on
-		ctx.r9.u64 = playersSlot;
 		uint32_t isPlayer = Players_IsPlayer(ctx, base, players, entity);
 		r8Value = isPlayer & 0xFF;
 		if ((uint32_t)r8Value != 0) {
@@ -231,7 +218,6 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 				uint32_t playersSlot = LOAD32(playersOwner + 4);
 				uint32_t players = LOAD32(playersSlot);
 				ctx.r8.u64 = playersSlot;  // state the callee may pass on
-				ctx.r9.u64 = playersOwner;
 				ctx.xer.ca = flags.ca;
 				uint64_t originEntity = n_sub_82264448(ctx, base, players, originUidAddr);
 
@@ -241,13 +227,11 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 				STORE32(stack + 84, 0);
 				STORE32(stack + 80, (uint32_t)handleVtable);
 				ctx.r6.u64 = handleVtable;  // state the callee may pass on
-				ctx.r7.s64 = g_820F0000;
 				ctx.cr0 = compare0;
 				EntityHandle_SetTarget(ctx, base, tempHandle, originEntity);
 				EntityHandle_Assign(ctx, base, electrifiedAddr + 104, tempHandle);
 				STORE32(stack + 80, (uint32_t)handleVtable);
 				ctx.r4.u64 = handleVtable;  // state the callee may pass on
-				ctx.r5.s64 = g_820F0000;
 				EntityHandle_Release(ctx, base, tempHandle);
 				r4Value = ctx.r4.u64;
 				r6Value = ctx.r6.u64;
@@ -258,11 +242,7 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 				flags.ca = ctx.xer.ca;
 			}
 			// state the callee may pass on
-			ctx.r4.u64 = r4Value;
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
 			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = r9Value;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
 			n_sub_82977DB8(ctx, base, electrifiedAddr);
@@ -428,13 +408,6 @@ uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 			uint32_t field24 = electrified->m_24;
 			uint32_t field20 = electrified->m_20;
 			// state the callee may pass on
-			ctx.r10.u64 = uint32_t(g_83320000);
-			ctx.f1.f64 = elapsed;
-			ctx.f9.f64 = newTimer;
-			ctx.f10.f64 = timerStep;
-			ctx.f11.f64 = timerPeriod;
-			ctx.f12.f64 = scaledElapsed;
-			ctx.f13.f64 = TXT_820E013C_L_;
 			uint64_t originEntity = EntityHandle_Get_825575C8(ctx, base, originHandleAddr);
 			ctx.fpscr.disableFlushMode();
 			STORE8(stack + 87, uint8_t(1));
@@ -462,7 +435,6 @@ uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 PROMOTED_ENTRY(68, sub_82976A20, 0x82976A20) { ctx.r3.u64 = n_sub_82976A20(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(68, 0x82976DD8)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82976DD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82976DD8);
@@ -496,7 +468,6 @@ uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, uint32_t(g_820F1664));
 	ctx.r9.s64 = g_820F1664;  // state the callee may pass on
-	ctx.r10.u64 = 0;
 	EntityHandle_Release(ctx, base, emptyHandle);
 	EntityHandle_Assign(ctx, base, handleAddr, emptyHandle);
 	uint32_t r10Low = ctx.r10.u32;
@@ -504,9 +475,6 @@ uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r7.s64 = g_820F1664;
-	ctx.r8.s64 = g_820F0000;
-	ctx.r10.u64 = r10Low;
 	uint64_t result = EntityHandle_Release(ctx, base, emptyHandle);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -681,8 +649,6 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = vectorAddr;
-		ctx.r9.u64 = 80;
 		double delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
 		ctx.fpscr.disableFlushMode();
 
@@ -695,11 +661,6 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(lane0Loaded), V8(vpermMask)));
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
-		ctx.r4.u64 = vectorAddr;
-		ctx.r5.u64 = kSpliceLane0;
-		ctx.r6.u64 = scalarAddr;
-		ctx.r7.u64 = uint32_t(g_820A0000);
-		ctx.f13.f64 = lane0Value;
 		delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
 		ctx.fpscr.disableFlushMode();
 
@@ -713,7 +674,6 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(lane1Loaded), V8(vpermMask)));
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
-		ctx.r9.u64 = vectorAddr;
 		delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
 
 		// lane 2, then hand the updated vector to the virtual method at vtable +100
@@ -786,26 +746,19 @@ uint32_t n_sub_82977DB8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	uint32_t container = LOAD32(LOAD32(LOAD32(LOAD32(manager + 12) + 88) + 4) + 60);
 
 	// state the callee may pass on
-	ctx.r7.u64 = counterAddr;
-	ctx.r9.u64 = contextObject;
-	ctx.f1.f64 = floatConstant;
 	uint64_t newObject = n_sub_824C8F70(ctx, base, container, counterValue, owner, 2, 0);
 
 	// temporary EntityHandle on the stack: {vtable, null}
 	const int64_t entityHandleVtable = (int64_t)g_820F0000 + 5732;
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
 	STORE32(stack + 84, 0);
-	ctx.r7.u64 = 0;
 	ctx.r8.u64 = entityHandleVtable;
-	ctx.r9.s64 = g_820F0000;
 	EntityHandle_SetTarget(ctx, base, uint64_t(stack + 80), newObject);
 
 	EntityHandle_Assign(ctx, base, electrifiedAddr + 136, uint64_t(stack + 80));
 
 	// destroy the temporary: restore its vtable, then release it
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
-	ctx.r5.u64 = entityHandleVtable;
-	ctx.r6.s64 = g_820F0000;
 	uint32_t released = EntityHandle_Release(ctx, base, uint64_t(stack + 80));
 
 	stack = PopStackFrame(stack, 112);
@@ -817,7 +770,6 @@ PROMOTED_ENTRY(68, sub_82977DB8, 0x82977DB8) { ctx.r3.u64 = n_sub_82977DB8(ctx, 
 // Assigns a temporary {vtable, null} EntityHandle to the handle at electrified+0x88. Before that, if the handle
 // has a reference (m_8C) whose target is null the handle is released, otherwise the target gets its byte at +0xD4 set.
 uint32_t n_sub_82977E68(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(68, 0x82977E68)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977E68(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82977E68);
@@ -843,16 +795,12 @@ uint32_t n_sub_82977E68(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = entityHandleVtable;
-	ctx.r10.u64 = 0;
 	EntityHandle_Release(ctx, base, uint64_t(stack + 80));
 
 	EntityHandle_Assign(ctx, base, handleAddr, uint64_t(stack + 80));
 
 	// destroy the temporary: restore its vtable, then release it
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
-	ctx.r7.u64 = entityHandleVtable;
-	ctx.r8.s64 = g_820F0000;
 	uint32_t released = EntityHandle_Release(ctx, base, uint64_t(stack + 80));
 
 	stack = PopStackFrame(stack, 112);
@@ -982,11 +930,11 @@ uint32_t n_sub_829781D0(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 	if (LOAD8(electrifiedAddr + 0x12) != 0) {
 		owner = electrified->m_4; // read again, as the original does
 		ctx.fpscr.disableFlushMode();
-		double floatConstant = double(LOAD_F32(0x820994C0u));
-		electrified->m_38 = float(floatConstant);
+		double temporalExperienceAmount = double(LOAD_F32(0x820994C0u));
+		electrified->m_38 = float(temporalExperienceAmount);
 		ctx.r1.u64 = stack;
 		writeRegisters();
-		result = n_sub_827CA600(ctx, base, owner, floatConstant);
+		result = n_sub_827CA600(ctx, base, owner, temporalExperienceAmount);
 		readRegisters();
 	}
 

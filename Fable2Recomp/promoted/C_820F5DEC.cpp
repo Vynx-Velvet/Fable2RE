@@ -9,11 +9,11 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82A446B8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
 	if (!UseLiftedCode(74, 0x82A446B8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82A446B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A446B8);
-	uint64_t result = n_sub_82A447D8(ctx, base, arg2, arg1);
-	return result;
+	return n_sub_82A447D8(ctx, base, arg2, arg1);
 }
 PROMOTED_ENTRY(74, sub_82A446B8, 0x82A446B8) { ctx.r3.u64 = n_sub_82A446B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECCreatureGenerator_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8C80_B_ = int32_t(0x820C8C80);
@@ -70,7 +71,7 @@ uint64_t n_sub_82870A20(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 }
 PROMOTED_ENTRY(59, sub_82870A20, 0x82870A20) { ctx.r3.u64 = n_sub_82870A20(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t arg2) {
+uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t definition) {
 	constexpr int32_t str_TXT_820D4C90_B_ = int32_t(0x820D4C90);
 	constexpr int32_t str_TXT_820D4C9C_B_ = int32_t(0x820D4C9C);
 	constexpr int32_t str_TXT_820DEEE8_B_ = int32_t(0x820DEEE8);
@@ -87,28 +88,28 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	constexpr int32_t str_TXT_820DEFF4_B_ = int32_t(0x820DEFF4);
 	constexpr int32_t str_TXT_820DF004_B_ = int32_t(0x820DF004);
 	constexpr int32_t str_TXT_820DF010_B_ = int32_t(0x820DF010);
-	constexpr int32_t g_820E0000 = int32_t(0x820E0000);
-	if (!UseLiftedCode(59, 0x82870AB8)) { ctx.r3.u64 = creatureGeneratorAddr; ctx.r4.u64 = arg2; __imp__sub_82870AB8(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t str_TXT_820DEFC0_B_ = int32_t(0x820DEFC0);
+	if (!UseLiftedCode(59, 0x82870AB8)) { ctx.r3.u64 = creatureGeneratorAddr; ctx.r4.u64 = definition; __imp__sub_82870AB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82870AB8);
 	uint32_t stack = ctx.r1.u64;
 	CECCreatureGenerator* creatureGenerator = GameObject<CECCreatureGenerator>(base, creatureGeneratorAddr);
 	stack = PushStackFrame(base, stack, 192);
 	ctx.r1.u64 = stack;
 
-	uint64_t spawnedName = n_sub_82345978(ctx, base, arg2, str_TXT_820DEEE8_B_);
+	uint64_t spawnedName = n_sub_82345978(ctx, base, definition, str_TXT_820DEEE8_B_);
 	CCharString_AssignFromCStr(ctx, base, creatureGeneratorAddr + 56, spawnedName);
 
-	uint32_t TXT_820DEEFC_L_ = GameDB_ReadBoolField_82303F38(ctx, base, arg2, str_TXT_820DEEFC_B_);
+	uint32_t TXT_820DEEFC_L_ = GameDB_ReadBoolField_82303F38(ctx, base, definition, str_TXT_820DEEFC_B_);
 	creatureGenerator->m_3C = (uint8_t)TXT_820DEEFC_L_;
 
-	GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820D4C90_B_);
+	GameDB_GetFloatByName(ctx, base, definition, str_TXT_820D4C90_B_);
 	creatureGenerator->m_70 = float(ctx.f1.f64);
-	GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820DEF08_B_);
+	GameDB_GetFloatByName(ctx, base, definition, str_TXT_820DEF08_B_);
 	creatureGenerator->m_78 = float(ctx.f1.f64);
-	GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820D4C9C_B_);
+	GameDB_GetFloatByName(ctx, base, definition, str_TXT_820D4C9C_B_);
 	creatureGenerator->m_74 = float(ctx.f1.f64);
 
-	uint32_t TXT_820DEF20_L_ = GameDB_GetIntByName(ctx, base, arg2, str_TXT_820DEF20_B_);
+	uint32_t TXT_820DEF20_L_ = GameDB_GetIntByName(ctx, base, definition, str_TXT_820DEF20_B_);
 	creatureGenerator->m_68 = TXT_820DEF20_L_;
 
 	// patrol radius must sit between the minimum radius and the chase radius
@@ -119,14 +120,14 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 		creatureGenerator->m_74 = creatureGenerator->m_70 * LOAD_F32(0x82099334);
 	}
 
-	uint32_t isDynamic = GameDB_ReadBoolField_82303F38(ctx, base, arg2, str_TXT_820DEF30_B_);
+	uint32_t isDynamic = GameDB_ReadBoolField_82303F38(ctx, base, definition, str_TXT_820DEF30_B_);
 	creatureGenerator->m_3F = (uint8_t)isDynamic;
 	if ((isDynamic & 0xFF) != 0) {
-		GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820DEF44_B_);
+		GameDB_GetFloatByName(ctx, base, definition, str_TXT_820DEF44_B_);
 		creatureGenerator->m_40 = float(ctx.f1.f64);
-		GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820DEF58_B_);
+		GameDB_GetFloatByName(ctx, base, definition, str_TXT_820DEF58_B_);
 		creatureGenerator->m_44 = float(ctx.f1.f64);
-		uint32_t spawnLimit = GameDB_GetIntByName(ctx, base, arg2, str_TXT_820DEF70_B_);
+		uint32_t spawnLimit = GameDB_GetIntByName(ctx, base, definition, str_TXT_820DEF70_B_);
 		float createRadius = creatureGenerator->m_40;
 		creatureGenerator->m_48 = spawnLimit;
 		if (createRadius == minRadius) {
@@ -137,27 +138,26 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 		}
 	}
 
-	GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820DEF84_B_);
+	GameDB_GetFloatByName(ctx, base, definition, str_TXT_820DEF84_B_);
 	creatureGenerator->m_4C = float(ctx.f1.f64);
 
-	uint32_t forceFaceHero = GameDB_ReadBoolField_82303F38(ctx, base, arg2, str_TXT_820DEFA0_B_);
+	uint32_t forceFaceHero = GameDB_ReadBoolField_82303F38(ctx, base, definition, str_TXT_820DEFA0_B_);
 	creatureGenerator->m_51 = (uint8_t)forceFaceHero;
 
 	uint64_t hashSeed = 0xFFFFFFFF811C9DC5ULL;
-	ctx.r8.s64 = g_820E0000;
-	uint64_t willGetReinforcementsKey = String_HashFnv1(ctx, base, (uint64_t)((int64_t)g_820E0000 - 4160), hashSeed);
-	GameDB_ReadBoolField(ctx, base, arg2, willGetReinforcementsKey, creatureGeneratorAddr + 61);
+	uint64_t willGetReinforcementsKey = String_HashFnv1(ctx, base, (uint64_t)(str_TXT_820DEFC0_B_), hashSeed);
+	GameDB_ReadBoolField(ctx, base, definition, willGetReinforcementsKey, creatureGeneratorAddr + 61);
 
 	uint64_t teleportSpawnedCreaturesInKey = String_HashFnv1(ctx, base, str_TXT_820DEFD8_B_, hashSeed);
-	GameDB_ReadBoolField(ctx, base, arg2, teleportSpawnedCreaturesInKey, creatureGeneratorAddr + 80);
+	GameDB_ReadBoolField(ctx, base, definition, teleportSpawnedCreaturesInKey, creatureGeneratorAddr + 80);
 
 	uint64_t teleportTypeKey = String_HashFnv1(ctx, base, str_TXT_820DEFF4_B_, hashSeed);
-	uint32_t teleportTypeField = GameDB_FindFieldValue(ctx, base, arg2, teleportTypeKey, 2);
+	uint32_t teleportTypeField = GameDB_FindFieldValue(ctx, base, definition, teleportTypeKey, 2);
 	if (teleportTypeField != 0) {
 		creatureGenerator->m_54 = LOAD32(teleportTypeField);
 	}
 
-	uint64_t familiesValue = GameDB_ReadU32Field(ctx, base, arg2, str_TXT_820DF004_B_);
+	uint64_t familiesValue = GameDB_ReadU32Field(ctx, base, definition, str_TXT_820DF004_B_);
 	n_sub_829FBC40(ctx, base, stack + 88, familiesValue, ctx.r8.u64);
 
 	uint32_t idx = LOAD32(stack + 96);
@@ -186,7 +186,7 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	HandleTarget_Free(ctx, base, arrayBase);
 
 	uint64_t disableLevelSavingKey = String_HashFnv1(ctx, base, str_TXT_820DF010_B_, hashSeed);
-	uint64_t disableLevelSavingField = n_sub_821E55C8(ctx, base, arg2, disableLevelSavingKey, stack + 80);
+	uint64_t disableLevelSavingField = n_sub_821E55C8(ctx, base, definition, disableLevelSavingKey, stack + 80);
 	uint32_t levelSavingDisabled = 0;
 	if ((uint32_t)disableLevelSavingField != 0) {
 		uint32_t fieldValue = LOAD32((uint32_t)disableLevelSavingField);
@@ -295,7 +295,6 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 								STORE32(stack + 112, entryKey);
 								STORE32(stack + 96, mapAddr);
 								STORE64(stack + 116, entityData);
-								ctx.r9.u64 = listKey;
 								n_sub_82874570(ctx, base, mapAddr, LOAD64(stack + 96), stack + 112);
 								reg7 = ctx.r7.u64;
 								reg9 = ctx.r9.u64;
@@ -356,8 +355,6 @@ uint64_t n_sub_82873060(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 		uint32_t handle = LOAD32(selectionData);
 
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = selectionData;
-		ctx.r9.u64 = selection;
 		result = EntityHandle_Get(ctx, base, handle);
 		flags.ca = ctx.xer.ca;
 		uint32_t targetEntity = (uint32_t)result;
@@ -474,8 +471,6 @@ uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 			uint32_t handle = LOAD32(handleOwner);
 
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = handleOwner;
-			ctx.r9.u64 = registry;
 			uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, handle);
 			r4Out = ctx.r4.u64;
 			v12 = ctx.v12;
@@ -491,8 +486,6 @@ uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 				uint32_t generatorPos = stack + 96;
 
 				uint32_t readEntityPos = LOAD32(LOAD32(entityComponent) + 64);
-				ctx.r3.u64 = entityPos;
-				ctx.r4.u64 = entityComponent;
 				ctx.r10.u64 = readEntityPos;
 				REX_CALL_INDIRECT_FUNC(readEntityPos);
 

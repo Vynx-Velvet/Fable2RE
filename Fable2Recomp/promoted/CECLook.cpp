@@ -9,17 +9,18 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
-	if (!UseLiftedCode(7, 0x8223E6B8)) { ctx.r3.u64 = lookAddr; __imp__sub_8223E6B8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
+	if (!UseLiftedCode(7, 0x8223E6B8)) { ctx.r3.u64 = lookAddress; __imp__sub_8223E6B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8223E6B8);
 	uint32_t stack = ctx.r1.u64;
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 	stack = PushStackFrame(base, stack, 128);
 
-	uint32_t lookA = (uint32_t)lookAddr;
+	uint32_t lookA = (uint32_t)lookAddress;
 	// r3 keeps whatever the last call (or explicit assignment) left in it.
-	uint64_t result = lookAddr;
+	uint64_t result = lookAddress;
 
 	if (LOAD8(0x8331930D) == 0) {
 		// idle looking globally disabled: clear the flags on the look owner
@@ -34,13 +35,13 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 
 	if (LOAD8(lookA + 84) != 0 && LOAD8(lookA + 96) == 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82240660(ctx, base, lookAddr);
+		n_sub_82240660(ctx, base, lookAddress);
 	} else {
 		ctx.r1.u64 = stack;
-		n_sub_82704F20(ctx, base, lookAddr);  // Lua_Look_ClearIdleLooking
+		n_sub_82704F20(ctx, base, lookAddress);  // Lua_Look_ClearIdleLooking
 	}
 
-	result = n_sub_82262AF0(ctx, base, lookAddr);
+	result = n_sub_82262AF0(ctx, base, lookAddress);
 	if (LOAD32(lookA + 140) == 0) {
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
@@ -53,7 +54,6 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 	uint32_t emptyHandle = 0x820F1664u;
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, emptyHandle);
-	ctx.r10.u64 = emptyHandle;
 	ctx.r1.u64 = stack;
 	EntityHandle_Release(ctx, base, stack + 80);
 
@@ -62,8 +62,6 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 
 	uint32_t resetHandle = 0x820F0000u + 5732;
 	STORE32(stack + 80, resetHandle);
-	ctx.r8.u64 = resetHandle;
-	ctx.r9.u64 = 0x820F0000u;
 	ctx.r1.u64 = stack;
 	EntityHandle_Release(ctx, base, stack + 80);
 
@@ -91,8 +89,6 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 			if (obj != 0) {
 				target = obj;
 			} else {
-				ctx.r7.u64 = handleParam;
-				ctx.r10.u64 = 0;
 				ctx.r1.u64 = stack;
 				result = EntityHandle_Release(ctx, base, node + 8);
 				handleParam = ctx.r7.u32;
@@ -107,11 +103,11 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 }
 PROMOTED_ENTRY(7, sub_8223E6B8, 0x8223E6B8) { ctx.r3.u64 = n_sub_8223E6B8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
-	if (!UseLiftedCode(9, 0x82262AF0)) { ctx.r3.u64 = lookAddr; __imp__sub_82262AF0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
+	if (!UseLiftedCode(9, 0x82262AF0)) { ctx.r3.u64 = lookAddress; __imp__sub_82262AF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82262AF0);
 	uint32_t stack = ctx.r1.u64;
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 	stack = PushStackFrame(base, stack, 144);
 
 	uint64_t reg6 = ctx.r6.u64;
@@ -234,12 +230,8 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 				bool alreadyApplied = LOAD8(info + 33) != 0 && LOAD8(info + 34) != 0;
 				if (!alreadyApplied) {
 					SET_V8(vec, VLOAD((stack + 80) & ~0xF));
-					ctx.r6.u64 = newBits;
-					ctx.r7.u64 = handleFlags;
-					ctx.r8.u64 = knownFlags;
-					ctx.r9.u64 = handle;
 					ctx.v1 = vec;
-					n_sub_82704160(ctx, base, lookAddr);
+					n_sub_82704160(ctx, base, lookAddress);
 					newBits = ctx.r6.u64;
 					handleFlags = ctx.r7.u64;
 					knownFlags = ctx.r8.u64;
@@ -252,10 +244,6 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 			uint32_t info = look->m_70;
 			uint64_t diff = flagDiff;
 			SET_V8(vec, VLOAD((stack + 80) & ~0xF));
-			ctx.r6.u64 = newBits;
-			ctx.r7.u64 = handleFlags;
-			ctx.r8.u64 = knownFlags;
-			ctx.r9.u64 = handle;
 			ctx.v1 = vec;
 			result = n_sub_822628B8(ctx, base, info, diff);
 			reg8 = ctx.r8.u64;
@@ -277,10 +265,10 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 }
 PROMOTED_ENTRY(9, sub_82262AF0, 0x82262AF0) { ctx.r3.u64 = n_sub_82262AF0(ctx, base, ctx.r3.u32); }
 
-uint32_t CECLook_CanLookAt(CpuState& ctx, uint8_t* base, uint32_t lookAddr, uint64_t arg2) {
-	if (!UseLiftedCode(9, 0x822643B0)) { ctx.r3.u64 = lookAddr; ctx.r4.u64 = arg2; __imp__sub_822643B0(ctx, base); return ctx.r3.u32; }
+uint32_t CECLook_CanLookAt(CpuState& ctx, uint8_t* base, uint32_t lookAddress, uint64_t arg2) {
+	if (!UseLiftedCode(9, 0x822643B0)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = arg2; __imp__sub_822643B0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822643B0);
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 
@@ -303,7 +291,7 @@ uint32_t CECLook_CanLookAt(CpuState& ctx, uint8_t* base, uint32_t lookAddr, uint
 		}
 		// The target is acceptable when it is unset, or when its range does not
 		// already reach the requested time.
-		if ((target & 0xFF) == 0 || LOAD32(LOAD32(lookAddr + 88) + 8) < timeValue) {
+		if ((target & 0xFF) == 0 || LOAD32(LOAD32(lookAddress + 88) + 8) < timeValue) {
 			uint32_t maxRange = look->m_68;
 			canLook = (timeValue >= maxRange) ? 1u : 0u;
 			carry = canLook;
@@ -335,17 +323,17 @@ uint64_t CECLook_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameSt
 }
 PROMOTED_ENTRY(47, sub_82702C00, 0x82702C00) { ctx.r3.u64 = CECLook_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint32_t arg2) {
+uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint32_t TXT_820A76B4_L_) {
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(47, 0x82703478)) { ctx.r3.u64 = lookAddr; ctx.r4.u64 = arg2; __imp__sub_82703478(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(47, 0x82703478)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = TXT_820A76B4_L_; __imp__sub_82703478(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82703478);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 
-	look->m_4 = arg2;
+	look->m_4 = TXT_820A76B4_L_;
 	look->m_8 = 0;
 	look->m_C = 0x820834B0u;
 	look->vtable = 0x82004058u;
@@ -362,7 +350,7 @@ uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint32_
 
 	look->m_24 = 0;
 	look->m_28 = 0;
-	STORE32(uint32_t(lookAddr) + 44, 0);
+	STORE32(uint32_t(lookAddress) + 44, 0);
 	look->m_30 = 0;
 	look->m_50 = 0;
 
@@ -385,9 +373,6 @@ uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint32_
 
 	const uint32_t allocSize = 16;
 	ctx.r1.u64 = stack;
-	ctx.r4.s64 = int64_t(str_TXT_820B0000_B_);
-	ctx.r5.u64 = 1;
-	ctx.r6.s64 = int64_t(g_83490000);
 	ctx.r8.s64 = int64_t(g_83490000);
 	uint32_t node = operator_new(ctx, base, allocSize);
 
@@ -403,24 +388,23 @@ uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint32_
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	return lookAddr;
+	return lookAddress;
 }
 PROMOTED_ENTRY(47, sub_82703478, 0x82703478) { ctx.r3.u64 = n_sub_82703478(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_t deleteFlags) {
-	if (!UseLiftedCode(47, 0x827035B0)) { ctx.r3.u64 = lookAddr; ctx.r4.u64 = deleteFlags; __imp__sub_827035B0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t deleteFlags) {
+	if (!UseLiftedCode(47, 0x827035B0)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = deleteFlags; __imp__sub_827035B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827035B0);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 
 	stack = PushStackFrame(base, stack, 112);
 
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
-	n_sub_824C6480(ctx, base, (uint32_t)(lookAddr + 132));
-	C_820EFB9C_Destructor(ctx, base, (uint32_t)(lookAddr + 120));
-	SharedHandle_Release(ctx, base, (uint32_t)(lookAddr + 112));
+	n_sub_824C6480(ctx, base, (uint32_t)(lookAddress + 132));
+	C_820EFB9C_Destructor(ctx, base, (uint32_t)(lookAddress + 120));
+	SharedHandle_Release(ctx, base, (uint32_t)(lookAddress + 112));
 
 	uint32_t handleTarget = look->m_58;
 	if (handleTarget != 0) {
@@ -432,13 +416,13 @@ uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 	}
 
 	look->m_58 = 0u;
-	LookAtHandle_Destruct(ctx, base, (uint32_t)(lookAddr + 16));
+	LookAtHandle_Destruct(ctx, base, (uint32_t)(lookAddress + 16));
 	look->vtable = 0x820A8D10u;
 
-	uint64_t result = lookAddr;
+	uint64_t result = lookAddress;
 	if (uint32_t(deleteFlags & 0x1) != 0) {
-		HandleTarget_Free(ctx, base, lookAddr);
-		result = lookAddr;
+		HandleTarget_Free(ctx, base, lookAddress);
+		result = lookAddress;
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -447,32 +431,31 @@ uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 }
 PROMOTED_ENTRY(47, sub_827035B0, 0x827035B0) { ctx.r3.u64 = n_sub_827035B0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_t arg2) {
+uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t gameDb) {
 	constexpr int32_t str_TXT_820CF300_B_ = int32_t(0x820CF300);
 	constexpr int32_t g_82970000 = int32_t(0x82970000);
-	if (!UseLiftedCode(47, 0x82703650)) { ctx.r3.u64 = lookAddr; ctx.r4.u64 = arg2; __imp__sub_82703650(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(47, 0x82703650)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = gameDb; __imp__sub_82703650(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82703650);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t lookValue = 0;
 	uint32_t applied = 0;
 	uint64_t carryR6 = 0, carryR7 = 0, carryR8 = 0, carryR9a = 0, carryR9b = 0;
 	PPCRegister callTarget{};
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
 	stack = PushStackFrame(base, stack, 128);
 
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)gameDb != 0) {
 		ctx.r1.u64 = stack;
-		GameDB_ReadBool(ctx, base, arg2, (uint64_t)(int64_t)str_TXT_820CF300_B_, lookAddr + 84);
-		arg2 = ctx.r4.u64;
+		GameDB_ReadBool(ctx, base, gameDb, (uint64_t)(int64_t)str_TXT_820CF300_B_, lookAddress + 84);
+		gameDb = ctx.r4.u64;
 	}
 
 	uint32_t TXT_820A76B4_L_ = look->m_4;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
 	uint32_t component = n_sub_827031D0(ctx, base, TXT_820A76B4_L_);
 
-	uint32_t handleAddr = (uint32_t)(lookAddr + 112);
-	SharedHandle_Release(ctx, base, lookAddr + 112);
+	uint32_t handleAddr = (uint32_t)(lookAddress + 112);
+	SharedHandle_Release(ctx, base, lookAddress + 112);
 	carryR6 = ctx.r6.u64;
 	carryR7 = ctx.r7.u64;
 	carryR8 = ctx.r8.u64;
@@ -506,11 +489,8 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		uint32_t TXT_820A76B4_L_2 = look->m_4;
 		uint32_t vfunc = LOAD32((uint32_t)look->vtable + 16);
 		callTarget.u64 = (uint64_t)vfunc;
-		ctx.r3.u64 = lookAddr;
-		ctx.r7.u64 = carryR7;
+		ctx.r3.u64 = lookAddress;
 		ctx.r8.u64 = carryR8;
-		ctx.r9.u64 = carryR9a;
-		ctx.r10.u64 = vfunc;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t componentId = ctx.r3.u64;
 		uint64_t removed = Entity_RemoveComponentByType(ctx, base, (uint64_t)TXT_820A76B4_L_2, componentId, ctx.r8.u64);
@@ -578,10 +558,8 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 	}
 
 	if (applied != 0) {
-		ctx.r7.u64 = carryR7;
 		ctx.r8.u64 = carryR8;
-		ctx.r9.u64 = carryR9b;
-		n_sub_8254F608(ctx, base, lookValue, lookAddr + 120, 3, lookAddr + 12);
+		n_sub_8254F608(ctx, base, lookValue, lookAddress + 120, 3, lookAddress + 12);
 		carryR6 = ctx.r6.u64;
 		carryR7 = ctx.r7.u64;
 		carryR8 = ctx.r8.u64;
@@ -589,11 +567,7 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 	}
 
 	uint32_t TXT_820A76B4_L_3 = look->m_4;
-	ctx.r6.u64 = carryR6;
-	ctx.r7.u64 = carryR7;
-	ctx.r8.u64 = carryR8;
-	ctx.r9.u64 = carryR9b;
-	uint64_t result = n_sub_82392C88(ctx, base, TXT_820A76B4_L_3, lookAddr);
+	uint64_t result = n_sub_82392C88(ctx, base, TXT_820A76B4_L_3, lookAddress);
 	look->m_50 = look->m_50 | 1;
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -672,7 +646,6 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		uint32_t nameBuffer = LOAD32(stack + 80);
 		uint64_t nameLength = g_8209003F;
 		if (nameBuffer != 0) nameLength = LOAD32(nameBuffer);
-		ctx.r4.u64 = nameLength;
 		IStream_SerializeU32(ctx, base, stream, stack + 84);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -680,7 +653,6 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		nameBuffer = LOAD32(stack + 80);
 		nameLength = g_8209003F;
 		if (nameBuffer != 0) nameLength = LOAD32(nameBuffer);
-		ctx.r4.u64 = nameLength;
 		IStream_SerializeId(ctx, base, stream, lookAddr + 92);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -812,7 +784,6 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		uint32_t lookAtIdBuffer = LOAD32(stack + 80);
 		uint64_t lookAtIdName = g_8209003F;
 		if (lookAtIdBuffer != 0) lookAtIdName = LOAD32(lookAtIdBuffer);
-		ctx.r4.u64 = lookAtIdName;
 		IStream_SerializeId(ctx, base, stream, lookAddr + 40);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		{
@@ -836,7 +807,6 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		uint32_t currentIdBuffer = LOAD32(stack + 88);
 		uint64_t currentIdName = g_8209003F;
 		if (currentIdBuffer != 0) currentIdName = LOAD32(currentIdBuffer);
-		ctx.r4.u64 = currentIdName;
 		IStream_SerializeU32(ctx, base, stream, lookAddr + 80);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 		streamReg = ctx.r4.u64;
@@ -866,8 +836,6 @@ uint64_t n_sub_82703BE8(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 	uint32_t playerEntity = LOAD32(field4);
 
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = field4;
-	ctx.r9.u64 = field88;
 	uint32_t isPlayer = Players_IsPlayer(ctx, base, playerEntity, lookEntity);
 	if ((isPlayer & 0xFF) != 0) {
 		stack = PopStackFrame(stack, 96);
@@ -928,7 +896,6 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 			uint64_t trollTable = (uint64_t)g_83497770;
 
 			ctx.r1.u64 = stack;
-			ctx.r10.u64 = helper;
 			n_sub_821F5B90(ctx, base, stack + 88, LOAD32(helper + 96), trollTable);
 
 			uint32_t manager = LOAD32(uint32_t(g_83490000) + 26912);
@@ -1039,10 +1006,6 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 				uint64_t tblA = (uint64_t)g_8349B1B8;
 				uint64_t tblB = (uint64_t)g_8349B1B4;
 
-				ctx.r6.u64 = weakSpotR6;
-				ctx.r7.u64 = weakSpotR7;
-				ctx.r8.u64 = weakSpotR8;
-				ctx.r9.u64 = weakSpotR9;
 				ctx.xer.ca = flags.ca;
 				uint32_t ws1 = CECTroll_HasWeakSpot(ctx, base, targetId, tblA);
 				vecV10 = ctx.v10;
@@ -1119,7 +1082,6 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 			STORE8(stack + 186, LOAD8(entryAddr + 2));
 			STORE8(stack + 187, LOAD8(entryAddr + 3));
 
-			ctx.r4.u64 = variant;
 			ctx.v1 = vecV1;
 			ctx.v2 = vecV2;
 			ctx.v10 = vecV10;
@@ -1144,26 +1106,21 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 }
 PROMOTED_ENTRY(47, sub_827045B8, 0x827045B8) { ctx.r3.u64 = n_sub_827045B8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82704F20(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
-	if (!UseLiftedCode(47, 0x82704F20)) { ctx.r3.u64 = lookAddr; __imp__sub_82704F20(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82704F20(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
+	if (!UseLiftedCode(47, 0x82704F20)) { ctx.r3.u64 = lookAddress; __imp__sub_82704F20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82704F20);
-	CECLook* look = GameObject<CECLook>(base, lookAddr);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	CECLook* look = GameObject<CECLook>(base, lookAddress);
+	GameStackFrame stackFrame(ctx, base, 96);
 
-	uint64_t result = LookAt_ClearLooking(ctx, base, lookAddr + 16);
+	uint64_t result = LookAt_ClearLooking(ctx, base, lookAddress + 16);
 
 	PPCVRegister zeroVector;
 	SET_V8(zeroVector, simde_mm_set1_epi32(0));
 
-	STORE32((uint32_t)lookAddr + 44, 0);
+	STORE32((uint32_t)lookAddress + 44, 0);
 	look->m_30 = 0;
 	// Clear the 16-byte aligned block at look + 0x40.
-	VSTORE(((uint32_t)lookAddr + 64u) & ~0xF, V8(zeroVector));
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
+	VSTORE(((uint32_t)lookAddress + 64u) & ~0xF, V8(zeroVector));
 	return result;
 }
 PROMOTED_ENTRY(47, sub_82704F20, 0x82704F20) { ctx.r3.u64 = n_sub_82704F20(ctx, base, ctx.r3.u64); }

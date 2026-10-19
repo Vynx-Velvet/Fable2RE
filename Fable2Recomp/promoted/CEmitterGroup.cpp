@@ -9,13 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_8220A608  [12 bytes]
-void CEmitterGroup_SetPosition(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(5, 0x8220A608)) { ctx.r3.u64 = arg1; __imp__sub_8220A608(ctx, base); return; }
+void CEmitterGroup_SetPosition(CpuState& ctx, uint8_t* base, uint32_t emitterGroupAddr) {
+	if (!UseLiftedCode(5, 0x8220A608)) { ctx.r3.u64 = emitterGroupAddr; __imp__sub_8220A608(ctx, base); return; }
 	LiftedFrame frame(0x8220A608);
 	PPCVRegister position = ctx.v1;
-	VSTORE((arg1 + 80u) & ~0xF, V8(position));
+	VSTORE((emitterGroupAddr + 80u) & ~0xF, V8(position));
 	return;
 }
 PROMOTED_ENTRY(5, sub_8220A608, 0x8220A608) { CEmitterGroup_SetPosition(ctx, base, ctx.r3.u32); }
@@ -791,15 +792,15 @@ PROMOTED_ENTRY(91, sub_82C3EB80, 0x82C3EB80) { ctx.r3.u64 = n_sub_82C3EB80(ctx, 
 // sub_82C3EE90  [300 bytes]
 // Calls n_sub_82C505E8 on the member at +56, then vtable slot 2 of every emitter in both lists with the second
 // argument. The callbacks may change the lists, so the end is re-read every step (checked-iterator traps kept).
-uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t arg2) {
-	if (!UseLiftedCode(91, 0x82C3EE90)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = arg2; __imp__sub_82C3EE90(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t contextArg) {
+	if (!UseLiftedCode(91, 0x82C3EE90)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = contextArg; __imp__sub_82C3EE90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3EE90);
 	uint32_t stack = ctx.r1.u64;
 	CEmitterGroup* emitterGroup = GameObject<CEmitterGroup>(base, emitterGroupAddr);
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	uint64_t result = n_sub_82C505E8(ctx, base, emitterGroupAddr + 56, arg2);
+	uint64_t result = n_sub_82C505E8(ctx, base, emitterGroupAddr + 56, contextArg);
 
 	uint32_t emitterNode = emitterGroup->m_emitterListBegin;
 	uint32_t checkedEnd = emitterGroup->m_emitterListEnd;
@@ -821,7 +822,7 @@ uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		if (emitter != 0) {
 			uint32_t slot2Fn = LOAD32(LOAD32(emitter) + 8);
 			ctx.r3.u64 = emitter;
-			ctx.r4.u64 = arg2;
+			ctx.r4.u64 = contextArg;
 			ctx.r9.u64 = listBegin;
 			ctx.r10.u64 = slot2Fn;
 			REX_CALL_INDIRECT_FUNC(slot2Fn);
@@ -854,7 +855,7 @@ uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		if (timedEmitter != 0) {
 			uint32_t slot2Fn = LOAD32(LOAD32(timedEmitter) + 8);
 			ctx.r3.u64 = timedEmitter;
-			ctx.r4.u64 = arg2;
+			ctx.r4.u64 = contextArg;
 			ctx.r9.u64 = listBegin;
 			ctx.r10.u64 = slot2Fn;
 			REX_CALL_INDIRECT_FUNC(slot2Fn);
@@ -877,15 +878,15 @@ PROMOTED_ENTRY(91, sub_82C3EE90, 0x82C3EE90) { ctx.r3.u64 = n_sub_82C3EE90(ctx, 
 // For every node of the emitter list: when the slot is empty or the emitter's vtable slot 0 returns non-zero,
 // n_sub_82C3E498 fills the node's slot anew; then the emitter now in the slot gets vtable slot 3 called with
 // the group's duration. Returns the last value r3 held (the group when the list is empty).
-uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t arg2) {
-	if (!UseLiftedCode(91, 0x82C3EFC0)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = arg2; __imp__sub_82C3EFC0(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t emitterFactory) {
+	if (!UseLiftedCode(91, 0x82C3EFC0)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = emitterFactory; __imp__sub_82C3EFC0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C3EFC0);
 	uint32_t stack = ctx.r1.u64;
 	CEmitterGroup* emitterGroup = GameObject<CEmitterGroup>(base, emitterGroupAddr);
 	stack = PushStackFrame(base, stack, 128);
 
 	// r4 as the previous call left it; the slot 0 call receives it.
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = emitterFactory;
 	uint32_t node = emitterGroup->m_emitterListBegin;
 	uint32_t checkedEnd = emitterGroup->m_emitterListEnd;
 	uint32_t result = (uint32_t)emitterGroupAddr;
@@ -926,8 +927,7 @@ uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		if (refill) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r9.u64 = r9Value;
-			n_sub_82C3E498(ctx, base, emitterGroupAddr, arg2, node);
+			n_sub_82C3E498(ctx, base, emitterGroupAddr, emitterFactory, node);
 			r4Value = ctx.r4.u64;
 			r9Value = ctx.r9.u64;
 		}
@@ -1006,7 +1006,6 @@ uint32_t CEmitterGroup_Destruct(CpuState& ctx, uint8_t* base, uint64_t emitterGr
 	if (timedListBegin != 0) {
 		uint32_t timedListEnd = LOAD32(timedListRoot + 8);
 		// state the callee may pass on: the list root and a byte of this frame the function never writes
-		ctx.r5.u64 = (int64_t)emitterGroupAddr + 20;
 		ctx.r6.u64 = LOAD8(stack + 80);
 		ReleaseRefRange_Stride28(ctx, base, timedListBegin, timedListEnd);
 		HandleTarget_FreeThunk(ctx, base, LOAD32(timedListRoot + 4));
@@ -1019,7 +1018,6 @@ uint32_t CEmitterGroup_Destruct(CpuState& ctx, uint8_t* base, uint64_t emitterGr
 	if (emitterListBegin != 0) {
 		uint32_t emitterListEnd = LOAD32(emitterListRoot + 8);
 		// state the callee may pass on
-		ctx.r5.u64 = (int64_t)emitterGroupAddr + 4;
 		ctx.r6.u64 = LOAD8(stack + 80);
 		ReleaseRefRange_Stride12(ctx, base, emitterListBegin, emitterListEnd);
 		HandleTarget_FreeThunk(ctx, base, LOAD32(emitterListRoot + 4));
@@ -1040,16 +1038,12 @@ PROMOTED_ENTRY(91, sub_82C3F240, 0x82C3F240) { ctx.r3.u64 = CEmitterGroup_Destru
 uint64_t CEmitterGroup_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(91, 0x82C3F2E0)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82C3F2E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3F2E0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
 	CEmitterGroup_Destruct(ctx, base, emitterGroupAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, emitterGroupAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return emitterGroupAddr;
 }
 PROMOTED_ENTRY(91, sub_82C3F2E0, 0x82C3F2E0) { ctx.r3.u64 = CEmitterGroup_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }

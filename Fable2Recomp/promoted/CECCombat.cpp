@@ -9,19 +9,20 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_82238358(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(7, 0x82238358)) { ctx.r3.u64 = combatAddr; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82238358(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82238358(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t event, uint64_t arg3) {
+	if (!UseLiftedCode(7, 0x82238358)) { ctx.r3.u64 = combatAddr; ctx.r4.u64 = event; ctx.r8.u64 = arg3; __imp__sub_82238358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82238358);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
 
-	// arg2's virtual slot 1 returns a code; only code 8 continues below.
-	uint32_t arg2Vtable = LOAD32((uint32_t)arg2);
+	// event's virtual slot 1 returns a code; only code 8 continues below.
+	uint32_t arg2Vtable = LOAD32((uint32_t)event);
 	uint32_t codeFn = LOAD32(arg2Vtable + 4);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = event;
+	ctx.r4.u64 = event;
 	ctx.r8.u64 = arg3;
 	ctx.r10.u64 = codeFn;
 	REX_CALL_INDIRECT_FUNC(codeFn);
@@ -37,8 +38,6 @@ uint64_t n_sub_82238358(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 
 		// virtual slot 4 of the combat object gives the component type to remove from its owner
 		ctx.r3.u64 = combatAddr;
-		ctx.r9.u64 = componentTypeFn;
-		ctx.r10.u64 = combatVtable;
 		REX_CALL_INDIRECT_FUNC(componentTypeFn);
 		uint64_t componentType = ctx.r3.u64;
 
@@ -72,19 +71,15 @@ uint64_t n_sub_827512B0(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(50, sub_827512B0, 0x827512B0) { ctx.r3.u64 = n_sub_827512B0(ctx, base); }
 
-uint64_t CECCombat_GetClassName(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t CECCombat_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8ED8_B_ = int32_t(0x820C8ED8);
-	if (!UseLiftedCode(52, 0x827942B8)) { ctx.r3.u64 = arg1; __imp__sub_827942B8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(52, 0x827942B8)) { ctx.r3.u64 = classNameString; __imp__sub_827942B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827942B8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	uint64_t className = str_TXT_820C8ED8_B_;
 	int32_t nameLength = -1;  // -1: length taken from the NUL terminator
-	CCharString_ConstructFromCStr(ctx, base, arg1, className, nameLength);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return arg1;
+	CCharString_ConstructFromCStr(ctx, base, classNameString, className, nameLength);
+	return classNameString;
 }
 PROMOTED_ENTRY(52, sub_827942B8, 0x827942B8) { ctx.r3.u64 = CECCombat_GetClassName(ctx, base, ctx.r3.u64); }
 
@@ -265,7 +260,6 @@ uint64_t CECCombat_LoadProperties(CpuState& ctx, uint8_t* base, uint64_t combatA
 	}
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = stateR4;  // state the callee may pass on
-	ctx.r6.u64 = stateR6;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_82799248(ctx, base, combatAddr + 276);
 	stack = PopStackFrame(stack, 112);
@@ -274,7 +268,7 @@ uint64_t CECCombat_LoadProperties(CpuState& ctx, uint8_t* base, uint64_t combatA
 }
 PROMOTED_ENTRY(52, sub_82794598, 0x82794598) { ctx.r3.u64 = CECCombat_LoadProperties(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t combatComponent, uint64_t stateStream, uint32_t arg3) {
+uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t combatComponent, uint64_t stateStream, uint32_t includePlayerRegroupFields) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820D4B7C_B_ = int32_t(0x820D4B7C);
 	constexpr int32_t str_TXT_820D4B88_B_ = int32_t(0x820D4B88);
@@ -291,7 +285,7 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 	constexpr int32_t str_TXT_820D4C74_B_ = int32_t(0x820D4C74);
 	constexpr int32_t str_TXT_820D4C90_B_ = int32_t(0x820D4C90);
 	constexpr int32_t str_TXT_820D4C9C_B_ = int32_t(0x820D4C9C);
-	if (!UseLiftedCode(52, 0x827947B0)) { ctx.r3.u64 = combatComponent; ctx.r4.u64 = stateStream; ctx.r5.u64 = arg3; __imp__sub_827947B0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(52, 0x827947B0)) { ctx.r3.u64 = combatComponent; ctx.r4.u64 = stateStream; ctx.r5.u64 = includePlayerRegroupFields; __imp__sub_827947B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827947B0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 128);
@@ -327,22 +321,18 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BF4_B_, -1);
-	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeU32(ctx, base, stateStream, combatComponent + 104);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C04_B_, -1);
-	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 184);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BAC_B_, -1);
-	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BD0_B_, -1);
-	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
@@ -350,7 +340,7 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 	IStream_SerializeString(ctx, base, nameBuffer, stateStream, combatComponent + 132);
 	result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
-	if (arg3 == 1) {
+	if (includePlayerRegroupFields == 1) {
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C2C_B_, -1);
 		IStream_SerializeString(ctx, base, nameBuffer, stateStream, combatComponent + 91);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
@@ -360,22 +350,18 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C58_B_, -1);
-		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 136);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C74_B_, -1);
-		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 140);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C90_B_, -1);
-		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 48);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C9C_B_, -1);
-		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 52);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 	}
@@ -408,7 +394,6 @@ uint64_t n_sub_82794AF8(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
 		uint32_t firstEntry = LOAD32(list + 4);
 		uint32_t handle = LOAD32(firstEntry);
 		ctx.r8.u64 = firstEntry;  // state the callee may pass on
-		ctx.r9.u64 = list;
 		result = EntityHandle_Get(ctx, base, handle);
 
 		// If the entity exists and has bit 0x40 set at +144, its component at +124 writes a
@@ -515,8 +500,6 @@ uint64_t n_sub_82794BA8(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 		STORE32(stack + 124, uint32_t((uint64_t)yValue + (uint64_t)halfSizeValue));
 
 		ctx.r7.u64 = maxX;  // state the callee may pass on
-		ctx.r8.u64 = minY;
-		ctx.r9.u64 = yValue;
 		n_sub_82464918(ctx, base, stack + 80, owner);
 
 		// Block at stack+96 for n_sub_8279D718: { 3, stack+80, stack+144, result slot }.
@@ -527,9 +510,7 @@ uint64_t n_sub_82794BA8(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 		ctx.f1.f64 = halfSize;  // state the callee may pass on
 		ctx.f9 = halfSizeInt;
 		ctx.f10 = xInt;
-		ctx.f11.f64 = x;
 		ctx.f12 = yInt;
-		ctx.f13.f64 = y;
 		n_sub_8279D718(ctx, base, firstEntryWord12, stack + 112, stack + 96);
 		arg2 = ctx.r7.u64;
 		arg3 = ctx.r8.u64;
@@ -635,7 +616,6 @@ uint64_t CECCombat_RestoreCombatStyle(CpuState& ctx, uint8_t* base, uint64_t com
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r7.u64 = arg2;
 	uint64_t result = List_ClearFreeNodes(ctx, base, combatAddr + 256);
 
 	uint8_t styleOverridePending = combat->m_styleOverridePending;
@@ -726,12 +706,10 @@ uint64_t CombatStyle_LoadShootingBalanceData(CpuState& ctx, uint8_t* base, uint6
 			ctx.fpscr.disableFlushMode();
 			combat->m_C0 = float(ctx.f1.f64);
 
-			ctx.r6.s64 = stringTableBase;
 			LuaRef_GetNumberField(ctx, base, balanceDataRef, str_TXT_820D5420_B_, defaultValue);
 			ctx.fpscr.disableFlushMode();
 			combat->m_C4 = float(ctx.f1.f64);
 
-			ctx.r5.s64 = stringTableBase;
 			LuaRef_GetNumberField(ctx, base, balanceDataRef, str_TXT_820D5444_W_, defaultValue);
 			ctx.fpscr.disableFlushMode();
 			combat->m_C8 = float(ctx.f1.f64);

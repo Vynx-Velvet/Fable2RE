@@ -1,65 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="370" viewBox="0 0 860 370" role="img" aria-label="0.2% of Lionhead's game functions are readable C++ with every name (88 of 41,186), as of 2026-10-19">
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="370" viewBox="0 0 860 370" role="img" aria-label="10.0% of Lionhead's game functions are readable C++ with every name (4,129 of 41,186), as of 2026-10-19">
 <text x="24" y="30" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" letter-spacing="1.2" fill="#9198a1">FABLE II IN HUMAN-READABLE C++ · LIONHEAD'S GAME CODE · 2026-10-19</text>
-<text x="24" y="78" font-family="Georgia, 'Times New Roman', serif" font-size="46" fill="#e6edf3">0.2%</text>
-<text x="174" y="62" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" fill="#e6edf3">of the game's functions are readable C++ with every name: 88 of 41,186.</text>
-<text x="174" y="84" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#9198a1">Another 3,053 are readable with names still to give, and 4,294 are rewrites still at machine level.</text>
+<text x="24" y="78" font-family="Georgia, 'Times New Roman', serif" font-size="46" fill="#e6edf3">10.0%</text>
+<text x="174" y="62" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="16" fill="#e6edf3">of the game's functions are readable C++ with every name: 4,129 of 41,186.</text>
+<text x="174" y="84" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#9198a1">Another 1,421 are readable with names still to give, and 1,885 are rewrites still at machine level.</text>
 <text x="174" y="104" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#9198a1">Almost all the rest runs as exact machine-translated C++. Each square is about 100 functions.</text>
 <rect x="24" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
-<rect x="39" y="132" width="12" height="12" rx="2.5" fill="#5fc48b"/>
-<rect x="54" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="69" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="84" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="99" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="114" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="129" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="144" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="159" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="174" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="189" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="204" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="219" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="234" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="249" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="264" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="279" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="294" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="309" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="324" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="339" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="354" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="369" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="384" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="399" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="414" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="429" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="444" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="459" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="474" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="489" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
-<rect x="504" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="519" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="534" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="549" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="564" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="579" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="594" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="609" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="624" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="639" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="654" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="669" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="684" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="699" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="714" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="729" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="744" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="759" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="774" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="789" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="804" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="819" y="132" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="24" y="147" width="12" height="12" rx="2.5" fill="#2c4f78"/>
-<rect x="39" y="147" width="12" height="12" rx="2.5" fill="#2c4f78"/>
+<rect x="39" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="54" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="69" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="84" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="99" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="114" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="129" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="144" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="159" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="174" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="189" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="204" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="219" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="234" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="249" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="264" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="279" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="294" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="309" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="324" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="339" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="354" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="369" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="384" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="399" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="414" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="429" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="444" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="459" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="474" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="489" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="504" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="519" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="534" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="549" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="564" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="579" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="594" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="609" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="624" y="132" width="12" height="12" rx="2.5" fill="#f2c14e"/>
+<rect x="639" y="132" width="12" height="12" rx="2.5" fill="#5fc48b"/>
+<rect x="654" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="669" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="684" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="699" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="714" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="729" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="744" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="759" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="774" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="789" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="804" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="819" y="132" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="24" y="147" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
+<rect x="39" y="147" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
 <rect x="54" y="147" width="12" height="12" rx="2.5" fill="#2c4f78"/>
 <rect x="69" y="147" width="12" height="12" rx="2.5" fill="#2c4f78"/>
 <rect x="84" y="147" width="12" height="12" rx="2.5" fill="#2c4f78"/>
@@ -418,16 +418,16 @@
 <rect x="519" y="237" width="12" height="12" rx="2.5" fill="#8b97a6"/>
 <rect x="24" y="268" width="12" height="12" rx="2.5" fill="#f2c14e"/>
 <text x="42" y="278" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Readable and named</text>
-<text x="42" y="296" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">31 · 0.1%</text>
+<text x="42" y="296" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">4,072 · 9.9%</text>
 <rect x="294" y="268" width="12" height="12" rx="2.5" fill="#5fc48b"/>
 <text x="312" y="278" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Written by hand</text>
 <text x="312" y="296" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">57 · 0.1%</text>
 <rect x="564" y="268" width="12" height="12" rx="2.5" fill="#5aa2f0"/>
 <text x="582" y="278" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Names still to do</text>
-<text x="582" y="296" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">3,053 · 7.4%</text>
+<text x="582" y="296" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">1,421 · 3.5%</text>
 <rect x="24" y="314" width="12" height="12" rx="2.5" fill="#2c4f78"/>
 <text x="42" y="324" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Machine-level rewrite</text>
-<text x="42" y="342" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">4,294 · 10.4%</text>
+<text x="42" y="342" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">1,885 · 4.6%</text>
 <rect x="294" y="314" width="12" height="12" rx="2.5" fill="#323b47"/>
 <text x="312" y="324" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Machine-translated</text>
 <text x="312" y="342" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#9198a1">32,714 · 79.4%</text>

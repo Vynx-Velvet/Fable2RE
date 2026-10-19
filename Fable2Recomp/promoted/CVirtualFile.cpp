@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_82B482A0  [36 bytes]
 void n_sub_82B482A0(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr) {
@@ -29,13 +30,9 @@ PROMOTED_ENTRY(83, sub_82B482A0, 0x82B482A0) { n_sub_82B482A0(ctx, base, ctx.r3.
 uint64_t n_sub_82C62888(CpuState& ctx, uint8_t* base, uint64_t dest, uint64_t source) {
 	if (!UseLiftedCode(92, 0x82C62888)) { ctx.r3.u64 = dest; ctx.r4.u64 = source; __imp__sub_82C62888(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62888);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	// The source object carries the string at offset 4; the copy is constructed at dest.
 	CCharString_CopyConstruct(ctx, base, dest, source + 4);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return dest;
 }
 PROMOTED_ENTRY(92, sub_82C62888, 0x82C62888) { ctx.r3.u64 = n_sub_82C62888(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -60,8 +57,8 @@ uint64_t n_sub_82C628C0(CpuState& ctx, uint8_t* base, uint64_t file) {
 }
 PROMOTED_ENTRY(92, sub_82C628C0, 0x82C628C0) { ctx.r3.u64 = n_sub_82C628C0(ctx, base, ctx.r3.u64); }
 
-uint32_t CVirtualFile_Constructor(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t arg2) {
-	if (!UseLiftedCode(92, 0x82C62990)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = arg2; __imp__sub_82C62990(ctx, base); return ctx.r3.u32; }
+uint32_t CVirtualFile_Constructor(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t stream) {
+	if (!UseLiftedCode(92, 0x82C62990)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = stream; __imp__sub_82C62990(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C62990);
 	uint32_t stack = ctx.r1.u64;
 	CVirtualFile* virtualFile = GameObject<CVirtualFile>(base, virtualFileAddr);
@@ -70,11 +67,11 @@ uint32_t CVirtualFile_Constructor(CpuState& ctx, uint8_t* base, uint32_t virtual
 	ctx.r1.u64 = stack;
 	RefCountedObject_Construct(ctx, base, virtualFileAddr + 4);
 	virtualFile->m_Source = 0;
-	virtualFile->m_Stream = (uint32_t)arg2;
-	if ((uint32_t)arg2 != 0) {
-		uint32_t method = LOAD32(LOAD32((uint32_t)arg2) + 4);
-		ctx.r3.u64 = arg2;
-		ctx.r4.u64 = arg2;
+	virtualFile->m_Stream = (uint32_t)stream;
+	if ((uint32_t)stream != 0) {
+		uint32_t method = LOAD32(LOAD32((uint32_t)stream) + 4);
+		ctx.r3.u64 = stream;
+		ctx.r4.u64 = stream;
 		ctx.r9.u64 = 0;
 		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(method);
@@ -113,8 +110,8 @@ uint64_t CVirtualFile_CloseStream(CpuState& ctx, uint8_t* base, uint32_t virtual
 }
 PROMOTED_ENTRY(92, sub_82C62A88, 0x82C62A88) { ctx.r3.u64 = CVirtualFile_CloseStream(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(92, 0x82C62AD8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C62AD8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
+	if (!UseLiftedCode(92, 0x82C62AD8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; ctx.r5.u64 = buffer; __imp__sub_82C62AD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62AD8);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -122,7 +119,7 @@ uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	stack = PushStackFrame(base, stack, 128);
 
 	// r4 is live across the calls below: the value the last callee leaves in r4 is returned to the caller.
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = offset;
 
 	// Field 0xC holds an intrusive pointer to the file's reader, created from the source on first use.
 	uint32_t readerFieldAddr = virtualFileAddr + 12;
@@ -147,14 +144,14 @@ uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	uint32_t reader = LOAD32(readerFieldAddr);
 	uint64_t result = reader;
 	if (reader != 0) {
-		STORE32(stack + 88, (uint32_t)arg2);
+		STORE32(stack + 88, (uint32_t)offset);
 		STORE32(stack + 92, 0u);
 		uint32_t method = LOAD32(LOAD32(reader) + 12);
 		callTarget.u64 = method;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = reader;
 		ctx.r4.u64 = stack + 88;
-		ctx.r5.u64 = arg3;
+		ctx.r5.u64 = buffer;
 		ctx.r9.u64 = method;
 		ctx.r10.u64 = LOAD32(reader);
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -169,17 +166,17 @@ uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 }
 PROMOTED_ENTRY(92, sub_82C62AD8, 0x82C62AD8) { ctx.r3.u64 = n_sub_82C62AD8(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(92, 0x82C62B70)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C62B70(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
+	if (!UseLiftedCode(92, 0x82C62B70)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; ctx.r5.u64 = buffer; __imp__sub_82C62B70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62B70);
 	uint32_t stack = ctx.r1.u64;
-	uint32_t arg2Value = (uint32_t)arg2;
+	uint32_t arg2Value = (uint32_t)offset;
 	PPCRegister callTarget{};
 	CVirtualFile* virtualFile = GameObject<CVirtualFile>(base, virtualFileAddr);
 	stack = PushStackFrame(base, stack, 128);
 
 	// r4 is live across the calls below: the value the last callee leaves in r4 is returned to the caller.
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = offset;
 
 	uint32_t fileDataAddr = virtualFileAddr + 12;
 	if (LOAD32(fileDataAddr) == 0) {
@@ -209,7 +206,7 @@ uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = result;
 		ctx.r4.u64 = stack + 88;
-		ctx.r5.u64 = arg3;
+		ctx.r5.u64 = buffer;
 		ctx.r9.u64 = readFn;
 		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -223,8 +220,8 @@ uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 }
 PROMOTED_ENTRY(92, sub_82C62B70, 0x82C62B70) { ctx.r3.u64 = n_sub_82C62B70(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t arg2) {
-	if (!UseLiftedCode(92, 0x82C62C08)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = arg2; __imp__sub_82C62C08(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t position) {
+	if (!UseLiftedCode(92, 0x82C62C08)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = position; __imp__sub_82C62C08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62C08);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -232,7 +229,7 @@ uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	stack = PushStackFrame(base, stack, 112);
 
 	// r4 is live across the calls below: the value the last callee leaves in r4 is returned to the caller.
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = position;
 
 	uint32_t cachedObjectAddr = virtualFileAddr + 12;
 	if (LOAD32(cachedObjectAddr) == 0) {
@@ -260,7 +257,7 @@ uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 		callTarget.u64 = (uint64_t)method;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = cachedObject;
-		ctx.r4.s64 = (int32_t)arg2;
+		ctx.r4.s64 = (int32_t)position;
 		ctx.r5.u64 = 0;
 		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -275,17 +272,17 @@ uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 }
 PROMOTED_ENTRY(92, sub_82C62C08, 0x82C62C08) { ctx.r3.u64 = n_sub_82C62C08(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t arg2) {
-	if (!UseLiftedCode(92, 0x82C62CA8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = arg2; __imp__sub_82C62CA8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset) {
+	if (!UseLiftedCode(92, 0x82C62CA8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; __imp__sub_82C62CA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62CA8);
 	uint32_t stack = ctx.r1.u64;
 	CVirtualFile* virtualFile = GameObject<CVirtualFile>(base, virtualFileAddr);
 	stack = PushStackFrame(base, stack, 112);
 
 	// r4 is live across the calls below: the value the last callee leaves in r4 is returned to the caller.
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = offset;
 
-	int32_t readArg = (int32_t)arg2;
+	int32_t readArg = (int32_t)offset;
 	uint32_t bufferSlot = virtualFileAddr + 12;
 
 	// First access: build the file's buffer from its source and release the temporary reference.
@@ -329,12 +326,12 @@ uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 PROMOTED_ENTRY(92, sub_82C62CA8, 0x82C62CA8) { ctx.r3.u64 = n_sub_82C62CA8(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_82C62D48  [80 bytes]
-uint64_t n_sub_82C62D48(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(92, 0x82C62D48)) { ctx.r3.u64 = arg1; __imp__sub_82C62D48(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C62D48(CpuState& ctx, uint8_t* base, uint64_t virtualFile) {
+	if (!UseLiftedCode(92, 0x82C62D48)) { ctx.r3.u64 = virtualFile; __imp__sub_82C62D48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62D48);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
-	uint32_t target = LOAD32((uint32_t)arg1 + 12);
+	uint32_t target = LOAD32((uint32_t)virtualFile + 12);
 	if (target != 0) {
 		// virtual call: vtable[6] of the target object
 		uint32_t virtualFn = LOAD32(LOAD32(target) + 24);
@@ -391,8 +388,8 @@ uint64_t CVirtualFile_HasSource(CpuState& ctx, uint8_t* base, uint32_t virtualFi
 }
 PROMOTED_ENTRY(92, sub_82C62DE8, 0x82C62DE8) { ctx.r3.u64 = CVirtualFile_HasSource(ctx, base, ctx.r3.u32); }
 
-uint64_t CVirtualFile_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(92, 0x82C632D0)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82C632D0(ctx, base); return ctx.r3.u64; }
+uint64_t CVirtualFile_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t virtualFile, uint64_t arg2) {
+	if (!UseLiftedCode(92, 0x82C632D0)) { ctx.r3.u64 = virtualFile; ctx.r4.u64 = arg2; __imp__sub_82C632D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C632D0);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t deleteFlags{};
@@ -400,11 +397,11 @@ uint64_t CVirtualFile_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uin
 	deleteFlags = arg2;
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = arg2;
-	CVirtualFile_Destructor(ctx, base, arg1);
-	uint64_t object = arg1;
+	CVirtualFile_Destructor(ctx, base, virtualFile);
+	uint64_t object = virtualFile;
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, object);
-		object = arg1;
+		object = virtualFile;
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -502,8 +499,6 @@ uint64_t CVirtualFile_SetPath(CpuState& ctx, uint8_t* base, uint64_t virtualFile
 		mappedAccess = LOAD32(resultSlot);
 	}
 
-	ctx.r3.u64 = lastStrcmpResult;
-	ctx.r5.u64 = savedR5;
 	uint32_t container = n_sub_82C63258(ctx, base);
 	if (LOAD32(container) == 0) {
 		uint64_t newObject = n_sub_82B3E0A8(ctx, base, newObjectSlot, ctx.r8.u64);

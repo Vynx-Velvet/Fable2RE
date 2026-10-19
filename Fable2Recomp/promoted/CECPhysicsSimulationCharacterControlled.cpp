@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821E3D60(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -40,7 +41,6 @@ uint64_t n_sub_821E3D60(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	uint64_t vectorSrcPtr = ctx.r3.u64;
 	PPCVRegister srcVec{};
 	SET_V8(srcVec, VLOAD((uint32_t)vectorSrcPtr & ~0xF));
-	ctx.r9.u64 = vectorSrcPtr;
 
 	uint32_t secondaryObject = character->m_4;
 	double value = n_sub_82207928(ctx, base, secondaryObject);
@@ -118,14 +118,12 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 	carriedF1 = double(LOAD_F32(stack + 80));
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = physicsSimulationCharacterControlledAddr;
 	isNaN = Math_IsNaN(ctx, base, carriedF1);
 	if ((int32_t)isNaN == 0) {
 		SET_V8(vec, VLOAD((uint32_t)vectorAddr & ~0xF));
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 84));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -133,7 +131,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 88));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -150,7 +147,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		carriedR3 = physicsSimulationCharacterControlled->m_4;
 		// state the callee may pass on
 		ctx.f1.f64 = carriedF1;
-		ctx.f13.f64 = carriedF13;
 		carriedF1 = n_sub_82207928(ctx, base, carriedR3);
 		carriedR9 = ctx.r9.u64;
 		carriedF13 = ctx.f13.f64;
@@ -194,8 +190,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 						if (record != 0) {
 							currentTarget = LOAD32(record);
 							if (currentTarget == 0) {
-								ctx.r9.u64 = carriedR9;
-								ctx.r10.u64 = currentTarget;
 								EntityHandle_Release(ctx, base, handleAddr);
 								carriedR9 = ctx.r9.u64;
 								carriedF13 = ctx.f13.f64;
@@ -223,10 +217,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 					}
 				} else {
 					// The handle's target is gone: release the handle.
-					ctx.r4.u64 = carriedR4;
-					ctx.r9.u64 = carriedR9;
-					ctx.r10.u64 = target;
-					ctx.f1.f64 = carriedF1;
 					ctx.v13 = carriedV13;
 					carriedR3 = EntityHandle_Release(ctx, base, handleAddr);
 					carriedR4 = ctx.r4.u64;
@@ -245,7 +235,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 80));
-		ctx.r3.u64 = carriedR3;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -253,7 +242,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 84));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -261,7 +249,6 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 88));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 	}
 done:
@@ -299,14 +286,12 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 	carriedF1 = double(LOAD_F32(stack + 80));
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = physicsSimulationCharacterControlledAddr;
 	isNaN = Math_IsNaN(ctx, base, carriedF1);
 	if ((int32_t)isNaN == 0) {
 		SET_V8(vec, VLOAD((uint32_t)vectorPtr & ~0xF));
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 84));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -314,7 +299,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 88));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -339,11 +323,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		// state the callee may pass on
 		ctx.r3.u64 = objD;
 		ctx.r4.u64 = vectorPtr;
-		ctx.r6.u64 = method64;
-		ctx.r7.u64 = objDVtable;
-		ctx.r8.u64 = objC;
-		ctx.r9.u64 = objB;
-		ctx.r10.u64 = objA;
 		ctx.f1.f64 = carriedF1;
 		ctx.f13.f64 = carriedF13;
 		ctx.v13 = carriedV13;
@@ -376,11 +355,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 				uint64_t carriedR9 = LOAD32(handleRecord);
 				if ((uint32_t)carriedR9 == 0) {
 					// The handle's target is gone: release the handle.
-					ctx.r4.u64 = carriedR4;
-					ctx.r5.u64 = carriedR5;
-					ctx.r9.u64 = carriedR9;
-					ctx.r10.u64 = head;
-					ctx.f1.f64 = carriedF1;
 					carriedR3 = EntityHandle_Release(ctx, base, handleAddr);
 					carriedR4 = ctx.r4.u32;
 					carriedR5 = ctx.r5.u64;
@@ -394,11 +368,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 					if (record != 0) {
 						target = LOAD32(record);
 						if (target == 0) {
-							ctx.r4.u64 = carriedR4;
-							ctx.r5.u64 = carriedR5;
-							ctx.r9.u64 = carriedR9;
-							ctx.r10.u64 = target;
-							ctx.f1.f64 = carriedF1;
 							EntityHandle_Release(ctx, base, handleAddr);
 							carriedR9 = ctx.r9.u64;
 							carriedF13 = ctx.f13.f64;
@@ -434,7 +403,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 80));
-		ctx.r3.u64 = carriedR3;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -442,7 +410,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 84));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 		if ((int32_t)isNaN != 0) goto done;
 
@@ -450,7 +417,6 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		VSTORE(uint32_t(stack + 80) & ~0xF, V8(vec));
 		ctx.fpscr.disableFlushMode();
 		carriedF1 = double(LOAD_F32(stack + 88));
-		ctx.r3.u64 = isNaN;
 		isNaN = Math_IsNaN(ctx, base, carriedF1);
 	}
 done:
@@ -511,7 +477,6 @@ uint32_t n_sub_8222E7D0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	if ((uint32_t)entity != 0) {
 		uint64_t componentOut = (int64_t)(uint64_t)stack + 80;
 		// state the callee may pass on
-		ctx.r9.u64 = 0;
 		uint32_t hasPhysicsComponent = Entity_GetPhysicsComponent(ctx, base, entity, componentOut);
 		r9Out = ctx.r9.u64;
 		if ((hasPhysicsComponent & 0xFF) != 0) {
@@ -556,8 +521,6 @@ uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 
 	ctx.r1.u64 = stack;
 	ctx.r8.u64 = entityHandleVtable;
-	ctx.r9.u64 = 0;
-	ctx.r10.s64 = g_820F0000;
 	EntityHandle_SetTarget(ctx, base, entityHandle, targetAddr);
 
 	uint32_t rangeEnd = LOAD32(characterList + 8);
@@ -576,8 +539,6 @@ uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	// Iterators are (list, element pointer) pairs.
 	uint64_t endIterator = LOAD64(stack + 88);
 	uint64_t beginIterator = LOAD64(stack + 96);
-	ctx.r7.u64 = rangeBegin;
-	ctx.r9.u64 = rangeEnd;
 	uint32_t foundIterAddr = n_sub_822C0268(ctx, base, stack + 112, beginIterator, endIterator, entityHandle);
 
 	uint64_t initialEndIterator = LOAD64(stack + 104);
@@ -585,8 +546,6 @@ uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	n_sub_8268A050(ctx, base, stack + 104, characterList, foundIterator, initialEndIterator);
 
 	STORE32(entityHandle, (uint32_t)entityHandleVtable);
-	ctx.r9.u64 = entityHandleVtable;
-	ctx.r10.s64 = g_820F0000;
 	uint64_t result = EntityHandle_Release(ctx, base, entityHandle);
 
 	stack = PopStackFrame(stack, 144);
@@ -630,12 +589,8 @@ uint64_t CECPhysicsSimulationCharacterControlled_GetClassName(CpuState& ctx, uin
 	constexpr int32_t str_TXT_820C8908_B_ = int32_t(0x820C8908);
 	if (!UseLiftedCode(67, 0x82958CD0)) { ctx.r3.u64 = classNameString; __imp__sub_82958CD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82958CD0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820C8908_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(67, sub_82958CD0, 0x82958CD0) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_GetClassName(ctx, base, ctx.r3.u64); }
@@ -839,13 +794,8 @@ PROMOTED_ENTRY(67, sub_829595E0, 0x829595E0) { ctx.r3.u64 = n_sub_829595E0(ctx, 
 uint64_t n_sub_829595E8(CpuState& ctx, uint8_t* base, uint64_t character) {
 	if (!UseLiftedCode(67, 0x829595E8)) { ctx.r3.u64 = character; __imp__sub_829595E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829595E8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_824C5290(ctx, base, character);
-	uint64_t result = n_sub_829592C0(ctx, base, character);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return n_sub_829592C0(ctx, base, character);
 }
 PROMOTED_ENTRY(67, sub_829595E8, 0x829595E8) { ctx.r3.u64 = n_sub_829595E8(ctx, base, ctx.r3.u64); }

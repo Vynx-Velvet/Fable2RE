@@ -9,10 +9,11 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t CPhysicsBodyComponent_GetPosition(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
+uint64_t CPhysicsBodyComponent_GetPosition(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t targetEntity) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(2, 0x821BD650)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_821BD650(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(2, 0x821BD650)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = targetEntity; __imp__sub_821BD650(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821BD650);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -29,7 +30,7 @@ uint64_t CPhysicsBodyComponent_GetPosition(CpuState& ctx, uint8_t* base, uint32_
 	callTarget.u64 = getPhysicsBody;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = bodyInterface;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = targetEntity;
 	ctx.r6.u64 = getPhysicsBody;
 	ctx.r7.u64 = bodyInterfaceVtable;
 	ctx.r8.u64 = worldSlot;
@@ -41,7 +42,7 @@ uint64_t CPhysicsBodyComponent_GetPosition(CpuState& ctx, uint8_t* base, uint32_
 	uint32_t physicsBodyVtable = LOAD32(physicsBody);
 	uint32_t setBody = LOAD32(physicsBodyVtable + 0x20);
 	callTarget.u64 = setBody;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = targetEntity;
 	ctx.r5.u64 = body;
 	ctx.r10.u64 = setBody;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -52,15 +53,14 @@ uint64_t CPhysicsBodyComponent_GetPosition(CpuState& ctx, uint8_t* base, uint32_
 PROMOTED_ENTRY(2, sub_821BD650, 0x821BD650) { ctx.r3.u64 = CPhysicsBodyComponent_GetPosition(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_821D9558  [40 bytes]
-uint64_t CPhysicsBodyComponent_IsActive(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(3, 0x821D9558)) { ctx.r3.u64 = arg1; __imp__sub_821D9558(ctx, base); return ctx.r3.u64; }
+uint64_t CPhysicsBodyComponent_IsActive(CpuState& ctx, uint8_t* base, uint64_t component) {
+	if (!UseLiftedCode(3, 0x821D9558)) { ctx.r3.u64 = component; __imp__sub_821D9558(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821D9558);
-	uint32_t componentAddr = (uint32_t)arg1;
+	uint32_t componentAddr = (uint32_t)component;
 	if (LOAD32(componentAddr + 0x20) == 4) {
 		uint32_t subObject = LOAD32(componentAddr + 0x38);
 		uint32_t method = LOAD32(LOAD32(subObject) + 0x34);
 		ctx.r3.u64 = subObject;
-		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(method);
 		return ctx.r3.u64;
 	}
@@ -68,10 +68,10 @@ uint64_t CPhysicsBodyComponent_IsActive(CpuState& ctx, uint8_t* base, uint64_t a
 }
 PROMOTED_ENTRY(3, sub_821D9558, 0x821D9558) { ctx.r3.u64 = CPhysicsBodyComponent_IsActive(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82241448(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(7, 0x82241448)) { ctx.r3.u64 = arg1; __imp__sub_82241448(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82241448(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
+	if (!UseLiftedCode(7, 0x82241448)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_82241448(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82241448);
-	uint32_t subObject = LOAD32((uint32_t)arg1 + 56);
+	uint32_t subObject = LOAD32((uint32_t)physicsBodyComponentAddr + 56);
 	if (subObject == 0) return subObject;
 	uint32_t virtualFn = LOAD32(LOAD32(subObject) + 8);
 	ctx.r3.u64 = subObject;
@@ -120,7 +120,6 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 			} while (!compare0.eq);
 		}
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = savedLockState;
 		uint32_t handleAObjectData = n_sub_82D5CE60(ctx, base, handleAObject);
 		// Copy the shared handle at 0x8 (object + refcount) onto the stack, taking a reference.
 		uint32_t handleBRefCount = physicsBodyComponent->m_C;
@@ -153,7 +152,6 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 				REX_LEAVE_GLOBAL_LOCK();
 			} while (!compare0.eq);
 		}
-		ctx.r9.u64 = refCountValue;
 		uint32_t handleBObjectData = n_sub_82D5DB78(ctx, base, handleBObject);
 		uint32_t targetType = 2;
 		uint32_t bodyAuxSub14 = LOAD32(bodyAuxSub + 20);
@@ -168,20 +166,20 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 }
 PROMOTED_ENTRY(10, sub_8227D8B8, 0x8227D8B8) { ctx.r3.u64 = n_sub_8227D8B8(ctx, base, ctx.r3.u32); }
 
-uint64_t CPhysicsBodyComponent_QueryPhysicsObject(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
-	if (!UseLiftedCode(12, 0x822B7D80)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_822B7D80(ctx, base); return ctx.r3.u64; }
+uint64_t CPhysicsBodyComponent_QueryPhysicsObject(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t query) {
+	if (!UseLiftedCode(12, 0x822B7D80)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = query; __imp__sub_822B7D80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822B7D80);
 	uint32_t stack = ctx.r1.u64;
 	CPhysicsBodyComponent* physicsBodyComponent = GameObject<CPhysicsBodyComponent>(base, physicsBodyComponentAddr);
 	stack = PushStackFrame(base, stack, 96);
 
-	uint32_t queryTarget = LOAD32((uint32_t)arg2 + 124);
+	uint32_t queryTarget = LOAD32((uint32_t)query + 124);
 	uint32_t queryFn = LOAD32(LOAD32(queryTarget) + 92);
 	PPCRegister callTarget{};
 	callTarget.u64 = (uint64_t)queryFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = queryTarget;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = query;
 	ctx.r10.u64 = queryFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -277,11 +275,6 @@ uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = componentAddr;
 		ctx.r4.u64 = entityHandle;
-		ctx.r6.u64 = entityEntry;
-		ctx.r7.u64 = entityList;
-		ctx.r8.u64 = entityManager;
-		ctx.r9.u64 = onEntityChanged;
-		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		result = n_sub_82522A78(ctx, base, physicsBodyComponent->m_Body, physicsBodyComponent->m_51);
@@ -309,10 +302,10 @@ uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 PROMOTED_ENTRY(49, sub_82739358, 0x82739358) { ctx.r3.u64 = n_sub_82739358(ctx, base, ctx.r3.u64); }
 
 // sub_82739620  [16 bytes]
-uint64_t n_sub_82739620(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(49, 0x82739620)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82739620(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82739620(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2) {
+	if (!UseLiftedCode(49, 0x82739620)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_82739620(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739620);
-	uint32_t nextBody = LOAD32((uint32_t)arg1 + 56);
+	uint32_t nextBody = LOAD32((uint32_t)physicsBodyComponentAddr + 56);
 	if (nextBody == 0) {
 		// callers read r4 after the call
 		ctx.r4.u64 = arg2;
@@ -374,7 +367,6 @@ uint64_t n_sub_82739650(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 			uint32_t bodyField2C = LOAD32(body + 0x2C);
 			uint32_t objectFirstWord = LOAD32((uint32_t)object);
 			// state the callee may pass on
-			ctx.r7.u64 = object;
 			n_sub_82E67E98(ctx, base, bodyField2C, objectFirstWord);
 
 			uint32_t globalObject2 = LOAD32(g_83330000 + 29792);
@@ -438,12 +430,12 @@ uint64_t n_sub_82739770(CpuState& ctx, uint8_t* base, uint64_t objectAddress) {
 PROMOTED_ENTRY(49, sub_82739770, 0x82739770) { ctx.r3.u64 = n_sub_82739770(ctx, base, ctx.r3.u64); }
 
 // sub_82739778  [576 bytes]
-uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6, uint32_t arg7) {
+uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2, uint64_t transform, uint64_t arg4, uint64_t arg5, uint64_t arg6, uint32_t map) {
 	constexpr int32_t str_TXT_820CA624_B_ = int32_t(0x820CA624);
 	constexpr int32_t g_833375D4 = int32_t(0x833375D4);
 	constexpr int32_t g_8333B4A8 = int32_t(0x8333B4A8);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(49, 0x82739778)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; ctx.r9.u64 = arg7; __imp__sub_82739778(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(49, 0x82739778)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = transform; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; ctx.r9.u64 = map; __imp__sub_82739778(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739778);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -461,7 +453,7 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
 	ctx.r8.u64 = arg6;
-	n_sub_8281BB38(ctx, base, physicsFileIdAddr, arg3, physicsFileName);
+	n_sub_8281BB38(ctx, base, physicsFileIdAddr, transform, physicsFileName);
 
 	// m_60 = (incremented global counter << 31) + the 32-bit value the call above stored
 	uint32_t counterAddr = (uint32_t)g_83490000 + 27480;
@@ -492,8 +484,8 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 		argFor1258 = nextOfType;
 	}
 
-	n_sub_82878960(ctx, base, vectorAddr, quaternionAddr, arg3);
-	Map_Find_823942A0(ctx, base, arg7, vectorAddr, quaternionAddr);
+	n_sub_82878960(ctx, base, vectorAddr, quaternionAddr, transform);
+	Map_Find_823942A0(ctx, base, map, vectorAddr, quaternionAddr);
 
 	uint32_t getRagdollSource = LOAD32(LOAD32((uint32_t)sourceObject) + 12);
 	callTarget.u64 = getRagdollSource;
@@ -514,17 +506,17 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	SharedPtr_ResetWithPointerE(ctx, base, bodySlotAddr, ragdollEntity);
 
 	STORE32(uint32_t(physicsBodyComponent->m_Body) + 272, uint32_t(physicsBodyComponent->m_6C));
-	uint32_t field70 = physicsBodyComponent->m_70;
-	STORE32(uint32_t(physicsBodyComponent->m_Body) + 276, field70);
+	uint32_t bodyCollisionMask = physicsBodyComponent->m_70;
+	STORE32(uint32_t(physicsBodyComponent->m_Body) + 276, bodyCollisionMask);
 
 	// state the callee may pass on
-	ctx.r8.u64 = field70;
+	ctx.r8.u64 = bodyCollisionMask;
 	n_sub_828A11B8(ctx, base, physicsBodyComponentAddr, argFor11B8);
 	n_sub_828A1258(ctx, base, physicsBodyComponentAddr, argFor1258);
 
 	// state the callee may pass on
 	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r5.u64 = transform;
 	ctx.r6.u64 = arg4;
 	ctx.r7.u64 = arg5;
 	n_sub_828A1018(ctx, base, physicsBodyComponentAddr);
@@ -617,7 +609,6 @@ uint64_t n_sub_827399B8(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 PROMOTED_ENTRY(49, sub_827399B8, 0x827399B8) { ctx.r3.u64 = n_sub_827399B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_82739B28(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
-	constexpr int32_t g_83498F68 = int32_t(0x83498F68);
 	if (!UseLiftedCode(49, 0x82739B28)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_82739B28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739B28);
 	uint32_t stack = ctx.r1.u64;
@@ -630,7 +621,6 @@ uint64_t n_sub_82739B28(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	STORE32(componentSlot, physicsBodyComponentAddr);
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r3.u64 = uint32_t(g_83498F68);
 	n_sub_825F2208(ctx, base, componentSlot);
 	uint64_t callerR4 = ctx.r4.u64;
 
@@ -670,26 +660,26 @@ uint64_t n_sub_82739B98(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 }
 PROMOTED_ENTRY(49, sub_82739B98, 0x82739B98) { ctx.r3.u64 = n_sub_82739B98(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82739BA0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
-	if (!UseLiftedCode(49, 0x82739BA0)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_82739BA0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82739BA0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t bodyData) {
+	if (!UseLiftedCode(49, 0x82739BA0)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = bodyData; __imp__sub_82739BA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739BA0);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
 	CPhysicsBodyComponent* physicsBodyComponent = GameObject<CPhysicsBodyComponent>(base, physicsBodyComponentAddr);
 	stack = PushStackFrame(base, stack, 112);
 
-	uint32_t sourceAddr = (uint32_t)arg2;
+	uint32_t sourceAddr = (uint32_t)bodyData;
 	uint64_t body = physicsBodyComponent->m_Body;
 	if ((uint32_t)body != 0) {
 		uint32_t virtualFunc = LOAD32(LOAD32((uint32_t)body) + 40);
 		callTarget.u64 = (uint64_t)virtualFunc;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = body;
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = bodyData;
 		ctx.r10.u64 = virtualFunc;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		body = ctx.r3.u64;
-		arg2 = ctx.r4.u64;
+		bodyData = ctx.r4.u64;
 	}
 
 	uint32_t highWord = LOAD32(sourceAddr + 20);
@@ -698,7 +688,7 @@ uint64_t n_sub_82739BA0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = bodyData;
 	return body;
 }
 PROMOTED_ENTRY(49, sub_82739BA0, 0x82739BA0) { ctx.r3.u64 = n_sub_82739BA0(ctx, base, ctx.r3.u32, ctx.r4.u64); }
@@ -825,9 +815,6 @@ uint64_t CPhysicsBodyComponent_SetState(CpuState& ctx, uint8_t* base, uint64_t p
 			uint32_t vtableSlot = LOAD32((uint32_t)physicsBodyComponent->vtable + 96);
 			callTarget.u64 = vtableSlot;
 			ctx.r3.u64 = physicsBodyComponentAddr;
-			ctx.r4.u64 = handle;
-			ctx.r9.u64 = scratchR9;
-			ctx.r10.u64 = vtableSlot;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = SharedHandle_Release(ctx, base, (uint64_t)stack + 80);
 			newState = ctx.r4.u64;
@@ -895,8 +882,8 @@ uint64_t n_sub_82739DB0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 }
 PROMOTED_ENTRY(49, sub_82739DB0, 0x82739DB0) { ctx.r3.u64 = n_sub_82739DB0(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newValue) {
-	if (!UseLiftedCode(61, 0x828A11B8)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newValue; __imp__sub_828A11B8(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollSource) {
+	if (!UseLiftedCode(61, 0x828A11B8)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newRagdollSource; __imp__sub_828A11B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828A11B8);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t oldValue{};
@@ -919,9 +906,9 @@ uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 			oldValue = ctx.r3.u64;
 		}
 	}
-	physicsBodyComponent->m_18 = newValue;
-	if (newValue != 0 && LOAD16(newValue + 4) != 0) {
-		STORE16(newValue + 6, uint16_t(LOAD16(newValue + 6) + 1));
+	physicsBodyComponent->m_18 = newRagdollSource;
+	if (newRagdollSource != 0 && LOAD16(newRagdollSource + 4) != 0) {
+		STORE16(newRagdollSource + 6, uint16_t(LOAD16(newRagdollSource + 6) + 1));
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -929,8 +916,8 @@ uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 }
 PROMOTED_ENTRY(61, sub_828A11B8, 0x828A11B8) { ctx.r3.u64 = n_sub_828A11B8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint32_t n_sub_828A1258(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRef) {
-	if (!UseLiftedCode(61, 0x828A1258)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newRef; __imp__sub_828A1258(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_828A1258(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollAttachment) {
+	if (!UseLiftedCode(61, 0x828A1258)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newRagdollAttachment; __imp__sub_828A1258(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828A1258);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -952,9 +939,9 @@ uint32_t n_sub_828A1258(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 			oldRef = ctx.r3.u32;
 		}
 	}
-	physicsBodyComponent->m_1C = newRef;
-	if (newRef != 0 && LOAD16(newRef + 4) != 0) {
-		STORE16(newRef + 6, (uint16_t)(LOAD16(newRef + 6) + 1));
+	physicsBodyComponent->m_1C = newRagdollAttachment;
+	if (newRagdollAttachment != 0 && LOAD16(newRagdollAttachment + 4) != 0) {
+		STORE16(newRagdollAttachment + 6, (uint16_t)(LOAD16(newRagdollAttachment + 6) + 1));
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;

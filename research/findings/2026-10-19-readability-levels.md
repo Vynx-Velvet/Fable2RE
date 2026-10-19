@@ -92,3 +92,96 @@ start-up initialisers); page bases `g_832A0000` 1,403, `g_832B0000` 1,141, `g_82
    module.
 3. Review and progress: the readability level in every review packet and in the publish summary; a function
    counts as human-readable only at the named level.
+
+## The same day: names for the start-up and shut-down functions, and the readable form
+
+**Names after the global (`tools/rewrite/name_globals.py`).** Of the start-up and shut-down functions of global
+strings, 2,050 do nothing but release one global (`CCharString_ReleaseAndDecGlobalCountA`) and 1,964 nothing but
+construct one from its text and register its release at exit. Where the global has a name (made on every machine
+from its own copy: `research/decomp/global_names.tsv`), they are named `Destroy_<global>` and
+`Construct_<global>`. The names live in the promoted modules only: the lifted code reaches these functions through
+pointers, and the weak native bridges (`native_bridges.N.cpp`) reach them through their entries, so nothing else
+changes. The repository holds such a name with a reference in place of the global's name
+(`Destroy_TXT_<address>_G_`: `promoted_text.py` now encodes a text-named global inside a longer name and its leak
+check finds one that is not encoded); every setup renders the same name from its own copy.
+
+**The readable form (`tools/rewrite/readable_form.py`).** Mechanical steps, each where it keeps what the strict
+check compares, and every changed function checked again (profiles 0-5, the registers callers read):
+
+- a register write goes when, in the straight-line code after it, the register is written again or changed by a
+  call before anything reads it (summaries `mods`, `rin`, a read of `ctx.rN`, a return with the register among
+  the function's `outputs`); a callee that only passes a register on (`fwd`) does not read a leftover temporary
+  (a constant or an address), as the check itself treats it; a branch, a label or a call through a pointer
+  leaves the write in place;
+- the frame of a body that keeps nothing on the game's stack is one line, `GameStackFrame stackFrame(ctx, base,
+  N);` (`Fable2Recomp/lifted/readable_support.h`: pushed where declared, popped on every return, as the original
+  did; not used before a tail call made after the pop);
+- atexit called with the r8 it was handed (the C runtime's own convention) is `RegisterAtExit(ctx, base, f)`,
+  which calls it through its entry with r3 set and r8 as it is;
+- a 64 KiB page base plus an offset handed to a call is named after what is at that address: the function
+  (`Destroy_g_X_address`) or the string (the lifter's `str_` name, often fixing a misleading one: the page base
+  itself was named after whatever string happened to start the page).
+
+Result: 3,599 functions changed (516 in a first module, 3,083 in the rest), 3,330 passed the strict check and were
+written (the other 269 keep their form;
+most wrote a register before a call through a pointer, which the first version did not treat as a reader). The
+build succeeds and the game checks pass (menu, load, play; no teardown crash, no critical log lines). A start-up
+function now reads:
+
+```cpp
+uint64_t Construct_TXT_834985C4_G_(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t TXT_834985C4_G_ = int32_t(0x834985C4);
+	constexpr int32_t str_TXT_820BD244_B_ = int32_t(0x820BD244);
+	constexpr int32_t Destroy_TXT_834985C4_G__address = int32_t(0x832A30F8);
+	if (!UseLiftedCode(143, 0x83250030)) { __imp__sub_83250030(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83250030);
+	GameStackFrame stackFrame(ctx, base, 96);
+	CCharString_ConstructFromCStr(ctx, base, TXT_834985C4_G_, str_TXT_820BD244_B_, -1);
+	return RegisterAtExit(ctx, base, Destroy_TXT_834985C4_G__address);
+}
+```
+
+(the published form; on a machine with the game, each reference is the global's or the string's name).
+
+Levels of the 7,378 published functions after both: **4,070 named** (was 31), 1,423 readable with names still
+to give, 1,885 still at machine level. A name made from an offset or a position (`flag144`, `GetField8`,
+`GetByte31`, `unk10`) now counts as a placeholder (225 functions have one).
+
+## The naming step (`tools/rewrite/name_pass.py`)
+
+A packet per module holds the text of its functions that still miss names and, for each function they call
+without a name, an excerpt of that callee's own code (the lifted text, or its module text), so a callee is named
+from what it does. The model answers in the naming pipeline's lines (`F` function, `M` field, `L` variable or
+parameter). `collect` keeps only medium and high confidence (a guess misleads: a wrong name is worse than none)
+and refuses names made from an offset or a position (`GetField8`, `GetByte31`, `SetObjectByte171`, `flag144`);
+variable and parameter names of promoted functions go straight into their modules (a rename inside one function,
+refused when the name is already used there), everything else through `tools/naming/merge.py` into
+`research/names/` (it rejects names that clash or would replace an entry of equal or higher confidence).
+
+Run of 2026-10-19 (DeepSeek `deepseek-flash`, effort low, 476 packets for 3,442 functions): USD 2.35 (2.9 M
+tokens in, 3.6 M out, of which 3.3 M reasoning).
+
+| | Lines |
+|---|---:|
+| refused, low confidence | 1,790 |
+| refused, made from an offset | 86 |
+| variable and parameter renames applied in modules (971 functions) | 1,475 |
+| added to the dictionary: functions / fields / locals of lifted callees | 3,347 / 1,241 / 1,882 |
+| rejected by `merge.py` (clash, existing name of equal or higher confidence, invalid) | 1,013 |
+
+The dictionary names take effect with `tools/lift/apply_names.py`, which re-lifts and re-tests what they affect,
+and `promote.py sync`, which writes them into the modules (a long cycle: run with the whole-game work at night).
+A name that keeps its global's address (`DestroyGlobalList_8349AD9C`) counts as an address, not a name, until the
+global is named.
+
+After the naming step and a second readable-form pass (calls through a pointer now count as readers: 141
+functions tried again, 80 passed), the build succeeds and the game checks pass again (menu, load, play; no
+teardown crash). Published levels: **4,072 named**, 1,421 readable, 1,885 at machine level; with the 57
+hand-written functions, 4,129 of 41,186 game functions (10.0%) are readable C++ with every name. Placeholder
+variable names are left in 510 functions (was 1,037).
+
+Left for the next steps: the dictionary names (applied with the next re-lift and re-test, then `promote.py sync`
+and a new naming round over what is still unnamed), names for globals (a published dictionary of globals does not
+exist yet: 2,088 functions still use one by address), field access through the class model instead of raw offsets
+(1,608 functions), and the 1,885 functions whose register code the analysis cannot show to be unneeded (a model
+rewrite with the analysis' facts, or a more precise analysis of registers that are only saved and restored).

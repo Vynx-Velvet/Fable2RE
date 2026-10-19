@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t newValue) {
 	constexpr int32_t g_820BE2D4 = int32_t(0x820BE2D4);
@@ -43,8 +44,6 @@ uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			ctx.r8.u64 = listSlot;
-			ctx.r9.u64 = listHolder;
-			ctx.r10.u64 = managerChild;
 			EntityHandleList_PushBackEntity(ctx, base, entityList, entity);
 		}
 
@@ -55,15 +54,12 @@ uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		STORE32(tempAddr, (uint32_t)firstWordDuringCall);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = firstWordDuringCall;
 		n_sub_82202E90(ctx, base, entity, tempAddr);
 
 		int32_t firstWordAfterBase = g_820F0000;
 		int64_t firstWordAfterCall = (int64_t)firstWordAfterBase - 1124;
 		STORE32(tempAddr, (uint32_t)firstWordAfterCall);
 		// state the callee may pass on
-		ctx.r8.u64 = firstWordAfterCall;
-		ctx.r9.s64 = firstWordAfterBase;
 		result = n_sub_82547FC0(ctx, base, graphicAppearanceAddr);
 		resultR4 = ctx.r4.u64;
 		resultR10 = ctx.r10.u64;
@@ -150,9 +146,6 @@ uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 				// state the callee may pass on
 				ctx.r0.u64 = caseTarget;
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = searchEnd;
-				ctx.r7.u64 = lastLess;
-				ctx.r8.u64 = stepBytes;
 				ctx.xer.ca = flags.ca;
 				uint64_t resolved = n_sub_821D81C0(ctx, base, result, 1);
 				if (uint32_t(resolved) != 0 && (LOAD8(uint32_t(resolved) + 144) & 64) != 0) {
@@ -225,7 +218,6 @@ uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 					object = LOAD32(handleRef);
 					if (object == 0) {
 						// state the callee may pass on (the zero object word)
-						ctx.r10.u64 = 0;
 						handle = EntityHandle_Release(ctx, base, handle);
 					}
 				}
@@ -259,12 +251,8 @@ uint64_t CECGraphicAppearance_GetClassName(CpuState& ctx, uint8_t* base, uint64_
 	constexpr int32_t str_TXT_820BDEEC_B_ = int32_t(0x820BDEEC);
 	if (!UseLiftedCode(33, 0x82546958)) { ctx.r3.u64 = classNameString; __imp__sub_82546958(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82546958);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820BDEEC_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(33, sub_82546958, 0x82546958) { ctx.r3.u64 = CECGraphicAppearance_GetClassName(ctx, base, ctx.r3.u64); }
@@ -600,7 +588,6 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	if ((oldFlags & 128) == 0) {
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = newState;
-		ctx.r10.u64 = oldState;
 		CECGraphicAppearance_ForEach(ctx, base, graphicAppearanceAddr);
 	}
 	const uint32_t globalBase = (uint32_t)g_83490000;
@@ -613,8 +600,6 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		const uint32_t slot = LOAD32(holder + 4);
 		const uint32_t entityList = LOAD32(slot);
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = slot;
-		ctx.r10.u64 = holder;
 		EntityHandleList_PushBackEntity(ctx, base, entityList, entity);
 	}
 
@@ -626,8 +611,6 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	STORE32(stack + 80, (uint32_t)tempVtable);
 	STORE8(stack + 84, (uint8_t)stateByte);
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = tempVtable;
-	ctx.r10.s64 = g_820C0000;
 	n_sub_82202E90(ctx, base, targetEntity, tempObjectAddr);
 
 	// Back to the base vtable 0x820EFB9C once the object is done with.
@@ -645,8 +628,6 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		const uint32_t holder = LOAD32(owner + 88);
 		const uint32_t slot = LOAD32(holder + 4);
 		const uint32_t entityList = LOAD32(slot);
-		ctx.r9.u64 = slot;
-		ctx.r10.u64 = holder;
 		EntityHandleList_PushBackEntity(ctx, base, entityList, entity);
 	}
 	// r4 and r10 for our callers are what this call leaves in them
@@ -993,13 +974,8 @@ uint64_t n_sub_82547FC0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 			STORE_F32(stack + 132, float(tint2));
 			STORE_F32(stack + 128, float(tint1));
 
-			ctx.r8.u64 = TXT_820BDFE4_L_;
 			ctx.cr0 = cr0;
 			const uint64_t uniqueId = Entity_GetUniqueId(ctx, base, entity);
-			ctx.f10.f64 = tint1;
-			ctx.f11.f64 = tint0;
-			ctx.f12.f64 = tint2;
-			ctx.f13.f64 = TXT_820BDFF4_L_;
 			result = n_sub_8254AB88(ctx, base, messageTarget, uint64_t(stack) + 112, uniqueId);
 			r8Value = ctx.r8.u64;
 			cr0 = ctx.cr0;
@@ -1014,7 +990,6 @@ uint64_t n_sub_82547FC0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 		STORE_F32(stack + 84, float(graphicAppearance->m_74));
 		STORE32(stack + 80, 0x820A4820u);
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = r8Value;
 		ctx.cr0 = cr0;
 		ctx.xer.ca = xer.ca;
 		const uint64_t uniqueId = Entity_GetUniqueId(ctx, base, graphicAppearance->m_4);
@@ -1098,8 +1073,6 @@ uint64_t n_sub_825486C0(CpuState& ctx, uint8_t* base, uint64_t appearance, uint3
 	CECGraphicAppearance* source = GameObject<CECGraphicAppearance>(base, sourceAddr);
 	const uint8_t sourceState = source->m_C5;
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = r8Value;
 	ctx.xer.ca = xer.ca;
 	n_sub_82547250(ctx, base, appearance, sourceState);

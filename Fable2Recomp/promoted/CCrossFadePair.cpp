@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 void n_sub_82C25628(CpuState& ctx, uint8_t* base, uint32_t crossFadePairAddr, uint32_t outIntAddr, uint32_t outVectorAddr) {
 	if (!UseLiftedCode(90, 0x82C25628)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = outIntAddr; ctx.r5.u64 = outVectorAddr; __imp__sub_82C25628(ctx, base); return; }
@@ -159,21 +160,21 @@ uint64_t CCrossFadePair_ReleaseChildren(CpuState& ctx, uint8_t* base, uint32_t c
 }
 PROMOTED_ENTRY(90, sub_82C25878, 0x82C25878) { ctx.r3.u64 = CCrossFadePair_ReleaseChildren(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82C25938(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t forwardedArg) {
-	if (!UseLiftedCode(90, 0x82C25938)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = forwardedArg; __imp__sub_82C25938(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C25938(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t childReference) {
+	if (!UseLiftedCode(90, 0x82C25938)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = childReference; __imp__sub_82C25938(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C25938);
 	uint32_t stack = ctx.r1.u64;
 	CCrossFadePair* crossFadePair = GameObject<CCrossFadePair>(base, crossFadePairAddr);
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82C50270(ctx, base, crossFadePairAddr + 48, forwardedArg);
+	n_sub_82C50270(ctx, base, crossFadePairAddr + 48, childReference);
 
 	uint32_t childB = crossFadePair->m_childB;
 	if (childB != 0) {
 		uint32_t childMethod = LOAD32(LOAD32(childB) + 4);
 		ctx.r3.u64 = childB;
-		ctx.r4.u64 = forwardedArg;
+		ctx.r4.u64 = childReference;
 		ctx.r10.u64 = childMethod;
 		REX_CALL_INDIRECT_FUNC(childMethod);
 	}
@@ -183,7 +184,7 @@ uint64_t n_sub_82C25938(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr
 	if (childA != 0) {
 		uint32_t childMethod = LOAD32(LOAD32(childA) + 4);
 		ctx.r3.u64 = childA;
-		ctx.r4.u64 = forwardedArg;
+		ctx.r4.u64 = childReference;
 		ctx.r10.u64 = childMethod;
 		REX_CALL_INDIRECT_FUNC(childMethod);
 		result = ctx.r3.u64;
@@ -195,21 +196,21 @@ uint64_t n_sub_82C25938(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr
 }
 PROMOTED_ENTRY(90, sub_82C25938, 0x82C25938) { ctx.r3.u64 = n_sub_82C25938(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C259B8(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t forwardedArg) {
-	if (!UseLiftedCode(90, 0x82C259B8)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = forwardedArg; __imp__sub_82C259B8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C259B8(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t childReference) {
+	if (!UseLiftedCode(90, 0x82C259B8)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = childReference; __imp__sub_82C259B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C259B8);
 	uint32_t stack = ctx.r1.u64;
 	CCrossFadePair* crossFadePair = GameObject<CCrossFadePair>(base, crossFadePairAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82C505E8(ctx, base, crossFadePairAddr + 48, forwardedArg);
+	n_sub_82C505E8(ctx, base, crossFadePairAddr + 48, childReference);
 
 	uint32_t childB = crossFadePair->m_childB;
 	uint64_t result = childB;
 	if (childB != 0) {
 		uint32_t childMethod = LOAD32(LOAD32(childB) + 8);
 		ctx.r3.u64 = childB;
-		ctx.r4.u64 = forwardedArg;
+		ctx.r4.u64 = childReference;
 		ctx.r10.u64 = childMethod;
 		REX_CALL_INDIRECT_FUNC(childMethod);
 		result = ctx.r3.u64;
@@ -220,7 +221,7 @@ uint64_t n_sub_82C259B8(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr
 		childB = crossFadePair->m_childB;
 		uint32_t childMethod = LOAD32(LOAD32(childB) + 8);
 		ctx.r3.u64 = childB;
-		ctx.r4.u64 = forwardedArg;
+		ctx.r4.u64 = childReference;
 		ctx.r10.u64 = childMethod;
 		REX_CALL_INDIRECT_FUNC(childMethod);
 		result = ctx.r3.u64;
@@ -276,8 +277,8 @@ uint64_t CCrossFadePair_SetPosition(CpuState& ctx, uint8_t* base, uint32_t cross
 PROMOTED_ENTRY(90, sub_82C25AB0, 0x82C25AB0) { ctx.r3.u64 = CCrossFadePair_SetPosition(ctx, base, ctx.r3.u32); }
 
 // sub_82C26048  [272 bytes]
-uint64_t n_sub_82C26048(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t objectAddr) {
-	if (!UseLiftedCode(90, 0x82C26048)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = objectAddr; __imp__sub_82C26048(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C26048(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr, uint64_t fadeSource) {
+	if (!UseLiftedCode(90, 0x82C26048)) { ctx.r3.u64 = crossFadePairAddr; ctx.r4.u64 = fadeSource; __imp__sub_82C26048(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C26048);
 	uint32_t stack = ctx.r1.u64;
 	CCrossFadePair* crossFadePair = GameObject<CCrossFadePair>(base, crossFadePairAddr);
@@ -285,19 +286,19 @@ uint64_t n_sub_82C26048(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr
 
 	// what callers find in r3 (returned), r4 and f1
 	uint64_t result = crossFadePairAddr;
-	uint64_t r4Out = objectAddr;
+	uint64_t r4Out = fadeSource;
 	double f1Out = ctx.f1.f64;
 
 	if (crossFadePair->m_6D == 0) {
-		uint32_t vtable = LOAD32((uint32_t)objectAddr);
-		uint32_t methodArg = crossFadePair->m_5C;
-		double initialValue = double(LOAD_F32(0x82000C0Cu));
+		uint32_t vtable = LOAD32((uint32_t)fadeSource);
+		uint32_t fadeLayer = crossFadePair->m_5C;
+		double fadeStartValue = double(LOAD_F32(0x82000C0Cu));
 		uint32_t virtualMethod = LOAD32(vtable + 0x38);
-		STORE_F32(stack + 80, float(initialValue));
+		STORE_F32(stack + 80, float(fadeStartValue));
 
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = objectAddr;
-		ctx.r4.u64 = methodArg;
+		ctx.r3.u64 = fadeSource;
+		ctx.r4.u64 = fadeLayer;
 		ctx.r5.u64 = stack + 80;
 		ctx.r9.u64 = virtualMethod;
 		ctx.r10.u64 = vtable;
@@ -309,60 +310,53 @@ uint64_t n_sub_82C26048(CpuState& ctx, uint8_t* base, uint64_t crossFadePairAddr
 		double f10Value = ctx.f10.f64;
 		double f11Value = ctx.f11.f64;
 		double f12Value = ctx.f12.f64;
-		uint64_t r8Value = (uint32_t)result & 0xFF;
+		uint64_t foundTarget = (uint32_t)result & 0xFF;
 
-		if (r8Value != 0) {
+		if (foundTarget != 0) {
 			ctx.fpscr.disableFlushMode();
 			f1Out = double(LOAD_F32(stack + 80));
 			uint64_t r6Value = stack + 88;
-			STORE_F32(stack + 88, float(initialValue));
+			STORE_F32(stack + 88, float(fadeStartValue));
 			STORE32(stack + 84, 0u);
 			result = n_sub_82C25EB0(ctx, base, crossFadePairAddr + 4, stack + 84, stack + 88, f1Out);
 			r4Out = ctx.r4.u64;
 
 			if (((uint32_t)result & 0xFF) != 0) {
-				uint32_t foundValue = LOAD32(stack + 84);
-				if (foundValue != crossFadePair->m_20) {
+				uint32_t newFadeId = LOAD32(stack + 84);
+				if (newFadeId != crossFadePair->m_20) {
 					ctx.fpscr.disableFlushMode();
-					double toValue = double(LOAD_F32(stack + 88));
-					double fromValue = double(LOAD_F32(stack + 80));
-					double distance;
-					if (!(toValue < fromValue)) {
-						distance = float(toValue - fromValue);
+					double targetFadeValue = double(LOAD_F32(stack + 88));
+					double currentFadeValue = double(LOAD_F32(stack + 80));
+					double fadeDistance;
+					if (!(targetFadeValue < currentFadeValue)) {
+						fadeDistance = float(targetFadeValue - currentFadeValue);
 					} else {
-						// forward from fromValue up to m_64, then from m_60 on to toValue
+						// forward from currentFadeValue up to m_64, then from m_60 on to targetFadeValue
 						ctx.fpscr.disableFlushMode();
-						double lowerLimit = double(crossFadePair->m_60);
-						double upperLimit = double(crossFadePair->m_64);
-						f11Value = float(toValue - lowerLimit);
-						f10Value = float(upperLimit - fromValue);
-						f12Value = upperLimit;
-						distance = float(f11Value + f10Value);
+						double rangeLowerBound = double(crossFadePair->m_60);
+						double rangeUpperBound = double(crossFadePair->m_64);
+						f11Value = float(targetFadeValue - rangeLowerBound);
+						f10Value = float(rangeUpperBound - currentFadeValue);
+						f12Value = rangeUpperBound;
+						fadeDistance = float(f11Value + f10Value);
 					}
 					ctx.fpscr.disableFlushMode();
-					double maxDistance = double(crossFadePair->m_68);
-					if (!(distance < maxDistance)) {
-						distance = maxDistance;
+					double maxFadeDistance = double(crossFadePair->m_68);
+					if (!(fadeDistance < maxFadeDistance)) {
+						fadeDistance = maxFadeDistance;
 					}
 
 					ctx.fpscr.disableFlushMode();
 					// state the callee may pass on
-					ctx.r6.u64 = r6Value;
-					ctx.r8.u64 = r8Value;
-					ctx.f10.f64 = f10Value;
-					ctx.f11.f64 = f11Value;
-					ctx.f12.f64 = f12Value;
-					ctx.f13.f64 = maxDistance;
-					n_sub_82C25CE0(ctx, base, crossFadePairAddr, objectAddr, foundValue, fromValue, distance);
+					ctx.r8.u64 = foundTarget;
+					n_sub_82C25CE0(ctx, base, crossFadePairAddr, fadeSource, newFadeId, currentFadeValue, fadeDistance);
 					r6Value = ctx.r6.u64;
-					r8Value = ctx.r8.u64;
+					foundTarget = ctx.r8.u64;
 				}
 
 				ctx.fpscr.disableFlushMode();
 				f1Out = double(LOAD_F32(stack + 80));
 				// state the callee may pass on
-				ctx.r6.u64 = r6Value;
-				ctx.r8.u64 = r8Value;
 				result = CCrossFadePair_UpdateFade(ctx, base, crossFadePairAddr, f1Out);
 				r4Out = ctx.r4.u64;
 				f1Out = ctx.f1.f64;
@@ -457,16 +451,12 @@ PROMOTED_ENTRY(90, sub_82C26158, 0x82C26158) { ctx.r3.u64 = CCrossFadePair_Dtor(
 uint64_t CCrossFadePair_DeletingDtor(CpuState& ctx, uint8_t* base, uint64_t self, uint64_t deleteFlag) {
 	if (!UseLiftedCode(90, 0x82C26258)) { ctx.r3.u64 = self; ctx.r4.u64 = deleteFlag; __imp__sub_82C26258(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C26258);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlag; // state the callee may pass on
 	CCrossFadePair_Dtor(ctx, base, self);
 	if (uint32_t(deleteFlag & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, self);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return self;
 }
 PROMOTED_ENTRY(90, sub_82C26258, 0x82C26258) { ctx.r3.u64 = CCrossFadePair_DeletingDtor(ctx, base, ctx.r3.u64, ctx.r4.u64); }

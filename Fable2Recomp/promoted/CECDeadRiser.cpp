@@ -9,9 +9,10 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t CECDeadRiser_GetClassName(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(61, 0x828987E0)) { ctx.r3.u64 = arg1; __imp__sub_828987E0(ctx, base); return ctx.r3.u64; }
+uint64_t CECDeadRiser_GetClassName(CpuState& ctx, uint8_t* base, uint64_t className) {
+	if (!UseLiftedCode(61, 0x828987E0)) { ctx.r3.u64 = className; __imp__sub_828987E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828987E0);
 
 	constexpr int32_t classNameCStr = int32_t(0x820C8E80);
@@ -22,11 +23,11 @@ uint64_t CECDeadRiser_GetClassName(CpuState& ctx, uint8_t* base, uint64_t arg1) 
 	int32_t length = -1;
 
 	ctx.r1.u64 = stack;
-	CCharString_ConstructFromCStr(ctx, base, arg1, classNameAddress, length);
+	CCharString_ConstructFromCStr(ctx, base, className, classNameAddress, length);
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return className;
 }
 PROMOTED_ENTRY(61, sub_828987E0, 0x828987E0) { ctx.r3.u64 = CECDeadRiser_GetClassName(ctx, base, ctx.r3.u64); }
 
@@ -39,8 +40,6 @@ uint64_t CECDeadRiser_Destructor(CpuState& ctx, uint8_t* base, uint64_t deadRise
 	stack = PushStackFrame(base, stack, 112);
 	deadRiser->m_3C = 0x820F1664u;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
-	ctx.r10.u64 = 0x820F1664u;
 	EntityHandle_Release(ctx, base, deadRiserAddr + 60);
 	deadRiser->m_40 = 0u;
 	deadRiser->vtable = 0x820A8D10u;
@@ -76,8 +75,8 @@ uint64_t n_sub_82898898(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 }
 PROMOTED_ENTRY(61, sub_82898898, 0x82898898) { ctx.r3.u64 = n_sub_82898898(ctx, base, ctx.r3.u64); }
 
-uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, uint64_t serializer, uint64_t arg3) {
-	if (!UseLiftedCode(61, 0x82898900)) { ctx.r3.u64 = deadRiserAddr; ctx.r4.u64 = serializer; ctx.r6.u64 = arg3; __imp__sub_82898900(ctx, base); return ctx.r3.u64; }
+uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, uint64_t serializer, uint64_t serializeFlags) {
+	if (!UseLiftedCode(61, 0x82898900)) { ctx.r3.u64 = deadRiserAddr; ctx.r4.u64 = serializer; ctx.r6.u64 = serializeFlags; __imp__sub_82898900(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82898900);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 128);
@@ -102,12 +101,11 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 	// TXT_820DFFEC_B_ is serialized through a temporary because the serializer may update it.
 	STORE32(stack + 84, uint32_t(deadRiser->m_CurrState));
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = arg3;
+	ctx.r6.u64 = serializeFlags;
 	CCharString_ConstructFromCStr(ctx, base, stack + 80, (uint64_t)(int64_t)str_TXT_820DFFEC_B_, -1);
 	uint32_t currStateNameObj = LOAD32(stack + 80);
 	uint64_t currStateName = emptyStringData;
 	if (currStateNameObj != 0) currStateName = LOAD32(currStateNameObj);
-	ctx.r4.u64 = currStateName;
 	IStream_SerializeU32(ctx, base, serializer, stack + 84);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	deadRiser->m_CurrState = LOAD32(stack + 84);
@@ -117,7 +115,6 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t nameObj = LOAD32(stack + 80);
 		uint64_t name = emptyStringData;
 		if (nameObj != 0) name = LOAD32(nameObj);
-		ctx.r4.u64 = name;
 		IStream_SerializeFloat(ctx, base, serializer, valueAddr);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	};
@@ -133,7 +130,6 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t nameObj = LOAD32(stack + 80);
 		uint64_t name = emptyStringData;
 		if (nameObj != 0) name = LOAD32(nameObj);
-		ctx.r4.u64 = name;
 		IStream_SerializeU32(ctx, base, serializer, valueAddr);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	};
@@ -151,7 +147,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 	n_sub_8244DAE0(ctx, base, deadRiserAddr + 52, stack + 80, serializer);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
-	uint32_t lowByte = (uint32_t)(arg3 & 0xFF);
+	uint32_t lowByte = (uint32_t)(serializeFlags & 0xFF);
 	uint32_t clz = (lowByte == 0) ? 32u : (uint32_t)__builtin_clz(lowByte);
 	deadRiser->m_12 = (uint8_t)((clz >> 5) & 1);
 
@@ -185,25 +181,19 @@ uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 		if (hasTargetSlots) {
 			const uint32_t manager = LOAD32((uint32_t)g_83490000 + 26912);
 			const uint32_t entityList = LOAD32(LOAD32(LOAD32(manager + 12) + 88) + 4);
-			ctx.r8.u64 = entityList;
 			const uint64_t entity = n_sub_82264448(ctx, base, LOAD32(entityList), arg4);
 
 			const uint32_t handleAddr = stack + 80;
 			const uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
 			STORE32(handleAddr + 4, 0);
 			STORE32(handleAddr, (uint32_t)handleVtable);
-			ctx.r6.u64 = handleVtable;
-			ctx.r7.s64 = g_820F0000;
 			EntityHandle_SetTarget(ctx, base, handleAddr, entity);
 			EntityHandle_Assign(ctx, base, (uint32_t)deadRiserAddr + 60, handleAddr);
 			STORE32(handleAddr, (uint32_t)handleVtable);
-			ctx.r4.u64 = handleVtable;
-			ctx.r5.s64 = g_820F0000;
 			result = EntityHandle_Release(ctx, base, handleAddr);
 			arg4 = ctx.r4.u64;
 		}
 		if (LOAD8((uint32_t)deadRiserAddr + 16) != 0) {
-			ctx.r4.u64 = arg4;
 			result = EntityHandle_Get_825575C8(ctx, base, (uint32_t)deadRiserAddr + 60);
 			arg4 = ctx.r4.u64;
 			if ((uint32_t)result != 0) {
@@ -259,7 +249,6 @@ uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, ui
 				ctx.r1.u64 = stack;
 				ctx.r4.u64 = arg2;
 			}
-			ctx.r10.u64 = 0;
 			EntityHandle_Release(ctx, base, handleAddr);
 		}
 		return 0;
@@ -287,8 +276,6 @@ uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, ui
 	uint32_t sourceEntity = LOAD32(ownerSlot);
 
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = ownerSlot;
-	ctx.r9.u64 = activeObj;
 
 	uint64_t owner = (isHero != 0)
 		? SpellShot_GetOwner(ctx, base, sourceEntity)
@@ -303,8 +290,8 @@ uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, ui
 }
 PROMOTED_ENTRY(61, sub_82899DC0, 0x82899DC0) { ctx.r3.u64 = n_sub_82899DC0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, double floatArg1) {
-	if (!UseLiftedCode(61, 0x8289A2C0)) { ctx.r3.u64 = deadRiserAddr; ctx.f1.f64 = floatArg1; __imp__sub_8289A2C0(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, double deltaTime) {
+	if (!UseLiftedCode(61, 0x8289A2C0)) { ctx.r3.u64 = deadRiserAddr; ctx.f1.f64 = deltaTime; __imp__sub_8289A2C0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289A2C0);
 
 	CECDeadRiser* deadRiser = GameObject<CECDeadRiser>(base, deadRiserAddr);
@@ -339,7 +326,7 @@ uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, do
 		float stepBase = (float)((double)rateDiff / (double)speedDivisor);
 		float yawDelta = targetYaw - oldYaw;
 		float absYawDelta = fabsf(yawDelta);
-		float yawStep = (float)((double)stepBase * floatArg1);
+		float yawStep = (float)((double)stepBase * deltaTime);
 
 		regF4 = (double)stepBase;
 		regF5.f64 = (double)absYawDelta;
@@ -366,7 +353,7 @@ uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, do
 		float stepBasePitch = (float)((double)pitchRateBase / (double)speedDivisor);
 		float pitchDelta = targetPitch - oldPitch;
 		float absPitchDelta = fabsf(pitchDelta);
-		float pitchStep = (float)((double)stepBasePitch * floatArg1);
+		float pitchStep = (float)((double)stepBasePitch * deltaTime);
 
 		regF11 = (double)stepBasePitch;
 		regF10.f64 = (double)absPitchDelta;
@@ -405,17 +392,10 @@ uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, do
 	}
 
 	ctx.fpscr.disableFlushMode();
-	ctx.f2.f64 = (double)currentPitch;
-	ctx.f4.f64 = regF4;
 	ctx.f5 = regF5;
-	ctx.f6.f64 = regF6;
 	ctx.f7 = regF7;
-	ctx.f8.f64 = regF8;
-	ctx.f9.f64 = regF9;
 	ctx.f10 = regF10;
-	ctx.f11.f64 = regF11;
 	ctx.f12 = regF12;
-	ctx.f13.f64 = regF13;
 
 	return n_sub_8289A398(ctx, base, deadRiserAddr, (double)currentYaw);
 }

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CDoubleBufferedStream_Construct(CpuState& ctx, uint8_t* base, uint64_t doubleBufferedStreamAddr, uint64_t sourceStream, uint64_t startPosition, uint64_t totalBufferSize) {
 	if (!UseLiftedCode(83, 0x82B48EB8)) { ctx.r3.u64 = doubleBufferedStreamAddr; ctx.r4.u64 = sourceStream; ctx.r5.u64 = startPosition; ctx.r6.u64 = totalBufferSize; __imp__sub_82B48EB8(ctx, base); return ctx.r3.u64; }
@@ -77,8 +78,8 @@ uint64_t CDoubleBufferedStream_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 }
 PROMOTED_ENTRY(83, sub_82B48EB8, 0x82B48EB8) { ctx.r3.u64 = CDoubleBufferedStream_Construct(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint64_t CDoubleBufferedStream_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(83, 0x82B48F90)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82B48F90(ctx, base); return ctx.r3.u64; }
+uint64_t CDoubleBufferedStream_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t doubleBufferedStream, uint64_t arg2) {
+	if (!UseLiftedCode(83, 0x82B48F90)) { ctx.r3.u64 = doubleBufferedStream; ctx.r4.u64 = arg2; __imp__sub_82B48F90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B48F90);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -87,12 +88,12 @@ uint64_t CDoubleBufferedStream_ScalarDeletingDestructor(CpuState& ctx, uint8_t* 
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = arg2;
 
-	CDoubleBufferedStream_Destructor(ctx, base, arg1);
+	CDoubleBufferedStream_Destructor(ctx, base, doubleBufferedStream);
 
-	uint64_t result = arg1;
+	uint64_t result = doubleBufferedStream;
 	if ((deleteFlags & 0x1u) != 0) {
 		HandleTarget_Free(ctx, base, result);
-		result = arg1;
+		result = doubleBufferedStream;
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -234,9 +235,6 @@ uint64_t CDoubleBufferedStream_Read(CpuState& ctx, uint8_t* base, uint64_t doubl
 		uint32_t seekFn = LOAD32(streamVtablePtr + 20);
 		ctx.r3.u64 = doubleBufferedStreamAddr;
 		ctx.r4.u64 = seekTarget;
-		ctx.r5.u64 = 0;
-		ctx.r9.u64 = seekFn;
-		ctx.r10.u64 = streamVtablePtr;
 		REX_CALL_INDIRECT_FUNC(seekFn);
 
 		stack = PopStackFrame(stack, 176);
@@ -399,8 +397,6 @@ uint64_t CDoubleBufferedStream_Write(CpuState& ctx, uint8_t* base, uint64_t doub
 			return 0;
 		}
 
-		ctx.r8.u64 = newPosition;
-		ctx.r9.u64 = absolutePosition;
 		uint32_t swapped = CDoubleBufferedStream_SwapBuffers(ctx, base, doubleBufferedStreamAddr);
 		sourceBuffer = ctx.r4.u64;
 		flushThreshold = ctx.r5.u64;
@@ -484,22 +480,17 @@ uint64_t CDoubleBufferedStream_Seek(CpuState& ctx, uint8_t* base, uint64_t doubl
 }
 PROMOTED_ENTRY(83, sub_82B49530, 0x82B49530) { ctx.r3.u64 = CDoubleBufferedStream_Seek(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t CDoubleBufferedStream_Flush(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(83, 0x82B49600)) { ctx.r3.u64 = arg1; __imp__sub_82B49600(ctx, base); return ctx.r3.u64; }
+uint64_t CDoubleBufferedStream_Flush(CpuState& ctx, uint8_t* base, uint64_t stream) {
+	if (!UseLiftedCode(83, 0x82B49600)) { ctx.r3.u64 = stream; __imp__sub_82B49600(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B49600);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint64_t result = 0xFFFFFFFF80004005ull; // E_FAIL
-	if (CDoubleBufferedStream_FlushBuffer(ctx, base, arg1, 0) & 0xFF) {
-		if (CDoubleBufferedStream_FlushBuffer(ctx, base, arg1, 1) & 0xFF) {
+	if (CDoubleBufferedStream_FlushBuffer(ctx, base, stream, 0) & 0xFF) {
+		if (CDoubleBufferedStream_FlushBuffer(ctx, base, stream, 1) & 0xFF) {
 			result = 0;
 		}
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(83, sub_82B49600, 0x82B49600) { ctx.r3.u64 = CDoubleBufferedStream_Flush(ctx, base, ctx.r3.u64); }
@@ -580,7 +571,6 @@ uint32_t CDoubleBufferedStream_SwapBuffers(CpuState& ctx, uint8_t* base, uint64_
 		uint32_t bufferSlotAddress = (newBuffer << 5) + (uint32_t)doubleBufferedStreamAddr;
 		uint64_t bufferEnd = LOAD64(bufferSlotAddress + 40);
 		uint64_t writePosition = (uint64_t)bufferSize + bufferEnd;
-		ctx.r9.u64 = bufferSize;
 		uint32_t loaded = CDoubleBufferedStream_LoadBuffer(ctx, base, doubleBufferedStreamAddr, 1, writePosition);
 		r9Value = ctx.r9.u64;
 		swapped = (loaded & 0xFF) != 0;

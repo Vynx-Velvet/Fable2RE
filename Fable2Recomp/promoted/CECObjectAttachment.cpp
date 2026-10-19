@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82204D70(CpuState& ctx, uint8_t* base, uint64_t attachment, uint64_t target) {
 	if (!UseLiftedCode(5, 0x82204D70)) { ctx.r3.u64 = attachment; ctx.r4.u64 = target; __imp__sub_82204D70(ctx, base); return ctx.r3.u64; }
@@ -159,9 +160,6 @@ uint32_t n_sub_822374D0(CpuState& ctx, uint8_t* base, uint32_t objectAttachmentA
 	// state SharedHandle_GetRaw may pass on
 	ctx.r4.u64 = outMatrix;
 	ctx.r5.u64 = entity;
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t rawHandle = SharedHandle_GetRaw(ctx, base, handleId);
 	uint32_t result = n_sub_82235CE8(ctx, base, (uint32_t)outMatrix, owner, entity, rawHandle);
@@ -187,8 +185,8 @@ uint64_t CECObjectAttachment_GetClassName(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(31, sub_8250C6E0, 0x8250C6E0) { ctx.r3.u64 = CECObjectAttachment_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t flags) {
-	if (!UseLiftedCode(31, 0x8250C720)) { ctx.r3.u64 = objectAttachmentAddr; ctx.r4.u64 = flags; __imp__sub_8250C720(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t deletingFlags) {
+	if (!UseLiftedCode(31, 0x8250C720)) { ctx.r3.u64 = objectAttachmentAddr; ctx.r4.u64 = deletingFlags; __imp__sub_8250C720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8250C720);
 	uint32_t stack = ctx.r1.u64;
 	CECObjectAttachment* objectAttachment = GameObject<CECObjectAttachment>(base, objectAttachmentAddr);
@@ -196,7 +194,7 @@ uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	stack = PushStackFrame(base, stack, 112);
 
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = flags; // state the callee may pass on
+	ctx.r4.u64 = deletingFlags; // state the callee may pass on
 	SharedHandle_Release(ctx, base, objectAttachmentAddr + 36);
 
 	n_sub_82512018(ctx, base, objectAttachmentAddr + 24);
@@ -208,7 +206,7 @@ uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 
 	objectAttachment->vtable = 0x820A8D10u;
 
-	if ((flags & 0x1) != 0) {
+	if ((deletingFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectAttachmentAddr);
 	}
 
@@ -324,8 +322,6 @@ uint64_t n_sub_8250E9F8(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	}
 
 	if (!entryMatches) {
-		ctx.r9.u64 = reg9;
-		ctx.r10.u64 = reg10;
 		n_sub_8250D0D0(ctx, base, stack + 96, (uint32_t)key, (uint32_t)nameString);
 		result = n_sub_8250DF18(ctx, base, objectAttachmentAddr, key, nameString, expectedValue, stack + 96, 1);
 		reg4 = ctx.r4.u64;
@@ -762,8 +758,6 @@ uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 			// A handle without an entity is released (when it has a slot) and its node erased.
 			if (handleSlot != 0) {
 				ctx.r1.u64 = stack;
-				ctx.r9.u64 = currentNode;
-				ctx.r10.u64 = entity;
 				EntityHandle_Release(ctx, base, handle);
 			}
 			ctx.r1.u64 = stack;
@@ -786,8 +780,6 @@ uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, (uint32_t)entityHandleVtable);
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = entityHandleVtable;
-	ctx.r10.u64 = 0;
 	EntityHandle_SetTarget(ctx, base, (uint64_t)stack + 80, targetEntity);
 
 	ctx.r8.s64 = g_834A0000;
@@ -796,8 +788,6 @@ uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	// The EntityHandle vtable is written again (as 0x820F0000 + 0x1664) before the release.
 	uint32_t vtableAgain = uint32_t(g_820F0000) + 5732u;
 	STORE32(stack + 80, vtableAgain);
-	ctx.r6.u64 = vtableAgain;
-	ctx.r7.u64 = (uint32_t)g_820F0000;
 	uint64_t result = EntityHandle_Release(ctx, base, (uint64_t)stack + 80);
 
 	stack = PopStackFrame(stack, 144);

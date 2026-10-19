@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECPhysicsRagdollComponentManager_GetName(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	if (!UseLiftedCode(40, 0x82626220)) { ctx.r3.u64 = arg1; __imp__sub_82626220(ctx, base); return ctx.r3.u64; }
@@ -190,7 +191,6 @@ uint64_t n_sub_826286E0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 			uint32_t componentField = LOAD32(component + 36);
 			uint32_t arg3 = LOAD32(LOAD32(component + 24) + 8);
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6Value;
 			uint64_t result = n_sub_828A0BC8(ctx, base, componentField, physicsData, arg3);
 			r6Value = ctx.r6.u64;
 			STORE64(component + 40, result);
@@ -317,37 +317,32 @@ uint32_t n_sub_826289A0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 }
 PROMOTED_ENTRY(40, sub_826289A0, 0x826289A0) { ctx.r3.u64 = n_sub_826289A0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82628A80(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(40, 0x82628A80)) { ctx.r3.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_82628A80(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82628A80(CpuState& ctx, uint8_t* base, uint64_t manager, uint64_t sourceInfo) {
+	if (!UseLiftedCode(40, 0x82628A80)) { ctx.r3.u64 = manager; ctx.r8.u64 = sourceInfo; __imp__sub_82628A80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82628A80);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t component{};
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
-	n_sub_82628AF0(ctx, base, arg1, arg2);
-	component = n_sub_826288C8(ctx, base, arg1);
+	n_sub_82628AF0(ctx, base, manager, sourceInfo);
+	component = n_sub_826288C8(ctx, base, manager);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return component;
 }
 PROMOTED_ENTRY(40, sub_82628A80, 0x82628A80) { ctx.r3.u64 = n_sub_82628A80(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82628AB8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(40, 0x82628AB8)) { ctx.r3.u64 = arg1; __imp__sub_82628AB8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82628AB8(CpuState& ctx, uint8_t* base, uint64_t componentManager) {
+	if (!UseLiftedCode(40, 0x82628AB8)) { ctx.r3.u64 = componentManager; __imp__sub_82628AB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82628AB8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	n_sub_826289A0(ctx, base, arg1);
-	uint64_t result = n_sub_82626BF8(ctx, base, (int64_t)arg1 + 44);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	n_sub_826289A0(ctx, base, componentManager);
+	return n_sub_82626BF8(ctx, base, (int64_t)componentManager + 44);
 }
 PROMOTED_ENTRY(40, sub_82628AB8, 0x82628AB8) { ctx.r3.u64 = n_sub_82628AB8(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82628AF0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollComponentManagerAddr, uint64_t arg2) {
-	if (!UseLiftedCode(40, 0x82628AF0)) { ctx.r3.u64 = physicsRagdollComponentManagerAddr; ctx.r8.u64 = arg2; __imp__sub_82628AF0(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_82628AF0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollComponentManagerAddr, uint64_t sourceInfo) {
+	if (!UseLiftedCode(40, 0x82628AF0)) { ctx.r3.u64 = physicsRagdollComponentManagerAddr; ctx.r8.u64 = sourceInfo; __imp__sub_82628AF0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82628AF0);
 	uint32_t stack = ctx.r1.u64;
 	CECPhysicsRagdollComponentManager* manager = GameObject<CECPhysicsRagdollComponentManager>(base, physicsRagdollComponentManagerAddr);
@@ -362,7 +357,7 @@ uint32_t n_sub_82628AF0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 	callTarget.u64 = (uint64_t)entityFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = entity;
-	ctx.r8.u64 = arg2;
+	ctx.r8.u64 = sourceInfo;
 	ctx.r9.u64 = entityFn;
 	ctx.r10.u64 = vtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -427,33 +422,25 @@ uint32_t n_sub_82628AF0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 				STORE32(stack + 104, 0);
 				STORE32(stack + 108, 0);
 				if (type == 2) {
-					ctx.r6.u64 = reg6;
-					ctx.r7.u64 = reg7;
 					n_sub_82B6F5A0(ctx, base, stack + 96, entry + 44, reg8);
 					reg7 = ctx.r7.u64;
 					reg8 = ctx.r8.u64;
 				} else if (type == 1) {
-					ctx.r6.u64 = reg6;
-					ctx.r7.u64 = reg7;
 					n_sub_82B6F5A0(ctx, base, stack + 96, entry + 44, reg8);
 					uint32_t first = LOAD32(stack + 100);
 					int32_t quotient = (int32_t)(LOAD32(stack + 104) - first) / 48;
 					uint32_t data = (quotient == 0) ? (stack + 96) : first;
-					ctx.r8.u64 = (uint32_t)quotient;
 					n_sub_82B6D400(ctx, base, data, LOAD32(entry + 148), 0, -1);
 					reg7 = ctx.r7.u64;
 					reg8 = ctx.r8.u64;
 				}
 				ctx.r6.u64 = LOAD32(entry + 148);
-				ctx.r7.u64 = reg7;
-				ctx.r8.u64 = reg8;
 				n_sub_8228F328(ctx, base, storedId, (uint32_t)physicsRagdollComponentManagerAddr + 64, stack + 96);
 				Vector_FreeAndReset(ctx, base, stack + 96);
 				reg6 = ctx.r6.u64;
 				reg8 = ctx.r8.u64;
 			}
 
-			ctx.r6.u64 = reg6;
 			ctx.r8.u64 = reg8;
 			result = n_sub_826265F8(ctx, base, (uint32_t)physicsRagdollComponentManagerAddr + 44, storedId);
 		}
@@ -550,8 +537,6 @@ uint32_t n_sub_82628CF0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 				uint32_t sourceField1 = LOAD32(sourceInfo + 4);
 				STORE32((uint32_t)newComponent + 96, sourceField1);
 				ctx.r8.u64 = sourceField1;
-				ctx.r9.u64 = (uint64_t)handleVtable;
-				ctx.r10.s64 = g_820F0000;
 				EntityHandle_SetTarget(ctx, base, stack + 80, targetOwner);
 
 				uint64_t r10Value = ctx.r10.u64;
@@ -562,7 +547,6 @@ uint32_t n_sub_82628CF0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 					if ((uint32_t)r10Value != 0) {
 						targetPtr = (uint32_t)r10Value;
 					} else {
-						ctx.r10.u64 = r10Value;
 						EntityHandle_Release(ctx, base, stack + 80);
 						r10Value = ctx.r10.u64;
 						targetPtr = 0;
@@ -570,12 +554,10 @@ uint32_t n_sub_82628CF0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 				} else {
 					targetPtr = 0;
 				}
-				ctx.r10.u64 = r10Value;
 				EntityHandle_SetTarget(ctx, base, (uint32_t)newComponent + 100, targetPtr);
 
 				uint32_t vtableLow = uint32_t(0x820F1664);
 				STORE32(stack + 80, vtableLow);
-				ctx.r10.u64 = vtableLow;
 				EntityHandle_Release(ctx, base, stack + 80);
 
 				n_sub_826290C0(ctx, base, manager, newComponent);
@@ -599,7 +581,6 @@ uint32_t n_sub_82628CF0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 			}
 		}
 
-		ctx.r5.u64 = r5Value;
 		arg1 = SharedHandle_Release(ctx, base, stack + 100);
 	}
 
@@ -609,15 +590,15 @@ uint32_t n_sub_82628CF0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 }
 PROMOTED_ENTRY(40, sub_82628CF0, 0x82628CF0) { ctx.r3.u64 = n_sub_82628CF0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_826290C0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollComponentManagerAddr, uint64_t arg2) {
+uint32_t n_sub_826290C0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollComponentManagerAddr, uint64_t component) {
 	constexpr int32_t str_TXT_820B7768_B_ = int32_t(0x820B7768);
-	if (!UseLiftedCode(40, 0x826290C0)) { ctx.r3.u64 = physicsRagdollComponentManagerAddr; ctx.r4.u64 = arg2; __imp__sub_826290C0(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(40, 0x826290C0)) { ctx.r3.u64 = physicsRagdollComponentManagerAddr; ctx.r4.u64 = component; __imp__sub_826290C0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x826290C0);
 	uint32_t stack = ctx.r1.u64;
 	CECPhysicsRagdollComponentManager* physicsRagdollComponentManager = GameObject<CECPhysicsRagdollComponentManager>(base, physicsRagdollComponentManagerAddr);
 
 	const uint32_t manager = (uint32_t)physicsRagdollComponentManagerAddr;
-	const uint32_t entity = (uint32_t)arg2;
+	const uint32_t entity = (uint32_t)component;
 	uint64_t entryEnd = ctx.r6.u64;
 	uint64_t result = physicsRagdollComponentManagerAddr;
 
@@ -667,7 +648,6 @@ uint32_t n_sub_826290C0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 			uint32_t nameTable = LOAD32(ragdollEntry + 148);
 			uint32_t ownerRef = LOAD32(LOAD32(entity + 24) + 8);
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = entryEnd;
 			uint64_t handle = n_sub_828A0BC8(ctx, base, entityId, nameTable, ownerRef);
 			uint64_t streamArg = ctx.r5.u64;
 			STORE64(entity + 40, handle);
@@ -685,9 +665,8 @@ uint32_t n_sub_826290C0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 				VSTORE((entity + 80) & ~0xFu, V8(vec));
 			}
 
-			ctx.r5.u64 = streamArg;
-			result = n_sub_82626EB8(ctx, base, (uint64_t)manager + 44, arg2);
-			arg2 = ctx.r4.u64;
+			result = n_sub_82626EB8(ctx, base, (uint64_t)manager + 44, component);
+			component = ctx.r4.u64;
 			uint32_t newest = LOAD32(entity + 48);
 			if (newest > LOAD32(manager + 76)) {
 				STORE32(manager + 76, newest);
@@ -697,7 +676,7 @@ uint32_t n_sub_826290C0(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollCom
 	}
 	stack = PopStackFrame(stack, 176);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = component;
 	return (uint32_t)result;
 }
 PROMOTED_ENTRY(40, sub_826290C0, 0x826290C0) { ctx.r3.u64 = n_sub_826290C0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -727,12 +706,12 @@ uint64_t n_sub_826293F0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	stack = PushStackFrame(base, stack, 112);
 
 	// Virtual call through the component's second vtable slot, `this` in r3.
-	uint32_t virtualCall = LOAD32(LOAD32((uint32_t)arg2) + 4);
+	uint32_t componentState = LOAD32(LOAD32((uint32_t)arg2) + 4);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = arg2;
 	ctx.r4.u64 = arg2;
-	ctx.r10.u64 = virtualCall;
-	REX_CALL_INDIRECT_FUNC(virtualCall);
+	ctx.r10.u64 = componentState;
+	REX_CALL_INDIRECT_FUNC(componentState);
 
 	uint64_t result = ctx.r3.u64;
 	if ((int32_t)result == 10 && LOAD8((uint32_t)arg2 + 4) != 0) {

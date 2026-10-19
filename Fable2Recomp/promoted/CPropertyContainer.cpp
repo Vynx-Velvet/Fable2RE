@@ -9,17 +9,18 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_82A12060  [80 bytes]
-uint64_t CPropertyContainer_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(73, 0x82A12060)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82A12060(ctx, base); return ctx.r3.u64; }
+uint64_t CPropertyContainer_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t propertyContainer, uint64_t arg2) {
+	if (!UseLiftedCode(73, 0x82A12060)) { ctx.r3.u64 = propertyContainer; ctx.r4.u64 = arg2; __imp__sub_82A12060(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A12060);
 	uint32_t stack = ctx.r1.u64;
-	uint64_t object = arg1;
+	uint64_t object = propertyContainer;
 	uint32_t deleteFlags = arg2;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	CPropertyContainer_Destruct(ctx, base, arg1);
+	CPropertyContainer_Destruct(ctx, base, propertyContainer);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
 	}
@@ -390,8 +391,6 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 			STORE32(stack + 80, 3u);
 			holder = LOAD32(kDescriptorGlobalB);
 			descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
-			ctx.r4.u64 = descriptor;
-			ctx.r9.u64 = flags;
 			IStream_SerializeU32(ctx, base, saveStream, stack + 80);
 
 			endFn = LOAD32(streamVtable + 12);
@@ -405,8 +404,6 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 		STORE32(stack + 84, propertyContainer->m_entryCount);
 		holder = LOAD32(kDescriptorGlobalN);
 		descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
-		ctx.r4.u64 = descriptor;
-		ctx.r9.u64 = flags;
 		n_sub_82A08FC8(ctx, base, saveStream, stack + 84);
 
 		// Walk the container's entry map from its leftmost node up to the
@@ -436,8 +433,6 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 			STORE32(stack + 88, LOAD32(node + 12));
 			holder = LOAD32(kDescriptorGlobalK);
 			descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
-			ctx.r4.u64 = descriptor;
-			ctx.r9.u64 = iteratorValue;
 			n_sub_82A08FC8(ctx, base, saveStream, stack + 88);
 
 			if (node == LOAD32(iteratorOwner + 4)) {
@@ -456,7 +451,6 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 			iteratorValue = ctx.r9.u64;
 		}
 
-		ctx.r5.u64 = 0;
 		CRegistrableThing_SaveId(ctx, base, propertyContainerAddr, saveStream);
 
 		endFn = LOAD32(streamVtable + 12);
@@ -543,7 +537,6 @@ uint32_t CPropertyContainer_Clear(CpuState& ctx, uint8_t* base, uint32_t propert
 		nextNode = LOAD32(nextNode + 16);
 		entryNode = nextNode + 4;
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = iterator;
 		n_sub_82A14AE0(ctx, base, entryNode, stack + 80);
 		StdMapIterator_Increment_Node25(ctx, base, stack + 88);
 		iterator = ctx.r9.u64;
@@ -551,7 +544,6 @@ uint32_t CPropertyContainer_Clear(CpuState& ctx, uint8_t* base, uint32_t propert
 
 	subtree = LOAD32(LOAD32(mapHeader + 4) + 4);
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = iterator;
 	destroyResult = StdMapSharedHandle_DestroySubtree(ctx, base, mapHeader, subtree);
 
 	rootNode = LOAD32(mapHeader + 4);
@@ -597,7 +589,6 @@ uint32_t n_sub_83218598(CpuState& ctx, uint8_t* base, uint64_t propertyContainer
 	uint32_t refCount = LOAD32(sourceHandle + 4);
 	uint64_t previousRefCount = LOAD32((uint32_t)handleSlot + 4);
 	if ((uint32_t)previousRefCount != refCount) {
-		ctx.r9.u64 = previousRefCount;
 		SharedHandle_Release(ctx, base, handleSlot);
 		previousRefCount = ctx.r9.u64;
 		STORE32((uint32_t)handleSlot, object);
@@ -885,9 +876,7 @@ uint64_t n_sub_83219DF8(CpuState& ctx, uint8_t* base, uint64_t propertyContainer
 
 		// the callee reads the entity id and the two extra flags from r5/r6/r7,
 		// not from the argument registers
-		ctx.r5.u64 = 0;
 		ctx.r6.u64 = entityId;
-		ctx.r7.u64 = 0;
 		CRegistrableThing_LoadId(ctx, base, propertyContainerAddr, stream);
 
 		uint32_t streamEndRead2 = LOAD32(LOAD32(streamAddr) + 12);

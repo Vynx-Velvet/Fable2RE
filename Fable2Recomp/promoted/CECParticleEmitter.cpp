@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECParticleEmitter_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t particleEmitterAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -43,8 +44,6 @@ uint64_t CECParticleEmitter_UpdateTransform(CpuState& ctx, uint8_t* base, uint64
 
 	if ((uint32_t)elementCount > 1) {
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = elementCount;
-		ctx.r9.u64 = elementBytes;
 		ctx.xer.ca = carry;
 		result = n_sub_8247F470(ctx, base, particleEmitterAddr);
 	} else {
@@ -136,26 +135,26 @@ uint64_t CECParticleEmitter_UpdateTransform(CpuState& ctx, uint8_t* base, uint64
 }
 PROMOTED_ENTRY(4, sub_821EC718, 0x821EC718) { ctx.r3.u64 = CECParticleEmitter_UpdateTransform(ctx, base, ctx.r3.u64); }
 
-uint64_t CECParticleEmitter_UpdateIfType10(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(4, 0x821EC840)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_821EC840(ctx, base); return ctx.r3.u64; }
+uint64_t CECParticleEmitter_UpdateIfType10(CpuState& ctx, uint8_t* base, uint64_t particleEmitterAddr, uint64_t entity) {
+	if (!UseLiftedCode(4, 0x821EC840)) { ctx.r3.u64 = particleEmitterAddr; ctx.r4.u64 = entity; __imp__sub_821EC840(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821EC840);
 	uint32_t stack = ctx.r1.u64;
 
 	stack = PushStackFrame(base, stack, 112);
-	uint32_t object = (uint32_t)arg2;
+	uint32_t object = (uint32_t)entity;
 	uint32_t vtable = LOAD32(object);
 	uint32_t getTypeFunction = LOAD32(vtable + 4);
 
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = entity;
+	ctx.r4.u64 = entity;
 	ctx.r10.u64 = getTypeFunction;
 	REX_CALL_INDIRECT_FUNC(getTypeFunction);
 	uint64_t result = ctx.r3.u64;
 
 	if ((int32_t)result == 10) {
-		ctx.r4.u64 = arg2;
-		result = CECParticleEmitter_UpdateTransform(ctx, base, arg1);
+		ctx.r4.u64 = entity;
+		result = CECParticleEmitter_UpdateTransform(ctx, base, particleEmitterAddr);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -197,7 +196,6 @@ uint64_t CECParticleEmitter_ScalarDeletingDestructor(CpuState& ctx, uint8_t* bas
 	if (rangeBegin != 0) {
 		const uint32_t rangeEnd = LOAD32(rangeListAddr + 8);
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = rangeListAddr;
 		CharStringRange_Destroy(ctx, base, rangeBegin, rangeEnd);
 		HandleTarget_Free(ctx, base, LOAD32(rangeListAddr + 4));
 		rangeHandleValue = ctx.r4.u64;
@@ -210,7 +208,6 @@ uint64_t CECParticleEmitter_ScalarDeletingDestructor(CpuState& ctx, uint8_t* bas
 	particleEmitter->m_emitterName = invalidStringIndex;
 
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = rangeHandleValue;
 	EntityHandle_Release(ctx, base, (uint32_t)particleEmitterAddr + 36);
 	particleEmitter->m_28 = 0;
 
@@ -310,7 +307,6 @@ uint64_t CECParticleEmitter_CreateEmitter(CpuState& ctx, uint8_t* base, uint64_t
 		}
 	}
 
-	ctx.r8.u64 = handleObject;
 	n_sub_8322E500(ctx, base, tempHandle);
 
 	uint32_t globalTable = LOAD32(uint32_t(g_83490000) + 26912);
@@ -387,8 +383,6 @@ uint32_t CECParticleEmitter_PostParticleCreateEvent(CpuState& ctx, uint8_t* base
 
 	if (hasEvent) {
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = savedR6;
-		ctx.r8.u64 = savedR8;
 		ctx.xer.ca = flags.ca;
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, g_82000C98, -1);
 		flags.ca = ctx.xer.ca;
@@ -416,10 +410,10 @@ uint32_t CECParticleEmitter_PostParticleCreateEvent(CpuState& ctx, uint8_t* base
 }
 PROMOTED_ENTRY(27, sub_8247E998, 0x8247E998) { ctx.r3.u64 = CECParticleEmitter_PostParticleCreateEvent(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAddr, uint64_t arg2) {
+uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAddr, uint64_t particleContainer) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
-	if (!UseLiftedCode(27, 0x8247F750)) { ctx.r3.u64 = particleEmitterAddr; ctx.r4.u64 = arg2; __imp__sub_8247F750(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(27, 0x8247F750)) { ctx.r3.u64 = particleEmitterAddr; ctx.r4.u64 = particleContainer; __imp__sub_8247F750(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8247F750);
 	PPCRegister scratch{};
 	uint32_t stack = ctx.r1.u64;
@@ -428,7 +422,7 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 
 	CECParticleEmitter* particleEmitter = GameObject<CECParticleEmitter>(base, particleEmitterAddr);
 	stack = PushStackFrame(base, stack, 160);
-	uint64_t containerPtr = arg2;
+	uint64_t containerPtr = particleContainer;
 	uint64_t result = particleEmitter->m_emitter;
 
 	if ((uint32_t)result != 0) {
@@ -461,12 +455,6 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 			VSTORE((uint32_t)vecOutAddr & ~0xF, V8(vecResult));
 
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = vecOutAddr;
-			ctx.r5.u64 = mask1Addr;
-			ctx.r6.u64 = mask2Addr;
-			ctx.r7.s64 = constBase1;
-			ctx.r8.s64 = constBase2;
-			ctx.r9.u64 = floatScratchAddr;
 			ctx.v1 = beginVec;
 			ctx.v2 = constVec;
 			n_sub_8322BD20(ctx, base, result);
@@ -481,7 +469,7 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 			STORE32(stack + 104, 0);
 			STORE32(stack + 108, 0);
 			n_sub_82480800(ctx, base, emitter2, vecOutAddr);
-			arg2 = ctx.r4.u64;
+			particleContainer = ctx.r4.u64;
 			local6 = ctx.r8.u64;
 
 			result = LOAD32(stack + 104);
@@ -495,7 +483,7 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 					uint32_t element = LOAD32(it);
 					ctx.xer.ca = flags.ca;
 					result = n_sub_8322AC90(ctx, base, element, containerPtr);
-					arg2 = ctx.r4.u64;
+					particleContainer = ctx.r4.u64;
 					local6 = ctx.r8.u64;
 					flags.ca = count > 0;
 					count--;
@@ -505,7 +493,7 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 			if (freePtr != 0) {
 				ctx.xer.ca = flags.ca;
 				result = HandleTarget_Free(ctx, base, freePtr);
-				arg2 = ctx.r4.u64;
+				particleContainer = ctx.r4.u64;
 				local6 = ctx.r8.u64;
 				flags.ca = ctx.xer.ca;
 			}
@@ -514,7 +502,7 @@ uint32_t n_sub_8247F750(CpuState& ctx, uint8_t* base, uint32_t particleEmitterAd
 
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = particleContainer;
 	ctx.r8.u64 = local6;
 	ctx.xer.ca = flags.ca;
 	return result;
@@ -598,9 +586,6 @@ uint64_t CECParticleEmitter_Destroy(CpuState& ctx, uint8_t* base, uint64_t parti
 		if (hasValue) {
 			uint64_t emptyStringAddr = g_82000C98;
 			uint64_t eventNameAddr = str_TXT_820B4E5C_B_;
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
 			CCharString_ConstructFromCStr(ctx, base, stack + 88, emptyStringAddr, -1);
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, eventNameAddr, -1);
 			RefCountedString_Assign(ctx, base, stack + 80, particleEmitterAddr + 24);
@@ -617,9 +602,6 @@ uint64_t CECParticleEmitter_Destroy(CpuState& ctx, uint8_t* base, uint64_t parti
 
 		uint32_t handleObject = LOAD32(handleAddr);
 		STORE32(handleObject + 40, 0);
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		n_sub_8322B788(ctx, base, handleObject);
 		result = SharedHandle_Release(ctx, base, handleAddr);
 		STORE32(handleAddr, 0);
@@ -634,7 +616,6 @@ PROMOTED_ENTRY(27, sub_8247FB80, 0x8247FB80) { ctx.r3.u64 = CECParticleEmitter_D
 uint64_t CECParticleEmitter_AttachToEntity(CpuState& ctx, uint8_t* base, uint64_t particleEmitterAddr) {
 	constexpr uint32_t kEntitySlotKey = 22;
 	constexpr uint32_t kInvalidHandlePtr = 0x820F1664;
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(27, 0x8247FD58)) { ctx.r3.u64 = particleEmitterAddr; __imp__sub_8247FD58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8247FD58);
 	uint32_t stack = ctx.r1.u64;
@@ -712,8 +693,6 @@ uint64_t CECParticleEmitter_AttachToEntity(CpuState& ctx, uint8_t* base, uint64_
 		EntityHandle_Release(ctx, base, tempHandleAddr);
 		EntityHandle_Assign(ctx, base, handleAddr, tempHandleAddr);
 		STORE32(tempHandleAddr, kInvalidHandlePtr);
-		ctx.r8.u64 = (uint64_t)((int64_t)g_820F0000 + 5732);
-		ctx.r9.s64 = g_820F0000;
 		EntityHandle_Release(ctx, base, tempHandleAddr);
 	}
 

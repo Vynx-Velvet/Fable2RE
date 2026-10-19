@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -102,11 +103,6 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 				uint32_t soundCategory = LOAD32(currentLine + 44);
 				if (soundCategory != 0) {
 					ctx.r1.u64 = stack;
-					ctx.r6.u64 = r6Value;
-					ctx.r7.u64 = r7Value;
-					ctx.r8.u64 = r8Value;
-					ctx.r9.u64 = 0;
-					ctx.r10.u64 = r10Value;
 					ctx.xer.ca = flags.ca;
 					r3Value = SoundCategory_IsPlayingByName(ctx, base, soundCategory, TXT_83497E9C_G_);
 					r6Value = ctx.r6.u64;
@@ -122,9 +118,6 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 					return r3Value;
 				}
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = r6Value;
-				ctx.r7.u64 = r7Value;
-				ctx.r8.u64 = r10Value;
 				ctx.xer.ca = flags.ca;
 				uint64_t stopped = n_sub_8244A6F8(ctx, base, talkAddr, 0);
 				stack = PopStackFrame(stack, 112);
@@ -134,7 +127,6 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 		} else {
 			if ((int32_t)LOAD32((uint32_t)g_83320000 - 27380) > (int32_t)LOAD32(talkBase + 20)) {
 				ctx.r1.u64 = stack;
-				ctx.r8.u64 = r8Value;
 				uint64_t stopped = n_sub_8244A6F8(ctx, base, talkAddr, 0);
 				stack = PopStackFrame(stack, 112);
 				ctx.r1.u64 = stack;
@@ -181,7 +173,6 @@ uint64_t CECTalk_RemoveComponent(CpuState& ctx, uint8_t* base, uint64_t arg1, ui
 		uint32_t getEntityFn = LOAD32(talkVtable + 0x10);
 		callTarget.u64 = (uint64_t)getEntityFn;
 		ctx.r3.u64 = talkEntity;
-		ctx.r10.u64 = getEntityFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t entity = ctx.r3.u64;
 		result = Entity_RemoveComponentByType(ctx, base, targetEntity, entity, ctx.r8.u64);
@@ -217,7 +208,6 @@ uint64_t n_sub_824480E8(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	stack = PushStackFrame(base, stack, 112);
 	uint32_t flags = deleteFlags;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	C_820EFB9C_Destructor(ctx, base, talkAddr + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, talkAddr + 64);
 	uint32_t component = talk->m_3C;
@@ -323,11 +313,6 @@ uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_
 
 	if (haveSound) {
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = ret6;
-		ctx.r7.u64 = ret7;
-		ctx.r8.u64 = ret8;
-		ctx.r9.u64 = ret9;
-		ctx.r10.u64 = ret10;
 		ctx.xer.ca = flags.ca;
 		n_sub_823A0938(ctx, base, (uint64_t)soundId, (uint64_t)(int64_t)TXT_83497E9C_G_, ret5);
 		arg2 = ctx.r4.u64;
@@ -372,11 +357,6 @@ uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_
 		uint32_t manager = LOAD32((uint32_t)g_83490000 + 26788);
 		uint32_t list = LOAD32(LOAD32(manager + 32) + 68);
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = ret5;
-		ctx.r6.u64 = ret6;
-		ctx.r7.u64 = ret7;
-		ctx.r8.u64 = ret8;
-		ctx.r9.u64 = ret9;
 		ctx.xer.ca = flags.ca;
 		result = PtrList_RemoveValue(ctx, base, list, speechObj);
 		arg2 = ctx.r4.u64;
@@ -409,8 +389,8 @@ uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_
 }
 PROMOTED_ENTRY(25, sub_8244A6F8, 0x8244A6F8) { ctx.r3.u64 = n_sub_8244A6F8(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(25, 0x8244AD28)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_8244AD28(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t speakerEntity, uint64_t arg3) {
+	if (!UseLiftedCode(25, 0x8244AD28)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = speakerEntity; ctx.r8.u64 = arg3; __imp__sub_8244AD28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8244AD28);
 	constexpr int32_t kStrRoperMinimap = int32_t(0x820B0000);
 	constexpr int32_t kStrTXT_820B2F64_B_ = int32_t(0x820B2F64);
@@ -428,14 +408,14 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 
 	uint64_t result = n_sub_8244B518(ctx, base, talkAddr, 1, ctx.r8.u64);
 
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)speakerEntity != 0) {
 		uint64_t TXT_820B2F64_L_ = kStrTXT_820B2F64_B_;
 		STORE32(stack + 80, 0u);
 		uint64_t voiceHash = String_HashFnv1(ctx, base, TXT_820B2F64_L_, kFnvSeed);
-		GameDB_ReadMappedU32Field(ctx, base, arg2, voiceHash, stack + 80);
+		GameDB_ReadMappedU32Field(ctx, base, speakerEntity, voiceHash, stack + 80);
 
 		ctx.r8.s64 = kStrRoperMinimap;
-		uint64_t narratorName = n_sub_82345978(ctx, base, arg2, (int64_t)kStrRoperMinimap + 12144);
+		uint64_t narratorName = n_sub_82345978(ctx, base, speakerEntity, (int64_t)kStrRoperMinimap + 12144);
 		CCharString_AssignFromCStr(ctx, base, talkAddr + 64, narratorName);
 
 		uint32_t mappedValue = LOAD32(stack + 80);
@@ -565,7 +545,6 @@ uint64_t n_sub_8244AFE0(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	uint32_t voiceTypeName = LOAD32(nameTemp);
 	STORE32(valueTemp, uint32_t(talk->m_20));
 	uint64_t fieldName = (voiceTypeName == 0) ? (uint64_t)(int64_t)g_8209003F : (uint64_t)LOAD32(voiceTypeName);
-	ctx.r4.u64 = fieldName;
 	IStream_SerializeU32(ctx, base, stream, valueTemp);
 	talk->m_20 = LOAD32(valueTemp);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameTemp);
@@ -657,8 +636,6 @@ uint64_t n_sub_8244B0C0(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 
 		uint64_t TXT_820B2EDC_L_ = str_TXT_820B2EDC_B_;
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Value;
-		ctx.r8.u64 = r8Value;
 		CCharString_ConstructFromCStr(ctx, base, stack + 84, TXT_820B2EDC_L_, -1);
 
 		STORE32(stack + 80, 0);
@@ -710,7 +687,7 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	uint64_t returnValue = talkAddr;
 	uint64_t r6Value = ctx.r6.u64;
 	uint64_t r7Value = ctx.r7.u64;
-	uint32_t eventId = 0;
+	uint32_t speechEvent = 0;
 	bool hasEvent = false;
 	uint32_t container = talk->m_4;
 
@@ -719,13 +696,13 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 		if (entries != 0) {
 			uint32_t index = LOAD8(entries + 19);
 			uint32_t table = LOAD32(container + 72);
-			eventId = LOAD32(table + (index << 3) + 4);
+			speechEvent = LOAD32(table + (index << 3) + 4);
 			hasEvent = true;
 		} else {
 			uint32_t begin = LOAD32(container + 72);
 			uint32_t end = LOAD32(container + 76);
 			r6Value = end;
-			STORE32(stack + 80, eventId);
+			STORE32(stack + 80, speechEvent);
 			STORE32(stack + 84, begin);
 			uint32_t pos = begin;
 			int32_t remaining = (int32_t)(end - begin) >> 3;
@@ -752,9 +729,9 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 			if (pos != end && (int32_t)LOAD32(pos) <= 19) {
 				// the original copies the located pair onto itself before reading it
 				STORE64(stack + 80, LOAD64(stack + 80));
-				eventId = LOAD32(pos + 4);
+				speechEvent = LOAD32(pos + 4);
 			} else {
-				eventId = LOAD32(end + 4);
+				speechEvent = LOAD32(end + 4);
 			}
 			hasEvent = true;
 		}
@@ -763,16 +740,13 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	if (hasEvent) {
 		if ((uint32_t)isEnabled & 0xFF) {
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6Value;
 			CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, str_TXT_820B2DB0_B_, -1);
-			n_sub_8223E410(ctx, base, eventId, talkAddr + 12, talkAddr + 68, uint64_t(stack) + 80);
+			n_sub_8223E410(ctx, base, speechEvent, talkAddr + 12, talkAddr + 68, uint64_t(stack) + 80);
 			returnValue = CCharString_ReleaseAndDecGlobalCountA(ctx, base, uint64_t(stack) + 80);
 			isEnabled = ctx.r4.u64;
 		} else {
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			returnValue = n_sub_82516210(ctx, base, eventId, talkAddr + 68, arg3);
+			returnValue = n_sub_82516210(ctx, base, speechEvent, talkAddr + 68, arg3);
 			isEnabled = ctx.r4.u64;
 		}
 	}

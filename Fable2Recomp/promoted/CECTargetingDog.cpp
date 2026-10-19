@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821A3158(CpuState& ctx, uint8_t* base, uint64_t targetingDogAddr) {
 	if (!UseLiftedCode(1, 0x821A3158)) { ctx.r3.u64 = targetingDogAddr; __imp__sub_821A3158(ctx, base); return ctx.r3.u64; }
@@ -123,12 +124,8 @@ uint64_t CECTargetingDog_GetClassName(CpuState& ctx, uint8_t* base, uint64_t res
 	constexpr int32_t str_TXT_820C8A04_B_ = int32_t(0x820C8A04);
 	if (!UseLiftedCode(66, 0x82956390)) { ctx.r3.u64 = result; __imp__sub_82956390(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82956390);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, result, uint64_t(str_TXT_820C8A04_B_), -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(66, sub_82956390, 0x82956390) { ctx.r3.u64 = CECTargetingDog_GetClassName(ctx, base, ctx.r3.u64); }
@@ -252,11 +249,11 @@ void n_sub_82986198(CpuState& ctx, uint8_t* base, uint32_t targetingDogAddr) {
 PROMOTED_ENTRY(68, sub_82986198, 0x82986198) { n_sub_82986198(ctx, base, ctx.r3.u32); }
 
 // sub_829862A8  [12 bytes]
-void n_sub_829862A8(CpuState& ctx, uint8_t* base, uint32_t targetingDogAddr, uint32_t arg2) {
-	if (!UseLiftedCode(68, 0x829862A8)) { ctx.r3.u64 = targetingDogAddr; ctx.r4.u64 = arg2; __imp__sub_829862A8(ctx, base); return; }
+void n_sub_829862A8(CpuState& ctx, uint8_t* base, uint32_t targetingDogAddr, uint32_t targetValue) {
+	if (!UseLiftedCode(68, 0x829862A8)) { ctx.r3.u64 = targetingDogAddr; ctx.r4.u64 = targetValue; __imp__sub_829862A8(ctx, base); return; }
 	LiftedFrame frame(0x829862A8);
 	CECTargetingDog* targetingDog = GameObject<CECTargetingDog>(base, targetingDogAddr);
-	STORE32(uint32_t(targetingDog->m_C) + 64, arg2);
+	STORE32(uint32_t(targetingDog->m_C) + 64, targetValue);
 	return;
 }
 PROMOTED_ENTRY(68, sub_829862A8, 0x829862A8) { n_sub_829862A8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
@@ -301,9 +298,9 @@ uint64_t n_sub_829862B8(CpuState& ctx, uint8_t* base, uint64_t resultAddr, uint3
 PROMOTED_ENTRY(68, sub_829862B8, 0x829862B8) { ctx.r3.u64 = n_sub_829862B8(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // sub_82986318  [136 bytes]
-uint64_t n_sub_82986318(CpuState& ctx, uint8_t* base, uint64_t targetingDogAddr, uint64_t flag) {
+uint64_t n_sub_82986318(CpuState& ctx, uint8_t* base, uint64_t targetingDogAddr, uint64_t targetingFlag) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(68, 0x82986318)) { ctx.r3.u64 = targetingDogAddr; ctx.r4.u64 = flag; __imp__sub_82986318(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(68, 0x82986318)) { ctx.r3.u64 = targetingDogAddr; ctx.r4.u64 = targetingFlag; __imp__sub_82986318(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82986318);
 	uint32_t stack = ctx.r1.u64;
 	CECTargetingDog* targetingDog = GameObject<CECTargetingDog>(base, targetingDogAddr);
@@ -313,10 +310,10 @@ uint64_t n_sub_82986318(CpuState& ctx, uint8_t* base, uint64_t targetingDogAddr,
 	uint32_t messageQueue = LOAD32(manager + 140);
 
 	uint64_t result = targetingDogAddr;
-	uint64_t callerR4 = flag;
+	uint64_t callerR4 = targetingFlag;
 	if (LOAD8(messageQueue + 0x34) != 0 && LOAD8(messageQueue + 0x35) != 0) {
-		// message object on the stack: vtable at +80, flag byte at +84
-		STORE8(stack + 84, (uint8_t)flag);
+		// message object on the stack: vtable at +80, targetingFlag byte at +84
+		STORE8(stack + 84, (uint8_t)targetingFlag);
 		uint32_t entity = targetingDog->m_pEntity;
 		STORE32(stack + 80, 0x820A4760u);
 		ctx.r1.u64 = stack;
@@ -324,7 +321,7 @@ uint64_t n_sub_82986318(CpuState& ctx, uint8_t* base, uint64_t targetingDogAddr,
 		result = Entity_PostFlagMessage(ctx, base, messageQueue, (uint64_t)(stack + 80), uniqueId);
 		callerR4 = ctx.r4.u64;
 	}
-	targetingDog->m_1D = (uint8_t)flag;
+	targetingDog->m_1D = (uint8_t)targetingFlag;
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;

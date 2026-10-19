@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CCompositeComponentHost_SendMessage(CpuState& ctx, uint8_t* base, uint32_t compositeComponentHostAddr, uint64_t message, uint64_t messageParam) {
 	if (!UseLiftedCode(0, 0x82175E58)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = message; ctx.r5.u64 = messageParam; __imp__sub_82175E58(ctx, base); return ctx.r3.u64; }
@@ -186,8 +187,8 @@ uint64_t n_sub_8226E918(CpuState& ctx, uint8_t* base, uint32_t compositeComponen
 }
 PROMOTED_ENTRY(9, sub_8226E918, 0x8226E918) { ctx.r3.u64 = n_sub_8226E918(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.f1.f64); }
 
-uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
-	if (!UseLiftedCode(10, 0x8228AD70)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = arg2; __imp__sub_8228AD70(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t componentToRemove) {
+	if (!UseLiftedCode(10, 0x8228AD70)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = componentToRemove; __imp__sub_8228AD70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8228AD70);
 	uint32_t stack = ctx.r1.u64;
 	CCompositeComponentHost* compositeComponentHost = GameObject<CCompositeComponentHost>(base, compositeComponentHostAddr);
@@ -195,7 +196,7 @@ uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_821A1C60(ctx, base, compositeComponentHostAddr, arg2);
+	n_sub_821A1C60(ctx, base, compositeComponentHostAddr, componentToRemove);
 
 	// Pointer chain from the global at 0x83496920 through fields +0x0C, +0x58, +0x04 and +0x18; that object's
 	// virtual slot 0x58 is called (r4/r5 keep what the previous call left).
@@ -215,11 +216,11 @@ uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	ctx.r10.u64 = link0C;
 	REX_CALL_INDIRECT_FUNC(chainFn);
 
-	// Virtual slot 0x20 of the returned object, which stays in r3, with arg2 and the main component.
+	// Virtual slot 0x20 of the returned object, which stays in r3, with componentToRemove and the main component.
 	uint32_t returnedObject = uint32_t(ctx.r3.u64);
 	uint32_t mainComponentAddr = compositeComponentHost->m_mainComponent;
 	uint32_t returnedObjectFn = LOAD32(LOAD32(returnedObject) + 32);
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = componentToRemove;
 	ctx.r5.u64 = mainComponentAddr;
 	ctx.r10.u64 = returnedObjectFn;
 	REX_CALL_INDIRECT_FUNC(returnedObjectFn);
@@ -409,10 +410,6 @@ uint64_t n_sub_828A8018(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = reg4;
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_82670098(ctx, base, compositeComponentHostAddr);
 	stack = PopStackFrame(stack, 128);
@@ -515,9 +512,6 @@ uint64_t n_sub_828A8100(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_8266FF90(ctx, base, compositeComponentHostAddr, visitor);
 	stack = PopStackFrame(stack, 144);
@@ -589,10 +583,6 @@ uint64_t n_sub_828A81F0(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = reg5;
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_8266FBB0(ctx, base, compositeComponentHostAddr, arg2);
 	stack = PopStackFrame(stack, 128);
@@ -662,10 +652,6 @@ uint64_t n_sub_828A8298(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = reg5;
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_8266FC80(ctx, base, compositeComponentHostAddr);
 	stack = PopStackFrame(stack, 128);
@@ -674,16 +660,16 @@ uint64_t n_sub_828A8298(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 }
 PROMOTED_ENTRY(61, sub_828A8298, 0x828A8298) { ctx.r3.u64 = n_sub_828A8298(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
-	if (!UseLiftedCode(61, 0x828A8330)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = arg2; __imp__sub_828A8330(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
+	if (!UseLiftedCode(61, 0x828A8330)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = component; __imp__sub_828A8330(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8330);
 	uint32_t stack = ctx.r1.u64;
 	CCompositeComponentHost* compositeComponentHost = GameObject<CCompositeComponentHost>(base, compositeComponentHostAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_8266FD60(ctx, base, compositeComponentHostAddr, arg2);
+	n_sub_8266FD60(ctx, base, compositeComponentHostAddr, component);
 
-	uint32_t memberObject = LOAD32((uint32_t)arg2 + 124);
+	uint32_t memberObject = LOAD32((uint32_t)component + 124);
 	uint32_t memberMethod = LOAD32(LOAD32(memberObject) + 92);
 	ctx.r3.u64 = memberObject;
 	ctx.r10.u64 = memberMethod;
@@ -704,16 +690,16 @@ uint64_t n_sub_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 }
 PROMOTED_ENTRY(61, sub_828A8330, 0x828A8330) { ctx.r3.u64 = n_sub_828A8330(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828A8398(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
-	if (!UseLiftedCode(61, 0x828A8398)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = arg2; __imp__sub_828A8398(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_828A8398(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
+	if (!UseLiftedCode(61, 0x828A8398)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = component; __imp__sub_828A8398(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8398);
 	uint32_t stack = ctx.r1.u64;
 	CCompositeComponentHost* compositeComponentHost = GameObject<CCompositeComponentHost>(base, compositeComponentHostAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	CCompositeComponent_ForEachChild(ctx, base, compositeComponentHostAddr, arg2);
+	CCompositeComponent_ForEachChild(ctx, base, compositeComponentHostAddr, component);
 
-	uint32_t memberObject = LOAD32((uint32_t)arg2 + 124);
+	uint32_t memberObject = LOAD32((uint32_t)component + 124);
 	uint32_t memberMethod = LOAD32(LOAD32(memberObject) + 92);
 	ctx.r3.u64 = memberObject;
 	ctx.r10.u64 = memberMethod;
@@ -735,16 +721,16 @@ uint64_t n_sub_828A8398(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 PROMOTED_ENTRY(61, sub_828A8398, 0x828A8398) { ctx.r3.u64 = n_sub_828A8398(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_828A8400  [120 bytes]
-uint64_t n_sub_828A8400(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
+uint64_t n_sub_828A8400(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(61, 0x828A8400)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = arg2; __imp__sub_828A8400(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(61, 0x828A8400)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = component; __imp__sub_828A8400(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8400);
 	uint32_t stack = ctx.r1.u64;
 	CCompositeComponentHost* compositeComponentHost = GameObject<CCompositeComponentHost>(base, compositeComponentHostAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_8266FE30(ctx, base, compositeComponentHostAddr, arg2);
+	n_sub_8266FE30(ctx, base, compositeComponentHostAddr, component);
 
 	// a chain of pointers from the global at 0x83496920 leads to the object whose method is called
 	uint32_t globalObject = LOAD32(g_83490000 + 26912);
@@ -769,7 +755,7 @@ uint64_t n_sub_828A8400(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	uint32_t returnedObjectMethod = LOAD32(LOAD32(returnedObject) + 28);
 
 	// r3 still holds returnedObject from the previous call: it is the receiver
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = component;
 	ctx.r5.u64 = mainComponent;
 	ctx.r10.u64 = returnedObjectMethod;
 	REX_CALL_INDIRECT_FUNC(returnedObjectMethod);

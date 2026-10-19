@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECVortex_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outName) {
 	constexpr int32_t str_TXT_820C8EB8_B_ = int32_t(0x820C8EB8);
@@ -55,21 +56,17 @@ uint64_t CECVortex_GetEntity(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) 
 PROMOTED_ENTRY(49, sub_8272F080, 0x8272F080) { ctx.r3.u64 = CECVortex_GetEntity(ctx, base, ctx.r3.u64); }
 
 // sub_8272F330  [80 bytes]
-uint64_t n_sub_8272F330(CpuState& ctx, uint8_t* base, uint64_t object, uint64_t flags) {
-	if (!UseLiftedCode(49, 0x8272F330)) { ctx.r3.u64 = object; ctx.r4.u64 = flags; __imp__sub_8272F330(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8272F330(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t deleteFlags) {
+	if (!UseLiftedCode(49, 0x8272F330)) { ctx.r3.u64 = vortex; ctx.r4.u64 = deleteFlags; __imp__sub_8272F330(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8272F330);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
-	ctx.r4.u64 = flags;  // state the callee may pass on
-	n_sub_8272F380(ctx, base, object);
-	// bit 0 set: the object's memory is freed as well
-	if ((uint32_t(flags) & 0x1) != 0) {
-		HandleTarget_Free(ctx, base, object);
+	GameStackFrame stackFrame(ctx, base, 112);
+	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
+	n_sub_8272F380(ctx, base, vortex);
+	// bit 0 set: the vortex's memory is freed as well
+	if ((uint32_t(deleteFlags) & 0x1) != 0) {
+		HandleTarget_Free(ctx, base, vortex);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
-	return object;
+	return vortex;
 }
 PROMOTED_ENTRY(49, sub_8272F330, 0x8272F330) { ctx.r3.u64 = n_sub_8272F330(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
@@ -146,8 +143,6 @@ uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		const double m30 = vortex->m_30;
 
 		// state the callee may pass on
-		ctx.r4.u64 = r4ForGet;
-		ctx.f1.f64 = distance;
 		const uint64_t entity360 = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 360);
 		const uint64_t entity352 = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 352);
 		ctx.fpscr.disableFlushMode();
@@ -226,8 +221,6 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 					entity = entityPtr;
 				} else {
 					// state the callee may pass on
-					ctx.r9.u64 = r9Value;
-					ctx.r10.u64 = 0;
 					ctx.cr0 = compare0;
 					ctx.xer.ca = flags.ca;
 					EntityHandle_Release(ctx, base, handleAddr);
@@ -238,7 +231,6 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 			}
 
 			// state the callee may pass on
-			ctx.r9.u64 = r9Value;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
 			n_sub_82734508(ctx, base, vortexAddr, entity, ctx.r8.u64);
@@ -249,7 +241,6 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 		}
 	}
 	// state the callee may pass on
-	ctx.r9.u64 = r9Value;
 	ctx.xer.ca = flags.ca;
 	EntityHandleVector_Clear(ctx, base, handleVectorAddr);
 
@@ -331,9 +322,6 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r5.u64 = 0;
-	ctx.r10.u64 = r10Value;
-	ctx.f1.f64 = ownerStep;
 	const uint32_t target = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 352);
 	const double targetStep = n_sub_824BB4D8(ctx, base, target);
 	ctx.fpscr.disableFlushMode();
@@ -391,7 +379,6 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			const uint32_t entity = LOAD32(handleTarget);
 			if (entity == 0) {
 				// state the callee may pass on
-				ctx.r10.u64 = 0;
 				ctx.xer.ca = flags.ca;
 				EntityHandle_Release(ctx, base, targetWordAddr - 4);
 			} else {
@@ -416,20 +403,20 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 }
 PROMOTED_ENTRY(49, sub_82730AC0, 0x82730AC0) { ctx.r3.u64 = n_sub_82730AC0(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t value) {
-	if (!UseLiftedCode(49, 0x82730C78)) { ctx.r3.u64 = vortexAddr; ctx.r4.u64 = value; __imp__sub_82730C78(ctx, base); return ctx.r3.u32; }
+uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t searchedEntity) {
+	if (!UseLiftedCode(49, 0x82730C78)) { ctx.r3.u64 = vortexAddr; ctx.r4.u64 = searchedEntity; __imp__sub_82730C78(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82730C78);
 	uint32_t stack = ctx.r1.u64;
 	CECVortex* vortex = GameObject<CECVortex>(base, vortexAddr);
 	// Returns 0 when HandleVector_Find, searching the handle vector at +0x1B0 (begin at +4, end at +8)
-	// for value, stops at the end, else 1. Iterators are {vector address, element pointer} pairs;
+	// for searchedEntity, stops at the end, else 1. Iterators are {vector address, element pointer} pairs;
 	// inconsistent ones trap.
 	const uint32_t vectorAddr = vortexAddr + 432;
 	stack = PushStackFrame(base, stack, 144);
 
 	const uint32_t vectorEnd = vortex->m_1B8;
 	const uint32_t vectorBegin = vortex->m_1B4;
-	STORE32(stack + 172, value);  // the searched value, in the caller's parameter save slot
+	STORE32(stack + 172, searchedEntity);  // the searched searchedEntity, in the caller's parameter save slot
 	if (vectorBegin > vectorEnd) {
 		ctx.r1.u64 = stack;
 		ppc_trap(ctx, base, 22);
@@ -458,8 +445,6 @@ uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r9.u64 = endPtrReread;
-	ctx.r10.u64 = endPtr;
 	const uint32_t foundIterator = HandleVector_Find(ctx, base, (uint64_t)stack + 96, beginIterator, endIterator, (uint64_t)stack + 172);
 
 	const uint32_t foundVector = LOAD32(foundIterator);
@@ -543,8 +528,6 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			const uint64_t handleVtableAgain = (int64_t)g_820F0000 + 5732;
 			STORE32(stack + 88, (uint32_t)handleVtableAgain);
 			// state the callee may pass on
-			ctx.r8.u64 = handleVtableAgain;
-			ctx.r9.s64 = g_820F0000;
 			EntityHandle_Release(ctx, base, emptyHandleAddr);
 		}
 		// v8-v10 as the calls above left them; n_sub_82736998 receives them further down
@@ -735,10 +718,6 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			vortex->m_A4 = float(dc);
 			vortex->m_74 = float(double(float(b0 + offset74)));
 			// state the callee may pass on
-			ctx.f1.f64 = dc;
-			ctx.f2.f64 = d8;
-			ctx.f3.f64 = d4;
-			ctx.f4.f64 = d0;
 			ctx.v12 = v12Value;
 			result = n_sub_82731090(ctx, base, vortexAddr);
 			v12Value = ctx.v12;
@@ -943,7 +922,6 @@ uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			}
 			if (reachedLimit) {
 				// state the callee may pass on
-				ctx.r8.u64 = r8Value;
 				ctx.v12 = v12Value;
 				result = n_sub_82731090(ctx, base, uint32_t(vortexAddr));
 				r8Value = ctx.r8.u64;
@@ -1009,7 +987,7 @@ uint32_t n_sub_82731BF0(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 		}
 	}
 
-	bool flagE2 = vortex->m_E2 != 0;
+	bool hasAlternateOutput = vortex->m_E2 != 0;
 	ctx.fpscr.disableFlushMode();
 	double offset568 = double(LOAD_F32(g_8209B710 + 568));
 	uint32_t maskAddr = g_820A0000 - 28176;
@@ -1025,7 +1003,7 @@ uint32_t n_sub_82731BF0(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 	SET_V8(outVec, rex::ppc::simde_mm_perm_epi8_(V8(vec320), V8(raisedLoad), V8(mask)));
 	VSTORE(outVector & ~0xF, V8(outVec));
 
-	if (flagE2) {
+	if (hasAlternateOutput) {
 		if (vortex->m_E3 != 0) {
 			PPCVRegister vec256{}, fillLoad{}, merged256{}, weightLoad{}, weightSplat{}, normalized{};
 			double fill = double(LOAD_F32(g_8209B710 - 8796));
@@ -1139,8 +1117,6 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		STORE32(stack + 80, uint32_t(handleVtable));
 		// state the callee may pass on
 		ctx.r8.u64 = uint64_t(handleVtable);
-		ctx.r9.u64 = 0;
-		ctx.r10.s64 = g_820F0000;
 		EntityHandle_SetTarget(ctx, base, tempHandle, entity);
 
 		EntityHandle_Assign(ctx, base, vortexAddr + 368, tempHandle);
@@ -1148,8 +1124,6 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		uint32_t handleVtableWord = uint32_t(g_820F0000) + 5732;
 		STORE32(stack + 80, handleVtableWord);
 		// state the callee may pass on
-		ctx.r6.u64 = handleVtableWord;
-		ctx.r7.u64 = uint32_t(g_820F0000);
 		EntityHandle_Release(ctx, base, tempHandle);
 
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
@@ -1164,18 +1138,18 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 }
 PROMOTED_ENTRY(49, sub_82731DC8, 0x82731DC8) { ctx.r3.u64 = n_sub_82731DC8(ctx, base, ctx.r3.u64); }
 
-// Clears the entity handle at owner + (slotIndex + 46) * 8; does nothing (returns owner) when the handle has no
+// Clears the entity handle at owner + (handleSlotIndex + 46) * 8; does nothing (returns owner) when the handle has no
 // data, and only releases it (returning that result) when its data holds no target. Otherwise, when bit 21 of the
 // entity's +44 word is set, its element for key 85 is looked up: through the byte at +85 of its +140 object, or
 // else by a lower-bound search of the {key, value} pairs from +72 to +76 (without an exact match the word at
-// end + 4 is used). A non-null element gets byte +65 set to 1 with flag 0 (then n_sub_8247EB68 is called on it
-// with the float at 0x82099568) or to 0 otherwise; with a non-zero flag n_sub_824B8500 is called on the handle's
+// end + 4 is used). A non-null element gets byte +65 set to 1 with skipFadeOut 0 (then n_sub_8247EB68 is called on it
+// with the float at 0x82099568) or to 0 otherwise; with a non-zero skipFadeOut n_sub_824B8500 is called on the handle's
 // current target. Then a temporary handle {0x820F1664, 0} at stack+80 is released, assigned to the slot and
 // released again; the last release result is returned.
-uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64_t slotIndex, uint64_t flag) {
+uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t handleSlotIndex, uint64_t skipFadeOut) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(49, 0x82731F28)) { ctx.r3.u64 = ownerAddr; ctx.r4.u64 = slotIndex; ctx.r5.u64 = flag; __imp__sub_82731F28(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(49, 0x82731F28)) { ctx.r3.u64 = vortex; ctx.r4.u64 = handleSlotIndex; ctx.r5.u64 = skipFadeOut; __imp__sub_82731F28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82731F28);
 	uint32_t stack = ctx.r1.u64;
 	// condition and carry bits the original hands to its calls
@@ -1183,17 +1157,17 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64
 	PPCXERRegister xer = ctx.xer;
 	stack = PushStackFrame(base, stack, 128);
 
-	uint64_t handleSlot = uint64_t(uint32_t(slotIndex + 46) << 3) + ownerAddr;
-	uint64_t result = ownerAddr;
-	uint64_t r4Value = slotIndex;
+	uint64_t handleSlot = uint64_t(uint32_t(handleSlotIndex + 46) << 3) + vortex;
+	uint64_t result = vortex;
+	uint64_t r4Value = handleSlotIndex;
 
 	uint32_t handleData = LOAD32(uint32_t(handleSlot) + 4);
 	if (handleData != 0) {
 		uint32_t target = LOAD32(handleData);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = slotIndex;
-		ctx.r5.u64 = flag;
+		ctx.r4.u64 = handleSlotIndex;
+		ctx.r5.u64 = skipFadeOut;
 		ctx.r10.u64 = target;
 		if (target == 0) {
 			uint64_t released = EntityHandle_Release(ctx, base, handleSlot);
@@ -1259,16 +1233,13 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64
 			}
 		}
 
-		if (uint8_t(flag) == 0) {
+		if (uint8_t(skipFadeOut) == 0) {
 			if (element != 0) {
 				STORE8(element + 65, uint8_t(1));
 				ctx.fpscr.disableFlushMode();
 				double fadeOutTime = double(LOAD_F32(0x82099568u));
 				// state the callee may pass on
-				ctx.r6.u64 = reg6;
-				ctx.r7.u64 = reg7;
 				ctx.r8.u64 = reg8;
-				ctx.r9.u64 = reg9;
 				ctx.cr0 = cr0;
 				ctx.xer.ca = xer.ca;
 				n_sub_8247EB68(ctx, base, element, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
@@ -1284,11 +1255,6 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64
 				STORE8(element + 65, uint8_t(0));
 			}
 			// state the callee may pass on
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
-			ctx.r9.u64 = reg9;
-			ctx.r10.u64 = reg10;
 			ctx.cr0 = cr0;
 			ctx.xer.ca = xer.ca;
 			uint64_t currentTarget = EntityHandle_Get_825575C8(ctx, base, handleSlot);
@@ -1305,11 +1271,6 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64
 		STORE32(stack + 84, 0);
 		STORE32(stack + 80, uint32_t(g_820F1664));
 		// state the callee may pass on
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
-		ctx.r9.u64 = reg9;
-		ctx.r10.u64 = uint64_t(int64_t(g_820F1664));
 		ctx.cr0 = cr0;
 		ctx.xer.ca = xer.ca;
 		EntityHandle_Release(ctx, base, tempHandle);
@@ -1319,8 +1280,6 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64
 		int64_t handleVtable = int64_t(g_820F0000) + 5732;
 		STORE32(stack + 80, uint32_t(handleVtable));
 		// state the callee may pass on
-		ctx.r8.u64 = uint64_t(handleVtable);
-		ctx.r9.s64 = g_820F0000;
 		result = EntityHandle_Release(ctx, base, tempHandle);
 		r4Value = ctx.r4.u64;
 	}
@@ -1339,26 +1298,25 @@ PROMOTED_ENTRY(49, sub_82731F28, 0x82731F28) { ctx.r3.u64 = n_sub_82731F28(ctx, 
 // at end + 4 is used) gets byte +65 set to 1 and n_sub_8247EB68 is called on it with the float at 0x8209B4E0. Then a
 // temporary handle {0x820F1664, 0} at stack+80 is released, assigned to the slot and released again; the last
 // release result is returned.
-uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
+uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t vortex) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(49, 0x827323E8)) { ctx.r3.u64 = ownerAddr; __imp__sub_827323E8(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(49, 0x827323E8)) { ctx.r3.u64 = vortex; __imp__sub_827323E8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x827323E8);
 	uint32_t stack = ctx.r1.u64;
 	// carry bit the original hands to its calls
 	PPCXERRegister xer = ctx.xer;
 	stack = PushStackFrame(base, stack, 128);
 
-	uint32_t result = uint32_t(ownerAddr);
-	uint32_t handleData = LOAD32(uint32_t(ownerAddr) + 404);
-	uint64_t handleAddr = ownerAddr + 400;
+	uint32_t result = uint32_t(vortex);
+	uint32_t handleData = LOAD32(uint32_t(vortex) + 404);
+	uint64_t handleAddr = vortex + 400;
 	uint32_t targetBit = 0;
 	if (handleData != 0) {
 		uint32_t target = LOAD32(handleData);
 		if (target == 0) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r10.u64 = target;
 			result = uint32_t(EntityHandle_Release(ctx, base, handleAddr));
 		} else {
 			targetBit = LOAD8(target + 144) & 0x40;
@@ -1368,7 +1326,6 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 	if (targetBit != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = targetBit;
 		uint32_t entity = uint32_t(EntityHandle_Get_825575C8(ctx, base, handleAddr));
 		// r6-r9 as the code leaves them; they are handed on to the calls below
 		uint64_t reg6 = ctx.r6.u64;
@@ -1428,10 +1385,7 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 			ctx.fpscr.disableFlushMode();
 			double fadeOutTime = double(LOAD_F32(0x8209B4E0u));
 			// state the callee may pass on
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
 			ctx.r8.u64 = reg8;
-			ctx.r9.u64 = reg9;
 			ctx.xer.ca = xer.ca;
 			n_sub_8247EB68(ctx, base, element, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
 			reg6 = ctx.r6.u64;
@@ -1445,11 +1399,6 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 		STORE32(stack + 84, 0);
 		STORE32(stack + 80, uint32_t(g_820F1664));
 		// state the callee may pass on
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
-		ctx.r9.u64 = reg9;
-		ctx.r10.u64 = uint64_t(int64_t(g_820F1664));
 		ctx.xer.ca = xer.ca;
 		EntityHandle_Release(ctx, base, tempHandle);
 
@@ -1458,8 +1407,6 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 		int64_t handleVtable = int64_t(g_820F0000) + 5732;
 		STORE32(stack + 80, uint32_t(handleVtable));
 		// state the callee may pass on
-		ctx.r8.u64 = uint64_t(handleVtable);
-		ctx.r9.s64 = g_820F0000;
 		result = uint32_t(EntityHandle_Release(ctx, base, tempHandle));
 	}
 
@@ -1508,18 +1455,16 @@ uint32_t n_sub_82733878(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		uint32_t value18 = vortex->m_18;
 		uint64_t handleAddr = vortexAddr + 352;
 		ctx.fpscr.disableFlushMode();
-		double value70 = double(vortex->m_70);
+		double intensity = double(vortex->m_70);
 		PPCVRegister vec320{};
 		SET_V8(vec320, VLOAD((uint32_t(vortexAddr) + 320u) & ~0xF));
 		// state the callee may pass on
-		ctx.r10.u64 = 0;
-		ctx.f1.f64 = step;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		ctx.fpscr.disableFlushMode();
 		// state the callee may pass on
 		ctx.v1 = vec320;
 		ctx.v127 = vec320;
-		result = uint32_t(n_sub_824BADB8(ctx, base, target, value18, 4u, value14, 32768u, floorValue, value70));
+		result = uint32_t(n_sub_824BADB8(ctx, base, target, value18, 4u, value14, 32768u, floorValue, intensity));
 		f1Value = ctx.f1.f64;
 		ctx.fpscr.disableFlushMode();
 		vortex->m_48 = LOAD_F32(floorAddr + 10872);

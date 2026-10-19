@@ -9,24 +9,25 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_821C7E18(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(3, 0x821C7E18)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_821C7E18(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821C7E18(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t eventData) {
+	if (!UseLiftedCode(3, 0x821C7E18)) { ctx.r3.u64 = birdAddr; ctx.r4.u64 = eventData; __imp__sub_821C7E18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821C7E18);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t callTarget;
 	uint64_t result;
 
 	stack = PushStackFrame(base, stack, 96);
-	callTarget = LOAD32(LOAD32((uint32_t)arg2) + 4);
+	callTarget = LOAD32(LOAD32((uint32_t)eventData) + 4);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = eventData;
+	ctx.r4.u64 = eventData;
 	ctx.r10.u64 = callTarget;
 	REX_CALL_INDIRECT_FUNC(callTarget);
 	result = ctx.r3.u64;
-	if ((int32_t)result == 8 && LOAD8((uint32_t)arg1 + 104) != 0) {
-		result = n_sub_8299D8B0(ctx, base, arg1);
+	if ((int32_t)result == 8 && LOAD8((uint32_t)birdAddr + 104) != 0) {
+		result = n_sub_8299D8B0(ctx, base, birdAddr);
 	}
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -106,8 +107,6 @@ uint64_t n_sub_821D7E98(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	double distance = double(LOAD_F32(statPtr + 40));
 	ctx.fpscr.disableFlushMode();
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = reg6Value;
-	ctx.r7.u64 = reg7Value;
 	ctx.xer.ca = carry;
 	uint64_t result = CECBird_IsPlayerWithinDistance(ctx, base, birdPtr, distance);
 
@@ -135,15 +134,15 @@ uint64_t n_sub_821D7E98(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 }
 PROMOTED_ENTRY(3, sub_821D7E98, 0x821D7E98) { ctx.r3.u64 = n_sub_821D7E98(ctx, base, ctx.r3.u64); }
 
-uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t birdAddr, double floatArg1) {
+uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t birdAddr, double maxDistance) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(4, 0x821EFF08)) { ctx.r3.u64 = birdAddr; ctx.f1.f64 = floatArg1; __imp__sub_821EFF08(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(4, 0x821EFF08)) { ctx.r3.u64 = birdAddr; ctx.f1.f64 = maxDistance; __imp__sub_821EFF08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821EFF08);
 	uint32_t stack = ctx.r1.u64;
 	PPCVRegister vecTarget{}, vecSelf{}, vecDiff{}, vecAbsMask{}, vecAbsDiff{}, vecDot{};
 	PPCRegister callTarget{};
-	double originalArg1 = floatArg1;
+	double originalArg1 = maxDistance;
 	uint64_t r4Out = ctx.r4.u64;
 	CECBird* bird = GameObject<CECBird>(base, birdAddr);
 	stack = PushStackFrame(base, stack, 144);
@@ -162,13 +161,10 @@ uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t b
 		trackedEntity = LOAD32(trackerLink);
 		if (trackedEntity == 0) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = managerEntry;
-			ctx.r9.u64 = worldNode;
-			ctx.r10.u64 = trackedEntity;
-			ctx.f1.f64 = floatArg1;
+			ctx.f1.f64 = maxDistance;
 			EntityHandle_Release(ctx, base, ownerHandle);
 			r4Out = ctx.r4.u64;
-			floatArg1 = ctx.f1.f64;
+			maxDistance = ctx.f1.f64;
 		} else if ((LOAD8(trackedEntity + 144) & 64) != 0) {
 			canMeasure = true;
 		}
@@ -189,9 +185,9 @@ uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t b
 		ctx.r8.u64 = managerEntry;
 		ctx.r9.u64 = selfGetter;
 		ctx.r10.u64 = selfVtable;
-		ctx.f1.f64 = floatArg1;
+		ctx.f1.f64 = maxDistance;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		floatArg1 = ctx.f1.f64;
+		maxDistance = ctx.f1.f64;
 
 		uint32_t trackedSource = LOAD32(trackedEntity + 124);
 		uint32_t trackedVtable = LOAD32(trackedSource);
@@ -202,7 +198,7 @@ uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t b
 		ctx.r7.u64 = trackedGetter;
 		ctx.r8.u64 = trackedVtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		floatArg1 = ctx.f1.f64;
+		maxDistance = ctx.f1.f64;
 
 		ctx.fpscr.disableFlushMode();
 		double radiusSquared = double(float(originalArg1 * originalArg1));
@@ -231,7 +227,7 @@ uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t b
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = r4Out;
-	ctx.f1.f64 = floatArg1;
+	ctx.f1.f64 = maxDistance;
 	return isWithinDistance;
 }
 PROMOTED_ENTRY(4, sub_821EFF08, 0x821EFF08) { ctx.r3.u64 = CECBird_IsPlayerWithinDistance(ctx, base, ctx.r3.u32, ctx.f1.f64); }
@@ -251,39 +247,39 @@ uint64_t CECBird_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameRe
 }
 PROMOTED_ENTRY(69, sub_8299C520, 0x8299C520) { ctx.r3.u64 = CECBird_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8299C988(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t arg2) {
+uint64_t n_sub_8299C988(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t definition) {
 	constexpr int32_t str_TXT_82000EB4_B_ = int32_t(0x82000EB4);
 	constexpr int32_t g_8209B650 = int32_t(0x8209B650);
 	constexpr int32_t str_TXT_820EEE14_B_ = int32_t(0x820EEE14);
 	constexpr int32_t str_TXT_820EEE28_B_ = int32_t(0x820EEE28);
 	constexpr int32_t str_TXT_820EEE38_B_ = int32_t(0x820EEE38);
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
-	if (!UseLiftedCode(69, 0x8299C988)) { ctx.r3.u64 = birdAddr; ctx.r4.u64 = arg2; __imp__sub_8299C988(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(69, 0x8299C988)) { ctx.r3.u64 = birdAddr; ctx.r4.u64 = definition; __imp__sub_8299C988(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8299C988);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t result = birdAddr;
-	uint64_t r4Value = arg2;
+	uint64_t r4Value = definition;
 	uint32_t birdBase = (uint32_t)birdAddr;
 	uint64_t birdAddr2 = birdAddr;
 	CECBird* bird = GameObject<CECBird>(base, birdAddr);
 	stack = PushStackFrame(base, stack, 176);
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)definition != 0) {
 		const uint64_t fnvBasis = 0xFFFFFFFF811C9DC5ULL;
 		uint64_t typeString = str_TXT_82000EB4_B_;
 		ctx.r1.u64 = stack;
 		uint64_t typeHash = String_HashFnv1(ctx, base, typeString, fnvBasis);
-		uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, arg2, typeHash, 2);
+		uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, definition, typeHash, 2);
 		if (fieldValue != 0) {
 			bird->m_C = LOAD32(fieldValue);
 		}
 		uint64_t maxMovementRadiusString = str_TXT_820EEE14_B_;
 		uint64_t maxMovementHash = String_HashFnv1(ctx, base, maxMovementRadiusString, fnvBasis);
 		uint32_t maxMovementRadiusAddr = birdBase + 20;
-		GameDB_ReadU32FieldByHash(ctx, base, arg2, maxMovementHash, maxMovementRadiusAddr);
+		GameDB_ReadU32FieldByHash(ctx, base, definition, maxMovementHash, maxMovementRadiusAddr);
 		uint64_t flyAwayRadiusString = str_TXT_820EEE28_B_;
 		uint32_t flyAwayRadiusAddr = birdBase + 28;
 		uint64_t flyAwayRadiusHash = String_HashFnv1(ctx, base, flyAwayRadiusString, fnvBasis);
-		GameDB_ReadFloatFieldByHash(ctx, base, arg2, flyAwayRadiusHash, flyAwayRadiusAddr);
+		GameDB_ReadFloatFieldByHash(ctx, base, definition, flyAwayRadiusHash, flyAwayRadiusAddr);
 		STORE32(stack + 80, 0);
 		uint32_t globalBase = uint32_t(g_8209B650);
 		const int32_t TXT_82100000_L_ = str_TXT_82100000_B_;
@@ -291,7 +287,7 @@ uint64_t n_sub_8299C988(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_
 		bird->m_20 = LOAD_F32(globalBase - 9036);
 		uint64_t takeOffAngleString = str_TXT_820EEE38_B_;
 		uint64_t takeOffAngleHash = String_HashFnv1(ctx, base, takeOffAngleString, fnvBasis);
-		GameDB_ReadU32FieldByHash(ctx, base, arg2, takeOffAngleHash, stack + 80);
+		GameDB_ReadU32FieldByHash(ctx, base, definition, takeOffAngleHash, stack + 80);
 		uint32_t takeOffAngleU32 = LOAD32(stack + 80);
 		uint32_t v4 = bird->m_4;
 		int32_t TXT_820EEE38_L_ = (int32_t)takeOffAngleU32;
@@ -655,16 +651,10 @@ uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 				const uint32_t action = LOAD32(LOAD32(element) + 64);
 				callTarget.u64 = uint64_t(action);
 				ctx.r3.u64 = uint64_t(stack) + 88;
-				ctx.r4.u64 = element;
-				ctx.r5.u64 = uint64_t(stack) + 112;
-				ctx.r6.u64 = 0;
-				ctx.r10.u64 = uint64_t(action);
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				flags.ca = ctx.xer.ca;
 
 				STORE32(stack + 88, uint32_t(g_820F0000) + 5732);
-				ctx.r8.u64 = uint64_t(uint32_t(g_820F0000) + 5732);
-				ctx.r9.u64 = uint64_t(uint32_t(g_820F0000));
 				EntityHandle_Release(ctx, base, uint64_t(stack) + 88);
 				flags.ca = ctx.xer.ca;
 				STORE32(stack + 92, 0);
@@ -816,8 +806,6 @@ uint64_t n_sub_8299D4F8(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 			uint32_t gcBase = uint32_t(g_820F0000);
 			uint32_t handleVtbl = (int32_t)gcBase + 5732;
 			STORE32(stack + 88, handleVtbl);
-			ctx.r8.u64 = handleVtbl;
-			ctx.r9.u64 = gcBase;
 			EntityHandle_Release(ctx, base, stack + 88);
 
 			STORE32(stack + 92, 0);
@@ -1024,7 +1012,6 @@ uint64_t n_sub_8299D8B0(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 
 	if (haveBone) {
 		uint64_t shadowHipBone = TXT_8349B390_G_;
-		ctx.r8.u64 = reg8;
 		uint32_t placement = n_sub_825490A8(ctx, base, stack + 96, boneValue, shadowHipBone, 0);
 		reg6 = ctx.r6.u64;
 		reg8 = ctx.r8.u64;
@@ -1047,7 +1034,6 @@ uint64_t n_sub_8299D8B0(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 96);
 
 	uint64_t unnamedName = (int64_t)g_820F0000 - 4512;
-	ctx.r8.s64 = g_820F0000;
 	CCharString_ConstructFromCStr(ctx, base, stack + 80, unnamedName, -1);
 
 	uint64_t featherEffect = str_TXT_820EEE6C_B_;

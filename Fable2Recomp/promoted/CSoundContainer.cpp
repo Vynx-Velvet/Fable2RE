@@ -9,31 +9,32 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_82C20CC0  [24 bytes]
-void n_sub_82C20CC0(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, uint32_t arg2, uint32_t arg3) {
-	if (!UseLiftedCode(90, 0x82C20CC0)) { ctx.r3.u64 = soundContainerAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C20CC0(ctx, base); return; }
+void n_sub_82C20CC0(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, uint32_t soundIdOut, uint32_t vectorOut) {
+	if (!UseLiftedCode(90, 0x82C20CC0)) { ctx.r3.u64 = soundContainerAddr; ctx.r4.u64 = soundIdOut; ctx.r5.u64 = vectorOut; __imp__sub_82C20CC0(ctx, base); return; }
 	LiftedFrame frame(0x82C20CC0);
 	PPCVRegister vectorData{};
 	CSoundContainer* soundContainer = GameObject<CSoundContainer>(base, soundContainerAddr);
-	STORE32(arg2, uint32_t(soundContainer->m_C));
+	STORE32(soundIdOut, uint32_t(soundContainer->m_C));
 	SET_V8(vectorData, VLOAD((soundContainerAddr + 16u) & ~0xF));
-	VSTORE(arg3 & ~0xF, V8(vectorData));
+	VSTORE(vectorOut & ~0xF, V8(vectorData));
 	return;
 }
 PROMOTED_ENTRY(90, sub_82C20CC0, 0x82C20CC0) { n_sub_82C20CC0(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
 
 // sub_82C20CD8  [304 bytes]
-uint64_t n_sub_82C20CD8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+uint64_t n_sub_82C20CD8(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
-	if (!UseLiftedCode(90, 0x82C20CD8)) { ctx.r4.u64 = arg1; ctx.r5.u64 = arg2; __imp__sub_82C20CD8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(90, 0x82C20CD8)) { ctx.r4.u64 = soundContainer; ctx.r5.u64 = arg2; __imp__sub_82C20CD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20CD8);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t soundParams = (uint32_t)arg2;   // T166637: parameter block (handle at +0x14, +0x18)
-	uint64_t container = arg1;               // CSoundContainer
+	uint64_t container = soundContainer;               // CSoundContainer
 	// r4/r5/r9 as the caller must see them after the return; the callees overwrite
 	// them, so the values are tracked here.
-	uint64_t callerR4 = arg1;
+	uint64_t callerR4 = soundContainer;
 	uint64_t callerR5 = arg2;
 	uint64_t callerR9 = ctx.r9.u64;
 	PPCRegister callTarget{};
@@ -224,17 +225,17 @@ uint64_t n_sub_82C20E80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 }
 PROMOTED_ENTRY(90, sub_82C20E80, 0x82C20E80) { ctx.r3.u64 = n_sub_82C20E80(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C20EF8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(90, 0x82C20EF8)) { ctx.r3.u64 = arg1; __imp__sub_82C20EF8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C20EF8(CpuState& ctx, uint8_t* base, uint64_t soundContainer) {
+	if (!UseLiftedCode(90, 0x82C20EF8)) { ctx.r3.u64 = soundContainer; __imp__sub_82C20EF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20EF8);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
 	stack = PushStackFrame(base, stack, 112);
 
-	const uint32_t container = (uint32_t)arg1;
+	const uint32_t container = (uint32_t)soundContainer;
 	const uint32_t headAddr = container + 4;   // address of the list head field (end-of-list marker)
 	uint32_t node = LOAD32(headAddr);
-	uint64_t result = arg1;
+	uint64_t result = soundContainer;
 
 	if (node != 0) {
 		while (true) {
@@ -262,14 +263,14 @@ uint64_t n_sub_82C20EF8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 PROMOTED_ENTRY(90, sub_82C20EF8, 0x82C20EF8) { ctx.r3.u64 = n_sub_82C20EF8(ctx, base, ctx.r3.u64); }
 
 // sub_82C20F80  [164 bytes]
-uint64_t n_sub_82C20F80(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(90, 0x82C20F80)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C20F80(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C20F80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2, uint64_t arg3) {
+	if (!UseLiftedCode(90, 0x82C20F80)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C20F80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20F80);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
 	stack = PushStackFrame(base, stack, 128);
 
-	uint64_t current = arg1;
+	uint64_t current = soundContainer;
 	uint32_t node = LOAD32((uint32_t)current + 4);
 	const uint32_t ownerTag = (uint32_t)current + 4;
 	const uint64_t arg2Frozen = arg2;
@@ -315,17 +316,17 @@ uint64_t n_sub_82C20F80(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 PROMOTED_ENTRY(90, sub_82C20F80, 0x82C20F80) { ctx.r3.u64 = n_sub_82C20F80(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82C21028  [116 bytes]
-uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(90, 0x82C21028)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82C21028(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
+	if (!UseLiftedCode(90, 0x82C21028)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackUserData; __imp__sub_82C21028(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C21028);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
-	uint64_t result = arg1;
-	uint64_t r4Out = arg2;
+	uint64_t result = soundContainer;
+	uint64_t r4Out = callbackUserData;
 	stack = PushStackFrame(base, stack, 112);
 	// linked list of entries hanging off the container at offset 4; each entry
 	// records the address of that list field at +0x10 so ownership can be checked.
-	uint32_t listAddress = (uint32_t)arg1 + 4;
+	uint32_t listAddress = (uint32_t)soundContainer + 4;
 	uint32_t node = LOAD32(listAddress);
 	while (node != 0) {
 		uint32_t item = LOAD32(node);
@@ -335,7 +336,7 @@ uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 			callTarget.u64 = method;
 			ctx.r1.u64 = stack;
 			ctx.r3.u64 = item;
-			ctx.r4.u64 = arg2;
+			ctx.r4.u64 = callbackUserData;
 			ctx.r10.u64 = method;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = ctx.r3.u64;
@@ -353,17 +354,17 @@ uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 }
 PROMOTED_ENTRY(90, sub_82C21028, 0x82C21028) { ctx.r3.u64 = n_sub_82C21028(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C210A0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(90, 0x82C210A0)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82C210A0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C210A0(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
+	if (!UseLiftedCode(90, 0x82C210A0)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackUserData; __imp__sub_82C210A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C210A0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 
-	uint32_t listRoot = (uint32_t)arg1 + 4;
+	uint32_t listRoot = (uint32_t)soundContainer + 4;
 	uint32_t node = LOAD32(listRoot);
-	uint64_t callArg = arg2;
-	uint64_t r4Out = arg2;
-	uint64_t result = arg1;
+	uint64_t callArg = callbackUserData;
+	uint64_t r4Out = callbackUserData;
+	uint64_t result = soundContainer;
 
 	while (node != 0) {
 		uint32_t listener = LOAD32(node);
@@ -394,19 +395,19 @@ uint64_t n_sub_82C210A0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 }
 PROMOTED_ENTRY(90, sub_82C210A0, 0x82C210A0) { ctx.r3.u64 = n_sub_82C210A0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(90, 0x82C21118)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82C21118(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackData) {
+	if (!UseLiftedCode(90, 0x82C21118)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackData; __imp__sub_82C21118(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C21118);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 
-	uint32_t containerAddr = (uint32_t)arg1;
+	uint32_t containerAddr = (uint32_t)soundContainer;
 	uint32_t listHeadAddr = containerAddr + 4;
 	uint32_t node = LOAD32(listHeadAddr);
-	uint64_t current = arg1;
-	uint64_t callArg = arg2;
+	uint64_t current = soundContainer;
+	uint64_t callArg = callbackData;
 
-	STORE32(containerAddr + 12, (uint32_t)arg2);
+	STORE32(containerAddr + 12, (uint32_t)callbackData);
 
 	while (node != 0) {
 		current = LOAD32(node);
@@ -418,7 +419,7 @@ uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 			ctx.r10.u64 = callback;
 			REX_CALL_INDIRECT_FUNC(callback);
 			current = ctx.r3.u64;
-			arg2 = ctx.r4.u64;
+			callbackData = ctx.r4.u64;
 		}
 		if (LOAD32(node + 16) != listHeadAddr) break;
 		node = LOAD32(node + 8);
@@ -428,7 +429,7 @@ uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = callbackData;
 	return current;
 }
 PROMOTED_ENTRY(90, sub_82C21118, 0x82C21118) { ctx.r3.u64 = n_sub_82C21118(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -626,8 +627,6 @@ uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAdd
 			arg2 = ctx.r4.u64;
 			flag = vtableResult & 0xFF;
 			if (flag == 0) {
-				ctx.r3.u64 = containerAddr;
-				ctx.r9.u64 = flag;
 				result = n_sub_82C20CD8(ctx, base, savedArg2, node);
 				arg2 = ctx.r4.u64;
 				flag = ctx.r9.u64;
@@ -676,8 +675,6 @@ uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAdd
 		STORE32(node + 4, 0);
 		STORE32(node, 0);
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
-		ctx.r9.u64 = flag;
 		result = HandleTarget_FreeThunk(ctx, base, node);
 		arg2 = ctx.r4.u64;
 		flag = ctx.r9.u64;
@@ -692,8 +689,8 @@ uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAdd
 }
 PROMOTED_ENTRY(90, sub_82C22FB0, 0x82C22FB0) { ctx.r3.u64 = n_sub_82C22FB0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t CSoundContainer_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(90, 0x82C23198)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82C23198(ctx, base); return ctx.r3.u64; }
+uint64_t CSoundContainer_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2) {
+	if (!UseLiftedCode(90, 0x82C23198)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = arg2; __imp__sub_82C23198(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C23198);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t deleteFlags = arg2;
@@ -702,12 +699,12 @@ uint64_t CSoundContainer_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64
 	ctx.r1.u64 = stack;
 
 	ctx.r4.u64 = arg2;
-	CSoundContainer_Dtor(ctx, base, arg1);
+	CSoundContainer_Dtor(ctx, base, soundContainer);
 
-	uint64_t thisPtr = arg1;
+	uint64_t thisPtr = soundContainer;
 	if (deleteFlags & 0x1) {
 		HandleTarget_FreeThunk(ctx, base, thisPtr);
-		thisPtr = arg1;
+		thisPtr = soundContainer;
 	}
 
 	stack = PopStackFrame(stack, 112);

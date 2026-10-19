@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECBullet_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameResult) {
 	constexpr int32_t str_TXT_820C8D94_B_ = int32_t(0x820C8D94);
@@ -42,7 +43,6 @@ uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint3
 	if ((uint32_t)targetEntity != 0) {
 		uint32_t subHandle = LOAD32(handleAddr + 8);
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = handleAddr;
 		n_sub_82965840(ctx, base, targetEntity, subHandle);
 		HandleTarget_Free(ctx, base, LOAD32(handleAddr + 4));
 		targetEntity = ctx.r4.u64;
@@ -57,7 +57,6 @@ uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint3
 
 	bullet->m_24 = nullSentinel;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = targetEntity;
 	EntityHandle_Release(ctx, base, uint32_t(bulletAddr) + 36);
 	bullet->m_28 = nullHandle;
 
@@ -81,15 +80,15 @@ uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint3
 }
 PROMOTED_ENTRY(67, sub_82961898, 0x82961898) { ctx.r3.u64 = n_sub_82961898(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82961948(CpuState& ctx, uint8_t* base, uint32_t bulletAddr, uint64_t arg2) {
+uint64_t n_sub_82961948(CpuState& ctx, uint8_t* base, uint32_t bulletAddr, uint64_t gameDbObject) {
 	constexpr int32_t str_TXT_820BC8FC_B_ = int32_t(0x820BC8FC);
-	if (!UseLiftedCode(67, 0x82961948)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = arg2; __imp__sub_82961948(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(67, 0x82961948)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = gameDbObject; __imp__sub_82961948(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82961948);
 	uint32_t stack = ctx.r1.u64;
 	CECBullet* bullet = GameObject<CECBullet>(base, bulletAddr);
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
-	uint64_t floatByName = GameDB_GetFloatByName(ctx, base, arg2, str_TXT_820BC8FC_B_);
+	uint64_t floatByName = GameDB_GetFloatByName(ctx, base, gameDbObject, str_TXT_820BC8FC_B_);
 	ctx.fpscr.disableFlushMode();
 	bullet->m_40 = float(ctx.f1.f64);
 	float speedFloor = LOAD_F32(0x83318D70u);
@@ -171,11 +170,6 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 		uint32_t trailEntity = LOAD32(entryValue + 16);
 		if (trailEntity != 0) {
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = 1;
-			ctx.r6.u64 = r6;
-			ctx.r7.u64 = r7;
-			ctx.r8.u64 = r8;
-			ctx.r9.u64 = r9;
 			ShieldSwords_CleanupBlockTrail(ctx, base, trailEntity);
 			r6 = ctx.r6.u64;
 			r7 = ctx.r7.u64;
@@ -200,7 +194,6 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 		if (trailEntity != 0) {
 			SET_V8(ctx.v1, VLOAD((stack + 112) & ~0xFu));
 			SET_V8(ctx.v2, VLOAD((uint32_t)g_8349E230 & ~0xFu));
-			ctx.r9.u64 = static_cast<uint64_t>(static_cast<int64_t>(g_8349E230));
 			n_sub_8322BD20(ctx, base, trailEntity);
 		}
 
@@ -222,10 +215,6 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 
 	uint32_t finalOwner = bullet->m_4;
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = r6;
-	ctx.r7.u64 = r7;
-	ctx.r8.u64 = r8;
-	ctx.r9.u64 = r9;
 	uint64_t result = n_sub_82392C88(ctx, base, finalOwner, bulletAddr);
 	stack = PopStackFrame(stack, 224);
 	ctx.r1.u64 = stack;
@@ -273,10 +262,10 @@ uint64_t n_sub_82961B80(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 }
 PROMOTED_ENTRY(67, sub_82961B80, 0x82961B80) { ctx.r3.u64 = n_sub_82961B80(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t arg2, uint64_t arg3) {
+uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t targetEntityId, uint64_t nameString) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(67, 0x82962170)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82962170(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(67, 0x82962170)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = targetEntityId; ctx.r5.u64 = nameString; __imp__sub_82962170(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82962170);
 	uint32_t stack = ctx.r1.u64;
 	CECBullet* bullet = GameObject<CECBullet>(base, bulletAddr);
@@ -287,8 +276,8 @@ uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	stack = PushStackFrame(base, stack, 208);
 	ctx.r1.u64 = stack;
 
-	const uint64_t targetId     = arg2;
-	const uint64_t sourceString = arg3;
+	const uint64_t targetId     = targetEntityId;
+	const uint64_t sourceString = nameString;
 	const uint32_t nullHandle   = uint32_t(g_820F1664);
 	const uint32_t refCountAddr = uint32_t(g_83490000) + 28344;
 	const uint32_t vectorObj    = uint32_t(bulletAddr) + 0x74;
@@ -296,8 +285,8 @@ uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	const uint64_t nullHandle64 = uint64_t(int64_t(g_820F1664));
 	const int64_t  baseTemp     = int64_t(g_83490000);
 
-	uint64_t curArg2 = arg2;
-	uint64_t curArg3 = arg3;
+	uint64_t curArg2 = targetEntityId;
+	uint64_t curArg3 = nameString;
 
 	uint32_t begin = bullet->m_78;
 	uint32_t end   = bullet->m_7C;
@@ -431,16 +420,12 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 	STORE8(stack + 83, 255);
 	ctx.fpscr.disableFlushMode();
 	double setupColor = double(LOAD_F32(0x83320000u + 5100));
-	ctx.r5.u64 = 0x83320000u;
-	ctx.r6.u64 = 0;
-	ctx.r7.u64 = 0;
 	n_sub_824B5770(ctx, base, stack + 96, stack + 80, setupColor);
 
 	STORE8(stack + 83, 255);
 	STORE8(stack + 82, 128);
 	STORE8(stack + 81, 128);
 	STORE8(stack + 80, 128);
-	ctx.r6.u64 = 0;
 	n_sub_824B5648(ctx, base, stack + 112, stack + 96, stack + 80);
 
 	uint32_t r4Value = bullet->m_7C;
@@ -485,10 +470,6 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 					ctx.fpscr.disableFlushMode();
 					PPCVRegister effectVector{};
 					SET_V8(effectVector, VLOAD((stack + 128) & ~0xFu));
-					ctx.r7.u64 = 0;
-					ctx.f1.f64 = f5;
-					ctx.f2.f64 = f4;
-					ctx.f3.f64 = f6;
 					ctx.v1 = effectVector;
 
 					result = n_sub_824B5D68(ctx, base, stack + 80);
@@ -497,8 +478,6 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 					continue;
 				}
 
-				ctx.r4.u64 = r4Value;
-				ctx.r10.u64 = 0;
 				EntityHandle_Release(ctx, base, element);
 			}
 
@@ -507,8 +486,6 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 			STORE8(stack + 84, 0);
 			STORE8(stack + 87, 255);
 			ctx.fpscr.disableFlushMode();
-			ctx.r6.u64 = 0;
-			ctx.r7.u64 = 0;
 			result = n_sub_824B5770(ctx, base, element + 16, stack + 84, f6);
 			r4Value = ctx.r4.u32;
 			offset += 32;
@@ -532,16 +509,16 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 }
 PROMOTED_ENTRY(67, sub_82962358, 0x82962358) { ctx.r3.u64 = n_sub_82962358(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t arg2) {
+uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t impactType) {
 	constexpr int32_t g_82099334 = int32_t(0x82099334);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(67, 0x82962A70)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = arg2; __imp__sub_82962A70(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(67, 0x82962A70)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = impactType; __imp__sub_82962A70(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82962A70);
 	PPCVRegister savedV127 = ctx.v127;
 	uint32_t stack = ctx.r1.u64;
 	PPCVRegister v1Reg = ctx.v1;
 
-	uint64_t originalArg2 = arg2;
+	uint64_t originalArg2 = impactType;
 	uint32_t local5 = ctx.r6.u64;
 	uint64_t local6 = ctx.r7.u64;
 	uint32_t local27 = 0;
@@ -619,14 +596,11 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 		ctx.fpscr.disableFlushMode();
 		double fadeOut = double(LOAD_F32(uint32_t(g_82099334) + 384));
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
-		ctx.r6.u64 = local5;
-		ctx.r7.u64 = local6;
 		ctx.r8.u64 = local27;
 		ctx.v127 = v1Reg;
 		ctx.xer.ca = flags.ca;
 		n_sub_8247EB68(ctx, base, killValue, fadeOut);
-		arg2 = ctx.r4.u64;
+		impactType = ctx.r4.u64;
 		local5 = ctx.r6.u64;
 		local6 = ctx.r7.u64;
 		local27 = ctx.r8.u64;
@@ -640,7 +614,7 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	callTarget.u64 = fn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = obj;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = impactType;
 	ctx.r6.u64 = local5;
 	ctx.r7.u64 = local6;
 	ctx.r8.u64 = local27;
@@ -671,15 +645,11 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	if (v10 != 0) {
 		uint32_t first = LOAD32(v10);
 		if (first == 0) {
-			ctx.r8.u64 = arg2Byte;
-			ctx.r10.u64 = first;
 			result = EntityHandle_Release(ctx, base, entityHandle);
 			v1Reg = ctx.v1;
 			flags.ca = ctx.xer.ca;
 			flag47 = false;
 		} else {
-			ctx.r8.u64 = arg2Byte;
-			ctx.r10.u64 = first;
 			result = EntityHandle_Get_825575C8(ctx, base, entityHandle);
 			v1Reg = ctx.v1;
 			flags.ca = ctx.xer.ca;
@@ -698,9 +668,6 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 			uint32_t c = LOAD32(b + 88);
 			uint32_t d = LOAD32(c + 4);
 			uint32_t e = LOAD32(d + 16);
-			ctx.r8.u64 = d;
-			ctx.r9.u64 = c;
-			ctx.r10.u64 = b;
 			uint32_t entity = EntityHandle_Get_825575C8(ctx, base, entityHandle);
 			v1Reg = ctx.v1;
 			flags.ca = ctx.xer.ca;
@@ -719,14 +686,14 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 }
 PROMOTED_ENTRY(67, sub_82962A70, 0x82962A70) { ctx.r3.u64 = n_sub_82962A70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t targetPosition) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
-	if (!UseLiftedCode(67, 0x82965358)) { ctx.r4.u64 = arg1; ctx.r5.u64 = arg2; __imp__sub_82965358(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(67, 0x82965358)) { ctx.r4.u64 = arg1; ctx.r5.u64 = targetPosition; __imp__sub_82965358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82965358);
 
 	uint32_t stack = ctx.r1.u64;
 	uint32_t bullet = (uint32_t)arg1;
-	uint32_t target = (uint32_t)arg2;
+	uint32_t target = (uint32_t)targetPosition;
 
 	uint64_t reg6 = ctx.r6.u64;
 	uint64_t reg7 = ctx.r7.u64;
@@ -819,10 +786,6 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 				uint64_t stackTemp = (uint64_t)stack + 96;
 
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = reg6;
-				ctx.r7.u64 = reg7;
-				ctx.r8.u64 = reg8;
-				ctx.r9.u64 = reg9;
 				ctx.v11 = vecResult;
 				ctx.v12 = vecDiff;
 				ctx.v13 = vecLoaded;
@@ -831,7 +794,7 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 				uint32_t resultPtr = n_sub_82399078(ctx, base, stackTemp, valuePtr, index);
 
 				arg1 = ctx.r4.u64;
-				arg2 = ctx.r5.u64;
+				targetPosition = ctx.r5.u64;
 				reg6 = ctx.r6.u64;
 				reg7 = ctx.r7.u64;
 				reg8 = ctx.r8.u64;
@@ -872,7 +835,7 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		stack = PopStackFrame(stack, 176);
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = arg1;
-		ctx.r5.u64 = arg2;
+		ctx.r5.u64 = targetPosition;
 		ctx.r6.u64 = reg6;
 		ctx.r7.u64 = reg7;
 		ctx.r8.u64 = reg8;
@@ -888,7 +851,7 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	stack = PopStackFrame(stack, 176);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = arg1;
-	ctx.r5.u64 = arg2;
+	ctx.r5.u64 = targetPosition;
 	ctx.r6.u64 = reg6;
 	ctx.r7.u64 = reg7;
 	ctx.r8.u64 = reg8;
@@ -929,13 +892,9 @@ uint64_t n_sub_82965540(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 			const uint32_t targetHead = LOAD32(targetRef);
 			if (targetHead == 0) {
 				ctx.r1.u64 = stack;
-				ctx.r9.u64 = handleState;
-				ctx.r10.u64 = targetHead;
 				EntityHandle_Release(ctx, base, handleAddr);
 			} else {
 				ctx.r1.u64 = stack;
-				ctx.r9.u64 = handleState;
-				ctx.r10.u64 = targetHead;
 				const uint32_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 				targetStillActive = (LOAD8(target + 0x90) & 0x40) != 0;
 			}

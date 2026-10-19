@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_82C79530  [16 bytes]
 void CBinaryDataStream_Destructor(CpuState& ctx, uint8_t* base, uint32_t binaryDataStreamAddr) {
@@ -125,12 +126,7 @@ uint64_t CBinaryDataStream_QueryInterface(CpuState& ctx, uint8_t* base, uint64_t
 			ctx.r1.u64 = stack;
 			ctx.r3.u64 = binaryDataStreamAddr;
 			ctx.r4.u64 = interfaceId;
-			ctx.r5.u64 = outInterface;
 			// state the callee may pass on: what the matching compare left in r7-r9
-			ctx.r7.u64 = lastGuidByte;
-			ctx.r8.u64 = interfaceId + 16;
-			ctx.r9.u64 = 0;
-			ctx.r10.u64 = addRefFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
@@ -801,8 +797,6 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	// the virtual base is found through the offset at +4 of the object's vtable
 	STORE32(LOAD32(LOAD32(textStream) + 4) + textStream, (uint32_t)streamBaseVtable);
 	// state the callee may pass on
-	ctx.r5.u64 = streamBaseVtable;
-	ctx.r6.s64 = g_82010000;
 	n_sub_82C7A0E0(ctx, base, textBuffer, 2, ctx.r8.u64);
 
 	// the source's method at +24 puts an enumerator object at stack+80
@@ -931,8 +925,6 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	n_sub_82C7A060(ctx, base, textStreamBase);
 	STORE32(textStreamBase, (uint32_t)lastBaseVtable);
 	// state the callee may pass on
-	ctx.r9.u64 = lastBaseVtable;
-	ctx.r10.s64 = int32_t(0x820D0000);
 	n_sub_82CD1E78(ctx, base, textStreamBase);
 
 	stack = PopStackFrame(stack, 384);
@@ -1080,7 +1072,6 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	// destroy the string at stack+160; r9 for n_sub_82C77700: its capacity, or what the free left in it
 	uint64_t nextR9 = LOAD32(stack + 184);
 	if ((uint32_t)nextR9 >= 8) {
-		ctx.r9.u64 = nextR9;
 		HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 164));
 		nextR9 = ctx.r9.u64;
 	}
@@ -1116,9 +1107,6 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 			uint32_t errorBits = streamState & 6;
 			if (errorBits != 0) {
 				// state the callee may pass on
-				ctx.r7.u64 = errorBits;
-				ctx.r8.u64 = streamState;
-				ctx.r9.u64 = virtualBaseOffset;
 				return releaseAndFail();
 			}
 
@@ -1159,7 +1147,6 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	if (heldObject != 0) {
 		uint32_t inner = LOAD32(heldObject);
 		if (inner != 0) {
-			ctx.r4.u64 = nextR4;
 			uint64_t releasedObject = n_sub_826C4B38(ctx, base, inner);
 			nextR4 = ctx.r4.u64;
 			if ((uint32_t)releasedObject != 0) {
@@ -1171,11 +1158,9 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 				nextR4 = ctx.r4.u64;
 			}
 		}
-		ctx.r4.u64 = nextR4;
 		HandleTarget_FreeThunk(ctx, base, heldObject);
 		nextR4 = ctx.r4.u64;
 	}
-	ctx.r4.u64 = nextR4;
 	n_sub_82CD1D00(ctx, base, stack + 204);
 
 	streamVtable = LOAD32(textStream);
@@ -1183,11 +1168,6 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	STORE32(LOAD32(streamVtable + 4) + textStream, (uint32_t)streamBaseVtable);
 	STORE32(stack + 272, (uint32_t)lastBaseVtable);
 	// state the callee may pass on
-	ctx.r6.u64 = streamVtable;
-	ctx.r7.u64 = lastBaseVtable;
-	ctx.r8.u64 = streamBaseVtable;
-	ctx.r9.s64 = int32_t(0x820D0000);
-	ctx.r10.s64 = g_82010000;
 	n_sub_82CD1E78(ctx, base, stack + 272);
 
 	stack = PopStackFrame(stack, 416);

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECTrigger_HasEntity(CpuState& ctx, uint8_t* base, uint32_t triggerAddr, uint64_t entityHandle) {
 	if (!UseLiftedCode(0, 0x8218AE80)) { ctx.r3.u64 = triggerAddr; ctx.r4.u64 = entityHandle; __imp__sub_8218AE80(ctx, base); return ctx.r3.u64; }
@@ -32,8 +33,6 @@ uint64_t CECTrigger_HasEntity(CpuState& ctx, uint8_t* base, uint32_t triggerAddr
 				// the entry's entity is gone: release the handle it still keeps alive
 				ctx.r1.u64 = stack;
 				// state the callee may pass on
-				ctx.r4.u64 = callerR4;
-				ctx.r10.u64 = 0;
 				EntityHandle_Release(ctx, base, (uint64_t)entry + 8);
 				callerR4 = ctx.r4.u64;
 			}
@@ -145,15 +144,11 @@ uint32_t n_sub_8218AF28(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 				currentEntity = LOAD32(cell);
 				if (currentEntity == 0) {
 					// state the callee may pass on
-					ctx.r9.u64 = r9State;
-					ctx.r10.u64 = 0;
 					EntityHandle_Release(ctx, base, (uint64_t)node + 8);
 					r9State = ctx.r9.u64;
 				}
 			}
 			// the callee reads r3 from the CPU state; r9 is state it may pass on
-			ctx.r3.u64 = triggerAddr;
-			ctx.r9.u64 = r9State;
 			n_sub_828BA620(ctx, base, currentEntity);
 			r9State = ctx.r9.u64;
 		}
@@ -266,10 +261,6 @@ uint64_t n_sub_8218B1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			uint32_t searchObject = LOAD32(tableSlot + 12);
 
 			// state the callee may pass on
-			ctx.r5.u64 = 2;
-			ctx.r7.u64 = tableSlot;
-			ctx.r8.u64 = table;
-			ctx.r9.u64 = rootChild;
 			result = n_sub_828BB3E8(ctx, base, searchObject, stack + 80);
 
 			const uint64_t foundEntity = result;
@@ -414,7 +405,6 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 		const uint64_t handleVectorAddr = (int64_t)triggerAddr + 36;
 		// state the callee may pass on
-		ctx.r9.u64 = r9State;
 		ctx.xer.ca = flags.ca;
 		EntityHandleVector_Clear(ctx, base, handleVectorAddr);
 		flags.ca = ctx.xer.ca;
@@ -447,10 +437,6 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 				}
 
 				// state the callee may pass on
-				ctx.r6.u64 = r6State;
-				ctx.r7.u64 = r7State;
-				ctx.r8.u64 = r8State;
-				ctx.r10.u64 = r10State;
 				ctx.xer.ca = flags.ca;
 				uint64_t entity = n_sub_82264448(ctx, base, lookupContext, offset + begin);
 				r6State = ctx.r6.u64;
@@ -486,10 +472,6 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 		const uint64_t entityListAddr = (int64_t)triggerAddr + 52;
 		// state the callee may pass on
-		ctx.r4.u64 = r4State;
-		ctx.r6.u64 = r6State;
-		ctx.r7.u64 = r7State;
-		ctx.r8.u64 = r8State;
 		List_ClearRefCountedHandleNodes(ctx, base, entityListAddr);
 		r4State = ctx.r4.u64;
 		flags.ca = ctx.xer.ca;
@@ -521,7 +503,6 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 				}
 
 				// state the callee may pass on
-				ctx.r10.u64 = r10State;
 				ctx.xer.ca = flags.ca;
 				uint64_t entity = n_sub_82264448(ctx, base, lookupContext, offset + begin);
 				r4State = entity;
@@ -558,7 +539,6 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r4.u64 = r4State;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = SharedHandle_Release(ctx, base, dataSlot);
 	STORE32((uint32_t)dataSlot, 0);
@@ -588,8 +568,6 @@ uint64_t n_sub_828B96C8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			uint32_t tableSlot = LOAD32(table + 4);
 			uint32_t entityHandle = LOAD32(tableSlot);
 			// state the callee may pass on
-			ctx.r8.u64 = tableSlot;
-			ctx.r9.u64 = table;
 			uint64_t entity = EntityHandle_Get(ctx, base, entityHandle);
 			result = n_sub_828B9788(ctx, base, triggerAddr, entity);
 			if (trigger->m_41 != 1) {
@@ -639,7 +617,6 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = lastEntry;
 		result = HandleVector_Find(ctx, base, stack + 96, beginIter, endIter, stack + 188);
 		callerR4 = ctx.r4.u64;
 
@@ -653,8 +630,6 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 			uint64_t entityHandleVtable = g_820F1664;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)entityHandleVtable);
-			ctx.r9.u64 = entityHandleVtable;
-			ctx.r10.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, stack + 80, targetEntity);
 
 			n_sub_82366260(ctx, base, handleVector, stack + 80);
@@ -662,8 +637,6 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 			// the same vtable address, rebuilt from its high half
 			uint32_t releaseVtable = (uint32_t)((int64_t)g_820F0000 + 5732);
 			STORE32(stack + 80, releaseVtable);
-			ctx.r7.u64 = releaseVtable;
-			ctx.r8.s64 = g_820F0000;
 			result = EntityHandle_Release(ctx, base, stack + 80);
 			callerR4 = ctx.r4.u64;
 		}
@@ -780,8 +753,6 @@ uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 		uint32_t handleSlot = LOAD32(handleOwner + 4);
 		uint32_t handle = LOAD32(handleSlot);
 		// state the callee may pass on
-		ctx.r8.u64 = handleSlot;
-		ctx.r9.u64 = handleOwner;
 		uint64_t entityResult = EntityHandle_Get(ctx, base, handle);
 		result = entityResult;
 		uint32_t entity = (uint32_t)entityResult;
@@ -789,7 +760,6 @@ uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			// the full 64-bit result goes on to both calls, as in the original
 			result = n_sub_828B9A40(ctx, base, triggerAddr, entityResult);
 			if (uint32_t(result & 0xFF) != 0) {
-				ctx.r3.u64 = triggerAddr;
 				result = n_sub_828BA620(ctx, base, entityResult);
 			}
 		}
@@ -888,9 +858,6 @@ uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 
 					// state the callee may pass on
 					ctx.r1.u64 = stack;
-					ctx.r6.u64 = argR6;
-					ctx.r7.u64 = nextIndex;
-					ctx.r8.u64 = fillPtr;
 					ctx.v1 = v1;
 					ctx.v2 = v2;
 					ctx.v12 = v12;
@@ -914,19 +881,12 @@ uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 				callTarget.u64 = uint64_t(vfunc);
 				ctx.r1.u64 = stack;
 				ctx.r3.u64 = globalObj;
-				ctx.r6.u64 = argR6;
-				ctx.r7.u64 = argR7;
-				ctx.r8.u64 = argR8;
-				ctx.r9.u64 = vfunc;
-				ctx.r10.u64 = vtablePtr;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 				uint64_t callResult = ctx.r3.u64;
 				uint32_t resultInner = LOAD32(uint32_t(callResult) + 4);
 				uint32_t innerValue = LOAD32(resultInner);
 				// state the callee may pass on
-				ctx.r7.u64 = resultInner;
-				ctx.r8.u64 = callResult;
 				n_sub_821DDE30(ctx, base, tempObject, innerValue, 1);
 				result = C_820A64F4_Destructor(ctx, base, tempObject);
 			}
@@ -986,7 +946,6 @@ uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	uint64_t idRef = IdRef_Get(ctx, base, refSlot);
 	if (uint32_t(GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820E0F10_B_) & 0xFF) != 0) {
 		// the original hands over the low 32 bits of the trigger address
-		ctx.r3.u64 = (uint32_t)triggerAddr;
 		n_sub_828BA4F0(ctx, base, (uint32_t)entity);
 	}
 
@@ -994,8 +953,6 @@ uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	uint64_t entityHandleVtable = g_820F1664;
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
-	ctx.r9.u64 = entityHandleVtable;
-	ctx.r10.u64 = 0;
 	EntityHandle_SetTarget(ctx, base, tempHandle, entity);
 
 	uint32_t listAddr = triggerAddr + 52;
@@ -1009,8 +966,6 @@ uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	uint32_t vtableHigh = uint32_t(g_820F0000);
 	uint32_t releaseVtable = vtableHigh + 5732;
 	STORE32(stack + 80, releaseVtable);
-	ctx.r6.u64 = releaseVtable;
-	ctx.r7.u64 = vtableHigh;
 	uint64_t result = EntityHandle_Release(ctx, base, tempHandle);
 
 	stack = PopStackFrame(stack, 160);
@@ -1076,7 +1031,6 @@ uint32_t n_sub_828BA4F0(CpuState& ctx, uint8_t* base, uint32_t entityAddr) {
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		result = Light_AddRef(ctx, base, recordValue);
 		r8Value = ctx.r8.u64;

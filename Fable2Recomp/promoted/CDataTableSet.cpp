@@ -9,20 +9,17 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CDataTableSet_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t self, uint64_t deleteFlags) {
 	if (!UseLiftedCode(87, 0x82BBCA18)) { ctx.r3.u64 = self; ctx.r4.u64 = deleteFlags; __imp__sub_82BBCA18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBCA18);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
 	n_sub_82BBCA68(ctx, base, self);
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, self);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return self;
 }
 PROMOTED_ENTRY(87, sub_82BBCA18, 0x82BBCA18) { ctx.r3.u64 = CDataTableSet_ScalarDeletingDtor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -59,9 +56,7 @@ PROMOTED_ENTRY(87, sub_82BBD248, 0x82BBD248) { ctx.r3.u64 = CDataTableSet_FindTa
 uint64_t CDataTableSet_FindColumnIndex(CpuState& ctx, uint8_t* base, uint32_t tableSet, uint64_t tableIndex, uint32_t columnName) {
 	if (!UseLiftedCode(87, 0x82BBD2C8)) { ctx.r3.u64 = tableSet; ctx.r4.u64 = tableIndex; ctx.r5.u64 = columnName; __imp__sub_82BBD2C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD2C8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 
 	uint32_t table = CDataTableSet_GetTable(ctx, base, tableSet, tableIndex);
 	uint32_t columnNameHash = String_HashLimited100(ctx, base, columnName);
@@ -73,17 +68,12 @@ uint64_t CDataTableSet_FindColumnIndex(CpuState& ctx, uint8_t* base, uint32_t ta
 		uint32_t columnHashAddr = LOAD32(table + 48) + 4;
 		do {
 			if (LOAD32(columnHashAddr) == columnNameHash) {
-				stack = PopStackFrame(stack, 112);
-				ctx.r1.u64 = stack;
 				return columnIndex;
 			}
 			columnIndex++;
 			columnHashAddr += 12;
 		} while ((int32_t)columnIndex < columnCount);
 	}
-
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return (uint64_t)-1;
 }
 PROMOTED_ENTRY(87, sub_82BBD2C8, 0x82BBD2C8) { ctx.r3.u64 = CDataTableSet_FindColumnIndex(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
@@ -119,8 +109,6 @@ uint64_t CDataTableSet_FindRowByNumber(CpuState& ctx, uint8_t* base, uint64_t da
 			uint32_t logFunction = LOAD32(uint32_t(logger) + 19068);
 			ctx.r3.u64 = 2;
 			ctx.r4.u64 = messageBuffer;
-			ctx.r6.u64 = logFunction;
-			ctx.r7.s64 = logger;
 			REX_CALL_INDIRECT_FUNC(logFunction);
 			stack = PopStackFrame(stack, 384);
 			ctx.r1.u64 = stack;
@@ -192,8 +180,6 @@ uint64_t CDataTableSet_FindRowByString(CpuState& ctx, uint8_t* base, uint64_t da
 			const uint32_t logFn = LOAD32((uint32_t)logManager + 19068);
 			ctx.r3.u64 = 2;
 			ctx.r4.u64 = message;
-			ctx.r6.u64 = logFn;
-			ctx.r7.s64 = logManager;
 			REX_CALL_INDIRECT_FUNC(logFn);
 
 			stack = PopStackFrame(stack, 384);
@@ -241,15 +227,10 @@ PROMOTED_ENTRY(87, sub_82BBD480, 0x82BBD480) { ctx.r3.u64 = CDataTableSet_FindRo
 uint64_t CDataTableSet_GetRowCount(CpuState& ctx, uint8_t* base, uint64_t dataTableSetAddr, uint64_t tableIndex) {
 	if (!UseLiftedCode(87, 0x82BBD5A8)) { ctx.r3.u64 = dataTableSetAddr; ctx.r4.u64 = tableIndex; __imp__sub_82BBD5A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD5A8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint32_t table = (uint32_t)CDataTableSet_GetTable(ctx, base, dataTableSetAddr, tableIndex);
 	uint32_t rowCount = (table != 0) ? LOAD32(table + 12) : 0;
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return rowCount;
 }
 PROMOTED_ENTRY(87, sub_82BBD5A8, 0x82BBD5A8) { ctx.r3.u64 = CDataTableSet_GetRowCount(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -258,15 +239,10 @@ PROMOTED_ENTRY(87, sub_82BBD5A8, 0x82BBD5A8) { ctx.r3.u64 = CDataTableSet_GetRow
 uint64_t CDataTableSet_GetColumnCount(CpuState& ctx, uint8_t* base, uint64_t dataTableSetAddr, uint64_t tableIndex) {
 	if (!UseLiftedCode(87, 0x82BBD5E8)) { ctx.r3.u64 = dataTableSetAddr; ctx.r4.u64 = tableIndex; __imp__sub_82BBD5E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD5E8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint32_t table = (uint32_t)CDataTableSet_GetTable(ctx, base, dataTableSetAddr, tableIndex);
 	uint32_t columnCount = (table != 0) ? LOAD32(table + 56) : 0;
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return columnCount;
 }
 PROMOTED_ENTRY(87, sub_82BBD5E8, 0x82BBD5E8) { ctx.r3.u64 = CDataTableSet_GetColumnCount(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -274,15 +250,10 @@ PROMOTED_ENTRY(87, sub_82BBD5E8, 0x82BBD5E8) { ctx.r3.u64 = CDataTableSet_GetCol
 uint64_t CDataTableSet_GetColumnType(CpuState& ctx, uint8_t* base, uint64_t dataTableSetAddr, uint64_t tableIndex, uint64_t columnIndex) {
 	if (!UseLiftedCode(87, 0x82BBD628)) { ctx.r3.u64 = dataTableSetAddr; ctx.r4.u64 = tableIndex; ctx.r5.u64 = columnIndex; __imp__sub_82BBD628(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD628);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint32_t column = (uint32_t)CDataTableSet_GetColumn(ctx, base, dataTableSetAddr, tableIndex, columnIndex);
 	uint32_t columnType = (column != 0) ? LOAD32(column + 8) : 0;
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return columnType;
 }
 PROMOTED_ENTRY(87, sub_82BBD628, 0x82BBD628) { ctx.r3.u64 = CDataTableSet_GetColumnType(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
@@ -291,9 +262,7 @@ uint64_t CDataTableSet_GetColumnName(CpuState& ctx, uint8_t* base, uint64_t data
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	if (!UseLiftedCode(87, 0x82BBD668)) { ctx.r3.u64 = dataTableSetAddr; ctx.r4.u64 = tableIndex; ctx.r5.u64 = columnIndex; __imp__sub_82BBD668(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD668);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint64_t columnName = 0;
 	uint32_t column = CDataTableSet_GetColumn(ctx, base, dataTableSetAddr, tableIndex, columnIndex);
@@ -309,9 +278,6 @@ uint64_t CDataTableSet_GetColumnName(CpuState& ctx, uint8_t* base, uint64_t data
 			}
 		}
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return columnName;
 }
 PROMOTED_ENTRY(87, sub_82BBD668, 0x82BBD668) { ctx.r3.u64 = CDataTableSet_GetColumnName(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
@@ -341,9 +307,7 @@ uint64_t CDataTableSet_GetString(CpuState& ctx, uint8_t* base, uint64_t tableSet
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	if (!UseLiftedCode(87, 0x82BBD710)) { ctx.r3.u64 = tableSet; ctx.r4.u64 = tableIndex; ctx.r5.u64 = columnIndex; ctx.r6.u64 = rowIndex; __imp__sub_82BBD710(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BBD710);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	// cell type 1 holds strings (SetString asks for it too)
 	uint32_t cellPtr = CDataTableSet_GetCellPtr(ctx, base, tableSet, tableIndex, columnIndex, rowIndex, 1);
 	uint64_t text = 0;
@@ -357,8 +321,6 @@ uint64_t CDataTableSet_GetString(CpuState& ctx, uint8_t* base, uint64_t tableSet
 			}
 		}
 	}
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return text;
 }
 PROMOTED_ENTRY(87, sub_82BBD710, 0x82BBD710) { ctx.r3.u64 = CDataTableSet_GetString(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
@@ -441,9 +403,6 @@ uint64_t CDataTableSet_GetTable(CpuState& ctx, uint8_t* base, uint32_t dataTable
 	const int32_t handlerBase = g_83310000;
 	uint32_t reportHandler = LOAD32(uint32_t(handlerBase) + 19068);
 	ctx.r3.u64 = 2;
-	ctx.r4.u64 = messageBuffer;
-	ctx.r6.u64 = reportHandler;
-	ctx.r7.s64 = handlerBase;
 	REX_CALL_INDIRECT_FUNC(reportHandler);
 
 	stack = PopStackFrame(stack, 352);
@@ -536,7 +495,6 @@ uint64_t CDataTableSet_GetCellPtr(CpuState& ctx, uint8_t* base, uint64_t dataTab
 	}
 
 	// state the callee may pass on
-	ctx.r3.u64 = dataTableSetAddr;
 	uint64_t errorResult = CDataTableSet_ReportCellError(ctx, base, errorMessage, tableIndex, columnIndex, rowIndex, expectedType);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -566,9 +524,6 @@ uint64_t CDataTableSet_ReportCellError(CpuState& ctx, uint8_t* base, uint64_t er
 	const uint32_t handlerFn = LOAD32(uint32_t(g_83310000) + 19068);
 	// state the callee may read (r6 holds the sign-extended page address)
 	ctx.r3.u64 = 2;
-	ctx.r4.u64 = messageBuffer;
-	ctx.r5.u64 = handlerFn;
-	ctx.r6.s64 = g_83310000;
 	REX_CALL_INDIRECT_FUNC(handlerFn);
 
 	stack = PopStackFrame(stack, 352);

@@ -9,18 +9,15 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_82894D18  [60 bytes]
 uint64_t CECInChaos_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8E74_B_ = int32_t(0x820C8E74);
 	if (!UseLiftedCode(60, 0x82894D18)) { ctx.r3.u64 = classNameString; __imp__sub_82894D18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82894D18);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820C8E74_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(60, sub_82894D18, 0x82894D18) { ctx.r3.u64 = CECInChaos_GetClassName(ctx, base, ctx.r3.u64); }
@@ -40,7 +37,6 @@ uint64_t n_sub_82894E68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	inChaos->m_74 = uint32_t(g_820F1664);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = flags;
 	EntityHandle_Release(ctx, base, inChaosAddr + 116);
 	inChaos->m_78 = 0;
 	inChaos->m_6C = uint32_t(g_820F1664);
@@ -63,14 +59,14 @@ uint64_t n_sub_82894E68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 PROMOTED_ENTRY(60, sub_82894E68, 0x82894E68) { ctx.r3.u64 = n_sub_82894E68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Serializes the floats at +72 and +76, the value at +68 and the entity UID at +92 by property name through
-// the stream, then sets m_41 to 1 if the low byte of arg3 is zero and to 0 otherwise.
-uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t stream, uint64_t arg3) {
+// the stream, then sets m_41 to 1 if the low byte of serializeFlags is zero and to 0 otherwise.
+uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t stream, uint64_t serializeFlags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820D0A08_B_ = int32_t(0x820D0A08);
 	constexpr int32_t str_TXT_820DFD40_B_ = int32_t(0x820DFD40);
 	constexpr int32_t str_TXT_820DFD50_B_ = int32_t(0x820DFD50);
 	constexpr int32_t str_TXT_820DFD74_B_ = int32_t(0x820DFD74);
-	if (!UseLiftedCode(60, 0x82894FD8)) { ctx.r3.u64 = inChaosAddr; ctx.r4.u64 = stream; ctx.r6.u64 = arg3; __imp__sub_82894FD8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(60, 0x82894FD8)) { ctx.r3.u64 = inChaosAddr; ctx.r4.u64 = stream; ctx.r6.u64 = serializeFlags; __imp__sub_82894FD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82894FD8);
 	uint32_t stack = ctx.r1.u64;
 	CECInChaos* inChaos = GameObject<CECInChaos>(base, inChaosAddr);
@@ -87,7 +83,7 @@ uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 
 	// state the callees may pass on
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = arg3;
+	ctx.r6.u64 = serializeFlags;
 
 	CCharString_ConstructFromCStr(ctx, base, scratchString, str_TXT_820DFD40_B_, -1);
 	ctx.r4.u64 = scratchNameText();
@@ -107,7 +103,7 @@ uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	n_sub_8244DAE0(ctx, base, inChaosAddr + 92, scratchString, stream);
 	const uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchString);
 
-	inChaos->m_41 = uint8_t((arg3 & 0xFF) == 0);
+	inChaos->m_41 = uint8_t((serializeFlags & 0xFF) == 0);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -142,8 +138,6 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 			const uint32_t firstWord = LOAD32(containerData);
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = containerData;
-			ctx.r9.u64 = container;
 			const uint64_t entity = n_sub_82264448(ctx, base, firstWord, uidAddr);
 
 			// A temporary EntityHandle at stack+80 (vtable 0x820F1664, second word 0) is aimed at the entity,
@@ -153,14 +147,10 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
 			// state the callee may pass on
-			ctx.r6.u64 = handleVtable;
-			ctx.r7.s64 = g_820F0000;
 			EntityHandle_SetTarget(ctx, base, tempHandle, entity);
 			EntityHandle_Assign(ctx, base, inChaosAddr + 100, tempHandle);
 			STORE32(stack + 80, (uint32_t)handleVtable);
 			// state the callee may pass on
-			ctx.r4.u64 = handleVtable;
-			ctx.r5.s64 = g_820F0000;
 			EntityHandle_Release(ctx, base, tempHandle);
 			r4ForUpdate = ctx.r4.u64;
 			r8Value = ctx.r8.u64;
@@ -171,7 +161,6 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4ForUpdate;
 		result = n_sub_82895338(ctx, base, inChaosAddr, r8Value);
 
 		if (inChaos->m_44 != 0 && inChaos->m_46 == 0) {
@@ -191,16 +180,10 @@ PROMOTED_ENTRY(60, sub_828950E0, 0x828950E0) { ctx.r3.u64 = n_sub_828950E0(ctx, 
 uint64_t n_sub_828951F0(CpuState& ctx, uint8_t* base, uint64_t chaos) {
 	if (!UseLiftedCode(60, 0x828951F0)) { ctx.r3.u64 = chaos; __imp__sub_828951F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828951F0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	n_sub_828955A0(ctx, base, chaos);
-	uint64_t result = n_sub_828953C8(ctx, base, chaos);
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return n_sub_828953C8(ctx, base, chaos);
 }
 PROMOTED_ENTRY(60, sub_828951F0, 0x828951F0) { ctx.r3.u64 = n_sub_828951F0(ctx, base, ctx.r3.u64); }
 
@@ -267,7 +250,6 @@ uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 		if (r10Value != 0) {
 			// Destroy the entity, then empty the handle by assigning it a temporary EntityHandle
 			// (vtable 0x820F1664, second word 0) built at stack+80, which is released afterwards.
-			ctx.r10.u64 = r10Value;
 			const uint64_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 			xer.ca = ctx.xer.ca;
 			Entity_DestroyImpl(ctx, base, entity);
@@ -276,7 +258,6 @@ uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 			const uint64_t handleVtable = g_820F1664;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
-			ctx.r10.u64 = handleVtable;
 			EntityHandle_Release(ctx, base, tempHandle);
 			xer.ca = ctx.xer.ca;
 			EntityHandle_Assign(ctx, base, handleAddr, tempHandle);
@@ -291,9 +272,6 @@ uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 			releaseAddr = handleAddr;
 		}
 		// state the callee may pass on
-		ctx.r8.u64 = outR8;
-		ctx.r9.u64 = outR9;
-		ctx.r10.u64 = r10Value;
 		result = EntityHandle_Release(ctx, base, releaseAddr);
 		outR6 = ctx.r6.u64;
 		outR7 = ctx.r7.u64;
@@ -626,17 +604,17 @@ PROMOTED_ENTRY(60, sub_82895800, 0x82895800) { ctx.r3.u64 = n_sub_82895800(ctx, 
 // Calls sub_82895C68, sub_82896128 and sub_828968B0, counts the timers at +0x4C and +0x48 down, feeds the +0x48
 // timer to the entity behind the handle at +0x6C, removes component type 206 from the owner when that timer runs
 // out or sub_824BCE78 returns 0, and formats the timer as text for sub_824B54A0 when the byte at 0x8349699D is set.
-uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t arg2) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820DFD88_B_ = int32_t(0x820DFD88);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(60, 0x82895968)) { ctx.r3.u64 = arg1; ctx.r6.u64 = arg2; __imp__sub_82895968(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(60, 0x82895968)) { ctx.r3.u64 = inChaos; ctx.r6.u64 = arg2; __imp__sub_82895968(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82895968);
 	PPCRegister scratch{};
 	PPCVRegister savedV127 = ctx.v127;  // (restored on return)
 	uint32_t stack = ctx.r1.u64;
 
-	const uint32_t self = (uint32_t)arg1;
+	const uint32_t self = (uint32_t)inChaos;
 	PPCRegister callTarget{};
 
 	// the original saves the non-volatile v127 below its frame
@@ -644,10 +622,9 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	stack = PushStackFrame(base, stack, 352);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = arg2;
-	n_sub_82895C68(ctx, base, arg1);
-	n_sub_82896128(ctx, base, arg1);
-	n_sub_828968B0(ctx, base, arg1);
+	n_sub_82895C68(ctx, base, inChaos);
+	n_sub_82896128(ctx, base, inChaos);
+	n_sub_828968B0(ctx, base, inChaos);
 
 	// f1Val / f13Val follow the original's f1 and f13: handed to calls below, f1 also left for the caller
 	double f1Val = n_sub_82207928(ctx, base, LOAD32(self + 4));
@@ -683,11 +660,7 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		}
 		if (expired) {
 			// state the callee may pass on
-			ctx.r8.u64 = r8Val;
-			ctx.r9.u64 = r9Val;
-			ctx.r10.u64 = r10Val;
-			ctx.f1.f64 = f1Val;
-			n_sub_82896D08(ctx, base, arg1);
+			n_sub_82896D08(ctx, base, inChaos);
 			r8Val = ctx.r8.u64;
 			r9Val = ctx.r9.u64;
 			r10Val = ctx.r10.u32;
@@ -721,13 +694,8 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	const double kRodata2020 = double(LOAD_F32(rodata + 8224));
 
 	if (LOAD8(self + 66) != 0) {
-		const uint64_t handleAddr = arg1 + 108;
+		const uint64_t handleAddr = inChaos + 108;
 		// state the callee may pass on
-		ctx.r8.u64 = r8Val;
-		ctx.r9.u64 = r9Val;
-		ctx.r10.u64 = r10Val;
-		ctx.f1.f64 = f1Val;
-		ctx.f13.f64 = f13Val;
 		const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		r8Val = ctx.r8.u64;
 		r9Val = ctx.r9.u64;
@@ -771,8 +739,6 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	}
 
 	// state the callee may pass on
-	ctx.r8.u64 = r8Val;
-	ctx.r9.u64 = r9Val;
 	uint64_t result = n_sub_824BCE78(ctx, base, LOAD32(self + 4));
 	if ((uint32_t(result) & 0xFF) == 0) {
 		removeComponent = true;
@@ -780,10 +746,8 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	if (removeComponent) {
 		STORE8(self + 67, 1);
 		// state the callee may pass on
-		ctx.f1.f64 = f1Val;
-		ctx.f13.f64 = f13Val;
-		n_sub_828955A0(ctx, base, arg1);
-		n_sub_828953C8(ctx, base, arg1);
+		n_sub_828955A0(ctx, base, inChaos);
+		n_sub_828953C8(ctx, base, inChaos);
 		result = Entity_RemoveComponentByType(ctx, base, LOAD32(self + 4), 206, ctx.r8.u64);
 		f1Val = ctx.f1.f64;
 		f13Val = ctx.f13.f64;
@@ -796,8 +760,6 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		STORE_F64(stack + 32, f1Val);
 		const uint64_t textBuf = (uint64_t)stack + 128;
 		// state the callee may pass on
-		ctx.f1.f64 = f1Val;
-		ctx.f13.f64 = f13Val;
 		sprintf(ctx, base, textBuf, str_TXT_820DFD88_B_, LOAD64(stack + 32), ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64, debugTextEnabled);
 
 		const uint32_t owner = LOAD32(self + 4);
@@ -809,8 +771,6 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		callTarget.u64 = LOAD32(vtable + 64);
 		ctx.r3.u64 = (uint64_t)stack + 96;
 		ctx.r4.u64 = component;
-		ctx.r9.u64 = callTarget.u64;
-		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		PPCVRegister vec{};
@@ -828,8 +788,6 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(loaded), V8(permMask)));
 		VSTORE(uint32_t(stack + 96) & ~0xF, V8(vec));
 		// state the callee may pass on
-		ctx.r8.u64 = (uint64_t)stack + 96;
-		ctx.f13.f64 = f13Val;
 		ctx.v7 = permMask;
 		ctx.v13 = loaded;
 		const uint64_t textCopy = CCharString_CopyConstruct(ctx, base, (uint64_t)stack + 80, text);
@@ -886,10 +844,6 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 			inChaos->m_1C = float(double(inChaos->m_50));
 			inChaos->m_46 = uint8_t(1);
 			// state the callee may pass on
-			ctx.r5.u64 = inChaosAddr;
-			ctx.f1.f64 = rawStep;
-			ctx.f12.f64 = timeStep;
-			ctx.f13.f64 = timer;
 			const uint32_t callResult = n_sub_82895690(ctx, base, inChaosAddr, 1);
 			// f1 and f13 stay as the callee left them
 			stack = PopStackFrame(stack, 96);
@@ -898,10 +852,6 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 		}
 		if (!stateFlag && alreadyActive) {
 			// state the callee may pass on
-			ctx.r5.u64 = inChaosAddr;
-			ctx.f1.f64 = rawStep;
-			ctx.f12.f64 = timeStep;
-			ctx.f13.f64 = timer;
 			const uint32_t callResult = n_sub_828955A0(ctx, base, inChaosAddr);
 			// f1 and f13 stay as the callee left them
 			stack = PopStackFrame(stack, 96);
@@ -919,33 +869,31 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 }
 PROMOTED_ENTRY(60, sub_82895C68, 0x82895C68) { ctx.r3.u64 = n_sub_82895C68(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(60, 0x82895F68)) { ctx.r3.u64 = arg1; __imp__sub_82895F68(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(60, 0x82895F68)) { ctx.r3.u64 = inChaos; __imp__sub_82895F68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82895F68);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	uint32_t handleSlot = (uint32_t)arg1 + 108;
-	uint32_t owner = LOAD32((uint32_t)arg1 + 112);
+	uint32_t handleSlot = (uint32_t)inChaos + 108;
+	uint32_t owner = LOAD32((uint32_t)inChaos + 112);
 	if (owner == 0) {
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
-		return arg1;
+		return inChaos;
 	}
 
 	uint32_t chaos = LOAD32(owner);
 	if (chaos == 0) {
-		ctx.r10.u64 = chaos;
 		uint64_t result = EntityHandle_Release(ctx, base, handleSlot);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
 		return result;
 	}
 
-	ctx.r10.u64 = chaos;
 	uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleSlot);
 	uint64_t reg6 = ctx.r6.u64;
 	uint64_t reg7 = ctx.r7.u64;
@@ -1003,11 +951,7 @@ uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 
 	if (killParticle) {
 		ctx.fpscr.disableFlushMode();
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
 		ctx.r8.u64 = reg8;
-		ctx.r9.u64 = reg9;
-		ctx.r10.u64 = reg10;
 		n_sub_8247EB68(ctx, base, particleId, double(LOAD_F32(0x820994B4u)));
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
@@ -1016,28 +960,20 @@ uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 		reg10 = ctx.r10.u64;
 	}
 
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
-	ctx.r9.u64 = reg9;
-	ctx.r10.u64 = reg10;
 	uint32_t liveEntity = EntityHandle_Get_825575C8(ctx, base, handleSlot);
 	Entity_DestroyImpl(ctx, base, liveEntity);
 
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, (uint32_t)g_820F1664);
-	ctx.r10.u64 = (uint64_t)g_820F1664;
 	EntityHandle_Release(ctx, base, stack + 80);
 	EntityHandle_Assign(ctx, base, handleSlot, stack + 80);
 
 	uint32_t invalidHandle = (uint32_t)((int64_t)g_820F0000 + 5732);
 	STORE32(stack + 80, invalidHandle);
-	ctx.r8.u64 = (uint64_t)((int64_t)g_820F0000 + 5732);
-	ctx.r9.u64 = (uint64_t)g_820F0000;
-	arg1 = EntityHandle_Release(ctx, base, stack + 80);
+	inChaos = EntityHandle_Release(ctx, base, stack + 80);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return inChaos;
 }
 PROMOTED_ENTRY(60, sub_82895F68, 0x82895F68) { ctx.r3.u64 = n_sub_82895F68(ctx, base, ctx.r3.u64); }

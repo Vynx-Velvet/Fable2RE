@@ -9,9 +9,10 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(1, 0x82195F20)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82195F20(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t actionManager, uint64_t hitResponseTable) {
+	if (!UseLiftedCode(1, 0x82195F20)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = hitResponseTable; __imp__sub_82195F20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82195F20);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 144);
@@ -19,18 +20,18 @@ uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r1.u64 = stack;
 	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
 
-	HitResponse_CreateActionFromTable(ctx, base, newHandleAddr, arg3);
+	HitResponse_CreateActionFromTable(ctx, base, newHandleAddr, hitResponseTable);
 
 	uint32_t action = LOAD32(stack + 80);
 	if (action != 0) {
 		uint32_t hook = LOAD32(0x83496BBCu);
 		if (hook != 0) {
-			ctx.r3.u64 = LOAD32(arg2 + 4);
-			ctx.r4.u64 = arg3;
+			ctx.r3.u64 = LOAD32(actionManager + 4);
+			ctx.r4.u64 = hitResponseTable;
 			ctx.r10.u64 = hook;
 			REX_CALL_INDIRECT_FUNC(hook);
 		}
-		uint32_t canInterrupt = CECActionManagerSimple_CanInterruptCurrentAction(ctx, base, arg2, LOAD32(action + 52), 0);
+		uint32_t canInterrupt = CECActionManagerSimple_CanInterruptCurrentAction(ctx, base, actionManager, LOAD32(action + 52), 0);
 		uint64_t savedR9 = ctx.r9.u64;
 		if ((canInterrupt & 0xFF) != 0) {
 			uint32_t controlBlock = LOAD32(stack + 84);
@@ -40,8 +41,7 @@ uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 				// take an extra reference on the shared handle's control block
 				STORE32(controlBlock, LOAD32(controlBlock) + 1);
 			}
-			ctx.r9.u64 = savedR9;
-			n_sub_822A4648(ctx, base, entityHandleAddr, arg2, stack + 88, 1);
+			n_sub_822A4648(ctx, base, entityHandleAddr, actionManager, stack + 88, 1);
 			SharedHandle_Release(ctx, base, newHandleAddr);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -104,7 +104,6 @@ uint64_t EntityHandle_SetTarget(CpuState& ctx, uint8_t* base, uint64_t entityHan
 
 	if (!alreadyPointsAtTarget) {
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = targetEntity;
 		entityHandleAddr = EntityHandle_Release(ctx, base, entityHandleAddr);
 		targetEntity = ctx.r4.u64;
 		retR9 = ctx.r9.u64;
@@ -139,20 +138,20 @@ uint64_t EntityHandle_SetTarget(CpuState& ctx, uint8_t* base, uint64_t entityHan
 }
 PROMOTED_ENTRY(5, sub_822149C8, 0x822149C8) { ctx.r3.u64 = EntityHandle_SetTarget(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
+uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t sourceHandle, uint64_t flags) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
-	if (!UseLiftedCode(11, 0x822A4648)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_822A4648(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(11, 0x822A4648)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = sourceHandle; ctx.r6.u64 = flags; __imp__sub_822A4648(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822A4648);
 
 	uint32_t stack = ctx.r1.u64;
 	uint64_t lockState = ctx.r9.u64;
 	uint32_t savedMsr = ctx.r13.u64;
 	PPCRegister callTarget{};
-	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
+	EntityHandle* entityHandle = GameObject<EntityHandle>(base, resultHandleAddr);
 
-	const uint32_t manager = (uint32_t)arg2;
-	const uint32_t handleAddr = (uint32_t)(arg2 + 16);   // shared handle owned by the action manager
-	const uint8_t flag = (uint8_t)(uint32_t)arg4;
+	const uint32_t manager = (uint32_t)actionManager;
+	const uint32_t handleAddr = (uint32_t)(actionManager + 16);   // shared handle owned by the action manager
+	const uint8_t flag = (uint8_t)(uint32_t)flags;
 
 	stack = PushStackFrame(base, stack, 160);
 
@@ -182,10 +181,10 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	uint32_t prepareFn = LOAD32(LOAD32(manager) + 88);
 	callTarget.u64 = (uint64_t)prepareFn;
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
-	ctx.r6.u64 = arg4;
+	ctx.r3.u64 = actionManager;
+	ctx.r4.u64 = actionManager;
+	ctx.r5.u64 = sourceHandle;
+	ctx.r6.u64 = flags;
 	ctx.r9.u64 = lockState;
 	ctx.r10.u64 = prepareFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -193,7 +192,6 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 
 	if (isPrepared != 0) {
 		uint32_t currentObject = LOAD32(handleAddr);
-		ctx.r9.u64 = isPrepared;
 		n_sub_826DF838(ctx, base, currentObject);
 		isPrepared = ctx.r9.u64;
 		uint32_t currentObject2 = LOAD32(handleAddr);
@@ -204,10 +202,9 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	}
 
 	uint32_t secondaryCounter = LOAD32(handleAddr + 4);
-	uint32_t secondaryHandle = (uint32_t)(arg2 + 24);
+	uint32_t secondaryHandle = (uint32_t)(actionManager + 24);
 	uint32_t secondaryObject = LOAD32(handleAddr);
 	if (LOAD32(manager + 28) != secondaryCounter) {
-		ctx.r9.u64 = isPrepared;
 		SharedHandle_Release(ctx, base, secondaryHandle);
 		isPrepared = ctx.r9.u64;
 		STORE32(secondaryHandle, secondaryObject);
@@ -218,10 +215,9 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 		}
 	}
 
-	uint32_t sourceCounter = LOAD32((uint32_t)arg3 + 4);
-	uint32_t sourceObject = LOAD32((uint32_t)arg3);
+	uint32_t sourceCounter = LOAD32((uint32_t)sourceHandle + 4);
+	uint32_t sourceObject = LOAD32((uint32_t)sourceHandle);
 	if (LOAD32(handleAddr + 4) != sourceCounter) {
-		ctx.r9.u64 = isPrepared;
 		SharedHandle_Release(ctx, base, handleAddr);
 		isPrepared = ctx.r9.u64;
 		STORE32(handleAddr, sourceObject);
@@ -237,7 +233,6 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	uint32_t managerCounter = LOAD32(manager + 12);
 	uint32_t managerOwner = LOAD32(manager + 4);
 	uint32_t targetObject = LOAD32(handleAddr);
-	ctx.r9.u64 = isPrepared;
 	n_sub_821B6668(ctx, base, targetObject, managerOwner, managerCounter);
 
 	uint32_t entityObject = LOAD32(handleAddr);
@@ -248,43 +243,39 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	entityHandle->m_4 = 0;
 	entityHandle->vtable = entityVtable;
 	uint32_t entityExtra = LOAD32(entityObject + 60);
-	ctx.r6.u64 = entityObject;
-	ctx.r7.u64 = entityVtable;
 	ctx.r8.u64 = 0;
-	ctx.r9.u64 = nextManagerCounter;
-	ctx.r10.s64 = g_820F0000;
-	EntityHandle_SetTarget(ctx, base, entityHandleAddr, target);
+	EntityHandle_SetTarget(ctx, base, resultHandleAddr, target);
 	entityHandle->m_8 = entityExtra;
 
 	uint32_t stackHandle = (uint32_t)((uint64_t)stack + 80);
 	SharedHandle_Release(ctx, base, stackHandle);
-	SharedHandle_Release(ctx, base, arg3);
+	SharedHandle_Release(ctx, base, sourceHandle);
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	return (uint32_t)entityHandleAddr;
+	return (uint32_t)resultHandleAddr;
 }
 PROMOTED_ENTRY(11, sub_822A4648, 0x822A4648) { ctx.r3.u64 = n_sub_822A4648(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint64_t n_sub_822BE660(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2) {
-	if (!UseLiftedCode(12, 0x822BE660)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; __imp__sub_822BE660(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_822BE660(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t sourceEntity) {
+	if (!UseLiftedCode(12, 0x822BE660)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = sourceEntity; __imp__sub_822BE660(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822BE660);
 	uint32_t stack = ctx.r1.u64;
 	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
 
 	stack = PushStackFrame(base, stack, 112);
 
-	// arg2->vtable->method_0x58(arg2): whether arg2 carries a valid source entity
-	uint32_t initMethod = LOAD32(LOAD32((uint32_t)arg2) + 88);
+	// sourceEntity->vtable->method_0x58(sourceEntity): whether sourceEntity carries a valid source entity
+	uint32_t initMethod = LOAD32(LOAD32((uint32_t)sourceEntity) + 88);
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = sourceEntity;
+	ctx.r4.u64 = sourceEntity;
 	ctx.r10.u64 = initMethod;
 	REX_CALL_INDIRECT_FUNC(initMethod);
 	uint32_t hasSource = ctx.r3.u32 & 0xFF;
 
 	if (hasSource != 0) {
-		uint32_t sourceIndex = LOAD32((uint32_t)arg2 + 4);
-		uint32_t sourceData = LOAD32(LOAD32((uint32_t)arg2 + 16) + 60);
+		uint32_t sourceIndex = LOAD32((uint32_t)sourceEntity + 4);
+		uint32_t sourceData = LOAD32(LOAD32((uint32_t)sourceEntity + 16) + 60);
 		C_820F1664_Constructor(ctx, base, entityHandleAddr, sourceIndex, sourceData);
 	} else {
 		entityHandle->m_4 = 0u;
@@ -311,8 +302,6 @@ uint64_t C_820F1664_Constructor(CpuState& ctx, uint8_t* base, uint64_t entityHan
 
 	ctx.r1.u64 = stack;
 	ctx.r5.u64 = targetId;
-	ctx.r9.u64 = g_820F1664;
-	ctx.r10.u64 = 0;
 	EntityHandle_SetTarget(ctx, base, entityHandleAddr, target);
 	entityHandle->m_8 = uint32_t(targetId);
 
@@ -322,9 +311,9 @@ uint64_t C_820F1664_Constructor(CpuState& ctx, uint8_t* base, uint64_t entityHan
 }
 PROMOTED_ENTRY(18, sub_8237D2B8, 0x8237D2B8) { ctx.r3.u64 = C_820F1664_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2) {
+uint64_t n_sub_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t deleteFlag) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(27, 0x82488D18)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; __imp__sub_82488D18(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(27, 0x82488D18)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = deleteFlag; __imp__sub_82488D18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82488D18);
 	uint32_t stack = ctx.r1.u64;
 	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
@@ -334,7 +323,7 @@ uint64_t n_sub_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r1.u64 = stack;
 	EntityHandle_Release(ctx, base, entityHandleAddr);
 	entityHandle->m_4 = 0u;
-	if (uint32_t(arg2 & 0x1) != 0) {
+	if (uint32_t(deleteFlag & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, entityHandleAddr);
 	}
 	stack = PopStackFrame(stack, 112);
@@ -370,10 +359,10 @@ uint32_t LookAtHandle_CopyConstruct(CpuState& ctx, uint8_t* base, uint64_t entit
 }
 PROMOTED_ENTRY(37, sub_825BC258, 0x825BC258) { ctx.r3.u64 = LookAtHandle_CopyConstruct(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2, uint32_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t lookupContext, uint32_t lookupContainer, uint64_t arg4, uint64_t arg5) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
-	if (!UseLiftedCode(47, 0x82706348)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_82706348(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(47, 0x82706348)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = lookupContext; ctx.r5.u64 = lookupContainer; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_82706348(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82706348);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t savedMsrBits = ctx.r13.u64;
@@ -383,7 +372,7 @@ uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
 	stack = PushStackFrame(base, stack, 160);
 
-	uint32_t container = arg3;
+	uint32_t container = lookupContainer;
 	// the original reuses one register first as a lookup flag, then as a search byte offset
 	uint32_t scratch = 0;
 	uint32_t entryValue = 0;
@@ -439,8 +428,8 @@ uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	}
 
 	if (found) {
-		uint32_t lookupFn = LOAD32((uint32_t)arg2 + 8);
-		uint64_t keyAddress = (uint64_t)LOAD32((uint32_t)arg2 + 12) + (uint64_t)entryValue;
+		uint32_t lookupFn = LOAD32((uint32_t)lookupContext + 8);
+		uint64_t keyAddress = (uint64_t)LOAD32((uint32_t)lookupContext + 12) + (uint64_t)entryValue;
 		callTarget.u64 = (uint64_t)lookupFn;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = stack + 96;
@@ -493,15 +482,15 @@ uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	STORE32(statsBase + 27288, createdCount + 1);
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = lookupContext;
 	return entityHandleAddr;
 }
 PROMOTED_ENTRY(47, sub_82706348, 0x82706348) { ctx.r3.u64 = n_sub_82706348(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2, uint32_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t lookupContext, uint32_t lookupContainer, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
-	if (!UseLiftedCode(47, 0x82706550)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_82706550(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(47, 0x82706550)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = lookupContext; ctx.r5.u64 = lookupContainer; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_82706550(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82706550);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t savedMsr = ctx.r13.u32;
@@ -512,11 +501,11 @@ uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
 	stack = PushStackFrame(base, stack, 176);
 
-	// Look up the entry for key 44 in the lookup structure passed as arg3.
+	// Look up the entry for key 44 in the lookup structure passed as lookupContainer.
 	uint32_t entryValue = 0;
 	bool haveEntry = false;
-	if (arg3 != 0 && (LOAD8((uint32_t)arg3 + 0x90) & 0x40) != 0) {
-		uint32_t container = arg3;
+	if (lookupContainer != 0 && (LOAD8((uint32_t)lookupContainer + 0x90) & 0x40) != 0) {
+		uint32_t container = lookupContainer;
 		if ((LOAD32(container + 0x28) >> 12) & 1) {
 			uint32_t table = LOAD32(container + 0x8C);
 			if (table != 0) {
@@ -597,13 +586,13 @@ uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 		STORE32(refCountAddr, refCount);
 		stack = PopStackFrame(stack, 176);
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = lookupContext;
 		return entityHandleAddr;
 	}
 
-	uint32_t fnPtr = LOAD32((uint32_t)arg2 + 8);
+	uint32_t fnPtr = LOAD32((uint32_t)lookupContext + 8);
 	uint64_t handleOut = (uint64_t)stack + 96;
-	uint64_t entryAddr = (uint64_t)LOAD32((uint32_t)arg2 + 12) + (uint64_t)entryValue;
+	uint64_t entryAddr = (uint64_t)LOAD32((uint32_t)lookupContext + 12) + (uint64_t)entryValue;
 	callTarget.u64 = fnPtr;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = handleOut;
@@ -627,9 +616,9 @@ uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 PROMOTED_ENTRY(47, sub_82706550, 0x82706550) { ctx.r3.u64 = n_sub_82706550(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_8279C730  [460 bytes]
-uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t typeFactory, uint64_t typeMap) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
-	if (!UseLiftedCode(52, 0x8279C730)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_8279C730(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(52, 0x8279C730)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = typeFactory; ctx.r5.u64 = typeMap; __imp__sub_8279C730(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8279C730);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t argReg6 = ctx.r6.u64;
@@ -638,23 +627,23 @@ uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	PPCCRRegister compare6{};
 	PPCXERRegister flags = ctx.xer;
 	PPCRegister callTarget{};
-	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
+	EntityHandle* entityHandle = GameObject<EntityHandle>(base, resultHandleAddr);
 	stack = PushStackFrame(base, stack, 128);
 
 	// r6/r7/r8 are live on entry and are handed to the virtual call below; the sorted-map
 	// lookup reuses r6 as the end pointer and r7/r8 as scratch.
 	bool found = false;
 	uint32_t mapValue = 0;
-	if ((uint32_t)arg3 != 0 && (LOAD8((uint32_t)arg3 + 144) & 64) != 0) {
-		if (((LOAD32((uint32_t)arg3 + 40) >> 2) & 1) != 0) {
-			uint32_t cachedNode = LOAD32((uint32_t)arg3 + 140);
+	if ((uint32_t)typeMap != 0 && (LOAD8((uint32_t)typeMap + 144) & 64) != 0) {
+		if (((LOAD32((uint32_t)typeMap + 40) >> 2) & 1) != 0) {
+			uint32_t cachedNode = LOAD32((uint32_t)typeMap + 140);
 			if (cachedNode != 0) {
-				uint32_t entry = LOAD32((uint32_t)arg3 + 72) + (uint32_t)LOAD8(cachedNode + 34) * 8;
+				uint32_t entry = LOAD32((uint32_t)typeMap + 72) + (uint32_t)LOAD8(cachedNode + 34) * 8;
 				found = true;
 				mapValue = LOAD32(entry + 4);
 			} else {
-				uint32_t begin = LOAD32((uint32_t)arg3 + 72);
-				uint32_t end = LOAD32((uint32_t)arg3 + 76);
+				uint32_t begin = LOAD32((uint32_t)typeMap + 72);
+				uint32_t end = LOAD32((uint32_t)typeMap + 76);
 				argReg6 = end;
 				uint32_t cursor = begin;
 				STORE32(stack + 80, 0);
@@ -700,49 +689,41 @@ uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 		entityHandle->m_8 = 0xFFFFFFFFu;
 		entityHandle->vtable = 0x820F1664u;
 	} else {
-		uint32_t valueOffset = LOAD32((uint32_t)arg2 + 20);
-		uint32_t factoryCall = LOAD32((uint32_t)arg2 + 16);
+		uint32_t valueOffset = LOAD32((uint32_t)typeFactory + 20);
+		uint32_t factoryCall = LOAD32((uint32_t)typeFactory + 16);
 		callTarget.u64 = factoryCall;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = (uint64_t)stack + 80;
 		ctx.r4.u64 = (uint64_t)valueOffset + mapValue;
-		ctx.r5.u64 = arg3;
-		ctx.r6.u64 = argReg6;
-		ctx.r7.u64 = argReg7;
 		ctx.r8.u64 = argReg8;
-		ctx.r9.u64 = factoryCall;
-		ctx.r10.u64 = valueOffset;
 		ctx.xer.ca = flags.ca;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint32_t created = ctx.r3.u64;
 		flags.ca = ctx.xer.ca;
-		EntityHandle_CopyConstruct(ctx, base, entityHandleAddr, created);
+		EntityHandle_CopyConstruct(ctx, base, resultHandleAddr, created);
 		flags.ca = ctx.xer.ca;
 		uint32_t entityId = LOAD32(created + 8);
 		uint32_t vtableBase = (uint32_t)g_820F0000;
 		uint32_t tempVtable = vtableBase + 5732;
 		STORE32(stack + 80, tempVtable);
 		entityHandle->m_8 = entityId;
-		ctx.r6.u64 = entityId;
-		ctx.r7.u64 = tempVtable;
-		ctx.r8.u64 = vtableBase;
 		EntityHandle_Release(ctx, base, (uint64_t)stack + 80);
-		arg2 = ctx.r4.u64;
+		typeFactory = ctx.r4.u64;
 	}
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
-	return entityHandleAddr;
+	ctx.r4.u64 = typeFactory;
+	return resultHandleAddr;
 }
 PROMOTED_ENTRY(52, sub_8279C730, 0x8279C730) { ctx.r3.u64 = n_sub_8279C730(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_8297BCA8  [148 bytes]
-uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t actionManager, uint64_t owner, uint64_t arg4) {
-	if (!UseLiftedCode(68, 0x8297BCA8)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = owner; ctx.r6.u64 = arg4; __imp__sub_8297BCA8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t owner, uint64_t arg4) {
+	if (!UseLiftedCode(68, 0x8297BCA8)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = owner; ctx.r6.u64 = arg4; __imp__sub_8297BCA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BCA8);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
-	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
+	EntityHandle* entityHandle = GameObject<EntityHandle>(base, resultHandleAddr);
 	stack = PushStackFrame(base, stack, 128);
 	uint32_t target = LOAD32((uint32_t)owner + 52);
 	ctx.r1.u64 = stack;
@@ -759,23 +740,23 @@ uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 		ctx.r10.u64 = virtualMethod;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t returnedHandle = ctx.r3.u64;
-		n_sub_822A4648(ctx, base, entityHandleAddr, actionManager, returnedHandle, 0);
+		n_sub_822A4648(ctx, base, resultHandleAddr, actionManager, returnedHandle, 0);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
-		return entityHandleAddr;
+		return resultHandleAddr;
 	}
 	entityHandle->m_4 = 0u;
 	entityHandle->vtable = 0x820F1664u;
 	entityHandle->m_8 = 0xFFFFFFFFu;
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	return entityHandleAddr;
+	return resultHandleAddr;
 }
 PROMOTED_ENTRY(68, sub_8297BCA8, 0x8297BCA8) { ctx.r3.u64 = n_sub_8297BCA8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_8297BDF8  [340 bytes]
-uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t actionManagerAddr, uint64_t actionOwnerAddr, uint64_t arg4) {
-	if (!UseLiftedCode(68, 0x8297BDF8)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = actionManagerAddr; ctx.r5.u64 = actionOwnerAddr; ctx.r6.u64 = arg4; __imp__sub_8297BDF8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManagerAddr, uint64_t actionOwnerAddr, uint64_t arg4) {
+	if (!UseLiftedCode(68, 0x8297BDF8)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManagerAddr; ctx.r5.u64 = actionOwnerAddr; ctx.r6.u64 = arg4; __imp__sub_8297BDF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BDF8);
 	uint32_t casAddr{};
 	uint32_t stack = ctx.r1.u64;
@@ -784,7 +765,7 @@ uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	uint32_t newRefCount{};
 	PPCCRRegister compare0{};
 	PPCRegister callTarget{};
-	EntityHandle* entityHandle = GameObject<EntityHandle>(base, entityHandleAddr);
+	EntityHandle* entityHandle = GameObject<EntityHandle>(base, resultHandleAddr);
 
 	stack = PushStackFrame(base, stack, 128);
 
@@ -826,7 +807,7 @@ uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 		entityHandle->m_8 = 0xFFFFFFFFu;
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
-		return entityHandleAddr;
+		return resultHandleAddr;
 	}
 
 	uint64_t sharedHandleAddr = (uint64_t)stack + 80;
@@ -856,16 +837,16 @@ uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	}
 
 	if (actionHandled) {
-		C_820F1664_Constructor(ctx, base, entityHandleAddr, LOAD32((uint32_t)actionManagerAddr + 4), LOAD32(LOAD32((uint32_t)actionManagerAddr + 0x10) + 0x3C));
+		C_820F1664_Constructor(ctx, base, resultHandleAddr, LOAD32((uint32_t)actionManagerAddr + 4), LOAD32(LOAD32((uint32_t)actionManagerAddr + 0x10) + 0x3C));
 	} else {
 		copyAndAddReference();
 		ctx.r9.u64 = savedR9;
-		n_sub_822A4648(ctx, base, entityHandleAddr, actionManagerAddr, (uint64_t)stack + 88, 0);
+		n_sub_822A4648(ctx, base, resultHandleAddr, actionManagerAddr, (uint64_t)stack + 88, 0);
 	}
 
 	SharedHandle_Release(ctx, base, sharedHandleAddr);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	return entityHandleAddr;
+	return resultHandleAddr;
 }
 PROMOTED_ENTRY(68, sub_8297BDF8, 0x8297BDF8) { ctx.r3.u64 = n_sub_8297BDF8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }

@@ -9,17 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECCarrying_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820BBD8C_B_ = int32_t(0x820BBD8C);
 	if (!UseLiftedCode(31, 0x824FE470)) { ctx.r3.u64 = classNameString; __imp__sub_824FE470(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FE470);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820BBD8C_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(31, sub_824FE470, 0x824FE470) { ctx.r3.u64 = CECCarrying_GetClassName(ctx, base, ctx.r3.u64); }
@@ -47,12 +44,12 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 	EntityHandle_CopyConstruct(ctx, base, stack + 100, stack + 80);
 
 	// r8 is handed to the calls below: the capacity in bytes, or what the copy left in r8 when the array is empty
-	uint64_t r8Value = ctx.r8.u64;
+	uint64_t capacityBytes = ctx.r8.u64;
 	uint32_t begin = carrying->m_10;
 	uint32_t capacityCount = 0;
 	if (begin != 0) {
-		r8Value = (uint64_t)LOAD32((uint32_t)entryListAddr + 12) - begin;
-		capacityCount = uint32_t((int32_t)r8Value / 12);
+		capacityBytes = (uint64_t)LOAD32((uint32_t)entryListAddr + 12) - begin;
+		capacityCount = uint32_t((int32_t)capacityBytes / 12);
 	}
 	uint32_t end = LOAD32((uint32_t)entryListAddr + 8);
 	uint32_t count = uint32_t((int32_t)(end - begin) / 12);
@@ -60,11 +57,11 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 	if (count < capacityCount) {
 		if (end != 0) {
 			STORE32(end, LOAD32(stack + 96));
-			ctx.r8.u64 = r8Value;
+			ctx.r8.u64 = capacityBytes;
 			ctx.r9.u64 = count;
 			ctx.r10.u64 = capacityCount;
 			EntityHandle_CopyConstruct(ctx, base, end + 4, stack + 100);
-			r8Value = ctx.r8.u64;
+			capacityBytes = ctx.r8.u64;
 			count = ctx.r9.u32;
 			capacityCount = ctx.r10.u32;
 		}
@@ -73,17 +70,17 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 		STORE32(stack + 92, end);
 		STORE32(stack + 88, 0);
 		ctx.r5.u64 = 1;
-		ctx.r8.u64 = r8Value;
+		ctx.r8.u64 = capacityBytes;
 		ctx.r9.u64 = count;
 		ctx.r10.u64 = capacityCount;
 		n_sub_82505610(ctx, base, entryListAddr, LOAD64(stack + 88), stack + 96);
-		r8Value = ctx.r8.u64;
+		capacityBytes = ctx.r8.u64;
 		count = ctx.r9.u32;
 		capacityCount = ctx.r10.u32;
 	}
 
 	STORE32(stack + 100, (uint32_t)g_820F1664);
-	ctx.r8.u64 = r8Value;
+	ctx.r8.u64 = capacityBytes;
 	ctx.r9.u64 = count;
 	ctx.r10.u64 = capacityCount;
 	EntityHandle_Release(ctx, base, stack + 100);
@@ -106,17 +103,13 @@ PROMOTED_ENTRY(31, sub_824FE4B0, 0x824FE4B0) { ctx.r3.u64 = n_sub_824FE4B0(ctx, 
 uint64_t n_sub_824FE5E0(CpuState& ctx, uint8_t* base, uint64_t objectPtr, uint64_t flags) {
 	if (!UseLiftedCode(31, 0x824FE5E0)) { ctx.r3.u64 = objectPtr; ctx.r4.u64 = flags; __imp__sub_824FE5E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FE5E0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	// state the callee may pass on
 	ctx.r4.u64 = flags;
 	n_sub_824FE630(ctx, base, objectPtr);
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectPtr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return objectPtr;
 }
 PROMOTED_ENTRY(31, sub_824FE5E0, 0x824FE5E0) { ctx.r3.u64 = n_sub_824FE5E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -213,9 +206,6 @@ uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
 
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = objectSlot;
-			ctx.r7.u64 = tableEntry;
-			ctx.r8.u64 = table;
 			uint64_t entity = n_sub_82264448(ctx, base, lookupObject, element + 4);
 			reg5 = entity;
 			reg7 = ctx.r7.u64;
@@ -243,9 +233,6 @@ uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = reg5;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		result = SharedHandle_Release(ctx, base, handleSlot);
 		STORE32((uint32_t)handleSlot, 0u);
 	}
@@ -332,8 +319,6 @@ uint32_t n_sub_824FF050(CpuState& ctx, uint8_t* base, uint32_t carryingAddr) {
 
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r9.u64 = reg9;
-		ctx.r10.u64 = reg10;
 		ctx.xer.ca = xer.ca;
 		shouldReplicate = (CECNetwork_ShouldReplicateEntity(ctx, base, component) & 0xFF) != 0;
 		reg9 = ctx.r9.u64;
@@ -381,9 +366,6 @@ uint64_t n_sub_824FF1A0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 			if (entityAddr == 0) {
 				ctx.r1.u64 = stack;
 				// state the callee may pass on
-				ctx.r8.u64 = entryCount;
-				ctx.r9.u64 = byteSize;
-				ctx.r10.u64 = entityAddr;
 				result = EntityHandle_Release(ctx, base, entryAddr + 4);
 			} else if ((LOAD8(entityAddr + 0x90) & 0x40) != 0) {
 				ctx.r1.u64 = stack;
@@ -470,11 +452,6 @@ uint32_t n_sub_824FF290(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	}
 
 	// state the callee may pass on
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = entriesEnd;
-	ctx.r8.u64 = offset;
-	ctx.r9.u64 = cursor;
-	ctx.r10.u64 = entriesEndReload;
 	ctx.cr0.lt = compare0.lt;
 	ctx.cr0.gt = compare0.gt;
 	ctx.cr0.eq = compare0.eq;
@@ -498,9 +475,9 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	uint32_t result = carryingAddr;
 	// r4, r6 and r7 as the original holds them: all three are handed to EntityHandle_Release, r6 and r7
 	// also back to callers
-	uint64_t r4Value = destVector;
-	uint64_t r6Value = ctx.r6.u64;
-	uint64_t r7Value = ctx.r7.u64;
+	uint64_t savedR4 = destVector;
+	uint64_t savedR6 = ctx.r6.u64;
+	uint64_t savedR7 = ctx.r7.u64;
 	PPCXERRegister flags = ctx.xer;
 	CECCarrying* carrying = GameObject<CECCarrying>(base, carryingAddr);
 	stack = PushStackFrame(base, stack, 192);
@@ -522,17 +499,11 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 					// stale handle: release it and skip this entry
 					ctx.r1.u64 = stack;
 					// state the callee may pass on
-					ctx.r4.u64 = r4Value;
-					ctx.r6.u64 = r6Value;
-					ctx.r7.u64 = r7Value;
-					ctx.r8.u64 = elementCount;
-					ctx.r9.u64 = vectorBytes;
-					ctx.r10.u64 = entity;
 					ctx.xer.ca = flags.ca;
 					result = EntityHandle_Release(ctx, base, handleAddr);
-					r4Value = ctx.r4.u64;
-					r6Value = ctx.r6.u64;
-					r7Value = ctx.r7.u64;
+					savedR4 = ctx.r4.u64;
+					savedR6 = ctx.r6.u64;
+					savedR7 = ctx.r7.u64;
 					flags.ca = ctx.xer.ca;
 				} else {
 					entityValid = (LOAD8(entity + 0x90) & 0x40) != 0;
@@ -591,27 +562,24 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 					uint64_t totalCount = (uint64_t)(int64_t)((int32_t)destBytes >> 4) + (uint64_t)(int64_t)((int32_t)sourceBytes >> 4);
 					ctx.r1.u64 = stack;
 					// state the callee may pass on
-					ctx.r5.u64 = sourceBytes;
-					ctx.r6.u64 = destBytes;
-					ctx.r7.u64 = sourceBegin;
 					ctx.xer.ca = flags.ca;
 					result = n_sub_82504F88(ctx, base, destVector, totalCount, sourceEnd);
-					r6Value = ctx.r6.u64;
-					r7Value = ctx.r7.u64;
+					savedR6 = ctx.r6.u64;
+					savedR7 = ctx.r7.u64;
 					flags.ca = ctx.xer.ca;
 					uint32_t copyBegin = LOAD32(key82Object + 0x10);
 					STORE32(stack + 88, 0);
 					STORE32(stack + 92, copyBegin);
-					r4Value = LOAD64(stack + 88);
-					STORE64(stack + 96, r4Value);
+					savedR4 = LOAD64(stack + 88);
+					STORE64(stack + 96, savedR4);
 					uint32_t copyEnd = LOAD32(key82Object + 0x14);
 					if (copyBegin != copyEnd) {
 						uint64_t src = LOAD32(stack + 100);
 						do {
 							result = Vector16_PushBack(ctx, base, destVector, src);
-							r4Value = ctx.r4.u64;
-							r6Value = ctx.r6.u64;
-							r7Value = ctx.r7.u64;
+							savedR4 = ctx.r4.u64;
+							savedR6 = ctx.r6.u64;
+							savedR7 = ctx.r7.u64;
 							flags.ca = ctx.xer.ca;
 							src += 16;
 						} while ((uint32_t)src != copyEnd);
@@ -627,8 +595,8 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	stack = PopStackFrame(stack, 192);
 	ctx.r1.u64 = stack;
 	// callers read r6-r8 and ca after the call
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = r7Value;
+	ctx.r6.u64 = savedR6;
+	ctx.r7.u64 = savedR7;
 	ctx.r8.u64 = elementCount;
 	ctx.xer.ca = flags.ca;
 	return result;
@@ -661,18 +629,18 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 
 	// empty the map: the head node's links point back at the head and the count is zeroed. The head pointer
 	// is re-read after each store as in the original; the three reads are what r8, r7 and r6 hold.
-	uint64_t r8Value = carrying->m_4C;
+	uint64_t savedR8 = carrying->m_4C;
 	uint32_t entriesBegin = LOAD32(stack + 116);
 	uint32_t entriesBytes = LOAD32(stack + 120) - entriesBegin;
-	STORE32((uint32_t)r8Value + 4, (uint32_t)r8Value);
-	uint64_t r7Value = carrying->m_4C;
+	STORE32((uint32_t)savedR8 + 4, (uint32_t)savedR8);
+	uint64_t savedR7 = carrying->m_4C;
 	flags.ca = (int32_t)entriesBytes < 0 & (entriesBytes & 0xF) != 0;
 	uint32_t remaining = (int32_t)entriesBytes >> 4;
 	compare0.compare<int32_t>((int32_t)remaining, 0, flags);
 	carrying->m_50 = 0;
-	STORE32((uint32_t)r7Value, (uint32_t)r7Value);
-	uint64_t r6Value = carrying->m_4C;
-	STORE32((uint32_t)r6Value + 8, (uint32_t)r6Value);
+	STORE32((uint32_t)savedR7, (uint32_t)savedR7);
+	uint64_t savedR6 = carrying->m_4C;
+	STORE32((uint32_t)savedR6 + 8, (uint32_t)savedR6);
 
 	if ((int32_t)remaining != 0) {
 		uint64_t entry = entriesBegin;
@@ -681,15 +649,12 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 			STORE32(stack + 80, 0);
 			if (firstId != 0) {
 				// state the callees may pass on
-				ctx.r8.u64 = r8Value;
 				ctx.xer.ca = flags.ca;
 				uint64_t idRef = IdRef_Get(ctx, base, entry);
-				ctx.r6.u64 = r6Value;
-				ctx.r7.u64 = r7Value;
 				result = GameDB_TryGetTypeField(ctx, base, idRef, stack + 80);
-				r6Value = ctx.r6.u64;
-				r7Value = ctx.r7.u64;
-				r8Value = ctx.r8.u64;
+				savedR6 = ctx.r6.u64;
+				savedR7 = ctx.r7.u64;
+				savedR8 = ctx.r8.u64;
 				if (LOAD32(stack + 80) != 0) {
 					uint32_t insertValue = n_sub_82545AF0(ctx, base, entry);
 					STORE32(stack + 80, insertValue);
@@ -698,9 +663,9 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 					ctx.cr0.eq = compare0.eq;
 					ctx.cr0.so = compare0.so;
 					result = Map_InsertUnique(ctx, base, stack + 88, propertyMap, stack + 80, ctx.r8.u64);
-					r6Value = ctx.r6.u64;
-					r7Value = ctx.r7.u64;
-					r8Value = ctx.r8.u64;
+					savedR6 = ctx.r6.u64;
+					savedR7 = ctx.r7.u64;
+					savedR8 = ctx.r8.u64;
 					compare0.lt = ctx.cr0.lt;
 					compare0.gt = ctx.cr0.gt;
 					compare0.eq = ctx.cr0.eq;
@@ -713,15 +678,12 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 			STORE32(stack + 80, 0);
 			if (secondId != 0) {
 				// state the callees may pass on
-				ctx.r8.u64 = r8Value;
 				ctx.xer.ca = flags.ca;
 				uint64_t idRef = IdRef_Get(ctx, base, entry + 8);
-				ctx.r6.u64 = r6Value;
-				ctx.r7.u64 = r7Value;
 				result = GameDB_TryGetTypeField(ctx, base, idRef, stack + 80);
-				r6Value = ctx.r6.u64;
-				r7Value = ctx.r7.u64;
-				r8Value = ctx.r8.u64;
+				savedR6 = ctx.r6.u64;
+				savedR7 = ctx.r7.u64;
+				savedR8 = ctx.r8.u64;
 				if (LOAD32(stack + 80) != 0) {
 					// look the field up again and insert its value
 					STORE32(stack + 80, 0);
@@ -733,9 +695,9 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 					ctx.cr0.eq = compare0.eq;
 					ctx.cr0.so = compare0.so;
 					result = Map_InsertUnique(ctx, base, stack + 112, propertyMap, stack + 84, ctx.r8.u64);
-					r6Value = ctx.r6.u64;
-					r7Value = ctx.r7.u64;
-					r8Value = ctx.r8.u64;
+					savedR6 = ctx.r6.u64;
+					savedR7 = ctx.r7.u64;
+					savedR8 = ctx.r8.u64;
 				}
 			}
 
@@ -748,18 +710,15 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 
 	if (entriesBegin != 0) {
 		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
 		ctx.cr0.so = compare0.so;
 		ctx.xer.ca = flags.ca;
 		result = HandleTarget_Free(ctx, base, entriesBegin);
-		r6Value = ctx.r6.u64;
-		r7Value = ctx.r7.u64;
-		r8Value = ctx.r8.u64;
+		savedR6 = ctx.r6.u64;
+		savedR7 = ctx.r7.u64;
+		savedR8 = ctx.r8.u64;
 		compare0.lt = ctx.cr0.lt;
 		compare0.gt = ctx.cr0.gt;
 		compare0.eq = ctx.cr0.eq;
@@ -770,9 +729,9 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	stack = PopStackFrame(stack, 192);
 	ctx.r1.u64 = stack;
 	// callers read r6-r8, cr0 and ca after the call
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = r7Value;
-	ctx.r8.u64 = r8Value;
+	ctx.r6.u64 = savedR6;
+	ctx.r7.u64 = savedR7;
+	ctx.r8.u64 = savedR8;
 	ctx.cr0.lt = compare0.lt;
 	ctx.cr0.gt = compare0.gt;
 	ctx.cr0.eq = compare0.eq;
@@ -782,14 +741,12 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 }
 PROMOTED_ENTRY(31, sub_824FF8B8, 0x824FF8B8) { ctx.r3.u64 = n_sub_824FF8B8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82503338(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+uint64_t n_sub_82503338(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(31, 0x82503338)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82503338(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(31, 0x82503338)) { ctx.r3.u64 = carryingAddr; ctx.r4.u64 = arg2; __imp__sub_82503338(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82503338);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	uint64_t entity = n_sub_825022E8(ctx, base, arg1, arg2);
+	GameStackFrame stackFrame(ctx, base, 96);
+	uint64_t entity = n_sub_825022E8(ctx, base, carryingAddr, arg2);
 
 	uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
 	uint32_t flagsBlock = LOAD32(LOAD32(globalRoot + 12) + 140);
@@ -799,9 +756,6 @@ uint64_t n_sub_82503338(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	if (bothFlagsSet && (uint32_t)entity != 0 && (LOAD8((uint32_t)entity + 144) & 64) != 0) {
 		entity = Entity_DestroyImpl(ctx, base, entity);
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return entity;
 }
 PROMOTED_ENTRY(31, sub_82503338, 0x82503338) { ctx.r3.u64 = n_sub_82503338(ctx, base, ctx.r3.u64, ctx.r4.u64); }

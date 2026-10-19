@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_826B20F8  [60 bytes]
 uint64_t CECShard_GetClassName(CpuState& ctx, uint8_t* base, uint64_t resultString) {
@@ -30,16 +31,12 @@ PROMOTED_ENTRY(45, sub_826B20F8, 0x826B20F8) { ctx.r3.u64 = CECShard_GetClassNam
 uint64_t n_sub_826B2340(CpuState& ctx, uint8_t* base, uint64_t shard, uint64_t flags) {
 	if (!UseLiftedCode(45, 0x826B2340)) { ctx.r3.u64 = shard; ctx.r4.u64 = flags; __imp__sub_826B2340(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B2340);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = flags;  // state the callee may pass on
 	n_sub_826B2390(ctx, base, shard);
 	if (flags & 0x1) {
 		HandleTarget_Free(ctx, base, shard);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return shard;
 }
 PROMOTED_ENTRY(45, sub_826B2340, 0x826B2340) { ctx.r3.u64 = n_sub_826B2340(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -201,8 +198,6 @@ uint64_t n_sub_826B42F0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r7.u64 = (uint64_t)(int64_t)(int32_t)entryCount;
-		ctx.r8.u64 = byteSize;
 		ctx.xer.ca = carry;
 		result = SharedHandle_Release(ctx, base, listHandleAddr);
 		STORE32((uint32_t)listHandleAddr, 0u);
@@ -302,10 +297,7 @@ uint32_t Shard_Kill_Impl(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 			ctx.fpscr.disableFlushMode();
 			double fadeOutTime = double(LOAD_F32(0x820994C0u));
 			// state the callee may pass on
-			ctx.r6.u64 = argR6;
-			ctx.r7.u64 = argR7;
 			ctx.r8.u64 = argR8;
-			ctx.r9.u64 = argR9;
 			ctx.cr0 = cr0;
 			ctx.xer.ca = xer.ca;
 			n_sub_8247EB68(ctx, base, particleEmitter, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
@@ -321,11 +313,6 @@ uint32_t Shard_Kill_Impl(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		STORE32(tempAddr + 4, 0);
 		STORE32(tempAddr, (uint32_t)g_820F1664);
 		// state the callee may pass on
-		ctx.r6.u64 = argR6;
-		ctx.r7.u64 = argR7;
-		ctx.r8.u64 = argR8;
-		ctx.r9.u64 = argR9;
-		ctx.r10.u64 = (uint64_t)(int64_t)g_820F1664;
 		ctx.cr0 = cr0;
 		ctx.xer.ca = xer.ca;
 		EntityHandle_Release(ctx, base, tempAddr);
@@ -333,8 +320,6 @@ uint32_t Shard_Kill_Impl(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint64_t entityHandleVtable = (int64_t)g_820F0000 + 5732;
 		STORE32(tempAddr, (uint32_t)entityHandleVtable);
 		// state the callee may pass on
-		ctx.r8.u64 = entityHandleVtable;
-		ctx.r9.s64 = g_820F0000;
 		EntityHandle_Release(ctx, base, tempAddr);
 	}
 
@@ -423,12 +408,6 @@ uint32_t n_sub_826B5FF8(CpuState& ctx, uint8_t* base, uint32_t shardAddr) {
 		double scaledValue = double(float(scaledProduct));
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r6.u64 = argR6;
-		ctx.r7.u64 = argR7;
-		ctx.r8.u64 = argR8;
-		ctx.r9.u64 = argR9;
-		ctx.r10.u64 = argR10;
-		ctx.f13.f64 = scaledProduct;
 		ctx.xer.ca = flags.ca;
 		double callResult = n_sub_82207928(ctx, base, owner);
 		ctx.fpscr.disableFlushMode();
@@ -543,15 +522,11 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		STORE32(stack + 80, (uint32_t)g_820F1664);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r9.u64 = (uint64_t)(int64_t)g_820F1664;
-		ctx.r10.u64 = 0;
 		EntityHandle_Release(ctx, base, tempHandle);
 		EntityHandle_Assign(ctx, base, trackedHandleAddr, tempHandle);
 		uint64_t entityHandleVtable = (int64_t)g_820F0000 + 5732;
 		STORE32(stack + 80, (uint32_t)entityHandleVtable);
 		// state the callee may pass on
-		ctx.r7.u64 = entityHandleVtable;
-		ctx.r8.s64 = g_820F0000;
 		result = EntityHandle_Release(ctx, base, tempHandle);
 	} else {
 		ctx.r1.u64 = stack;
@@ -565,9 +540,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint32_t targetSlot64 = LOAD32(targetVtable + 64);
 		callTarget.u64 = targetSlot64;
 		ctx.r3.u64 = targetPointAddr;
-		ctx.r4.u64 = targetObj;
-		ctx.r9.u64 = targetSlot64;
-		ctx.r10.u64 = targetVtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// slot 76 of the same kind of object writes a vector to stack+128
@@ -577,11 +549,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint32_t targetVtable2 = LOAD32(targetObj2);
 		uint32_t targetSlot76 = LOAD32(targetVtable2 + 76);
 		callTarget.u64 = targetSlot76;
-		ctx.r3.u64 = targetMotionAddr;
-		ctx.r4.u64 = targetObj2;
-		ctx.r6.u64 = targetSlot76;
-		ctx.r7.u64 = targetVtable2;
-		ctx.r8.u64 = target2;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// aim point = point + motion * lead, lead being the float at +0x144 (lvlx + splat) in every lane
@@ -609,11 +576,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		ctx.r3.u64 = ownerPointAddr;
 		ctx.r4.u64 = ownerObj;
 		// state the callee may pass on
-		ctx.r5.u64 = 324;
-		ctx.r7.u64 = ownerSlot64;
-		ctx.r8.u64 = ownerVtable;
-		ctx.r9.u64 = owner;
-		ctx.r10.u64 = targetPointAddr;
 		ctx.v10 = aimPoint;
 		ctx.v11 = targetMotion;
 		ctx.v12 = targetPoint;
@@ -642,10 +604,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint64_t facingAddr = (uint64_t)stack + 80;
 		uint32_t ownerObjForFacing = LOAD32(owner + 124);
 		// state the callee may pass on
-		ctx.r5.u64 = ownerPointAddr;
-		ctx.r6.u64 = targetPointAddr;
-		ctx.r8.u64 = owner;
-		ctx.f1.f64 = aimDistance;
 		ctx.v6 = toAimMasked;
 		ctx.v7 = toAim;
 		ctx.v8 = ownerPoint;
@@ -676,7 +634,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		owner = shard->m_4;
 		ctx.fpscr.disableFlushMode();
 		// state the callee may pass on
-		ctx.r7.u64 = keepFacingSign;
 		ctx.f1.f64 = angle;
 		double callResult = n_sub_82207928(ctx, base, owner);
 		ctx.fpscr.disableFlushMode();
@@ -721,12 +678,6 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 			ctx.v13 = v13Out;  // state the callee may pass on
 		}
 		// state the callee may pass on
-		ctx.f1.f64 = callResult;
-		ctx.f9.f64 = stepF;
-		ctx.f10.f64 = scaledTurnSpeed;
-		ctx.f11.f64 = angle;
-		ctx.f12.f64 = step;
-		ctx.f13.f64 = turnSpeed;
 		ctx.v1 = newFacing;
 		ctx.v12 = handV12;
 		result = Entity_SetFacingDirectionNormalized(ctx, base, facingObj);
@@ -759,7 +710,6 @@ uint64_t n_sub_826B8098(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		if (target == 0) {
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, handleAddr);
 		} else {
 			killParticle = (LOAD8(target + 0x90) & 0x40) != 0;
@@ -769,7 +719,6 @@ uint64_t n_sub_826B8098(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (killParticle) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on: the flag bit just tested
-		ctx.r10.u64 = 0x40;
 		const uint64_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		const uint32_t entityAddr = (uint32_t)entity;
 		result = entity;
@@ -955,8 +904,6 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 
 	if (havePayload) {
 		// r7, r8 and xer.ca as the search leaves them: state the callee may pass on
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		uint32_t lookup = n_sub_825490A8(ctx, base, pairOut, payload, shardAddr + 20, 0);
 
@@ -965,8 +912,6 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		VSTORE(vecBufA & ~0xF, V8(vectorA));
 
 		// state the callee may pass on
-		ctx.r7.s64 = g_834A0000;
-		ctx.r8.u64 = slotIndex;
 		uint64_t lookup2 = n_sub_825490A8(ctx, base, pairOut, payload,
 			(uint64_t)(slotIndex << 2) + (uint64_t)((int64_t)g_834A0000 - 20760), 0);
 
@@ -976,9 +921,6 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		VSTORE(vecBufB & ~0xF, V8(vectorB));
 		SET_V8(vectorA, VLOAD(vecBufA & ~0xF));
 		// state the callee may pass on
-		ctx.r4.u64 = vecBufA;
-		ctx.r5.u64 = vecBufB;
-		ctx.r6.u64 = lookup2;
 		ctx.v1 = vectorA;
 		ctx.v2 = vectorB;
 		result = n_sub_8322BD20(ctx, base, heldObject);
@@ -1027,7 +969,6 @@ uint64_t n_sub_826B8AA0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		if (target == 0) {
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, handleAddr);
 		} else {
 			killParticle = (LOAD8(target + 0x90) & 0x40) != 0;
@@ -1037,7 +978,6 @@ uint64_t n_sub_826B8AA0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (killParticle) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on: the flag bit just tested
-		ctx.r10.u64 = 0x40;
 		const uint64_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		const uint32_t entityAddr = (uint32_t)entity;
 		result = entity;
@@ -1151,7 +1091,6 @@ uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		const uint32_t target = LOAD32(targetRef);
 		if (target == 0) {
 			// state the callee may pass on
-			ctx.r10.u64 = 0;
 			const uint64_t released = EntityHandle_Release(ctx, base, handleAddr);
 			stack = PopStackFrame(stack, 128);
 			ctx.r1.u64 = stack;
@@ -1159,7 +1098,6 @@ uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		}
 
 		// state the callee may pass on
-		ctx.r10.u64 = target;
 		const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 
 		// Component 85: bit 21 of the mask word at +0x2C says the entity has one. The byte table at +0x8C,
@@ -1230,14 +1168,11 @@ uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		STORE32(stack + 84, 0);
 		STORE32(stack + 80, (uint32_t)g_820F1664);
 		// state the callee may pass on
-		ctx.r10.s64 = g_820F1664;
 		EntityHandle_Release(ctx, base, stack + 80);
 		EntityHandle_Assign(ctx, base, handleAddr, stack + 80);
 		const uint32_t handleWord = (uint32_t)g_820F0000 + 5732;
 		STORE32(stack + 80, handleWord);
 		// state the callee may pass on
-		ctx.r8.u64 = handleWord;
-		ctx.r9.u64 = (uint32_t)g_820F0000;
 		result = EntityHandle_Release(ctx, base, stack + 80);
 	}
 
@@ -1296,10 +1231,6 @@ uint32_t Shard_ReleaseEffectsAndSendBeamAttack(CpuState& ctx, uint8_t* base, uin
 			uint32_t sender = LOAD32(LOAD32(manager + 12) + 140);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = 1;
-			ctx.r7.s64 = g_820A86F8;
-			ctx.r8.u64 = (uint64_t)stack + 112;
-			ctx.r9.u64 = (uint64_t)stack + 96;
 			ctx.xer.ca = carry;
 			uint64_t uniqueId = Entity_GetUniqueId(ctx, base, owner);
 			result = NetMessage_SendShardBeamAttack(ctx, base, sender, (uint64_t)stack + 80, uniqueId);

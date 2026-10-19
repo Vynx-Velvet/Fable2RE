@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
@@ -95,8 +96,6 @@ uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 						STORE32(scratch + 8, 0);
 						STORE32(scratch + 12, 0);
 						// state the callee may pass on
-						ctx.f12.f64 = healthFloor;
-						ctx.f13.f64 = healthFraction;
 						ctx.cr0.lt = compare0.lt;
 						ctx.cr0.gt = compare0.gt;
 						ctx.cr0.eq = compare0.eq;
@@ -117,8 +116,6 @@ uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 						mood->m_28 = float(newM28);
 
 						// state the callee may pass on
-						ctx.f11.f64 = newM28;
-						ctx.f12.f64 = previousM28;
 						result = Vector_FreeAndReset(ctx, base, scratch);
 						// leave r4, cr0 and xer.ca as this call left them
 						callerR4 = ctx.r4.u64;
@@ -245,12 +242,7 @@ uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 							STORE32(stack + 88, 0);
 							STORE32(stack + 92, 0);
 							// state the callee may pass on
-							ctx.f8.f64 = elapsedFraction;
-							ctx.f9.f64 = elapsedSingle;
-							ctx.f10.f64 = elapsed;
 							ctx.f11 = elapsedBits;
-							ctx.f12.f64 = fullWeight;
-							ctx.f13.f64 = lowerLimit;
 							ctx.cr0.lt = compare0.lt;
 							ctx.cr0.gt = compare0.gt;
 							ctx.cr0.eq = compare0.eq;
@@ -271,8 +263,6 @@ uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 							mood->m_28 = float(newM28);
 
 							// state the callee may pass on
-							ctx.f11.f64 = newM28;
-							ctx.f12.f64 = previousM28;
 							result = Vector_FreeAndReset(ctx, base, stack + 80);
 							// leave r4, cr0 and xer.ca as this call left them
 							callerR4 = ctx.r4.u64;
@@ -397,7 +387,6 @@ uint64_t n_sub_822B0118(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 			uint32_t componentState = LOAD32(component + 156);
 			if (componentState != 5 && componentState != 25) {
 				// state the callee may pass on
-				ctx.r6.u64 = passedR6;
 				ctx.r8.u64 = passedR8;
 				ctx.xer.ca = flags.ca;
 				result = CECMood_UpdateCurrentMood(ctx, base, moodAddr);
@@ -457,9 +446,6 @@ uint64_t CECMood_UpdateCurrentMood(CpuState& ctx, uint8_t* base, uint64_t moodAd
 	uint32_t moodName = stack + 80;
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.f11.f64 = driveBMagnitude;
-	ctx.f12.f64 = levelThreshold;
-	ctx.f13.f64 = levelMagnitude;
 	CCharString_ConstructFromCStr(ctx, base, moodName, g_82000C98, -1);
 	// r6 and xer.ca as the constructor left them, until the component lookup below changes them
 	uint64_t passedR6 = ctx.r6.u64;
@@ -472,8 +458,6 @@ uint64_t CECMood_UpdateCurrentMood(CpuState& ctx, uint8_t* base, uint64_t moodAd
 		double moodLevel = double(mood->m_C);
 		if (moodLevel > double(LOAD_F32(moodTuning + 384))) {
 			// state the callee may pass on
-			ctx.r5.u64 = uint64_t(g_82099334);
-			ctx.f13.f64 = moodLevel;
 			CCharString_AssignFromCStr(ctx, base, moodName, str_TXT_820EA864_B_);
 			mood->m_7C = 1;
 		} else {
@@ -565,12 +549,8 @@ uint64_t CECMood_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameSt
 	constexpr int32_t str_TXT_820C90A8_B_ = int32_t(0x820C90A8);
 	if (!UseLiftedCode(65, 0x8291ABF8)) { ctx.r3.u64 = classNameString; __imp__sub_8291ABF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8291ABF8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, uint64_t(str_TXT_820C90A8_B_), -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(65, sub_8291ABF8, 0x8291ABF8) { ctx.r3.u64 = CECMood_GetClassName(ctx, base, ctx.r3.u64); }
@@ -633,8 +613,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r9.u64 = listBegin;
-	ctx.r10.u64 = listEnd;
 	uint64_t result = n_sub_821B1DC0(ctx, base, list, arg2);
 
 	if (LOAD8(0x83496BB5u) == 0) {
@@ -656,8 +634,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		entity = LOAD32(entitySlot);
 		if (entity == 0) {
 			// state the callee may pass on
-			ctx.r9.u64 = entryArray;
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, result);
 		}
 	}
@@ -677,8 +653,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		callTarget.u64 = ownerGetVec;
 		ctx.r3.u64 = ownerVecAddr;
 		ctx.r4.u64 = ownerObject;
-		ctx.r9.u64 = ownerGetVec;
-		ctx.r10.u64 = ownerVtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		uint32_t constants = uint32_t(g_820A0000);
@@ -703,8 +677,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		ctx.r4.u64 = ownerVecAddr;  // state the callee may pass on
 		uint64_t camera = Player_GetCameraAssociatedWithPlayer(ctx, base, player);
 		// state the callee may pass on
-		ctx.f12.f64 = raisedElement2;
-		ctx.f13.f64 = ownerElement2;
 		ctx.v7 = laneMask;
 		ctx.v12 = raisedOwnerVec;
 		ctx.v13 = raisedLane;
@@ -717,7 +689,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		callTarget.u64 = entityGetVec;
 		ctx.r3.u64 = entityVecAddr;
 		ctx.r4.u64 = entityObject;
-		ctx.r10.u64 = entityGetVec;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// Difference from the camera transform's first vector to the entity's vector, element 2
@@ -766,7 +737,6 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 		// Two items (kinds 1 and 2, with m_24 and m_28) are created and pushed onto the mood's list.
 		// state the callee may pass on
-		ctx.f2.f64 = itemParamF2;
 		ctx.v3 = negXLane;
 		ctx.v4 = dirShifted;
 		ctx.v5 = fillShifted;
@@ -934,8 +904,6 @@ uint64_t n_sub_8291C680(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = begin;
-	ctx.r10.u64 = checkedEnd;
 	n_sub_821B1DC0(ctx, base, handles, forwardedArg);
 
 	// Virtual slot 0x10 yields the component type that is removed from the entity at m_4.

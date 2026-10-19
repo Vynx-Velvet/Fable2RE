@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // sub_821B3258  [8 bytes]
 uint64_t n_sub_821B3258(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroup, uint64_t transformAddr) {
@@ -108,8 +109,6 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 	}
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = transformAddr;
-	ctx.r9.u64 = r9Value;
 	uint32_t animData = n_sub_82D5DB78(ctx, base, driverData);
 	uint64_t handleAddr = (int64_t)(uint64_t)stack + 80;
 	SharedHandle_Release(ctx, base, handleAddr);
@@ -202,14 +201,8 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 		uint32_t driverObject = LOAD32(boneDriver + 44);
 		VSTORE(uint32_t((int64_t)(uint64_t)stack + 192) & ~0xF, V8(local61));
 		// state the callee may pass on
-		ctx.r9.u64 = boneDriver;
 		hkRotation_SetFromQuaternion(ctx, base, (uint32_t)rotationMatrixAddr, (uint32_t)rotationOutAddr);
 		// state the callee may pass on
-		ctx.r4.u64 = rotationMatrixAddr;
-		ctx.r5.u64 = scaleOutAddr;
-		ctx.r6.u64 = rotationOutAddr;
-		ctx.r7.u64 = translationOutAddr;
-		ctx.r8.u64 = children;
 		ctx.v1 = local50;
 		ctx.v2 = local51;
 		ctx.v3 = local52;
@@ -235,7 +228,6 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 	uint64_t result = boneDriverGroup->m_98;
 	if ((uint32_t)result != 0) {
 		// state the callee may pass on
-		ctx.r9.u64 = r9Value;
 		ctx.xer.ca = flags.ca;
 		result = n_sub_82E66200(ctx, base, result);
 		r9Value = ctx.r9.u64;
@@ -503,21 +495,20 @@ uint64_t CBoneDriverGroup_ForEachChildVirtual44(CpuState& ctx, uint8_t* base, ui
 PROMOTED_ENTRY(61, sub_828A2C28, 0x828A2C28) { ctx.r3.u64 = CBoneDriverGroup_ForEachChildVirtual44(ctx, base, ctx.r3.u64); }
 
 // sub_828A2F68  [116 bytes]
-uint64_t n_sub_828A2F68(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr, uint64_t arg2, uint64_t arg3, double floatArg1) {
-	if (!UseLiftedCode(61, 0x828A2F68)) { ctx.r3.u64 = boneDriverGroupAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_828A2F68(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_828A2F68(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr, uint64_t boneData, uint64_t arg3, double floatArg1) {
+	if (!UseLiftedCode(61, 0x828A2F68)) { ctx.r3.u64 = boneDriverGroupAddr; ctx.r4.u64 = boneData; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_828A2F68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A2F68);
 	uint32_t stack = ctx.r1.u64;
 	CBoneDriverGroup* boneDriverGroup = GameObject<CBoneDriverGroup>(base, boneDriverGroupAddr);
 	uint64_t result = boneDriverGroupAddr;
-	uint64_t callerR4 = arg2;
+	uint64_t callerR4 = boneData;
 	double callerF1 = floatArg1;
 
 	stack = PushStackFrame(base, stack, 112);
 	if (LOAD8(0x834BE89Bu) == 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
-		uint32_t sourceAddr = n_sub_82D5DB48(ctx, base, arg2);
+		uint32_t sourceAddr = n_sub_82D5DB48(ctx, base, boneData);
 		uint32_t value98 = boneDriverGroup->m_98;
 		ctx.fpscr.disableFlushMode();
 		uint32_t sourceValue = LOAD32(sourceAddr);
@@ -574,7 +565,6 @@ uint64_t n_sub_828A2FE0(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAd
 	double matrixF1 = Quat_ToMatrix4x4(ctx, base, matrix, quatLo, quatHi);
 
 	// state the callee may pass on
-	ctx.f1.f64 = matrixF1;
 	uint64_t converted = n_sub_8227D720(ctx, base, (uint64_t)stack + 176, matrix);
 	uint64_t result = n_sub_82272E28(ctx, base, boneDriverGroupAddr, converted);
 
@@ -584,7 +574,7 @@ uint64_t n_sub_828A2FE0(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAd
 }
 PROMOTED_ENTRY(61, sub_828A2FE0, 0x828A2FE0) { ctx.r3.u64 = n_sub_828A2FE0(ctx, base, ctx.r3.u64); }
 
-// For each child (8-byte entries from the pointer at arg1+0x3C to the one at arg1+0x40) composes the parent
+// For each child (8-byte entries from the pointer at boneDriverGroup+0x3C to the one at boneDriverGroup+0x40) composes the parent
 // transform that n_sub_82D54C38 writes at stack+112 from arg3 (translation, rotation quaternion, a third
 // vector) with the child's rotation (virtual function at vtable offset 0x18) and position (offset 0x14), and
 // writes a 48-byte record per child into the array whose address is the first word of what n_sub_82D5CE60
@@ -597,9 +587,9 @@ PROMOTED_ENTRY(61, sub_828A2FE0, 0x828A2FE0) { ctx.r3.u64 = n_sub_828A2FE0(ctx, 
 // f11-f13 are handed to the first virtual call on every pass, and r4, v1-v3, v16, v18-v23 and v25-v31 are
 // left for callers. Returns what n_sub_82D5CE60 returned when there are no children, otherwise stack+128
 // (the parent rotation in the released frame), as the original leaves r3.
-uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t arg1, uint64_t arg2, uint64_t arg3) {
+uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, uint64_t transformBuffer, uint64_t arg3) {
 	constexpr int32_t g_82024280 = int32_t(0x82024280);
-	if (!UseLiftedCode(61, 0x828A3078)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_828A3078(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(61, 0x828A3078)) { ctx.r3.u64 = boneDriverGroup; ctx.r4.u64 = transformBuffer; ctx.r5.u64 = arg3; __imp__sub_828A3078(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A3078);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t result{};
@@ -610,7 +600,7 @@ uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t arg1, uint64_t ar
 	uint64_t passR6 = ctx.r6.u64;
 	uint64_t passR7{};
 	uint64_t passR9{};
-	uint64_t returnR4 = arg2;
+	uint64_t returnR4 = transformBuffer;
 	double productW = ctx.f11.f64;
 	double rotationDot = ctx.f12.f64;
 	double childRotW = ctx.f13.f64;
@@ -659,11 +649,11 @@ uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t arg1, uint64_t ar
 	stack = PushStackFrame(base, stack, 384);
 	uint32_t parentSource = arg3;
 	ctx.r1.u64 = stack;
-	result = n_sub_82D5CE60(ctx, base, arg2);
+	result = n_sub_82D5CE60(ctx, base, transformBuffer);
 	passR7 = ctx.r7.u64;
 	passR9 = ctx.r9.u64;
 	uint32_t recordsHolder = result;
-	uint32_t childList = (int32_t)arg1 + 56;
+	uint32_t childList = (int32_t)boneDriverGroup + 56;
 	ctx.fpscr.disableFlushMode();
 	double thirdFactor = double(LOAD_F32(0x820994C0u));
 	uint32_t index = 0;

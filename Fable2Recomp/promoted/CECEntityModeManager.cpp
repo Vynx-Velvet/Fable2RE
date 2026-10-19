@@ -9,22 +9,23 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_821FEA40(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t arg2) {
-	if (!UseLiftedCode(5, 0x821FEA40)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = arg2; __imp__sub_821FEA40(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821FEA40(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t targetObjectAddr) {
+	if (!UseLiftedCode(5, 0x821FEA40)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = targetObjectAddr; __imp__sub_821FEA40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FEA40);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
 	CECEntityModeManager* entityModeManager = GameObject<CECEntityModeManager>(base, entityModeManagerAddr);
 	stack = PushStackFrame(base, stack, 96);
 
-	uint32_t targetObject = (uint32_t)arg2;
+	uint32_t targetObject = (uint32_t)targetObjectAddr;
 	uint32_t vtable = LOAD32(targetObject);
 	uint32_t methodAddr = LOAD32(vtable + 4);
 	callTarget.u64 = methodAddr;
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = targetObjectAddr;
+	ctx.r4.u64 = targetObjectAddr;
 	ctx.r10.u64 = methodAddr;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t modeResult = ctx.r3.u64;
@@ -114,8 +115,6 @@ uint64_t n_sub_82218498(CpuState& ctx, uint8_t* base, uint64_t managerAddr) {
 	for (uint64_t id = 0; (int32_t)id != 10; ++id) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r7.u64 = r7Value;
-		ctx.r9.u64 = r9Value;
 		result = AnimationComponent_FindAnimation(ctx, base, foundIter, managerAddr, id);
 		r7Value = ctx.r7.u64;
 		uint32_t iterList = LOAD32(foundIter);
@@ -181,19 +180,15 @@ uint64_t CECEntityModeManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_
 	constexpr int32_t str_TXT_820A7538_B_ = int32_t(0x820A7538);
 	if (!UseLiftedCode(22, 0x823EEB80)) { ctx.r3.u64 = classNameString; __imp__sub_823EEB80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823EEB80);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820A7538_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(22, sub_823EEB80, 0x823EEB80) { ctx.r3.u64 = CECEntityModeManager_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t arg2) {
+uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t owner) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
-	if (!UseLiftedCode(22, 0x823F0E18)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = arg2; __imp__sub_823F0E18(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(22, 0x823F0E18)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = owner; __imp__sub_823F0E18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F0E18);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t r13Value = ctx.r13.u64;   // its MSR bits are set around each atomic update
@@ -201,7 +196,7 @@ uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 	stack = PushStackFrame(base, stack, 112);
 
-	entityModeManager->m_4 = (uint32_t)arg2;
+	entityModeManager->m_4 = (uint32_t)owner;
 	entityModeManager->m_8 = 0;
 	entityModeManager->vtable = 0x82003B58u;
 	entityModeManager->m_C = 0;
@@ -209,7 +204,7 @@ uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = owner;
 	uint32_t allocation = operator_new(ctx, base, 16);
 	if (allocation != 0) {
 		STORE32(allocation, allocation);
@@ -330,7 +325,6 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			entryOffset += 16;
 		}
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		uint64_t released = SharedHandle_Release(ctx, base, handleAddr);
 		STORE32((uint32_t)handleAddr, 0);
@@ -395,8 +389,6 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	if ((result & 0xFF) != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
 		ctx.r8.u64 = r8Arg;
 		ctx.cr0.lt = cr0.lt;
 		ctx.cr0.gt = cr0.gt;
@@ -436,17 +428,17 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 }
 PROMOTED_ENTRY(22, sub_823F1B68, 0x823F1B68) { ctx.r3.u64 = n_sub_823F1B68(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t mode) {
+uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeId) {
 	constexpr int32_t g_83497870 = int32_t(0x83497870);
-	if (!UseLiftedCode(22, 0x823F1EB0)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = mode; __imp__sub_823F1EB0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(22, 0x823F1EB0)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeId; __imp__sub_823F1EB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F1EB0);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
 	CECEntityModeManager* entityModeManager = GameObject<CECEntityModeManager>(base, entityModeManagerAddr);
 	stack = PushStackFrame(base, stack, 128);
 
-	uint32_t modeSlot = stack + 156;   // the lookup takes the mode by address
-	STORE32(modeSlot, (uint32_t)mode);
+	uint32_t modeSlot = stack + 156;   // the lookup takes the modeId by address
+	STORE32(modeSlot, (uint32_t)modeId);
 	// global container searched by n_sub_823F4AA0; a found node holds a create function at +16
 	uint64_t registryAddr = g_83497870;
 	uint32_t iter = stack + 80;   // {container, node} from the lookup, later reused as a shared handle
@@ -468,7 +460,7 @@ uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	uint32_t foundNode = LOAD32(iter + 4);
 	if (foundNode != containerEnd) {
 		ctx.r5.u64 = r5Value;   // state the callee may pass on
-		result = CECEntityModeManager_HasMode(ctx, base, entityModeManagerAddr, mode);
+		result = CECEntityModeManager_HasMode(ctx, base, entityModeManagerAddr, modeId);
 		r4Value = ctx.r4.u64;
 		r5Value = ctx.r5.u64;
 		if ((result & 0xFF) == 0) {
@@ -505,8 +497,8 @@ uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 }
 PROMOTED_ENTRY(22, sub_823F1EB0, 0x823F1EB0) { ctx.r3.u64 = n_sub_823F1EB0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_823F1F88(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t arg2) {
-	if (!UseLiftedCode(22, 0x823F1F88)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = arg2; __imp__sub_823F1F88(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_823F1F88(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeNameAddr) {
+	if (!UseLiftedCode(22, 0x823F1F88)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeNameAddr; __imp__sub_823F1F88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F1F88);
 	uint32_t stack = ctx.r1.u64;
 	CECEntityModeManager* entityModeManager = GameObject<CECEntityModeManager>(base, entityModeManagerAddr);
@@ -516,12 +508,12 @@ uint64_t n_sub_823F1F88(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = modeNameAddr;
 	uint64_t allocation = operator_new(ctx, base, 24);
 
 	uint32_t object = 0;
 	if ((uint32_t)allocation != 0) {
-		object = n_sub_82805DC0(ctx, base, allocation, entityModeManager->m_4, arg2);
+		object = n_sub_82805DC0(ctx, base, allocation, entityModeManager->m_4, modeNameAddr);
 	}
 	STORE32(handleAddr, object);
 	if (object != 0) {
@@ -652,7 +644,6 @@ uint64_t n_sub_823F20A8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			callTarget.u64 = (uint64_t)slot16Fn;
 			ctx.r3.u64 = mode;
 			ctx.r4.u64 = modeData;
-			ctx.r10.u64 = slot16Fn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 			n_sub_823F2448(ctx, base, entityModeManagerAddr, iteratorAddr);
@@ -731,7 +722,6 @@ uint64_t n_sub_823F23B0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	uint64_t key = 0;
 	do {
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = r9Carry;
 		result = AnimationComponent_FindAnimation(ctx, base, (uint64_t)stack + 80, entityModeManagerAddr, key);
 
 		uint32_t iteratorList = LOAD32(stack + 80);
@@ -844,7 +834,6 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	bool addMode = true;
 	if (hasEntity && LOAD8((uint32_t)entityModeManagerAddr + 65) == 0) {
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = r9Carry;
 		ctx.xer.ca = flags.ca;
 		result = CECNetwork_ShouldReplicateEntity(ctx, base, entity);
 		r9Carry = ctx.r9.u64;
@@ -962,10 +951,6 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 				hasValue58 = true;
 			}
 			if (hasValue58) {
-				ctx.r6.u64 = r6Carry;
-				ctx.r7.u64 = r7Carry;
-				ctx.r8.u64 = r8Carry;
-				ctx.r9.u64 = r9Carry;
 				ctx.xer.ca = flags.ca;
 				AnimationComponent_ReleaseAnimationControl(ctx, base, value58);
 				r6Carry = ctx.r6.u64;
@@ -1080,7 +1065,6 @@ uint64_t n_sub_823F30D8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	bool tearDown = true;
 	if (hasEntity && LOAD8((uint32_t)entityModeManagerAddr + 65) == 0) {
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = r9Carry;
 		ctx.xer.ca = flags.ca;
 		result = CECNetwork_ShouldReplicateEntity(ctx, base, entity);
 		r9Carry = ctx.r9.u64;
@@ -1129,9 +1113,6 @@ uint64_t n_sub_823F30D8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Carry;
-		ctx.r7.u64 = r7Carry;
-		ctx.r8.u64 = r8Carry;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -1240,9 +1221,6 @@ uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 	if (rebuild) {
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Carry;
-		ctx.r7.u64 = r7Carry;
-		ctx.r8.u64 = r8Carry;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -1445,9 +1423,6 @@ uint64_t n_sub_823F3A10(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			uint32_t modeObject = entityModeManager->m_20;
 			if (modeObject != 0) {
 				// state the callee may pass on
-				ctx.r6.u64 = outR6;
-				ctx.r7.u64 = outR7;
-				ctx.r8.u64 = outR8;
 				ctx.cr0.lt = compare0.lt;
 				ctx.cr0.gt = compare0.gt;
 				ctx.cr0.eq = compare0.eq;

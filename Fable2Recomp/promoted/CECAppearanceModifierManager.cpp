@@ -9,30 +9,27 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECAppearanceModifierManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820BEF74_B_ = int32_t(0x820BEF74);
 	if (!UseLiftedCode(34, 0x8256E938)) { ctx.r3.u64 = classNameString; __imp__sub_8256E938(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8256E938);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	// Fill the caller-supplied CCharString with our class name; -1 = derive length from the C string.
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820BEF74_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(34, sub_8256E938, 0x8256E938) { ctx.r3.u64 = CECAppearanceModifierManager_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8256E9D0(CpuState& ctx, uint8_t* base, uint64_t appearanceModifierManagerAddr, uint64_t arg2) {
-	if (!UseLiftedCode(34, 0x8256E9D0)) { ctx.r3.u64 = appearanceModifierManagerAddr; ctx.r4.u64 = arg2; __imp__sub_8256E9D0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8256E9D0(CpuState& ctx, uint8_t* base, uint64_t appearanceModifierManagerAddr, uint64_t ownerEntity) {
+	if (!UseLiftedCode(34, 0x8256E9D0)) { ctx.r3.u64 = appearanceModifierManagerAddr; ctx.r4.u64 = ownerEntity; __imp__sub_8256E9D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8256E9D0);
 	uint32_t stack = ctx.r1.u64;
 	CECAppearanceModifierManager* appearanceModifierManager = GameObject<CECAppearanceModifierManager>(base, appearanceModifierManagerAddr);
 	stack = PushStackFrame(base, stack, 112);
 
-	appearanceModifierManager->m_4 = (uint32_t)arg2;
+	appearanceModifierManager->m_4 = (uint32_t)ownerEntity;
 	appearanceModifierManager->m_8 = 0;
 	appearanceModifierManager->vtable = 0x82003048u;
 	appearanceModifierManager->m_10 = 0;
@@ -55,7 +52,7 @@ uint64_t n_sub_8256E9D0(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = ownerEntity;
 	RbTree_InitHeaderNode20(ctx, base, (uint32_t)(appearanceModifierManagerAddr + 84));
 
 	appearanceModifierManager->m_60 = 0;
@@ -88,7 +85,6 @@ uint64_t n_sub_8256EAA8(CpuState& ctx, uint8_t* base, uint64_t object, uint64_t 
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_8256EAF8(ctx, base, object);
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
@@ -139,7 +135,6 @@ uint32_t n_sub_8256F678(CpuState& ctx, uint8_t* base, uint64_t indexVector, uint
 				fieldNameCStr = LOAD32(stringData);
 			}
 			// state the callee may pass on: the field name goes in r4, which is not a native parameter
-			ctx.r4.u64 = fieldNameCStr;
 			IStream_SerializeU32(ctx, base, stream, stack + 84);
 			CCharString_Release(ctx, base, stack + 80);
 
@@ -244,7 +239,6 @@ uint64_t n_sub_8256F910(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 	const uint64_t inventoryItemComponentName = str_TXT_820A9080_B_;
 	uint64_t idRef = IdRef_Get(ctx, base, stack + 80);
 	// state the callee may pass on
-	ctx.r7.u64 = inventoryItemComponentName;
 	uint64_t itemComponent = GameDB_ReadU32Field(ctx, base, idRef, inventoryItemComponentName);
 	if ((uint32_t)itemComponent != 0) {
 		const uint64_t isStyleRemovalName = str_TXT_820BF0E0_B_;
@@ -334,10 +328,6 @@ uint64_t n_sub_8256F910(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 		uint32_t oldFlags = LOAD32(key3Object + 144);
 		if (uint32_t(oldFlags & 128) == 0) {
 			// state the callee may pass on
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = r9Value;
 			CECGraphicAppearance_ForEach(ctx, base, key3Object);
 			r6Value = ctx.r6.u64;
 			r7Value = ctx.r7.u64;
@@ -352,10 +342,7 @@ uint64_t n_sub_8256F910(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 			uint32_t handleListPtr = LOAD32(LOAD32(globalChild + 88) + 4);
 			uint32_t handleList = LOAD32(handleListPtr);
 			// state the callee may pass on: r9 holds the list pointer just loaded
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
 			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = handleListPtr;
 			EntityHandleList_PushBackEntity(ctx, base, handleList, key3ObjectId);
 			r6Value = ctx.r6.u64;
 			r7Value = ctx.r7.u64;
@@ -432,35 +419,35 @@ uint64_t n_sub_8256FC80(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 		if ((LOAD32(owner + 36) >> 13) & 1) {
 			// Value of key 13 in the owner's sorted {key, value} table at +72 / +76.
 			uint32_t value;
-			uint64_t r8Value;  // what the lookup leaves in r8; handed on below
+			uint64_t lookupByteOffset;  // what the lookup leaves in r8; handed on below
 			uint32_t indexTable = LOAD32(owner + 140);
 			if (indexTable != 0) {
 				// byte 13 of the index table is the entry number of key 13
-				r8Value = (uint64_t)(LOAD8(indexTable + 13) << 3) + LOAD32(owner + 72);
-				value = LOAD32((uint32_t)r8Value + 4);
+				lookupByteOffset = (uint64_t)(LOAD8(indexTable + 13) << 3) + LOAD32(owner + 72);
+				value = LOAD32((uint32_t)lookupByteOffset + 4);
 			} else {
 				// lower_bound over the 8-byte entries: first entry whose key is >= 13
 				uint32_t begin = LOAD32(owner + 72);
 				uint32_t end = LOAD32(owner + 76);
 				STORE32(stack + 80, 0u);
-				r8Value = (uint64_t)end - begin;
+				lookupByteOffset = (uint64_t)end - begin;
 				STORE32(stack + 84, begin);
-				int32_t count = (int32_t)(uint32_t)r8Value >> 3;
+				int32_t count = (int32_t)(uint32_t)lookupByteOffset >> 3;
 				// the count shift sets the carry and cr0, both handed on below
-				xerFlags.ca = (int32_t)(uint32_t)r8Value < 0 && (r8Value & 0x7) != 0;
+				xerFlags.ca = (int32_t)(uint32_t)lookupByteOffset < 0 && (lookupByteOffset & 0x7) != 0;
 				cr0Flags.compare<int32_t>(count, 0, xerFlags);
 				uint32_t it = begin;
 				if (count > 0) {
 					xerFlags.ca = 0;  // the halving shifts below only see positive counts
 					do {
 						int32_t half = count >> 1;
-						r8Value = (uint32_t)half << 3;
-						it += (uint32_t)r8Value;
+						lookupByteOffset = (uint32_t)half << 3;
+						it += (uint32_t)lookupByteOffset;
 						if ((int32_t)LOAD32(it) < 13) {
 							it += 8;
 							count = count - half - 1;
 						} else {
-							it -= (uint32_t)r8Value;
+							it -= (uint32_t)lookupByteOffset;
 							count = half;
 						}
 					} while (count > 0);
@@ -475,7 +462,6 @@ uint64_t n_sub_8256FC80(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 			}
 
 			// state the callee may pass on
-			ctx.r8.u64 = r8Value;
 			ctx.cr0.lt = cr0Flags.lt;
 			ctx.cr0.gt = cr0Flags.gt;
 			ctx.cr0.eq = cr0Flags.eq;
@@ -569,9 +555,6 @@ uint64_t HeroWornItems_RemoveItemByKey(CpuState& ctx, uint8_t* base, uint64_t ap
 	STORE32(stack + 88, 0);
 	STORE32(stack + 92, 0);
 	// state the callee may pass on
-	ctx.r6.u64 = lastKeyWord;
-	ctx.r7.u64 = begin;
-	ctx.r8.u64 = end;
 	n_sub_8218DF70(ctx, base, stack + 80, entry);
 	n_sub_82576960(ctx, base, appearanceModifierManagerAddr, stack + 80);
 	if ((uint32_t)entry >= appearanceModifierManager->m_14) {
@@ -581,7 +564,6 @@ uint64_t HeroWornItems_RemoveItemByKey(CpuState& ctx, uint8_t* base, uint64_t ap
 	n_sub_82579A00(ctx, base, entry + 24, appearanceModifierManager->m_14, entry);
 	uint32_t entriesEnd = appearanceModifierManager->m_14;
 	// state the callee may pass on: r3 = the entry vector
-	ctx.r3.u64 = entriesAddr;
 	uint64_t result = HeroWornItem_DestroyRange(ctx, base, (uint64_t)entriesEnd - 24, entriesEnd);
 	appearanceModifierManager->m_14 = appearanceModifierManager->m_14 - 24;
 
@@ -941,11 +923,8 @@ uint64_t n_sub_82571B60(CpuState& ctx, uint8_t* base, uint32_t appearanceModifie
 
 	ctx.r1.u64 = stack;
 	// state the callees may pass on
-	ctx.r4.u64 = modifierRefAddr;
-	ctx.r8.u64 = forwardedR8;
 	uint64_t idRef = IdRef_Get(ctx, base, keyAddr);
 
-	ctx.r7.u64 = str_TXT_820A94F0_B_;
 	uint64_t appearanceModifier = GameDB_ReadU32Field(ctx, base, idRef, str_TXT_820A94F0_B_);
 	if ((uint32_t)appearanceModifier == 0) {
 		stack = PopStackFrame(stack, 128);
@@ -1102,9 +1081,6 @@ uint32_t n_sub_82575268(CpuState& ctx, uint8_t* base, uint32_t manager, uint64_t
 				uint64_t newCount = (uint64_t)(int64_t)((int32_t)dstBytes >> 4) + (uint64_t)(int64_t)((int32_t)srcBytes >> 4);
 
 				// state the callee may pass on
-				ctx.r5.u64 = srcBytes;
-				ctx.r6.u64 = dstBytes;
-				ctx.r7.u64 = srcBegin;
 				ctx.xer.ca = ((int32_t)srcBytes < 0) & (((uint32_t)srcBytes & 0xF) != 0);
 				// reserve room for both ranges (srcEnd goes in r8)
 				result = n_sub_82504F88(ctx, base, outList, newCount, srcEnd);
@@ -1187,12 +1163,8 @@ uint64_t n_sub_82575398(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 			STORE32(fieldValue, 0);
 			if (firstRef != 0) {
 				// state the callees may pass on
-				ctx.r8.u64 = reg8;
 				ctx.xer.ca = carry;
 				uint64_t record = IdRef_Get(ctx, base, firstRefAddr);
-				ctx.r4.u64 = typeName;
-				ctx.r6.u64 = reg6;
-				ctx.r7.u64 = reg7;
 				result = GameDB_TryGetTypeField(ctx, base, record, fieldValue);
 				reg6 = ctx.r6.u64;
 				reg7 = ctx.r7.u64;
@@ -1211,12 +1183,8 @@ uint64_t n_sub_82575398(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 			STORE32(fieldValue, 0);
 			if (secondRef != 0) {
 				// state the callees may pass on
-				ctx.r8.u64 = reg8;
 				ctx.xer.ca = carry;
 				uint64_t record = IdRef_Get(ctx, base, secondRefAddr);
-				ctx.r4.u64 = typeName;
-				ctx.r6.u64 = reg6;
-				ctx.r7.u64 = reg7;
 				result = GameDB_TryGetTypeField(ctx, base, record, fieldValue);
 				reg6 = ctx.r6.u64;
 				reg7 = ctx.r7.u64;
@@ -1224,7 +1192,6 @@ uint64_t n_sub_82575398(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 				if (LOAD32(fieldValue) != 0) {
 					STORE32(fieldValue, 0);
 					uint64_t recordAgain = IdRef_Get(ctx, base, secondRefAddr);
-					ctx.r4.u64 = typeName;
 					GameDB_TryGetTypeField(ctx, base, recordAgain, fieldValue);
 					STORE32(fieldCopy, LOAD32(fieldValue));
 					// the result slot is the gathered vector's header; its begin was read above
@@ -1243,9 +1210,6 @@ uint64_t n_sub_82575398(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 
 	if (listBegin != 0) {
 		// state the callee may pass on
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.xer.ca = carry;
 		result = HandleTarget_Free(ctx, base, listBegin);
 		reg6 = ctx.r6.u64;
@@ -1265,27 +1229,27 @@ uint64_t n_sub_82575398(CpuState& ctx, uint8_t* base, uint64_t appearanceModifie
 PROMOTED_ENTRY(35, sub_82575398, 0x82575398) { ctx.r3.u64 = n_sub_82575398(ctx, base, ctx.r3.u64); }
 
 // sub_82576140  [496 bytes]
-// When the global message queue has bytes +52 and +53 set and the handle's target has a nonzero word at +4,
+// When the global message queue has bytes +52 and +53 set and the wornItemHandle's target has a nonzero word at +4,
 // queues a message carrying that word, then up to two more built from the target's type-2 object (each
-// gated by n_sub_82570D68). The handle is then removed from its target's pointer list (if any) and cleared.
-uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint64_t handle) {
+// gated by n_sub_82570D68). The wornItemHandle is then removed from its target's pointer list (if any) and cleared.
+uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint64_t wornItemHandle) {
 	constexpr int32_t g_820A2BB8 = int32_t(0x820A2BB8);
 	constexpr int32_t g_820A4964 = int32_t(0x820A4964);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(35, 0x82576140)) { ctx.r3.u64 = managerAddr; ctx.r4.u64 = handle; __imp__sub_82576140(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(35, 0x82576140)) { ctx.r3.u64 = managerAddr; ctx.r4.u64 = wornItemHandle; __imp__sub_82576140(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82576140);
 	uint32_t stack = ctx.r1.u64;
 	CECAppearanceModifierManager* appearanceModifierManager = GameObject<CECAppearanceModifierManager>(base, managerAddr);
 	stack = PushStackFrame(base, stack, 224);
 
-	uint32_t handleAddr = uint32_t(handle);
+	uint32_t handleAddr = uint32_t(wornItemHandle);
 	uint32_t globalBase = uint32_t(g_83490000);
 	uint32_t queueOwner = LOAD32(LOAD32(globalBase + 26912) + 12);
 	uint32_t messageQueue = LOAD32(queueOwner + 140);
 	bool queueEnabled = LOAD8(messageQueue + 52) != 0 && LOAD8(messageQueue + 53) != 0;
 
 	uint64_t result = managerAddr;
-	uint64_t r4ForCallers = handle;     // r4 at the return: the handle, or what the later calls leave in r4
+	uint64_t r4ForCallers = wornItemHandle;     // r4 at the return: the wornItemHandle, or what the later calls leave in r4
 	bool targetWasNull = false;
 	if (queueEnabled) {
 		uint32_t target = LOAD32(handleAddr);
@@ -1308,14 +1272,13 @@ uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 				uint32_t baseVtable = uint32_t(g_820A2BB8);
 
 				ctx.r3.u64 = uint32_t(managerAddr);     // state the callee may pass on
-				uint32_t firstCheck = n_sub_82570D68(ctx, base, handle, 0);
-				uint64_t reg8 = firstCheck & 0xFF;      // r8 handed from call to call below
-				if (reg8 != 0) {
+				uint32_t firstCheck = n_sub_82570D68(ctx, base, wornItemHandle, 0);
+				uint64_t partCheckResult = firstCheck & 0xFF;      // r8 handed from call to call below
+				if (partCheckResult != 0) {
 					STORE32(stack + 80, 0);
 					uint32_t firstTarget = LOAD32(handleAddr);
-					ctx.r8.u64 = reg8;
 					uint32_t found = n_sub_82577A30(ctx, base, firstTarget, stack + 80);
-					reg8 = ctx.r8.u64;
+					partCheckResult = ctx.r8.u64;
 					if ((found & 0xFF) != 0) {
 						uint32_t source = LOAD32(stack + 80);
 						STORE32(stack + 96, messageVtable);
@@ -1334,19 +1297,15 @@ uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 						uint32_t queueOwnerB = LOAD32(LOAD32(globalBase + 26912) + 12);
 						uint32_t queueB = LOAD32(queueOwnerB + 140);
 						// state the callees may pass on
-						ctx.r7.u64 = queueOwnerB;
-						ctx.r8.u64 = b14;
 						uint64_t uniqueId2 = Entity_GetUniqueId(ctx, base, ownerEntity2);
 						n_sub_82577A88(ctx, base, uint64_t(queueB), stack + 96, uniqueId2);
-						reg8 = ctx.r8.u64;
+						partCheckResult = ctx.r8.u64;
 						STORE32(stack + 96, baseVtable);
 					}
 				}
 
 				// state the callee may pass on
-				ctx.r3.u64 = uint32_t(managerAddr);
-				ctx.r8.u64 = reg8;
-				uint32_t secondCheck = n_sub_82570D68(ctx, base, handle, 1);
+				uint32_t secondCheck = n_sub_82570D68(ctx, base, wornItemHandle, 1);
 				r4ForCallers = ctx.r4.u64;
 				if ((secondCheck & 0xFF) != 0) {
 					STORE32(stack + 80, 0);
@@ -1371,9 +1330,6 @@ uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 						STORE_F32(stack + 140, float(sourceValue2));
 						uint32_t queueC = LOAD32(LOAD32(globalRoot + 12) + 140);
 						// state the callees may pass on
-						ctx.r6.u64 = b5;
-						ctx.r7.u64 = b6;
-						ctx.r8.u64 = b4;
 						uint64_t uniqueId3 = Entity_GetUniqueId(ctx, base, ownerEntity3);
 						n_sub_82577A88(ctx, base, uint64_t(queueC), stack + 128, uniqueId3);
 						r4ForCallers = ctx.r4.u64;
@@ -1389,7 +1345,7 @@ uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 		result = target;
 		if (target != 0) {
 			ctx.r1.u64 = stack;
-			result = PtrList_RemoveAll(ctx, base, target, handle);
+			result = PtrList_RemoveAll(ctx, base, target, wornItemHandle);
 			r4ForCallers = ctx.r4.u64;
 		}
 	}
@@ -1401,14 +1357,14 @@ uint64_t n_sub_82576140(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 }
 PROMOTED_ENTRY(35, sub_82576140, 0x82576140) { ctx.r3.u64 = n_sub_82576140(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// When the global message queue has bytes +52 and +53 set and the handle's target has a nonzero word at +4,
-// queues a message carrying that word. The handle is then removed from its target's pointer list (if any)
+// When the global message queue has bytes +52 and +53 set and the wornItemHandle's target has a nonzero word at +4,
+// queues a message carrying that word. The wornItemHandle is then removed from its target's pointer list (if any)
 // and cleared.
-uint32_t n_sub_82576960(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint64_t handle) {
+uint32_t n_sub_82576960(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint64_t wornItemHandle) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820A4970 = int32_t(0x820A4970);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(35, 0x82576960)) { ctx.r3.u64 = managerAddr; ctx.r4.u64 = handle; __imp__sub_82576960(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(35, 0x82576960)) { ctx.r3.u64 = managerAddr; ctx.r4.u64 = wornItemHandle; __imp__sub_82576960(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82576960);
 	uint32_t stack = ctx.r1.u64;
 	// r6/r7 go on to PtrList_RemoveAll and back to the callers
@@ -1423,7 +1379,7 @@ uint32_t n_sub_82576960(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 	uint32_t result = (uint32_t)managerAddr;
 	bool targetWasNull = false;
 	if (queueEnabled) {
-		uint32_t target = LOAD32((uint32_t)handle);
+		uint32_t target = LOAD32((uint32_t)wornItemHandle);
 		if (target == 0) {
 			targetWasNull = true;
 		} else {
@@ -1447,19 +1403,17 @@ uint32_t n_sub_82576960(CpuState& ctx, uint8_t* base, uint64_t managerAddr, uint
 		}
 	}
 	if (!targetWasNull) {
-		uint32_t target = LOAD32((uint32_t)handle);
+		uint32_t target = LOAD32((uint32_t)wornItemHandle);
 		result = target;
 		if (target != 0) {
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			result = PtrList_RemoveAll(ctx, base, target, handle);
+			result = PtrList_RemoveAll(ctx, base, target, wornItemHandle);
 			reg6 = ctx.r6.u64;
 			reg7 = ctx.r7.u64;
 		}
 	}
-	STORE32((uint32_t)handle, 0);
+	STORE32((uint32_t)wornItemHandle, 0);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	// callers read r6/r7 after the call

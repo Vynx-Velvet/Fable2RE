@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82263408(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (!UseLiftedCode(9, 0x82263408)) { ctx.r3.u64 = followAddr; __imp__sub_82263408(ctx, base); return ctx.r3.u64; }
@@ -84,10 +85,6 @@ uint64_t CECFollow_Clear(CpuState& ctx, uint8_t* base, uint64_t self) {
 				}
 				ctx.r1.u64 = stack;
 				// state the callee may pass on (r7 is the zero target word just read)
-				ctx.r7.u64 = 0;
-				ctx.r8.u64 = container;
-				ctx.r9.u64 = containerEnd;
-				ctx.r10.u64 = node;
 				EntityHandle_Release(ctx, base, handle);
 			}
 
@@ -105,12 +102,8 @@ uint64_t CECFollow_GetClassName(CpuState& ctx, uint8_t* base, uint64_t className
 	constexpr int32_t str_TXT_820B36F8_B_ = int32_t(0x820B36F8);
 	if (!UseLiftedCode(25, 0x82455ED0)) { ctx.r3.u64 = classNameString; __imp__sub_82455ED0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82455ED0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820B36F8_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(25, sub_82455ED0, 0x82455ED0) { ctx.r3.u64 = CECFollow_GetClassName(ctx, base, ctx.r3.u64); }
@@ -182,6 +175,7 @@ uint64_t n_sub_82456050(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	constexpr int32_t str_TXT_820B3734_B_ = int32_t(0x820B3734);
 	constexpr int32_t str_TXT_820B3744_B_ = int32_t(0x820B3744);
 	constexpr int32_t str_TXT_820B3764_B_ = int32_t(0x820B3764);
+	constexpr int32_t str_TXT_820B3754_B_ = int32_t(0x820B3754);
 	if (!UseLiftedCode(25, 0x82456050)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = stream; ctx.r5.u64 = mode; ctx.r6.u64 = saving; __imp__sub_82456050(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82456050);
 	uint32_t stack = ctx.r1.u64;
@@ -229,7 +223,7 @@ uint64_t n_sub_82456050(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 
 	// The field name for +0x12 is the string at 0x820B3754.
 	ctx.r10.s64 = str_TXT_820B0000_B_;  // state the callee may pass on
-	CCharString_ConstructFromCStr(ctx, base, stack + 80, (int64_t)str_TXT_820B0000_B_ + 14164, -1);
+	CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B3754_B_, -1);
 	IStream_SerializeString(ctx, base, stack + 80, stream, followAddr + 18);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -454,8 +448,6 @@ uint64_t n_sub_82456E18(CpuState& ctx, uint8_t* base, uint32_t followAddr, uint3
 		TXT_820B3774_L_->m_10 = (uint8_t)enabled;
 		uint32_t isDisabled = ((enabled & 0xFF) == 0) ? 1 : 0;
 		ctx.r6.u64 = reg6;  // state the callee may pass on
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		result = n_sub_82391838(ctx, base, TXT_820B3774_L_->m_4, isDisabled);
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
@@ -567,9 +559,7 @@ uint64_t n_sub_82457468(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	}
 
 	ctx.r6.u64 = reg6;  // state the callee may pass on
-	ctx.r7.u64 = reg7;
 	ctx.r8.u64 = reg8;
-	ctx.r9.u64 = reg9;
 	ctx.xer.ca = xer.ca;
 	result = n_sub_82457368(ctx, base, entryValue, TXT_820B3774_L_->m_4);
 	xer.ca = ctx.xer.ca;
@@ -691,10 +681,6 @@ uint32_t n_sub_82457628(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 			nodeTarget = LOAD32(nodeHandleRef);
 			if (nodeTarget == 0) {
 				ctx.r6.u64 = reg6;  // state the callee may pass on
-				ctx.r7.u64 = reg7;
-				ctx.r8.u64 = reg8;
-				ctx.r9.u64 = reg9;
-				ctx.r10.u64 = 0;
 				ctx.xer.ca = xer.ca;
 				result = EntityHandle_Release(ctx, base, result);
 				reg6 = ctx.r6.u64;
@@ -789,11 +775,7 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 
 	uint32_t managerChild = LOAD32(manager + 12);
 	ctx.r6.u64 = (uint64_t)stack + 96;  // state the callee may pass on
-	ctx.r7.u64 = (uint64_t)stack + 128;
 	ctx.r8.u64 = managerChild;
-	ctx.r9.s64 = g_83490000;
-	ctx.r10.u64 = (uint64_t)stack + 128;
-	ctx.f13.f64 = shiftedZ;
 	ctx.v7 = mergeMask;
 	ctx.v13 = shiftedZVector;
 	n_sub_821F5B90(ctx, base, (uint64_t)stack + 112, LOAD32(managerChild + 96), (int64_t)g_83490000 + 30564);
@@ -851,20 +833,6 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 
 	// The label as a wide string at stack+96.
 	ctx.r5.u64 = (uint64_t)stack + 144;  // state the callee may pass on
-	ctx.r6.u64 = (uint64_t)stack + 96;
-	ctx.f1.f64 = value2;
-	ctx.f2.f64 = scaled1;
-	ctx.f3.f64 = value3;
-	ctx.f4.f64 = value0;
-	ctx.f5.f64 = value2;
-	ctx.f6.u64 = byte2;
-	ctx.f7.u64 = byte0;
-	ctx.f8.f64 = value3;
-	ctx.f9.f64 = value1;
-	ctx.f10.f64 = scaled0;
-	ctx.f11.f64 = scaled2;
-	ctx.f12.f64 = scaled3;
-	ctx.f13.f64 = value0;
 	ctx.v10 = lane0;
 	ctx.v11 = scaledBytes;
 	ctx.v12 = lane3;
@@ -891,10 +859,10 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 }
 PROMOTED_ENTRY(25, sub_82458698, 0x82458698) { ctx.r3.u64 = n_sub_82458698(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t target, uint64_t flag, double floatArg) {
+uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t target, uint64_t flag, double deltaTime) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(25, 0x824596B0)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = target; ctx.r5.u64 = flag; ctx.f1.f64 = floatArg; __imp__sub_824596B0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(25, 0x824596B0)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = target; ctx.r5.u64 = flag; ctx.f1.f64 = deltaTime; __imp__sub_824596B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824596B0);
 	PPCVRegister savedV127 = ctx.v127;
 	uint32_t stack = ctx.r1.u64;
@@ -909,7 +877,7 @@ uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	uint64_t r7 = ctx.r7.u64;
 	uint64_t r8 = ctx.r8.u64;
 	uint64_t r9 = ctx.r9.u64;
-	double f1 = floatArg;
+	double f1 = deltaTime;
 	double f13;
 	PPCCRRegister cr0 = ctx.cr0;
 	PPCXERRegister xer = ctx.xer;
@@ -1070,9 +1038,6 @@ uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 			if (holder != 0) {
 				uint32_t handler = LOAD32(LOAD32(holder + 4) + 100);
 				ctx.r6.u64 = r6;  // state the callee may pass on
-				ctx.r7.u64 = r7;
-				ctx.r8.u64 = r8;
-				ctx.r9.u64 = r9;
 				ctx.v1 = targetVector;
 				ctx.cr0 = cr0;
 				ctx.xer.ca = xer.ca;

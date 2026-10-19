@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821CB1B0(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
@@ -33,9 +34,6 @@ uint64_t n_sub_821CB1B0(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 	uint32_t linkedObject = physicsSimpleLight->m_4;
 
 	ctx.r1.u64 = stack;
-	ctx.r7.u64 = lightDesc;
-	ctx.r8.u64 = zero;
-	ctx.r9.s64 = g_82000000;
 
 	uint64_t result = n_sub_82202E90(ctx, base, linkedObject, stackArgAddr);
 
@@ -46,14 +44,14 @@ uint64_t n_sub_821CB1B0(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 }
 PROMOTED_ENTRY(3, sub_821CB1B0, 0x821CB1B0) { ctx.r3.u64 = n_sub_821CB1B0(ctx, base, ctx.r3.u32); }
 
-uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(3, 0x821DB4B0)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_821DB4B0(ctx, base); return ctx.r3.u64; }
+uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight, uint64_t sourceTransform) {
+	if (!UseLiftedCode(3, 0x821DB4B0)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = sourceTransform; __imp__sub_821DB4B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821DB4B0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 128);
 
-	uint32_t self = (uint32_t)arg1;
-	uint32_t src = (uint32_t)arg2;
+	uint32_t self = (uint32_t)physicsSimpleLight;
+	uint32_t src = (uint32_t)sourceTransform;
 
 	// first row (16 bytes) of the source rotation block at src + 48
 	PPCVRegister srcRow;
@@ -63,8 +61,8 @@ uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uin
 	uint32_t updateFn = LOAD32(data + 100);
 
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg1;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = physicsSimpleLight;
+	ctx.r4.u64 = sourceTransform;
 	ctx.r9.u64 = updateFn;
 	ctx.r10.u64 = 48;
 	ctx.v1 = srcRow;
@@ -80,7 +78,7 @@ uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uin
 	uint64_t quatLo = LOAD64(stack + 80);
 	uint64_t quatHi = LOAD64(stack + 88);
 
-	ctx.r3.u64 = arg1;
+	ctx.r3.u64 = physicsSimpleLight;
 	ctx.r4.u64 = quatLo;
 	ctx.r5.u64 = quatHi;
 	ctx.r6.u64 = applyFn;
@@ -94,18 +92,17 @@ uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(3, sub_821DB4B0, 0x821DB4B0) { ctx.r3.u64 = CECPhysicsSimpleLight_UpdateTransform(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_821FEEC0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_821FEEC0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
 	constexpr int32_t g_82000F94 = int32_t(0x82000F94);
-	if (!UseLiftedCode(5, 0x821FEEC0)) { ctx.r3.u64 = arg1; __imp__sub_821FEEC0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(5, 0x821FEEC0)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_821FEEC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FEEC0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
-	uint32_t linkedObject = LOAD32((uint32_t)arg1 + 4);
+	uint32_t linkedObject = LOAD32((uint32_t)physicsSimpleLight + 4);
 	STORE32(stack + 80, (uint32_t)g_82000F94);
 	STORE8(stack + 84, 0);
 	uint32_t descriptor = stack + 80;
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = g_82000F94;
 	uint64_t result = n_sub_82202E90(ctx, base, linkedObject, descriptor);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -128,7 +125,6 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 
 	uint32_t entityBefore = physicsSimpleLight->m_4;
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = (uint64_t)(int64_t)g_82000F94;
 	n_sub_82202E90(ctx, base, entityBefore, stack + 80);
 
 	uint64_t r9AfterFirstCall = ctx.r9.u64;
@@ -201,11 +197,6 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 			}
 		}
 
-		ctx.r5.u64 = (uint64_t)flagBit;
-		ctx.r6.u64 = (uint64_t)r6;
-		ctx.r7.u64 = r7;
-		ctx.r8.u64 = r8;
-		ctx.r9.u64 = r9;
 		ctx.xer.ca = carry;
 		result = C_82001100_UpdateTransform(ctx, base, result);
 		carry = ctx.xer.ca;
@@ -218,11 +209,11 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 }
 PROMOTED_ENTRY(11, sub_8229B070, 0x8229B070) { ctx.r3.u64 = n_sub_8229B070(ctx, base, ctx.r3.u32); }
 
-double n_sub_824D2880(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(29, 0x824D2880)) { ctx.r3.u64 = arg1; __imp__sub_824D2880(ctx, base); return ctx.f1.f64; }
+double n_sub_824D2880(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight) {
+	if (!UseLiftedCode(29, 0x824D2880)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_824D2880(ctx, base); return ctx.f1.f64; }
 	LiftedFrame frame(0x824D2880);
 	ctx.fpscr.disableFlushMode();
-	return double(LOAD_F32(arg1 + 12));
+	return double(LOAD_F32(physicsSimpleLight + 12));
 }
 PROMOTED_ENTRY(29, sub_824D2880, 0x824D2880) { ctx.f1.f64 = n_sub_824D2880(ctx, base, ctx.r3.u32); }
 
@@ -242,17 +233,16 @@ uint64_t CECPhysicsSimpleLight_GetClassName(CpuState& ctx, uint8_t* base, uint64
 }
 PROMOTED_ENTRY(41, sub_82644EF0, 0x82644EF0) { ctx.r3.u64 = CECPhysicsSimpleLight_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82647688(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(41, 0x82647688)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82647688(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82647688(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight, uint64_t deleteFlags) {
+	if (!UseLiftedCode(41, 0x82647688)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = deleteFlags; __imp__sub_82647688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82647688);
 	uint32_t stack = ctx.r1.u64;
-	uint64_t object = arg1;
-	uint32_t flags = arg2;
+	uint64_t object = physicsSimpleLight;
+	uint32_t flags = deleteFlags;
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
-	n_sub_824C2360(ctx, base, arg1);
+	n_sub_824C2360(ctx, base, physicsSimpleLight);
 
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
@@ -277,20 +267,20 @@ void n_sub_82749370(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAdd
 }
 PROMOTED_ENTRY(50, sub_82749370, 0x82749370) { n_sub_82749370(ctx, base, ctx.r3.u32); }
 
-void n_sub_82749390(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(50, 0x82749390)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82749390(ctx, base); return; }
+void n_sub_82749390(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight, uint32_t radiusSource) {
+	if (!UseLiftedCode(50, 0x82749390)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = radiusSource; __imp__sub_82749390(ctx, base); return; }
 	LiftedFrame frame(0x82749390);
 	ctx.fpscr.disableFlushMode();
-	STORE_F32(arg1 + 12, float(double(LOAD_F32(arg2))));
+	STORE_F32(physicsSimpleLight + 12, float(double(LOAD_F32(radiusSource))));
 	return;
 }
 PROMOTED_ENTRY(50, sub_82749390, 0x82749390) { n_sub_82749390(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(50, 0x827493A0)) { ctx.r3.u64 = arg1; __imp__sub_827493A0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
+	if (!UseLiftedCode(50, 0x827493A0)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_827493A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827493A0);
 	uint32_t stack = ctx.r1.u64;
-	const uint32_t self = (uint32_t)arg1;
+	const uint32_t self = (uint32_t)physicsSimpleLight;
 	PPCVRegister savedV127{};
 	PPCVRegister inputVector = ctx.v1;
 
@@ -306,7 +296,7 @@ uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	callTarget.u64 = getTransformFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = scratch;
-	ctx.r4.u64 = arg1;
+	ctx.r4.u64 = physicsSimpleLight;
 	ctx.r10.u64 = getTransformFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t transformPtr = ctx.r3.u64;
@@ -321,7 +311,7 @@ uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	SET_VF(sumVector, simde_mm_add_ps(VF(loadedVector), VF(inputVector)));
 
 	callTarget.u64 = applyFn;
-	ctx.r3.u64 = arg1;
+	ctx.r3.u64 = physicsSimpleLight;
 	ctx.r7.u64 = applyFn;
 	ctx.r8.u64 = typeInfo;
 	ctx.r9.u64 = transformPtr;

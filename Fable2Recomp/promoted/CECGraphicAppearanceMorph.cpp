@@ -9,17 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECGraphicAppearanceMorph_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outClassName) {
 	constexpr int32_t str_TXT_820A75FC_B_ = int32_t(0x820A75FC);
 	if (!UseLiftedCode(26, 0x82465D68)) { ctx.r3.u64 = outClassName; __imp__sub_82465D68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82465D68);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, outClassName, str_TXT_820A75FC_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return outClassName;
 }
 PROMOTED_ENTRY(26, sub_82465D68, 0x82465D68) { ctx.r3.u64 = CECGraphicAppearanceMorph_GetClassName(ctx, base, ctx.r3.u64); }
@@ -27,16 +24,12 @@ PROMOTED_ENTRY(26, sub_82465D68, 0x82465D68) { ctx.r3.u64 = CECGraphicAppearance
 uint64_t CECGraphicAppearanceMorph_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t morphAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(26, 0x824666E8)) { ctx.r3.u64 = morphAddr; ctx.r4.u64 = deleteFlags; __imp__sub_824666E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824666E8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags; // state the callee may pass on
 	CECGraphicAppearanceMorph_Dtor(ctx, base, morphAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, morphAddr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return morphAddr;
 }
 PROMOTED_ENTRY(26, sub_824666E8, 0x824666E8) { ctx.r3.u64 = CECGraphicAppearanceMorph_ScalarDeletingDtor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -229,9 +222,6 @@ uint64_t n_sub_82466888(CpuState& ctx, uint8_t* base, uint64_t morph, uint64_t c
 		handleTarget = LOAD32(handleEntry);
 		if (handleTarget == 0) {
 			// state the callee may pass on
-			ctx.r8.u64 = nodeTarget;
-			ctx.r9.u64 = node;
-			ctx.r10.u64 = 0;
 			result = EntityHandle_Release(ctx, base, result);
 		}
 	}
@@ -297,7 +287,6 @@ uint64_t CECGraphicAppearanceMorph_LoadFromDefinition(CpuState& ctx, uint8_t* ba
 	if (characterUidData != 0) {
 		characterUidText = LOAD32(characterUidData);
 	}
-	ctx.r4.u64 = characterUidText;
 	IStream_SerializeId(ctx, base, definition, appearanceMorph + 180);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stringBuffer);
 
@@ -379,7 +368,6 @@ uint32_t n_sub_82466B58(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 			if (entry != 0) {
 				ctx.r1.u64 = stack;
 				// state the callee may pass on
-				ctx.r6.u64 = reg6;
 				ctx.r8.u64 = reg8;
 				ctx.xer.ca = flags.ca;
 				uint64_t newObject = operator_new(ctx, base, 8);
@@ -411,10 +399,10 @@ uint32_t n_sub_82466B58(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 }
 PROMOTED_ENTRY(26, sub_82466B58, 0x82466B58) { ctx.r3.u64 = n_sub_82466B58(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82466CD8(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(26, 0x82466CD8)) { ctx.r3.u64 = arg1; __imp__sub_82466CD8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82466CD8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceMorphAddr) {
+	if (!UseLiftedCode(26, 0x82466CD8)) { ctx.r3.u64 = graphicAppearanceMorphAddr; __imp__sub_82466CD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82466CD8);
-	return n_sub_824686C8(ctx, base, arg1);
+	return n_sub_824686C8(ctx, base, graphicAppearanceMorphAddr);
 }
 PROMOTED_ENTRY(26, sub_82466CD8, 0x82466CD8) { ctx.r3.u64 = n_sub_82466CD8(ctx, base, ctx.r3.u64); }
 
@@ -485,9 +473,6 @@ uint64_t n_sub_82466CE0(CpuState& ctx, uint8_t* base, uint64_t morphAddr) {
 
 	if (found) {
 		// state the callee may pass on
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.xer.ca = flags.ca;
 		CECGraphicAppearance_ForEach(ctx, base, appearance);
 		// Remove every occurrence of this morph's +0xC address from the component's list at +0xC.
@@ -530,9 +515,7 @@ uint64_t n_sub_8246B3C0(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r6.u64 = reg6;
 	ctx.r7.u64 = graphicAppearanceMorphAddr + 36;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_8246C330(ctx, base, graphicAppearanceMorphAddr + 52);
 	reg6 = ctx.r6.u64;
@@ -596,9 +579,6 @@ uint64_t n_sub_8246B3C0(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		}
 		if (found) {
 			// state the callee may pass on
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
 			ctx.cr0 = cr0;
 			ctx.xer.ca = flags.ca;
 			n_sub_82628F28(ctx, base, component, sharedHandle);
@@ -610,10 +590,6 @@ uint64_t n_sub_8246B3C0(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 			flags.ca = ctx.xer.ca;
 		}
 		// state the callee may pass on
-		ctx.r4.u64 = reg4;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.cr0 = cr0;
 		ctx.xer.ca = flags.ca;
 		result = SharedHandle_Release(ctx, base, sharedHandleAddr);
@@ -701,7 +677,6 @@ uint64_t n_sub_8246BC90(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 			STORE32(stack + 80, uint32_t(g_820A8734));
 			uint32_t receiver = LOAD32(LOAD32(globalRoot + 12) + 140);
 			// state the callee may pass on (r8 holds the constant sign-extended)
-			ctx.r8.u64 = (uint64_t)(int64_t)g_820A8734;
 			ctx.cr0 = cr0;
 			uint64_t uniqueId = Entity_GetUniqueId(ctx, base, owner);
 			result = n_sub_823D5360(ctx, base, receiver, (uint64_t)stack + 80, uniqueId);

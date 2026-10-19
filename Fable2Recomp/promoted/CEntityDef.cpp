@@ -128,14 +128,14 @@ uint64_t n_sub_8321E9E0(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	stack = PushStackFrame(base, stack, 128);
 
 	PPCRegister callTarget{};
-	uint32_t fn{};
+	uint32_t vtableMethodAddress{};
 
-	fn = LOAD32(uint32_t(entityDef->vtable) + 20);
-	callTarget.u64 = (uint64_t)fn;
+	vtableMethodAddress = LOAD32(uint32_t(entityDef->vtable) + 20);
+	callTarget.u64 = (uint64_t)vtableMethodAddress;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = entityDefAddr;
 	ctx.r4.u64 = stream;
-	ctx.r10.u64 = fn;
+	ctx.r10.u64 = vtableMethodAddress;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint32_t flags = ctx.r3.u32;
 
@@ -143,10 +143,10 @@ uint64_t n_sub_8321E9E0(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 
 	uint32_t extraId = 0;
 	if ((int32_t)flags == 0) {
-		fn = LOAD32(uint32_t(entityDef->vtable) + 60);
-		callTarget.u64 = (uint64_t)fn;
+		vtableMethodAddress = LOAD32(uint32_t(entityDef->vtable) + 60);
+		callTarget.u64 = (uint64_t)vtableMethodAddress;
 		ctx.r3.u64 = entityDefAddr;
-		ctx.r10.u64 = fn;
+		ctx.r10.u64 = vtableMethodAddress;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		extraId = ctx.r3.u32;
 	}
@@ -155,11 +155,11 @@ uint64_t n_sub_8321E9E0(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	BinaryStream_WriteUInt32(ctx, base, stream, id);
 	BinaryStream_WriteUInt32(ctx, base, stream, extraId);
 
-	fn = LOAD32(uint32_t(entityDef->vtable) + 32);
-	callTarget.u64 = (uint64_t)fn;
+	vtableMethodAddress = LOAD32(uint32_t(entityDef->vtable) + 32);
+	callTarget.u64 = (uint64_t)vtableMethodAddress;
 	ctx.r3.u64 = entityDefAddr;
 	ctx.r4.u64 = stream;
-	ctx.r10.u64 = fn;
+	ctx.r10.u64 = vtableMethodAddress;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t result = ctx.r3.u64;
 

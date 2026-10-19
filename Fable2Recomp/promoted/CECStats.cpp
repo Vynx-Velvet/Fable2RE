@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t n_sub_82174F10(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -113,9 +114,7 @@ uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, 
 	STORE_F64(stack + 88, asInt.f64);
 	const uint32_t timeLimit = LOAD32(stack + 92);
 	// state the callee may pass on
-	ctx.f1.f64 = roundedValue;
 	ctx.f12 = asInt;
-	ctx.f13.f64 = roundedAsFloat;
 	uint32_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, keyString);
 
 	// Values the original code keeps in r7-r9 and hands to EntityHandle_Release.
@@ -153,10 +152,6 @@ uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, 
 				const uint32_t entity = LOAD32(handleTarget);
 				if (entity == 0) {
 					// state the callee may pass on
-					ctx.r7.u64 = r7Value;
-					ctx.r8.u64 = r8Value;
-					ctx.r9.u64 = r9Value;
-					ctx.r10.u64 = entity;
 					result = EntityHandle_Release(ctx, base, node + 12);
 					r7Value = ctx.r7.u32;
 					r8Value = ctx.r8.u32;
@@ -190,10 +185,6 @@ uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, 
 			STORE32(nextLink + 4, prevLink);
 			STORE32(node + 12, handleMarker);
 			// state the callee may pass on
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = prevLink;
-			ctx.r9.u64 = nextLink;
-			ctx.r10.u64 = prev;
 			EntityHandle_Release(ctx, base, node + 12);
 			STORE32(node + 16, 0);
 			result = HandleTarget_Free(ctx, base, node);
@@ -368,11 +359,6 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 
 	if (hasAugment) {
 		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
-		ctx.r9.u64 = r9Value;
-		ctx.r10.u64 = r10Value;
 		ctx.cr0 = cr[0];
 		ctx.xer.ca = xer.ca;
 		const uint32_t hasEvilAddition = n_sub_8223D5E0(ctx, base, augment, 7);
@@ -544,9 +530,6 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 
 	if (hasAugment) {
 		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
 		ctx.cr0 = cr[0];
 		ctx.xer.ca = xer.ca;
 		const uint32_t hasEvilAddition = n_sub_8223D5E0(ctx, base, augment, 7);
@@ -659,14 +642,7 @@ uint64_t CECStats_ApplyPurityBalancing(CpuState& ctx, uint8_t* base, uint64_t st
 			const uint64_t recordRef = uint64_t(stack) + 88;
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = record;
-			ctx.f7.f64 = total;
-			ctx.f8.f64 = recordIntAsFloat;
-			ctx.f9.f64 = recordIntAsDouble;
 			ctx.f10 = recordIntBits;
-			ctx.f11.f64 = newValue;
-			ctx.f12.f64 = threshold;
-			ctx.f13.f64 = offsetConstant;
 			CCharString_ConstructFromCStr(ctx, base, nameString, uint64_t(str_TXT_82001440_B_), -1);
 			GameDBRecordRef_Construct(ctx, base, recordRef, uint32_t(stack) + 80);
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
@@ -841,12 +817,8 @@ uint64_t CECStats_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outClassNa
 	constexpr int32_t str_TXT_820B59D0_B_ = int32_t(0x820B59D0);
 	if (!UseLiftedCode(28, 0x8249C528)) { ctx.r3.u64 = outClassName; __imp__sub_8249C528(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8249C528);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, outClassName, str_TXT_820B59D0_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return outClassName;
 }
 PROMOTED_ENTRY(28, sub_8249C528, 0x8249C528) { ctx.r3.u64 = CECStats_GetClassName(ctx, base, ctx.r3.u64); }
@@ -859,7 +831,6 @@ uint64_t n_sub_8249CAC8(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_8249CB18(ctx, base, statsAddr);
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, statsAddr);
@@ -964,17 +935,7 @@ uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = highLtBit;
-	ctx.r6.u64 = lowIndex;
-	ctx.r7.u64 = lowSoBit;
 	ctx.f1.f64 = delta;
-	ctx.f6.f64 = clampedHeight;
-	ctx.f7.f64 = highSelector;
-	ctx.f8.f64 = aboveMax;
-	ctx.f9.f64 = atLeastMin;
-	ctx.f10.f64 = lowSelector;
-	ctx.f11.f64 = aboveMin;
-	ctx.f12.f64 = newHeight.f64;
 	ctx.f13 = newHeight;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, statsAddr);
 
@@ -995,7 +956,6 @@ uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 
 			const uint32_t modifierName = stack + 80;
 			// state the callee may pass on
-			ctx.r8.u64 = reportModifiers;
 			ctx.f13 = deltaMagnitude;
 			CCharString_ConstructFromCStr(ctx, base, modifierName, str_TXT_820B5CE4_B_, -1);
 
@@ -1062,18 +1022,8 @@ uint64_t CECStats_ModifyStat(CpuState& ctx, uint8_t* base, uint64_t statsAddr, d
 	stats->m_3C = float(clamped);
 
 	// state the callee may pass on
-	ctx.r6.u64 = highIndex;
 	ctx.r7.u64 = uint64_t(int64_t(g_82100170));  // the table address as the original's lis leaves it (sign-extended)
 	ctx.f1.f64 = statValue;
-	ctx.f5.f64 = clamped;
-	ctx.f6.f64 = highSelector;
-	ctx.f7.f64 = aboveMax;
-	ctx.f8.f64 = atLeastMin;
-	ctx.f9.f64 = lowSelector;
-	ctx.f10.f64 = aboveMin;
-	ctx.f11.f64 = statValue;
-	ctx.f12.f64 = maxValue;
-	ctx.f13.f64 = zero;
 	return HeroStats_NotifyStatModified(ctx, base, statsAddr);
 }
 PROMOTED_ENTRY(28, sub_8249ED38, 0x8249ED38) { ctx.r3.u64 = CECStats_ModifyStat(ctx, base, ctx.r3.u64, ctx.f1.f64); }
@@ -1121,17 +1071,7 @@ uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = highLtBit;
-	ctx.r6.u64 = lowIndex;
-	ctx.r7.u64 = lowSoBit;
-	ctx.r8.u64 = lowLtBit;
 	ctx.f1.f64 = delta;
-	ctx.f7.f64 = clampedStrength;
-	ctx.f8.f64 = highSelector;
-	ctx.f9.f64 = aboveOne;
-	ctx.f10.f64 = atLeastZero;
-	ctx.f11.f64 = lowSelector;
-	ctx.f12.f64 = newStrength.f64;
 	ctx.f13 = newStrength;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, heroStats);
 	// Registers callers read after the call.
@@ -1157,7 +1097,6 @@ uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double
 
 			const uint32_t modifierName = stack + 80;
 			// state the callee may pass on
-			ctx.r8.u64 = reportModifiers;
 			ctx.f13 = deltaMagnitude;
 			CCharString_ConstructFromCStr(ctx, base, modifierName, str_TXT_820B5CF4_B_, -1);
 
@@ -1230,18 +1169,8 @@ uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = lowIndex;
-	ctx.r6.u64 = lowLtBit;
-	ctx.r7.u64 = highIndex;
 	ctx.r8.u64 = uint64_t(int64_t(g_82100170));  // the table address as the original's lis leaves it (sign-extended)
 	ctx.f1.f64 = delta;
-	ctx.f7.f64 = clampedSkill;
-	ctx.f8.f64 = highSelector;
-	ctx.f9.f64 = aboveOne;
-	ctx.f10.f64 = atLeastZero;
-	ctx.f11.f64 = lowSelector;
-	ctx.f12.f64 = newSkill;
-	ctx.f13.f64 = newSkill;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, statsAddr);
 
 	// Registers handed on to the later calls and back to callers.
@@ -1316,7 +1245,6 @@ uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 		const uint32_t component = LOAD32(entry + 20);
 		if (component != 0) {
 			// state the callee may pass on
-			ctx.r5.u64 = hasKey33;
 			handOverState();
 			result = n_sub_821E8870(ctx, base, component, 9);
 			takeBackState();
@@ -1450,11 +1378,6 @@ uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		stats->m_4C = uint32_t(berserkEndWord);
 
 		// State the callee may pass on (r4 still holds the offset of m_4C).
-		ctx.r4.u64 = 76;
-		ctx.f9.s64 = berserkEndWord;
-		ctx.f10.f64 = berserkEnd;
-		ctx.f11.f64 = counter;
-		ctx.f12.f64 = counterSlot.f64;
 		n_sub_8249EDA8(ctx, base, statsAddr, strengthBonus);
 		ctx.fpscr.disableFlushMode();
 
@@ -1469,7 +1392,6 @@ uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		stats->m_4C = 0u;
 		// State the callee may pass on.
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = isBerserk;
 		n_sub_8249EDA8(ctx, base, statsAddr, -strengthBonus);
 		ctx.fpscr.disableFlushMode();
 
@@ -1516,13 +1438,10 @@ uint64_t n_sub_8249F8A0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		if (int32_t(LOAD32(world + 284)) >= 1) {
 			// State the callee may pass on.
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = r8Out;
 			const uint64_t handle = SortedArray_FindValueByKey(ctx, base, LOAD32(world + 156), 2);
 			r8Out = ctx.r8.u64;
 			if (uint32_t(handle) != 0) {
 				// State the callee may pass on: r4 still holds the key.
-				ctx.r4.u64 = 2;
-				ctx.f13.f64 = f13Out;
 				result = EntityHandle_GetEntity(ctx, base, handle);
 				r4Out = ctx.r4.u64;
 				r8Out = ctx.r8.u64;
@@ -1536,7 +1455,6 @@ uint64_t n_sub_8249F8A0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 
 		// State the callee may pass on.
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = r8Out;
 		result = GameDBRecordRef_Construct(ctx, base, uint64_t(stack) + 88, titleRecordName);
 		r4Out = ctx.r4.u64;
 		r8Out = ctx.r8.u64;
@@ -1791,8 +1709,6 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	uint32_t playersSlot = LOAD32(playersRef + 4);
 	// State the callee may pass on.
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = playersSlot;
-	ctx.r10.u64 = playersRef;
 	const uint64_t isPlayerResult = Players_IsPlayer(ctx, base, LOAD32(playersSlot), ownerEntity);
 	const uint32_t isPlayer = uint32_t(isPlayerResult) & 0xFF;
 	if (isPlayer == 0) {
@@ -1822,17 +1738,10 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	// First player: the handle at players+104.
 	playersSlot = LOAD32(LOAD32(world + 88) + 4);
 	// State the callee may pass on.
-	ctx.r8.u64 = isPlayer;
-	ctx.r9.u64 = unlocksAllowed;
-	ctx.r10.u64 = playersSlot;
 	const uint32_t firstPlayer = uint32_t(EntityHandle_Get(ctx, base, LOAD32(playersSlot)));
 	if (firstPlayer != 0 && (LOAD8(firstPlayer + 144) & 64) != 0 && ((LOAD32(firstPlayer + 40) >> 25) & 1) != 0) {
 		const ComponentSearch search = findComponent57(firstPlayer);
 		// State the callee may pass on; this search keeps 32-bit values.
-		ctx.r7.u64 = search.r7;
-		ctx.r8.u64 = search.r8;
-		ctx.r9.u64 = uint32_t(search.r9);
-		ctx.r10.u64 = uint32_t(search.r10);
 		ctx.cr0 = search.cr0;
 		ctx.xer.ca = search.ca;
 		Achievements_UnlockForHero(ctx, base, search.component, achievementId, achievementIndex, 0);
@@ -1843,8 +1752,6 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	playersRef = LOAD32(world + 88);
 	playersSlot = LOAD32(playersRef + 4);
 	// State the callee may pass on.
-	ctx.r9.u64 = playersSlot;
-	ctx.r10.u64 = playersRef;
 	const uint64_t secondPlayerResult = SpellShot_GetOwner(ctx, base, LOAD32(playersSlot));
 	const uint32_t secondPlayer = uint32_t(secondPlayerResult);
 	if (secondPlayer == 0 || (LOAD8(secondPlayer + 144) & 64) == 0) {
@@ -1866,10 +1773,6 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	}
 	const ComponentSearch search = findComponent57(secondPlayer);
 	// State the callee may pass on.
-	ctx.r7.u64 = search.r7;
-	ctx.r8.u64 = search.r8;
-	ctx.r9.u64 = search.r9;
-	ctx.r10.u64 = search.r10;
 	ctx.cr0 = search.cr0;
 	ctx.xer.ca = search.ca;
 	const uint64_t result = Achievements_UnlockForHero(ctx, base, search.component, achievementId, achievementIndex, 0);
@@ -2033,9 +1936,6 @@ uint32_t n_sub_824A6E00(CpuState& ctx, uint8_t* base, uint32_t statsAddr, double
 			const double newMaximum = double(stats->m_424);
 			// State the callee may pass on.
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
 			ctx.cr0 = cr0Value;
 			ctx.xer.ca = xerValue.ca;
 			const uint32_t callResult = n_sub_82389100(ctx, base, component, newMaximum);
@@ -2048,9 +1948,6 @@ uint32_t n_sub_824A6E00(CpuState& ctx, uint8_t* base, uint32_t statsAddr, double
 		if (LOAD8(worldFlags + 52) != 0 && LOAD8(worldFlags + 54) != 0) {
 			// State the callee may pass on.
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
 			ctx.cr0 = cr0Value;
 			ctx.xer.ca = xerValue.ca;
 			const uint32_t callResult = n_sub_82389100(ctx, base, component, f1Value);
@@ -2104,7 +2001,6 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r8.s64 = g_820B0000;
 	const uint64_t levelListHash = String_HashFnv1(ctx, base, uint64_t(int64_t(g_820B0000) + 25804), hashSeed);
 	const uint64_t levelList = n_sub_829FB108(ctx, base, LOAD32(uint32_t(g_83490000 + 27600)), levelListHash);
 	// f13 holds m_424 for the calls below, as in the original
@@ -2223,7 +2119,6 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 		ctx.r8.u64 = r8State;
 		ctx.f1.f64 = flooredGold;
 		ctx.f12 = wholeGoldBits;
-		ctx.f13.f64 = flooredGoldSingle;
 		ctx.cr0 = cr0State;
 		ctx.xer.ca = caState;
 		result = n_sub_8239E698(ctx, base, entryData, wholeGold, 1, 1, 0);
@@ -2327,9 +2222,6 @@ uint64_t HeroStats_NotifyStatModified(CpuState& ctx, uint8_t* base, uint32_t sta
 		STORE8(key116Data + 16, 1);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6State;
-		ctx.r7.u64 = r7State;
-		ctx.r8.u64 = r8State;
 		ctx.cr0 = cr0State;
 		ctx.xer.ca = caState;
 		HeroStats_PublishStatsSnapshot(ctx, base, key116Data, 1);
@@ -2372,10 +2264,6 @@ uint64_t HeroStats_NotifyStatModified(CpuState& ctx, uint8_t* base, uint32_t sta
 		}
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6State;
-		ctx.r7.u64 = r7State;
-		ctx.r8.u64 = r8State;
-		ctx.r9.u64 = r9State;
 		ctx.cr0 = cr0State;
 		ctx.xer.ca = caState;
 		result = n_sub_823F23B0(ctx, base, key21Data);
@@ -2487,7 +2375,6 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 		const uint32_t players = LOAD32(LOAD32(LOAD32(LOAD32(globals + 26912) + 12) + 88) + 4);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = players;
 		result = Players_IsPlayer(ctx, base, LOAD32(players), owner);
 		keepCalleeRegisters();
 	}
@@ -2618,18 +2505,7 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 				const uint32_t notifyTarget = LOAD32(LOAD32(globalState + 168) + 4);
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
-				ctx.r5.u64 = r5State;
-				ctx.r6.u64 = r6State;
-				ctx.r7.u64 = r7State;
 				ctx.r8.u64 = r8State;
-				ctx.f6.f64 = f6State;
-				ctx.f7.f64 = f7State;
-				ctx.f8.f64 = f8State;
-				ctx.f9.f64 = f9State;
-				ctx.f10.f64 = f10State;
-				ctx.f11.f64 = f11State;
-				ctx.f12.f64 = f12State;
-				ctx.f13.f64 = f13State;
 				ctx.xer.ca = caState;
 				result = n_sub_821B5478(ctx, base, notifyTarget, 238);
 				keepCalleeRegisters();
@@ -2901,7 +2777,6 @@ uint32_t CECStats_ClearBonus(CpuState& ctx, uint8_t* base, uint32_t statsAddr, u
 			// state the callee may pass on
 			ctx.r0.u64 = r0Value;
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = r8Value;
 			ctx.cr0.lt = compare0.lt;
 			ctx.cr0.gt = compare0.gt;
 			ctx.cr0.eq = compare0.eq;
@@ -2986,8 +2861,6 @@ uint64_t n_sub_824A94B0(CpuState& ctx, uint8_t* base, uint64_t stats, uint64_t a
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = stats;
-	ctx.r8.u64 = incomingR8;
 	Stats_GetAbilityBaseKeyByIndex(ctx, base, abilityKey, abilityIndex);
 
 	if (LOAD32(stack + 80) != 0) {
@@ -3091,8 +2964,6 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 
 		uint64_t balancingKey = (uint64_t)stack + 80;  // a CCharString on the stack
 		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r8.u64 = r8Value;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -3110,9 +2981,6 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 		double stepCountDouble = double(stepCountBits.s64);
 		double stepCountSingle = double(float(stepCountDouble));
 		// state the callee may pass on
-		ctx.r6.u64 = (uint32_t)stepCount;
-		ctx.r8.u64 = rangeStart;
-		ctx.f13.f64 = stepCountDouble;
 		Achievements_GetBalancingValue(ctx, base, balancingKey);
 		double requiredCount = ctx.f1.f64;
 		ctx.fpscr.disableFlushMode();

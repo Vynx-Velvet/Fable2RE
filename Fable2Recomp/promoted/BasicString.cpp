@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t BasicString_AssignSubstr(CpuState& ctx, uint8_t* base, uint64_t dstStringAddr, uint64_t srcStringAddr, uint64_t startOffset, uint64_t requestedLength, uint64_t r8Value) {
 	if (!UseLiftedCode(1, 0x8218EA38)) { ctx.r3.u64 = dstStringAddr; ctx.r4.u64 = srcStringAddr; ctx.r5.u64 = startOffset; ctx.r6.u64 = requestedLength; ctx.r8.u64 = r8Value; __imp__sub_8218EA38(ctx, base); return ctx.r3.u64; }
@@ -18,14 +19,14 @@ uint64_t BasicString_AssignSubstr(CpuState& ctx, uint8_t* base, uint64_t dstStri
 	stack = PushStackFrame(base, stack, 128);
 
 	// r6 as the callees below receive it: requestedLength, or what the range-error handler left there
-	uint64_t r6Value = requestedLength;
+	uint64_t effectiveRequestedLength = requestedLength;
 	if (LOAD32((uint32_t)srcStringAddr + 0x14) < (uint32_t)startOffset) {
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = dstStringAddr;
 		ctx.r4.u64 = srcStringAddr;
 		ctx.r6.u64 = requestedLength;
 		n_sub_82CD12C8(ctx, base, r8Value);
-		r6Value = ctx.r6.u64;
+		effectiveRequestedLength = ctx.r6.u64;
 		r8Value = ctx.r8.u64;
 	}
 
@@ -37,7 +38,7 @@ uint64_t BasicString_AssignSubstr(CpuState& ctx, uint8_t* base, uint64_t dstStri
 	if ((uint32_t)dstStringAddr == (uint32_t)srcStringAddr) {
 		// Assigning part of the string to itself: erase what follows the range, then what precedes it.
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = r6Value;
+		ctx.r6.u64 = effectiveRequestedLength;
 		n_sub_822F1F60(ctx, base, dstStringAddr, copyLength + startOffset, -1, r8Value);
 		n_sub_822F1F60(ctx, base, dstStringAddr, 0, startOffset, ctx.r8.u64);
 		stack = PopStackFrame(stack, 128);
@@ -46,7 +47,7 @@ uint64_t BasicString_AssignSubstr(CpuState& ctx, uint8_t* base, uint64_t dstStri
 	}
 
 	ctx.r1.u64 = stack;
-	ctx.r6.u64 = r6Value;
+	ctx.r6.u64 = effectiveRequestedLength;
 	uint32_t growResult = BasicString_Grow(ctx, base, dstStringAddr, copyLength, 0, r8Value);
 	if ((growResult & 0xFF) != 0) {
 		uint64_t srcData = (LOAD32((uint32_t)srcStringAddr + 0x18) >= 16)
@@ -90,7 +91,6 @@ uint64_t BasicString_AssignPtrLen(CpuState& ctx, uint8_t* base, uint64_t basicSt
 	if (sourceIsInternal) {
 		// The source lies inside this string's own characters: assign it as a substring of itself.
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = capacity;
 		uint64_t assigned = BasicString_AssignSubstr(ctx, base, basicStringAddr, basicStringAddr, sourceChars - data, charCount, r8Value);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
@@ -98,7 +98,6 @@ uint64_t BasicString_AssignPtrLen(CpuState& ctx, uint8_t* base, uint64_t basicSt
 	}
 
 	ctx.r1.u64 = stack;
-	ctx.r9.u64 = capacity;
 	uint32_t growResult = BasicString_Grow(ctx, base, basicStringAddr, charCount, 0, r8Value);
 	if ((growResult & 0xFF) != 0) {
 		uint32_t newCapacity = basicString->capacity;
@@ -124,13 +123,11 @@ uint32_t BasicString_Grow(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr
 	stack = PushStackFrame(base, stack, 128);
 
 	// r4 handed back at the last return: requestedLength, or what the length-error handler left there
-	uint64_t r4Value = requestedLength;
+	uint64_t effectiveRequestedLength = requestedLength;
 	if ((uint32_t)requestedLength > 0xFFFFFFFEu) {
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = basicStringAddr;
-		ctx.r4.u64 = requestedLength;
 		n_sub_82CD11D0(ctx, base, r8Value);
-		r4Value = ctx.r4.u64;
+		effectiveRequestedLength = ctx.r4.u64;
 		r8Value = ctx.r8.u64;
 	}
 
@@ -170,7 +167,7 @@ uint32_t BasicString_Grow(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	// callers read r4, r8 and the carry flag (set when the requested length is zero) after the call
-	ctx.r4.u64 = r4Value;
+	ctx.r4.u64 = effectiveRequestedLength;
 	ctx.r8.u64 = r8Value;
 	ctx.xer.ca = (uint32_t)requestedLength == 0;
 	return (uint32_t)requestedLength != 0;
@@ -208,7 +205,6 @@ uint32_t BasicString_Reallocate(CpuState& ctx, uint8_t* base, uint64_t basicStri
 	uint64_t allocSize = newCapacity + 1;
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r4.u64 = 0;
 	ctx.r5.u64 = newLength;
 	ctx.xer.ca = flags.ca;
 	uint64_t newData = Allocator_AllocateElements1(ctx, base, allocSize, r8Value);
@@ -261,9 +257,6 @@ uint32_t BasicString_Assign(CpuState& ctx, uint8_t* base, uint64_t basicStringAd
 		}
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r4.u64 = r4Value;
-		ctx.r5.u64 = r5Value;
-		ctx.r8.u64 = r8Value;
 		result = HandleTarget_Free(ctx, base, heapBuffer);
 		r4Value = ctx.r4.u64;
 		r5Value = ctx.r5.u64;
@@ -294,7 +287,6 @@ uint32_t n_sub_822F1F60(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 
 	if ((uint32_t)basicString->length < (uint32_t)position) {
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = basicStringAddr;
 		n_sub_82CD12C8(ctx, base, r8Value);
 		r8Value = ctx.r8.u64;
 	}
@@ -314,8 +306,6 @@ uint32_t n_sub_822F1F60(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 		// Move the characters after the erased range down over it.
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r9.u64 = charsFromPosition;
-		ctx.r10.u64 = data;
 		memcpy_s(ctx, base, eraseStart, (uint64_t)capacity - position, eraseStart + eraseCount, charsFromPosition - eraseCount, capacity);
 		r8Value = ctx.r8.u64;
 
@@ -354,8 +344,6 @@ uint64_t BasicString_ConstructFromCStr(CpuState& ctx, uint8_t* base, uint64_t ba
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on: the initial capacity and the terminating character
-	ctx.r9.u64 = 15;
-	ctx.r10.u64 = 0;
 	BasicString_AssignPtrLen(ctx, base, basicStringAddr, sourceText, textLength, r8Value);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -448,7 +436,6 @@ uint64_t n_sub_826C2FA8(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_826C2E98(ctx, base, basicStringAddr);
 	if (deleteFlags & 0x1) {
 		HandleTarget_Free(ctx, base, basicStringAddr);

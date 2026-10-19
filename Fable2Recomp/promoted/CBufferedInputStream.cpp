@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 void CBufferedInputStream_SeekTo(CpuState& ctx, uint8_t* base, uint32_t bufferedInputStreamAddr, uint64_t targetPosition) {
 	if (!UseLiftedCode(0, 0x82175DE0)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = targetPosition; __imp__sub_82175DE0(ctx, base); return; }
@@ -57,7 +58,6 @@ uint32_t CBufferedInputStream_ReadChar(CpuState& ctx, uint8_t* base, uint64_t bu
 		ctx.r4.u64 = character;
 		CCharString_MakeUnique(ctx, base, bufferedInputStreamAddr);
 		uint32_t charString = bufferedInputStream->m_string;
-		ctx.r5.u64 = 1;
 		CCharString_AppendChar(ctx, base, charString, characterValue);
 		uint32_t result = (uint32_t)bufferedInputStreamAddr;
 		stack = PopStackFrame(stack, 128);
@@ -168,9 +168,6 @@ uint64_t CBufferedInputStream_ReadCharString(CpuState& ctx, uint8_t* base, uint6
 			STORE8(charAddr, c);
 		} else {
 			ctx.r1.u64 = stack;
-			ctx.r7.u64 = lockR7;
-			ctx.r8.u64 = lockR8;
-			ctx.r9.u64 = lockR9;
 			CBufferedReadStream_Read(ctx, base, sourceStream, charAddr, 1);
 			regR5 = ctx.r5.u64;
 			regR6 = ctx.r6.u64;
@@ -185,11 +182,7 @@ uint64_t CBufferedInputStream_ReadCharString(CpuState& ctx, uint8_t* base, uint6
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = regR5;
-		ctx.r6.u64 = regR6;
-		ctx.r7.u64 = regR7;
 		ctx.r8.u64 = regR8;
-		ctx.r9.u64 = regR9;
 		CBufferedInputStream_ReadChar(ctx, base, bufferedInputStreamAddr, currentChar);
 		lockR7 = ctx.r7.u64;
 		lockR8 = ctx.r8.u64;
@@ -267,9 +260,6 @@ uint64_t CBufferedInputStream_ReadWideString(CpuState& ctx, uint8_t* base, uint6
 			STORE32((uint32_t)sourceStream + streamReadOff, bytesRead + 2);
 		} else {
 			ctx.r1.u64 = stack;
-			ctx.r7.u64 = readArg7;
-			ctx.r8.u64 = readArg8;
-			ctx.r9.u64 = readArg9;
 			CBufferedReadStream_Read(ctx, base, sourceStream, wideCharBuffer, 2);
 			appendR5 = ctx.r5.u64;
 			appendR6 = ctx.r6.u64;
@@ -293,11 +283,7 @@ uint64_t CBufferedInputStream_ReadWideString(CpuState& ctx, uint8_t* base, uint6
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = appendR5;
-		ctx.r6.u64 = appendR6;
-		ctx.r7.u64 = appendR7;
 		ctx.r8.u64 = appendR8;
-		ctx.r9.u64 = appendR9;
 		CWideString_AppendChar(ctx, base, bufferedInputStreamAddr, currentWideChar);
 		readArg7 = ctx.r7.u64;
 		readArg8 = ctx.r8.u64;
@@ -398,8 +384,8 @@ uint64_t CBufferedInputStream_Reset(CpuState& ctx, uint8_t* base, uint64_t buffe
 }
 PROMOTED_ENTRY(73, sub_82A1CEF0, 0x82A1CEF0) { ctx.r3.u64 = CBufferedInputStream_Reset(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(73, 0x82A1CF98)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82A1CF98(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t bufferOut, uint64_t byteCountOut) {
+	if (!UseLiftedCode(73, 0x82A1CF98)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = bufferOut; ctx.r5.u64 = byteCountOut; __imp__sub_82A1CF98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1CF98);
 	uint32_t stack = ctx.r1.u64;
 	CBufferedInputStream* bufferedInputStream = GameObject<CBufferedInputStream>(base, bufferedInputStreamAddr);
@@ -410,8 +396,8 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	uint32_t resetFn = LOAD32(uint32_t(bufferedInputStream->m_string) + 8);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = bufferedInputStreamAddr;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r4.u64 = bufferOut;
+	ctx.r5.u64 = byteCountOut;
 	ctx.r10.u64 = resetFn;
 	REX_CALL_INDIRECT_FUNC(resetFn);
 
@@ -426,7 +412,7 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 		countAddr = stack + 80;
 	}
 	uint32_t count = LOAD32(countAddr);
-	STORE32((uint32_t)arg3, count);
+	STORE32((uint32_t)byteCountOut, count);
 
 	uint32_t stream = bufferedInputStream->m_stream;
 	uint32_t streamVtable = LOAD32(stream);
@@ -439,7 +425,7 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	REX_CALL_INDIRECT_FUNC(seekFn);
 
 	uint32_t stream2 = bufferedInputStream->m_stream;
-	count = LOAD32((uint32_t)arg3);
+	count = LOAD32((uint32_t)byteCountOut);
 	uint32_t buffer = bufferedInputStream->m_buffer;
 	uint32_t stream2Vtable = LOAD32(stream2);
 	uint32_t readFn = LOAD32(stream2Vtable + 12);
@@ -451,7 +437,7 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	ctx.r8.u64 = stream2Vtable;
 	REX_CALL_INDIRECT_FUNC(readFn);
 
-	STORE32((uint32_t)arg2, uint32_t(bufferedInputStream->m_buffer));
+	STORE32((uint32_t)bufferOut, uint32_t(bufferedInputStream->m_buffer));
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -459,16 +445,16 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 }
 PROMOTED_ENTRY(73, sub_82A1CF98, 0x82A1CF98) { ctx.r3.u64 = n_sub_82A1CF98(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82A1D030(CpuState& ctx, uint8_t* base, uint32_t bufferedInputStreamAddr, uint32_t arg2) {
-	if (!UseLiftedCode(73, 0x82A1D030)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = arg2; __imp__sub_82A1D030(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82A1D030(CpuState& ctx, uint8_t* base, uint32_t bufferedInputStreamAddr, uint32_t offset) {
+	if (!UseLiftedCode(73, 0x82A1D030)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = offset; __imp__sub_82A1D030(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1D030);
 	CBufferedInputStream* bufferedInputStream = GameObject<CBufferedInputStream>(base, bufferedInputStreamAddr);
-	return (int32_t)arg2 < (int32_t)bufferedInputStream->m_bufferSize ? 1 : 0;
+	return (int32_t)offset < (int32_t)bufferedInputStream->m_bufferSize ? 1 : 0;
 }
 PROMOTED_ENTRY(73, sub_82A1D030, 0x82A1D030) { ctx.r3.u64 = n_sub_82A1D030(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(73, 0x82A1D050)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82A1D050(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t buffer, uint64_t byteCount) {
+	if (!UseLiftedCode(73, 0x82A1D050)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = buffer; ctx.r5.u64 = byteCount; __imp__sub_82A1D050(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1D050);
 	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
@@ -480,8 +466,8 @@ uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	callTarget.u64 = (uint64_t)openFunc;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = bufferedInputStreamAddr;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r4.u64 = buffer;
+	ctx.r5.u64 = byteCount;
 	ctx.r10.u64 = openFunc;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t handle = ctx.r3.u64;
@@ -498,13 +484,13 @@ uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	ctx.r9.u64 = stream;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	// stream->vtable[3](stream, arg2, arg3, 0)
+	// stream->vtable[3](stream, buffer, byteCount, 0)
 	uint32_t stream2 = bufferedInputStream->m_stream;
 	uint32_t readFunc = LOAD32(LOAD32(stream2) + 12);
 	callTarget.u64 = (uint64_t)readFunc;
 	ctx.r3.u64 = stream2;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r4.u64 = buffer;
+	ctx.r5.u64 = byteCount;
 	ctx.r6.u64 = 0;
 	ctx.r10.u64 = readFunc;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
@@ -544,7 +530,6 @@ uint32_t CWideString_AppendChar(CpuState& ctx, uint8_t* base, uint64_t bufferedI
 		uint32_t alignedEnd = (tailOffset + 3) & 0xFFFFFFFC;
 		uint32_t zeroAddress = LOAD32(string) + tailOffset;
 		uint64_t zeroSize = (uint64_t)alignedEnd - (uint64_t)tailOffset;
-		ctx.r6.u64 = terminatorOffset;
 		memset(ctx, base, zeroAddress, 0, zeroSize);
 
 		stack = PopStackFrame(stack, 128);
@@ -578,7 +563,6 @@ uint32_t CWideString_AppendChar(CpuState& ctx, uint8_t* base, uint64_t bufferedI
 				} while (LOAD16(scanPtr) != 0);
 			}
 
-			ctx.r9.u64 = firstChar;
 			CWideString_AssignN(ctx, base, allocated, stack + 80, charCount);
 			newString = allocatedAddr;
 			STORE32(allocatedAddr + 12, 1u);

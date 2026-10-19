@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // Returns 1 when m_20 is set, the global state reached from 0x83496920 has byte +75 clear and +73 set,
 // and an entry of the list at +12 whose object has byte +13 clear answers nonzero from vtable slot 2.
@@ -122,8 +123,6 @@ uint32_t n_sub_821C75E0(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	if (!entryAllowed) return giveUp();
 
 	// state the callee may pass on
-	ctx.r8.u64 = reg8;
-	ctx.r9.u64 = recordHolder;
 	uint32_t entity = EntityHandle_Get(ctx, base, LOAD32(handleRecord));
 	reg6 = ctx.r6.u64;
 	reg7 = ctx.r7.u64;
@@ -188,9 +187,6 @@ uint32_t n_sub_821C75E0(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	}
 
 	// state the callee may pass on
-	ctx.r6.u64 = reg6;
-	ctx.r7.u64 = reg7;
-	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint32_t queryResult = n_sub_822040D0(ctx, base, entryValue, nPCRewardGiver->m_4);
 	stack = PopStackFrame(stack, 128);
@@ -222,7 +218,6 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 		uint32_t wantedModifier = (uint32_t)(reg8 ^ 1) + 50;
 		if (nPCRewardGiver->m_1C != wantedModifier) {
 			// state the callee may pass on
-			ctx.r8.u64 = reg8;
 			uint32_t itemFoundAgain = n_sub_82450BD8(ctx, base, nPCRewardGiverAddr);
 			nPCRewardGiver->m_1C = ((itemFoundAgain & 0xFF) != 0 ? 1u : 0u) + 50;
 
@@ -232,8 +227,6 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			uint32_t owner = nPCRewardGiver->m_4;
 			uint32_t statsTarget = LOAD32(globalRef + 28);
 			// state the callee may pass on
-			ctx.r6.u64 = globalRef;
-			ctx.r8.s64 = g_83490000;
 			CCharString_AssignFromWideStr(ctx, base, stack + 88, uint64_t(g_82000AF4));
 
 			Stats_ApplyModifierIfAllowed(ctx, base, statsTarget, stack + 80, owner, stack + 88, nPCRewardGiver->m_1C);
@@ -242,7 +235,6 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			CCharString_ConstructFromCStr(ctx, base, stack + 88, uint64_t(g_82000000) + 3224, -1);
 
 			// state the callee may pass on
-			ctx.r3.u64 = statsTarget;
 			n_sub_823B6C00(ctx, base, owner, stack + 80, stack + 88, nPCRewardGiver->m_1C, ctx.r8.u64);
 
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
@@ -255,7 +247,6 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	}
 
 	// state the callee may pass on
-	ctx.r8.u64 = reg8;
 	uint64_t result = CECNPCRewardGiver_HasAvailableReward(ctx, base, nPCRewardGiverAddr);
 	// r4 is handed back to the caller; r6-r8 and the carry flag are handed to n_sub_82294C68.
 	uint64_t retR4 = ctx.r4.u64;
@@ -316,10 +307,6 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 				}
 
 				// state the callee may pass on
-				ctx.r4.u64 = retR4;
-				ctx.r6.u64 = reg6;
-				ctx.r7.u64 = reg7;
-				ctx.r8.u64 = reg8;
 				ctx.xer.ca = flags.ca;
 				result = n_sub_82294C68(ctx, base, entryValue);
 				retR4 = ctx.r4.u64;
@@ -339,10 +326,10 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 }
 PROMOTED_ENTRY(3, sub_821C77D8, 0x821C77D8) { ctx.r3.u64 = n_sub_821C77D8(ctx, base, ctx.r3.u64); }
 
-// Asks arg2 for its kind (vtable slot 1): kind 8 goes to n_sub_82451308; on kind 9 the giver runs
+// Asks rewardEvent for its kind (vtable slot 1): kind 8 goes to n_sub_82451308; on kind 9 the giver runs
 // n_sub_824506A8, then the component of the type its own vtable slot 4 returns is removed from m_4.
-uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t arg2) {
-	if (!UseLiftedCode(7, 0x82232A60)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = arg2; __imp__sub_82232A60(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t rewardEvent) {
+	if (!UseLiftedCode(7, 0x82232A60)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = rewardEvent; __imp__sub_82232A60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82232A60);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t result{};
@@ -350,22 +337,22 @@ uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	CECNPCRewardGiver* nPCRewardGiver = GameObject<CECNPCRewardGiver>(base, nPCRewardGiverAddr);
 	stack = PushStackFrame(base, stack, 112);
 
-	uint32_t getKindFn = LOAD32(LOAD32((uint32_t)arg2) + 4);
+	uint32_t getKindFn = LOAD32(LOAD32((uint32_t)rewardEvent) + 4);
 	callTarget.u64 = getKindFn;
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = arg2;
-	ctx.r4.u64 = arg2;
+	ctx.r3.u64 = rewardEvent;
+	ctx.r4.u64 = rewardEvent;
 	ctx.r10.u64 = getKindFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	int32_t kind = ctx.r3.u32;
 
 	if (kind == 8) {
-		result = n_sub_82451308(ctx, base, nPCRewardGiverAddr, arg2);
+		result = n_sub_82451308(ctx, base, nPCRewardGiverAddr, rewardEvent);
 	} else {
 		// the kind is asked for again
-		getKindFn = LOAD32(LOAD32((uint32_t)arg2) + 4);
+		getKindFn = LOAD32(LOAD32((uint32_t)rewardEvent) + 4);
 		callTarget.u64 = getKindFn;
-		ctx.r3.u64 = arg2;
+		ctx.r3.u64 = rewardEvent;
 		ctx.r10.u64 = getKindFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		result = ctx.r3.u64;
@@ -375,7 +362,6 @@ uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			uint32_t owner = nPCRewardGiver->m_4;
 			callTarget.u64 = getComponentTypeFn;
 			ctx.r3.u64 = nPCRewardGiverAddr;
-			ctx.r10.u64 = getComponentTypeFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			uint64_t componentType = ctx.r3.u64;
 			result = Entity_RemoveComponentByType(ctx, base, owner, componentType, ctx.r8.u64);
@@ -595,7 +581,6 @@ uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			if ((uint32_t)result != 0) {
 				uint32_t idRef = stack + 80;
 				// state the callee may pass on
-				ctx.r3.u64 = (uint32_t)nPCRewardGiverAddr;
 				ctx.f1.f64 = f1;
 				uint32_t rewardId = (uint32_t)n_sub_82450250(ctx, base, result, ctx.r8.u64);
 				f1 = ctx.f1.f64;
@@ -693,9 +678,6 @@ uint64_t n_sub_82450BD8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 				uint32_t TXT_820B36C0_L_ = LOAD32(node + 8);
 				uint32_t owner = nPCRewardGiver->m_4;
 				ctx.r1.u64 = stack;
-				ctx.r7.u64 = r7;
-				ctx.r8.u64 = r8;
-				ctx.r9.u64 = r9;
 				uint64_t matched = n_sub_827AD310(ctx, base, TXT_820B36C0_L_, owner);
 				r7 = ctx.r7.u64;
 				r8 = ctx.r8.u64;

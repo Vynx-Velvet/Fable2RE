@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CStructuredWriter_EndElement(CpuState& ctx, uint8_t* base, uint64_t structuredWriterAddr) {
 	if (!UseLiftedCode(93, 0x82C829F0)) { ctx.r3.u64 = structuredWriterAddr; __imp__sub_82C829F0(ctx, base); return ctx.r3.u64; }
@@ -346,8 +347,8 @@ uint64_t CStructuredWriter_WriteStringValue(CpuState& ctx, uint8_t* base, uint64
 PROMOTED_ENTRY(93, sub_82C83900, 0x82C83900) { ctx.r3.u64 = CStructuredWriter_WriteStringValue(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C83A38  [140 bytes]
-uint64_t CStructuredWriter_WriteNamedValue(CpuState& ctx, uint8_t* base, uint64_t structuredWriterAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(93, 0x82C83A38)) { ctx.r3.u64 = structuredWriterAddr; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82C83A38(ctx, base); return ctx.r3.u64; }
+uint64_t CStructuredWriter_WriteNamedValue(CpuState& ctx, uint8_t* base, uint64_t structuredWriterAddr, uint64_t namedValue, uint64_t arg3) {
+	if (!UseLiftedCode(93, 0x82C83A38)) { ctx.r3.u64 = structuredWriterAddr; ctx.r4.u64 = namedValue; ctx.r8.u64 = arg3; __imp__sub_82C83A38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C83A38);
 	uint32_t stack = ctx.r1.u64;
 	CStructuredWriter* structuredWriter = GameObject<CStructuredWriter>(base, structuredWriterAddr);
@@ -372,8 +373,7 @@ uint64_t CStructuredWriter_WriteNamedValue(CpuState& ctx, uint8_t* base, uint64_
 	if (LOAD8(nestedWriterAddr + 4) != 0) {
 		uint32_t valueAddr = stack + 81;
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = valueAddr;
-		uint32_t writeResult = n_sub_82C839C8(ctx, base, arg2, nestedWriterAddr, arg3);
+		uint32_t writeResult = n_sub_82C839C8(ctx, base, namedValue, nestedWriterAddr, arg3);
 		STORE8(nestedWriterAddr + 4, (uint8_t)writeResult);
 	}
 
@@ -592,8 +592,8 @@ uint64_t CStructuredWriter_WriteNamedBool(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(93, sub_82C83D18, 0x82C83D18) { ctx.r3.u64 = CStructuredWriter_WriteNamedBool(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r8.u64); }
 
-uint64_t CStructuredWriter_WriteNamedFloat(CpuState& ctx, uint8_t* base, uint64_t structuredWriter, uint64_t valueName, uint32_t valuePtr, uint64_t arg4) {
-	if (!UseLiftedCode(93, 0x82C83E40)) { ctx.r3.u64 = structuredWriter; ctx.r4.u64 = valueName; ctx.r5.u64 = valuePtr; ctx.r8.u64 = arg4; __imp__sub_82C83E40(ctx, base); return ctx.r3.u64; }
+uint64_t CStructuredWriter_WriteNamedFloat(CpuState& ctx, uint8_t* base, uint64_t structuredWriter, uint64_t valueName, uint32_t valuePtr, uint64_t allocator) {
+	if (!UseLiftedCode(93, 0x82C83E40)) { ctx.r3.u64 = structuredWriter; ctx.r4.u64 = valueName; ctx.r5.u64 = valuePtr; ctx.r8.u64 = allocator; __imp__sub_82C83E40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C83E40);
 	uint32_t stack = ctx.r1.u64;
 
@@ -624,7 +624,7 @@ uint64_t CStructuredWriter_WriteNamedFloat(CpuState& ctx, uint8_t* base, uint64_
 	uint32_t nameLength = nameEnd - (uint32_t)valueName - 1;
 
 	ctx.r1.u64 = stack;
-	BasicString_AssignPtrLen(ctx, base, stack + 80, valueName, nameLength, arg4);
+	BasicString_AssignPtrLen(ctx, base, stack + 80, valueName, nameLength, allocator);
 
 	// Second string temporary at stack+160.
 	STORE32(stack + 184, ssoCapacity);

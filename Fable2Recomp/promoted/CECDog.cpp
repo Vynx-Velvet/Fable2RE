@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // Returns the object the handle at +300 refers to; a handle whose object is gone is released and 0 returned.
 uint64_t n_sub_82174238(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
@@ -103,12 +104,7 @@ uint32_t n_sub_821780B8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 			const uint32_t chainEnd = LOAD32(LOAD32(link4 + 36) + 4);
 
 			// state the callee may pass on
-			ctx.r6.u64 = link4;
-			ctx.r7.u64 = link3;
-			ctx.r8.u64 = link2;
-			ctx.r9.u64 = link1;
 			ctx.f11 = yInt;
-			ctx.f12.f64 = y;
 			ctx.f13 = xInt;
 			const uint64_t found = n_sub_823509C8(ctx, base, chainEnd, stack + 80);
 			// the last argument is r8 as n_sub_823509C8 left it
@@ -189,15 +185,6 @@ uint32_t n_sub_82186980(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 		if (reached) {
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			ctx.r6.u64 = wordLo;
-			ctx.r7.u64 = wordHi;
-			ctx.r9.u64 = uint32_t(g_82000000);
-			ctx.f8.f64 = step;
-			ctx.f9.f64 = quotient;
-			ctx.f10.f64 = denom;
-			ctx.f11.f64 = origM7C;
-			ctx.f12.f64 = trigger;
-			ctx.f13.f64 = newM7C;
 			n_sub_82789AA8(ctx, base, dogAddr, state);
 		}
 	}
@@ -394,13 +381,7 @@ uint32_t CECDog_UpdateFetchTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr
 
 	const uint32_t entityMethod152 = LOAD32(LOAD32(entityComponent) + 152);
 	callTarget.u64 = entityMethod152;
-	ctx.r3.u64 = entityComponent;
-	ctx.r4.u64 = target;
-	ctx.r5.u64 = withinFlag;
 	// state the callee may pass on
-	ctx.r8.u64 = passedR8;
-	ctx.r9.u64 = stack + 80;
-	ctx.r10.u64 = entityMethod152;
 	ctx.v13 = lengthSq;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -408,8 +389,6 @@ uint32_t CECDog_UpdateFetchTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr
 	const uint32_t targetMethod152 = LOAD32(targetVtable + 152);
 	callTarget.u64 = targetMethod152;
 	ctx.r3.u64 = targetComponent;
-	ctx.r4.u64 = entity;
-	ctx.r5.u64 = withinFlag;
 	// state the callee may pass on
 	ctx.r8.u64 = targetMethod152;
 	ctx.r9.u64 = targetVtable;
@@ -507,10 +486,6 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r6.u64 = searchR6;
-	ctx.r7.u64 = searchR7;
-	ctx.r8.u64 = searchR8;
-	ctx.r9.u64 = searchR9;
 	ctx.cr0 = searchCr0;
 	ctx.xer.ca = searchXer.ca;
 	CCharString_ConstructFromCStr(ctx, base, stack + 88, str_TXT_820019B0_B_, -1);
@@ -538,10 +513,6 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 		if (searchR9 != 0) {
 			const uint32_t component83 = findComponent(carried, 83, 80);
 			// state the callee may pass on
-			ctx.r6.u64 = searchR6;
-			ctx.r7.u64 = searchR7;
-			ctx.r8.u64 = searchR8;
-			ctx.r9.u64 = searchR9;
 			ctx.cr0 = searchCr0;
 			ctx.xer.ca = searchXer.ca;
 			const uint64_t idSource = n_sub_821D9F40(ctx, base, stack + 96, component83);
@@ -778,11 +749,6 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 			if (regR10 != 0) return 0;
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = regR6;
-			ctx.r7.u64 = regR7;
-			ctx.r8.u64 = regR8;
-			ctx.r9.u64 = regR9;
-			ctx.r10.u64 = regR10;
 			ctx.xer.ca = xer.ca;
 			uint64_t lockRef = n_sub_821D9F40(ctx, base, stack + 80, keyLock);
 			xer.ca = ctx.xer.ca;
@@ -810,11 +776,6 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 						regR10 = searchPos;
 					}
 					// state the callee may pass on
-					ctx.r6.u64 = regR6;
-					ctx.r7.u64 = regR7;
-					ctx.r8.u64 = regR8;
-					ctx.r9.u64 = regR9;
-					ctx.r10.u64 = regR10;
 					ctx.xer.ca = xer.ca;
 					CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820C7554_B_, -1);
 					int32_t silverKeysHeld = ItemList_CountByTypeName(ctx, base, inventory, stack + 80);
@@ -990,7 +951,6 @@ uint64_t n_sub_8277E558(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint6
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_8277E630(ctx, base, objectAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectAddr);
@@ -1156,9 +1116,9 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 }
 PROMOTED_ENTRY(51, sub_8277E8A8, 0x8277E8A8) { ctx.r3.u64 = n_sub_8277E8A8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double floatArg1) {
+uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double deltaTime) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
-	if (!UseLiftedCode(51, 0x827818D0)) { ctx.r3.u64 = dogAddr; ctx.f1.f64 = floatArg1; __imp__sub_827818D0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(51, 0x827818D0)) { ctx.r3.u64 = dogAddr; ctx.f1.f64 = deltaTime; __imp__sub_827818D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827818D0);
 	uint32_t stack = ctx.r1.u64;
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
@@ -1166,7 +1126,7 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double f
 
 	// Register values the original code leaves for its callers.
 	uint64_t regR4 = ctx.r4.u64;
-	double regF1 = floatArg1;
+	double regF1 = deltaTime;
 	PPCVRegister regV1 = ctx.v1;
 
 	uint64_t result = dogAddr;
@@ -1187,8 +1147,7 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double f
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = dogAddr;
-		ctx.f1.f64 = floatArg1;
+		ctx.f1.f64 = deltaTime;
 		uint32_t found = n_sub_82781AD0(ctx, base, stack + 80);
 		regF1 = ctx.f1.f64;
 		if ((found & 0xFF) == 0) {
@@ -1230,11 +1189,8 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double f
 			dog->m_D8 = uint32_t(nowAgain - (uint64_t)LOAD32(stack + 84));
 		} else {
 			// state the callee may pass on
-			ctx.r5.s64 = g_83320000;
-			ctx.r7.u64 = isHealthLow;
 			ctx.f9 = ticksB;
 			ctx.f10 = ticksA;
-			ctx.f11.f64 = timeScale;
 			ctx.v1 = regV1;
 			result = n_sub_827814D8(ctx, base, dogAddr, 0, ctx.f1.f64);
 			regR4 = ctx.r4.u64;
@@ -1274,8 +1230,6 @@ uint32_t n_sub_82781A08(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 		if (linkedEntity == 0) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = outVecAddr;
-			ctx.r10.u64 = linkedEntity;
 			EntityHandle_Release(ctx, base, dogAddr + 300);
 		} else {
 			linkedFlagSet = (LOAD8(linkedEntity + 144) & 0x40) != 0;
@@ -1330,8 +1284,6 @@ uint32_t n_sub_82781AD0(CpuState& ctx, uint8_t* base, uint32_t outVecAddr) {
 		uint64_t targetEntity = (uint64_t)LOAD32(target + 4) + 176;
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = container;
-		ctx.r7.u64 = owner;
 		uint32_t result = n_sub_8238EF38(ctx, base, targetEntity, outVecAddr, (uint64_t)stack + 80);
 		stack = PopStackFrame(stack, 112);
 		ctx.r1.u64 = stack;
@@ -1441,10 +1393,6 @@ uint32_t n_sub_82781B70(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r5.u64 = navigation;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
-		ctx.r9.u64 = reg9;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -1692,8 +1640,6 @@ uint64_t n_sub_82789AA8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = arg2;
-	ctx.r9.u64 = reg9;
 	uint64_t result = n_sub_82789B68(ctx, base, dogAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -1805,9 +1751,6 @@ uint64_t n_sub_82789B68(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	if (state == 2 || state == 3) {
 		n_sub_8277D960(ctx, base, slot4, slotOwner, -1, 31);
 	} else {
-		ctx.r5.u64 = reg5;
-		ctx.r6.u64 = uint64_t(dataBase);
-		ctx.r7.u64 = reg7;
 		n_sub_8277DC78(ctx, base, slot4, slotOwner);
 	}
 
@@ -1864,19 +1807,16 @@ uint64_t n_sub_8278A258(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 		uint64_t reg9 = LOAD32(scriptCall);
 		if (reg9 != 0) {
 			uint32_t owner = dog->m_4;
-			ctx.r9.u64 = reg9;
 			int32_t stayType = n_sub_827924E8(ctx, base, scriptCall, aiManagerRef, owner, ctx.r6.u64, ctx.r7.u64);
 			reg9 = ctx.r9.u64;
 			mustStay = stayType == 1 || stayType == 2 || stayType == 3;
 		}
-		ctx.r9.u64 = reg9;
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, scriptCall + 8);
 		SharedHandle_Release(ctx, base, scriptCall);
 		reg6 = ctx.r6.u64;
 	}
 
 	mustStay = mustStay || dog->m_22 != 0;
-	ctx.r6.u64 = reg6;
 	SharedHandle_Release(ctx, base, aiManagerRef);
 	SharedHandle_Release(ctx, base, globalsRef);
 	stack = PopStackFrame(stack, 128);
@@ -1885,27 +1825,27 @@ uint64_t n_sub_8278A258(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 }
 PROMOTED_ENTRY(52, sub_8278A258, 0x8278A258) { ctx.r3.u64 = n_sub_8278A258(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t arg2) {
+uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t ownerEntity) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(52, 0x8278ADB8)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = arg2; __imp__sub_8278ADB8(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(52, 0x8278ADB8)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = ownerEntity; __imp__sub_8278ADB8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8278ADB8);
 	uint32_t stack = ctx.r1.u64;
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
 
 	stack = PushStackFrame(base, stack, 128);
-	const uint32_t tempHandle = stack + 80;
+	const uint32_t entityHandle = stack + 80;
 
 	// scratch handle holds the entity passed in, and is copied into the dog's own handle field
-	STORE32(tempHandle + 4, 0);
-	STORE32(tempHandle, uint32_t(g_820F1664));
+	STORE32(entityHandle + 4, 0);
+	STORE32(entityHandle, uint32_t(g_820F1664));
 	ctx.r1.u64 = stack;
-	EntityHandle_SetTarget(ctx, base, tempHandle, arg2);
+	EntityHandle_SetTarget(ctx, base, entityHandle, ownerEntity);
 
-	EntityHandle_Assign(ctx, base, dogAddr + 300, tempHandle);
+	EntityHandle_Assign(ctx, base, dogAddr + 300, entityHandle);
 
-	STORE32(tempHandle, uint32_t(g_820F1664));
-	EntityHandle_Release(ctx, base, tempHandle);
+	STORE32(entityHandle, uint32_t(g_820F1664));
+	EntityHandle_Release(ctx, base, entityHandle);
 
 	// r6-r9 as the game code holds them at the calls below: leftovers of the handle calls,
 	// or scratch values of the lookup; the callees may pass them on
@@ -1930,9 +1870,9 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 			uint32_t entry = LOAD32(owner + 72);
 			const uint32_t mapEnd = LOAD32(owner + 76);
 			r6Value = mapEnd;
-			STORE32(tempHandle, 0);
+			STORE32(entityHandle, 0);
 			int32_t remaining = (int32_t)(mapEnd - entry) >> 3;
-			STORE32(tempHandle + 4, entry);
+			STORE32(entityHandle + 4, entry);
 			if (remaining > 0) {
 				do {
 					const int32_t half = remaining >> 1;
@@ -1950,20 +1890,16 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 						remaining = half;
 					}
 				} while (remaining > 0);
-				STORE32(tempHandle + 4, entry);
+				STORE32(entityHandle + 4, entry);
 			}
 			if (entry != mapEnd && (int32_t)LOAD32(entry) <= 17) {
-				STORE64(tempHandle, LOAD64(tempHandle));
-				component = LOAD32(LOAD32(tempHandle + 4) + 4);
+				STORE64(entityHandle, LOAD64(entityHandle));
+				component = LOAD32(LOAD32(entityHandle + 4) + 4);
 			} else {
 				component = LOAD32(mapEnd + 4);
 			}
 		}
 
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
-		ctx.r9.u64 = r9Value;
 		n_sub_824686C8(ctx, base, component);
 		r6Value = ctx.r6.u64;
 		r7Value = ctx.r7.u64;
@@ -1971,8 +1907,8 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 
 	// the same for the owner entity, copied into the handle at +192 of the object
 	// reached through the global at 0x83496920
-	STORE32(tempHandle + 4, 0);
-	STORE32(tempHandle, uint32_t(g_820F1664));
+	STORE32(entityHandle + 4, 0);
+	STORE32(entityHandle, uint32_t(g_820F1664));
 	const uint32_t currentOwner = dog->m_4;
 	const uint32_t manager = LOAD32(uint32_t(g_83490000) + 26912);
 	const uint32_t root = LOAD32(manager + 12);
@@ -1981,17 +1917,13 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	const uint32_t handleOwner = LOAD32(handleOwnerSlot);
 
 	// state the callee may pass on
-	ctx.r6.u64 = r6Value;
-	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = handleOwnerSlot;
-	ctx.r9.u64 = node;
-	ctx.r10.u64 = root;
-	EntityHandle_SetTarget(ctx, base, tempHandle, currentOwner);
+	EntityHandle_SetTarget(ctx, base, entityHandle, currentOwner);
 
-	EntityHandle_Assign(ctx, base, handleOwner + 192, tempHandle);
+	EntityHandle_Assign(ctx, base, handleOwner + 192, entityHandle);
 
-	STORE32(tempHandle, uint32_t(g_820F1664));
-	const uint32_t result = EntityHandle_Release(ctx, base, tempHandle);
+	STORE32(entityHandle, uint32_t(g_820F1664));
+	const uint32_t result = EntityHandle_Release(ctx, base, entityHandle);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -2008,24 +1940,20 @@ uint64_t n_sub_8278B118(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
 
 	stack = PushStackFrame(base, stack, 112);
-	const uint32_t tempHandle = stack + 80;
+	const uint32_t entityHandle = stack + 80;
 
 	// a scratch handle with no target is copied into the dog's handle field at +324
-	STORE32(tempHandle + 4, 0);
-	STORE32(tempHandle, uint32_t(g_820F1664));
+	STORE32(entityHandle + 4, 0);
+	STORE32(entityHandle, uint32_t(g_820F1664));
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r9.s64 = g_820F1664;
-	ctx.r10.u64 = 0;
-	EntityHandle_Release(ctx, base, tempHandle);
+	EntityHandle_Release(ctx, base, entityHandle);
 
-	EntityHandle_Assign(ctx, base, dogAddr + 324, tempHandle);
+	EntityHandle_Assign(ctx, base, dogAddr + 324, entityHandle);
 
-	STORE32(tempHandle, uint32_t(g_820F1664));
+	STORE32(entityHandle, uint32_t(g_820F1664));
 	// state the callee may pass on (g_820F1664 is g_820F0000 + 5732)
-	ctx.r7.s64 = g_820F1664;
-	ctx.r8.s64 = g_820F0000;
-	const uint64_t result = EntityHandle_Release(ctx, base, tempHandle);
+	const uint64_t result = EntityHandle_Release(ctx, base, entityHandle);
 
 	dog->m_E8 = uint32_t(-1);
 

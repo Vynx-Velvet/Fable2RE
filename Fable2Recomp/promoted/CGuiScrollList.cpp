@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t CGuiScrollList_Destructor(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr) {
 	if (!UseLiftedCode(35, 0x82581820)) { ctx.r3.u64 = guiScrollListAddr; __imp__sub_82581820(ctx, base); return ctx.r3.u32; }
@@ -137,8 +138,8 @@ uint32_t n_sub_8259E068(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 }
 PROMOTED_ENTRY(36, sub_8259E068, 0x8259E068) { ctx.r3.u64 = n_sub_8259E068(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82833920(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t arg2) {
-	if (!UseLiftedCode(57, 0x82833920)) { ctx.r3.u64 = guiScrollListAddr; ctx.r8.u64 = arg2; __imp__sub_82833920(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82833920(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t entityId) {
+	if (!UseLiftedCode(57, 0x82833920)) { ctx.r3.u64 = guiScrollListAddr; ctx.r8.u64 = entityId; __imp__sub_82833920(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82833920);
 	uint32_t stack = ctx.r1.u64;
 	CGuiScrollList* guiScrollList = GameObject<CGuiScrollList>(base, guiScrollListAddr);
@@ -147,11 +148,11 @@ uint64_t n_sub_82833920(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 	uint32_t thirdVirtualFn = LOAD32(uint32_t(guiScrollList->vtable) + 8);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = guiScrollListAddr;
-	ctx.r8.u64 = arg2;
+	ctx.r8.u64 = entityId;
 	ctx.r10.u64 = thirdVirtualFn;
 	REX_CALL_INDIRECT_FUNC(thirdVirtualFn);
 
-	// The lookup takes the r8 that the virtual call left behind, not arg2.
+	// The lookup takes the r8 that the virtual call left behind, not entityId.
 	uint32_t lookupSource = LOAD32(LOAD32(0x834968A4u) + 56);
 	uint64_t result = n_sub_823FE8F8(ctx, base, lookupSource, ctx.r8.u64);
 	if ((uint32_t)result != 0)
@@ -170,15 +171,15 @@ uint64_t n_sub_82833978(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 }
 PROMOTED_ENTRY(57, sub_82833978, 0x82833978) { ctx.r3.u64 = n_sub_82833978(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t r8Value) {
-	if (!UseLiftedCode(57, 0x82833980)) { ctx.r3.u64 = guiScrollListAddr; ctx.r8.u64 = r8Value; __imp__sub_82833980(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t entityId) {
+	if (!UseLiftedCode(57, 0x82833980)) { ctx.r3.u64 = guiScrollListAddr; ctx.r8.u64 = entityId; __imp__sub_82833980(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82833980);
 	uint32_t stack = ctx.r1.u64;
 	CGuiScrollList* guiScrollList = GameObject<CGuiScrollList>(base, guiScrollListAddr);
 	stack = PushStackFrame(base, stack, 144);
 
 	// The original code hands r4, cr0 and xer.ca to its callees and leaves r4, r8, cr0 and
-	// xer.ca for its callers; r4Value, r8Value, compare0 and flags track those registers.
+	// xer.ca for its callers; r4Value, entityId, compare0 and flags track those registers.
 	uint64_t r4Value = ctx.r4.u64;
 	PPCCRRegister compare0 = ctx.cr0;
 	PPCXERRegister flags = ctx.xer;
@@ -192,11 +193,10 @@ uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 		uint32_t entry = LOAD32(node + 8);
 
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4Value;
 		ctx.cr0 = compare0;
 		ctx.xer.ca = flags.ca;
-		result = n_sub_823FE8F8(ctx, base, lookupSource, r8Value);
-		r8Value = ctx.r8.u64;
+		result = n_sub_823FE8F8(ctx, base, lookupSource, entityId);
+		entityId = ctx.r8.u64;
 		compare0 = ctx.cr0;
 		flags.ca = ctx.xer.ca;
 		r4Value = result;
@@ -214,7 +214,7 @@ uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 				ctx.xer.ca = flags.ca;
 				result = n_sub_829DD530(ctx, base, entry, r4Value, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64);
 				r4Value = ctx.r4.u64;
-				r8Value = ctx.r8.u64;
+				entityId = ctx.r8.u64;
 				compare0 = ctx.cr0;
 				flags.ca = ctx.xer.ca;
 			}
@@ -239,12 +239,11 @@ uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 				clearFlag = false;
 			} else {
 				ctx.r1.u64 = stack;
-				ctx.r4.u64 = r4Value;
 				ctx.cr0 = compare0;
 				ctx.xer.ca = flags.ca;
-				result = CGuiScrollList_UpdateArrows(ctx, base, guiScrollListAddr, r8Value);
+				result = CGuiScrollList_UpdateArrows(ctx, base, guiScrollListAddr, entityId);
 				r4Value = ctx.r4.u64;
-				r8Value = ctx.r8.u64;
+				entityId = ctx.r8.u64;
 				compare0 = ctx.cr0;
 				flags.ca = ctx.xer.ca;
 			}
@@ -256,20 +255,20 @@ uint64_t n_sub_82833980(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = r4Value;
-	ctx.r8.u64 = r8Value;
+	ctx.r8.u64 = entityId;
 	ctx.cr0 = compare0;
 	ctx.xer.ca = flags.ca;
 	return result;
 }
 PROMOTED_ENTRY(57, sub_82833980, 0x82833980) { ctx.r3.u64 = n_sub_82833980(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
+uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr, uint64_t eventType, uint64_t bladeIndexArg, uint64_t entityId) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t TXT_83498764_G_ = int32_t(0x83498764);
-	if (!UseLiftedCode(57, 0x82833A90)) { ctx.r3.u64 = guiScrollListAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_82833A90(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(57, 0x82833A90)) { ctx.r3.u64 = guiScrollListAddr; ctx.r4.u64 = eventType; ctx.r5.u64 = bladeIndexArg; ctx.r8.u64 = entityId; __imp__sub_82833A90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82833A90);
 	uint32_t stack = ctx.r1.u64;
 
@@ -278,10 +277,10 @@ uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 
 	uint64_t scrollListBase = guiScrollListAddr;
 
-	if ((int32_t)arg2 == 27) {
+	if ((int32_t)eventType == 27) {
 		uint32_t listEndAddr = (uint32_t)scrollListBase + 8;
 		uint32_t node = LOAD32(uint32_t(guiScrollList->m_C));
-		uint32_t bladeIndex = (uint32_t)arg3;
+		uint32_t bladeIndex = (uint32_t)bladeIndexArg;
 		uint64_t helperTable = g_82000000;
 		bool listChanged = false;
 
@@ -302,15 +301,11 @@ uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 
 			ctx.r1.u64 = stack;
 			ctx.r3.u64 = scrollListBase;
-			ctx.r4.u64 = arg2;
-			ctx.r8.u64 = arg4;
-			ctx.r9.u64 = helperTable;
 			uint64_t firstCallResult = n_sub_821FE378(ctx, base, -double(LOAD_F32(stack + 84)), wrapConstant);
 			double angleY = double(float(ctx.f1.f64));
 
 			ctx.fpscr.disableFlushMode();
 			ctx.r3.u64 = firstCallResult;
-			ctx.f13.f64 = angleLow;
 			n_sub_821FE378(ctx, base, -angleLow, wrapConstant);
 			uint64_t animIndexArg = ctx.r8.u64;
 			uint64_t dirArg = ctx.r9.u64;
@@ -338,14 +333,12 @@ uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 			}
 
 			uint64_t nodeData = LOAD32(node + 8);
-			ctx.r9.u64 = dirArg;
-			ctx.f12.f64 = angleX;
 			uint64_t animResult = n_sub_823FE8F8(ctx, base, uint64_t(animSet), animIndexArg);
 			uint64_t packedAngle = LOAD64(stack + 88);
 			guiScrollListAddr = n_sub_829DD640(ctx, base, nodeData, packedAngle, animResult, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64);
-			arg2 = ctx.r4.u64;
-			arg3 = ctx.r5.u64;
-			arg4 = ctx.r8.u64;
+			eventType = ctx.r4.u64;
+			bladeIndexArg = ctx.r5.u64;
+			entityId = ctx.r8.u64;
 			helperTable = ctx.r9.u64;
 			if ((uint32_t(guiScrollListAddr) & 0xFF) != 0)
 				listChanged = true;
@@ -357,18 +350,16 @@ uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 		}
 
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
-		ctx.r5.u64 = arg3;
-		guiScrollListAddr = CGuiScrollList_UpdateArrows(ctx, base, scrollListBase, arg4);
-		arg2 = ctx.r4.u64;
-		arg4 = ctx.r8.u64;
+		ctx.r5.u64 = bladeIndexArg;
+		guiScrollListAddr = CGuiScrollList_UpdateArrows(ctx, base, scrollListBase, entityId);
+		eventType = ctx.r4.u64;
+		entityId = ctx.r8.u64;
 
 		if (listChanged) {
 			uint32_t scrollState = LOAD32((uint32_t)g_83490000 + 26788);
-			ctx.r6.u64 = 0;
 			n_sub_82306098(ctx, base, uint64_t(stack) + 96, uint64_t(scrollState), TXT_83498764_G_);
-			arg2 = ctx.r4.u64;
-			arg4 = ctx.r8.u64;
+			eventType = ctx.r4.u64;
+			entityId = ctx.r8.u64;
 			guiScrollListAddr = LOAD32(stack + 100);
 			if ((uint32_t)guiScrollListAddr != 0) {
 				uint32_t vfunc = LOAD32(LOAD32((uint32_t)guiScrollListAddr) + 4);
@@ -378,16 +369,16 @@ uint64_t n_sub_82833A90(CpuState& ctx, uint8_t* base, uint64_t guiScrollListAddr
 				ctx.r10.u64 = vfunc;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				guiScrollListAddr = ctx.r3.u64;
-				arg2 = ctx.r4.u64;
-				arg4 = ctx.r8.u64;
+				eventType = ctx.r4.u64;
+				entityId = ctx.r8.u64;
 			}
 		}
 	}
 
 	stack = PopStackFrame(stack, 224);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
-	ctx.r8.u64 = arg4;
+	ctx.r4.u64 = eventType;
+	ctx.r8.u64 = entityId;
 	return guiScrollListAddr;
 }
 PROMOTED_ENTRY(57, sub_82833A90, 0x82833A90) { ctx.r3.u64 = n_sub_82833A90(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
@@ -396,8 +387,8 @@ uint64_t CGuiScrollList_UpdateArrows(CpuState& ctx, uint8_t* base, uint64_t guiS
 	constexpr int32_t str_TXT_8209BAAC_B_ = int32_t(0x8209BAAC);
 	constexpr int32_t str_TXT_820DB6F4_B_ = int32_t(0x820DB6F4);
 	constexpr int32_t str_TXT_820DB6FC_B_ = int32_t(0x820DB6FC);
-	constexpr int32_t g_820E0000 = int32_t(0x820E0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	constexpr int32_t str_TXT_820DB708_B_ = int32_t(0x820DB708);
 	if (!UseLiftedCode(57, 0x82833E70)) { ctx.r3.u64 = guiScrollListAddr; ctx.r8.u64 = arg2; __imp__sub_82833E70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82833E70);
 	uint32_t stack = ctx.r1.u64;
@@ -443,7 +434,7 @@ uint64_t CGuiScrollList_UpdateArrows(CpuState& ctx, uint8_t* base, uint64_t guiS
 				uint64_t TXT_820DB6FC_L_ = n_sub_823F8A38(ctx, base, downArrowCStr, (uint64_t)arrowOwner2, entity, ctx.r8.u64);
 
 				uint32_t arrowOwner3 = guiScrollList->m_14;
-				uint64_t iconCStr = CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 88, (int64_t)g_820E0000 - 18680, -1);
+				uint64_t iconCStr = CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 88, str_TXT_820DB708_B_, -1);
 				uint64_t r9AfterIcon = ctx.r9.u64;
 				n_sub_823F8A38(ctx, base, iconCStr, (uint64_t)arrowOwner3, entity, ctx.r8.u64);
 

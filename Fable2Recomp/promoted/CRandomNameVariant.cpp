@@ -9,13 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_821916D0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(1, 0x821916D0)) { ctx.r3.u64 = arg1; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; __imp__sub_821916D0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821916D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant, uint64_t arg2, uint64_t arg3) {
+	if (!UseLiftedCode(1, 0x821916D0)) { ctx.r3.u64 = randomNameVariant; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; __imp__sub_821916D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821916D0);
-	uint32_t linkedEntity = LOAD32((uint32_t)arg1 + 0x14);
-	uint64_t relatedPtr = (uint64_t)linkedEntity + 0x44;
-	return n_sub_8228E880(ctx, base, linkedEntity, relatedPtr, arg2, arg3);
+	uint32_t variantData = LOAD32((uint32_t)randomNameVariant + 0x14);
+	uint64_t namePtr = (uint64_t)variantData + 0x44;
+	return n_sub_8228E880(ctx, base, variantData, namePtr, arg2, arg3);
 }
 PROMOTED_ENTRY(1, sub_821916D0, 0x821916D0) { ctx.r3.u64 = n_sub_821916D0(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64); }
 
@@ -24,16 +25,16 @@ uint64_t n_sub_821966A8(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 	if (!UseLiftedCode(1, 0x821966A8)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_821966A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821966A8);
 	CRandomNameVariant* randomNameVariant = GameObject<CRandomNameVariant>(base, randomNameVariantAddr);
-	uint32_t data = randomNameVariant->m_data;
-	uint64_t firstNameAddr = (uint64_t)data + 36;
-	uint64_t secondNameAddr = (uint64_t)data + 68;
+	uint32_t variantData = randomNameVariant->m_data;
+	uint64_t firstNameAddr = (uint64_t)variantData + 36;
+	uint64_t secondNameAddr = (uint64_t)variantData + 68;
 	return n_sub_8219A800(ctx, base, firstNameAddr, secondNameAddr, arg2, arg3, arg4);
 }
 PROMOTED_ENTRY(1, sub_821966A8, 0x821966A8) { ctx.r3.u64 = n_sub_821966A8(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_821E1A28  [88 bytes]
-uint64_t n_sub_821E1A28(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(4, 0x821E1A28)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_821E1A28(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821E1A28(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameSource, uint64_t variantFilter) {
+	if (!UseLiftedCode(4, 0x821E1A28)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = nameSource; ctx.r5.u64 = variantFilter; __imp__sub_821E1A28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821E1A28);
 	uint32_t stack = ctx.r1.u64;
 	CRandomNameVariant* randomNameVariant = GameObject<CRandomNameVariant>(base, randomNameVariantAddr);
@@ -43,14 +44,14 @@ uint64_t n_sub_821E1A28(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	callTarget.u64 = LOAD32(uint32_t(randomNameVariant->vtable) + 88);
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = randomNameVariantAddr;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
+	ctx.r4.u64 = nameSource;
+	ctx.r5.u64 = variantFilter;
 	ctx.r10.u64 = callTarget.u64;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint32_t nameVariantIndex = ctx.r3.u32;
 
-	if ((uint32_t)arg3 != 0) {
-		uint64_t result = n_sub_827FFC10(ctx, base, arg2, (int64_t)randomNameVariantAddr + 8, nameVariantIndex, arg3);
+	if ((uint32_t)variantFilter != 0) {
+		uint64_t result = n_sub_827FFC10(ctx, base, nameSource, (int64_t)randomNameVariantAddr + 8, nameVariantIndex, variantFilter);
 		stack = PopStackFrame(stack, 112);
 		ctx.r1.u64 = stack;
 		return result;
@@ -160,8 +161,8 @@ uint64_t n_sub_827FF4B0(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 }
 PROMOTED_ENTRY(56, sub_827FF4B0, 0x827FF4B0) { ctx.r3.u64 = n_sub_827FF4B0(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t arg2) {
-	if (!UseLiftedCode(56, 0x827FF870)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = arg2; __imp__sub_827FF870(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameString) {
+	if (!UseLiftedCode(56, 0x827FF870)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = nameString; __imp__sub_827FF870(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827FF870);
 	uint32_t stack = ctx.r1.u64;
 	PPCCRRegister compare6{};
@@ -171,7 +172,7 @@ uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	stack = PushStackFrame(base, stack, 112);
 	uint64_t nameStringAddr = randomNameVariantAddr + 8;
 	ctx.r1.u64 = stack;
-	CCharString_Assign(ctx, base, nameStringAddr, arg2);
+	CCharString_Assign(ctx, base, nameStringAddr, nameString);
 	flags.ca = ctx.xer.ca;
 
 	uint32_t nameHash = randomNameVariant->m_nameHash;
@@ -300,7 +301,6 @@ uint64_t n_sub_827FF9D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	}
 
 	if (!variantLookupFailed) {
-		ctx.r9.u64 = r9Value;
 		uint32_t numVariants = n_sub_821C9EE0(ctx, base, variantNameId, nameHash);
 		r9Value = ctx.r9.u64;
 
@@ -548,8 +548,6 @@ uint64_t n_sub_827FFE08(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 				uint64_t uniqueId = Entity_GetUniqueId(ctx, base, LOAD32(entity + 4));
 				int32_t networkGlobal = g_83490000;
 				uint32_t network = LOAD32(LOAD32((uint32_t)networkGlobal + 26912) + 12);
-				ctx.r8.u64 = network;
-				ctx.r9.u64 = (uint64_t)(int64_t)networkGlobal;
 				result = n_sub_8238AD80(ctx, base, LOAD32(network + 140), stack + 88, uniqueId);
 			}
 		}
@@ -562,10 +560,10 @@ uint64_t n_sub_827FFE08(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 PROMOTED_ENTRY(56, sub_827FFE08, 0x827FFE08) { ctx.r3.u64 = n_sub_827FFE08(ctx, base, ctx.r3.u64); }
 
 // sub_82803380  [4 bytes]
-uint64_t n_sub_82803380(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(56, 0x82803380)) { ctx.r3.u64 = arg1; __imp__sub_82803380(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82803380(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr) {
+	if (!UseLiftedCode(56, 0x82803380)) { ctx.r3.u64 = randomNameVariantAddr; __imp__sub_82803380(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82803380);
-	uint64_t result = n_sub_827FFE08(ctx, base, arg1);
+	uint64_t result = n_sub_827FFE08(ctx, base, randomNameVariantAddr);
 	return result;
 }
 PROMOTED_ENTRY(56, sub_82803380, 0x82803380) { ctx.r3.u64 = n_sub_82803380(ctx, base, ctx.r3.u64); }
@@ -594,7 +592,6 @@ uint64_t CRandomNameVariant_ScalarDeletingDestructor(CpuState& ctx, uint8_t* bas
 	randomNameVariant->vtable = 0x820D8FB0u;
 	uint64_t charStringAddr = randomNameVariantAddr + 8;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, charStringAddr);
 	if (uint32_t(deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, randomNameVariantAddr);
@@ -609,33 +606,33 @@ uint64_t n_sub_82805F30(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 	if (!UseLiftedCode(56, 0x82805F30)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_82805F30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82805F30);
 	CRandomNameVariant* randomNameVariant = GameObject<CRandomNameVariant>(base, randomNameVariantAddr);
-	uint64_t dataAddr = randomNameVariant->m_data;
-	uint64_t descriptionPtr = dataAddr + 24;
-	uint64_t namePtr = dataAddr + 68;
+	uint64_t variantData = randomNameVariant->m_data;
+	uint64_t descriptionPtr = variantData + 24;
+	uint64_t namePtr = variantData + 68;
 	return n_sub_8219A800(ctx, base, descriptionPtr, namePtr, arg2, arg3, arg4);
 }
 PROMOTED_ENTRY(56, sub_82805F30, 0x82805F30) { ctx.r3.u64 = n_sub_82805F30(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82805F40(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
-	if (!UseLiftedCode(56, 0x82805F40)) { ctx.r3.u64 = arg1; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_82805F40(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82805F40(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
+	if (!UseLiftedCode(56, 0x82805F40)) { ctx.r3.u64 = randomNameVariant; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_82805F40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82805F40);
-	uint32_t nameVariantData = LOAD32((uint32_t)arg1 + 0x14);
-	return n_sub_828047D0(ctx, base, nameVariantData, arg2, arg3, arg4);
+	uint32_t variantData = LOAD32((uint32_t)randomNameVariant + 0x14);
+	return n_sub_828047D0(ctx, base, variantData, arg2, arg3, arg4);
 }
 PROMOTED_ENTRY(56, sub_82805F40, 0x82805F40) { ctx.r3.u64 = n_sub_82805F40(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_82805F48  [56 bytes]
-uint64_t n_sub_82805F48(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(56, 0x82805F48)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82805F48(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82805F48(CpuState& ctx, uint8_t* base, uint64_t destinationString, uint32_t sourceVariant) {
+	if (!UseLiftedCode(56, 0x82805F48)) { ctx.r3.u64 = destinationString; ctx.r4.u64 = sourceVariant; __imp__sub_82805F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82805F48);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t sourceAddress{};
 	stack = PushStackFrame(base, stack, 96);
-	sourceAddress = (uint64_t)LOAD32(arg2 + 20) + 64;
+	sourceAddress = (uint64_t)LOAD32(sourceVariant + 20) + 64;
 	ctx.r1.u64 = stack;
-	CCharString_CopyConstruct(ctx, base, arg1, sourceAddress);
+	CCharString_CopyConstruct(ctx, base, destinationString, sourceAddress);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return destinationString;
 }
 PROMOTED_ENTRY(56, sub_82805F48, 0x82805F48) { ctx.r3.u64 = n_sub_82805F48(ctx, base, ctx.r3.u64, ctx.r4.u32); }

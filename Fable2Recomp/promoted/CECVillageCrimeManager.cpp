@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECVillageCrimeManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C906C_B_ = int32_t(0x820C906C);
@@ -92,49 +93,44 @@ uint64_t n_sub_8284D4E8(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 }
 PROMOTED_ENTRY(58, sub_8284D4E8, 0x8284D4E8) { ctx.r3.u64 = n_sub_8284D4E8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8284D608(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(58, 0x8284D608)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_8284D608(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8284D608(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManager, uint64_t deleteFlags) {
+	if (!UseLiftedCode(58, 0x8284D608)) { ctx.r3.u64 = villageCrimeManager; ctx.r4.u64 = deleteFlags; __imp__sub_8284D608(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284D608);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 
-	ctx.r4.u64 = arg2;
-	n_sub_8284D658(ctx, base, arg1);
+	ctx.r4.u64 = deleteFlags;
+	n_sub_8284D658(ctx, base, villageCrimeManager);
 
-	if ((static_cast<uint32_t>(arg2) & 0x1) != 0) {
-		HandleTarget_Free(ctx, base, arg1);
+	if ((static_cast<uint32_t>(deleteFlags) & 0x1) != 0) {
+		HandleTarget_Free(ctx, base, villageCrimeManager);
 	}
-
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
-	return arg1;
+	return villageCrimeManager;
 }
 PROMOTED_ENTRY(58, sub_8284D608, 0x8284D608) { ctx.r3.u64 = n_sub_8284D608(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t arg2) {
+uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t villageRecord) {
 	constexpr int32_t str_TXT_820C47A8_B_ = int32_t(0x820C47A8);
 	constexpr int32_t str_TXT_820DD954_B_ = int32_t(0x820DD954);
 	constexpr int32_t str_TXT_820DD964_B_ = int32_t(0x820DD964);
 	constexpr int32_t str_TXT_820DD978_B_ = int32_t(0x820DD978);
 	constexpr int32_t str_TXT_820DD9BC_B_ = int32_t(0x820DD9BC);
 	constexpr int32_t str_TXT_820DD9D0_B_ = int32_t(0x820DD9D0);
-	if (!UseLiftedCode(58, 0x8284D740)) { ctx.r3.u64 = villageCrimeManagerAddr; ctx.r4.u64 = arg2; __imp__sub_8284D740(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(58, 0x8284D740)) { ctx.r3.u64 = villageCrimeManagerAddr; ctx.r4.u64 = villageRecord; __imp__sub_8284D740(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284D740);
 	uint32_t stack = ctx.r1.u64;
 
 	CECVillageCrimeManager* villageCrimeManager = GameObject<CECVillageCrimeManager>(base, villageCrimeManagerAddr);
 	stack = PushStackFrame(base, stack, 112);
 
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)villageRecord != 0) {
 		ctx.r1.u64 = stack;
-		uint32_t isTXT_820DD954_B_ = GameDB_ReadBoolField_82303F38(ctx, base, arg2, str_TXT_820DD954_B_);
+		uint32_t isTXT_820DD954_B_ = GameDB_ReadBoolField_82303F38(ctx, base, villageRecord, str_TXT_820DD954_B_);
 		villageCrimeManager->m_84 = (uint8_t)isTXT_820DD954_B_;
 
 		uint64_t TXT_820DD964_L_ = str_TXT_820DD964_B_;
 		uint64_t crimeHash = String_HashFnv1(ctx, base, TXT_820DD964_L_, 0xFFFFFFFF811C9DC5ULL);
 
-		uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, arg2, crimeHash, 6);
+		uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, villageRecord, crimeHash, 6);
 		uint32_t crimeId = (fieldValue != 0) ? LOAD32(fieldValue) : 0;
 
 		// Build the crime IdRef into a stack temporary, then copy it into the manager.
@@ -144,7 +140,6 @@ uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 		uint64_t idRefAddr = (int64_t)villageCrimeManagerAddr + 12;
 		STORE64((uint32_t)villageCrimeManagerAddr + 12, LOAD64(idRefTmp));
 
-		ctx.r4.u64 = crimeId;
 		uint64_t crimeIdRef = IdRef_Get(ctx, base, idRefAddr);
 		if ((uint32_t)crimeIdRef != 0) {
 			uint32_t isTXT_820DD978_B_ = GameDB_ReadBoolField_82303F38(ctx, base, crimeIdRef, str_TXT_820DD978_B_);

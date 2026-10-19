@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821DAB78(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(3, 0x821DAB78)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_821DAB78(ctx, base); return ctx.r3.u64; }
@@ -64,11 +65,11 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 	uint32_t self = (uint32_t)actionManagerSimpleAddr;
 	uint32_t currentActionSlot = self + 16;
 	uint32_t previousActionSlot = self + 24;
-	uint32_t sharedHandle20 = self + 32;
+	uint32_t heldObjectHandle = self + 32;
 
-	uint32_t heldObject = LOAD32(sharedHandle20);
+	uint32_t heldObject = LOAD32(heldObjectHandle);
 	// r5 handed to the +0x18 release: the object held at +0x20, or what the +0x20 release left in r5
-	uint64_t handedR5 = heldObject;
+	uint64_t heldObjectForRelease = heldObject;
 	if (heldObject != 0) {
 		// vtable slot 0x40 returns an EntityHandle for the held object into a stack temporary, which is
 		// destroyed at once; then the shared handle at +0x20 is released and cleared.
@@ -84,18 +85,15 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		STORE32(tempHandle, uint32_t(g_820F0000 + 5732));
 		// state the callee may pass on
-		ctx.r8.s64 = int64_t(g_820F0000) + 5732;
-		ctx.r9.s64 = g_820F0000;
 		EntityHandle_Release(ctx, base, tempHandle);
 		STORE32(tempHandle + 4, 0);
-		SharedHandle_Release(ctx, base, sharedHandle20);
-		handedR5 = ctx.r5.u64;
-		STORE32(sharedHandle20, 0);
+		SharedHandle_Release(ctx, base, heldObjectHandle);
+		heldObjectForRelease = ctx.r5.u64;
+		STORE32(heldObjectHandle, 0);
 	}
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = handedR5;
 	SharedHandle_Release(ctx, base, previousActionSlot);
 	STORE32(previousActionSlot, 0);
 
@@ -133,7 +131,6 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 				handedR9 = lockState;
 			} while (!compare0.eq);
 		}
-		ctx.r9.u64 = handedR9;
 		n_sub_8226B5C0(ctx, base, currentAction);
 		if (currentAction == LOAD32(currentActionSlot)) {
 			uint32_t actionCheckFn = LOAD32(LOAD32(currentAction) + 24);
@@ -226,8 +223,6 @@ uint64_t CECActionManagerSimple_SetAction(CpuState& ctx, uint8_t* base, uint64_t
 		outHandle->vtable = entityHandleVtable;
 		// state the callee may pass on
 		ctx.r8.s64 = int64_t(g_820F0000) + 5732;
-		ctx.r9.u64 = 0;
-		ctx.r10.s64 = g_820F0000;
 		EntityHandle_SetTarget(ctx, base, outHandleAddr, entity);
 		outHandle->m_8 = actionWord;
 	} else {
@@ -243,9 +238,6 @@ uint64_t CECActionManagerSimple_SetAction(CpuState& ctx, uint8_t* base, uint64_t
 		STORE32(tempHandle, entityHandleVtable);
 		outHandle->m_8 = tempWord8;
 		// state the callee may pass on
-		ctx.r5.u64 = tempWord8;
-		ctx.r6.u64 = entityHandleVtable;
-		ctx.r7.u64 = uint32_t(g_820F0000);
 		EntityHandle_Release(ctx, base, tempHandle);
 	}
 
@@ -395,12 +387,8 @@ uint64_t CECActionManagerSimple_GetName(CpuState& ctx, uint8_t* base, uint64_t o
 	constexpr int32_t str_TXT_820A7618_B_ = int32_t(0x820A7618);
 	if (!UseLiftedCode(68, 0x8297B290)) { ctx.r3.u64 = outNameAddr; __imp__sub_8297B290(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297B290);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, outNameAddr, str_TXT_820A7618_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return outNameAddr;
 }
 PROMOTED_ENTRY(68, sub_8297B290, 0x8297B290) { ctx.r3.u64 = CECActionManagerSimple_GetName(ctx, base, ctx.r3.u64); }
@@ -418,8 +406,6 @@ uint64_t CECActionManagerSimple_DeletingDestructor(CpuState& ctx, uint8_t* base,
 	actionManagerSimple->m_30 = entityHandleVtable;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
-	ctx.r10.u64 = entityHandleVtable;
 	EntityHandle_Release(ctx, base, actionManagerSimpleAddr + 48);
 	actionManagerSimple->m_34 = 0u;
 
@@ -646,13 +632,11 @@ uint64_t CECActionManagerSimple_ReleaseCurrentAction(CpuState& ctx, uint8_t* bas
 		// or what n_sub_826DF838 left there
 		uint64_t r9Value = ctx.r3.u32 & 0xFF;
 		if (r9Value == 0) {
-			ctx.r9.u64 = r9Value;
 			n_sub_826DF838(ctx, base, LOAD32((uint32_t)currentActionSlot));
 			r9Value = ctx.r9.u64;
 		}
 		action = LOAD32((uint32_t)currentActionSlot);
 		if (LOAD8(action + 73) == 0) {
-			ctx.r9.u64 = r9Value;
 			n_sub_82285D10(ctx, base, action);
 		}
 		result = SharedHandle_Release(ctx, base, currentActionSlot);
@@ -769,10 +753,6 @@ uint64_t CECActionManagerSimple_ApplyAlpha(CpuState& ctx, uint8_t* base, uint64_
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = actionManagerSimpleAddr;
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = r9Value;
 			ctx.xer.ca = carry;
 			result = n_sub_82547EC8(ctx, base, result, alpha);
 		}

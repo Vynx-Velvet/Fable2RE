@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t CECPlayerSpellManager_UpdateNetworked(CpuState& ctx, uint8_t* base, uint32_t playerSpellManagerAddr) {
 	if (!UseLiftedCode(13, 0x822D2EE0)) { ctx.r3.u64 = playerSpellManagerAddr; __imp__sub_822D2EE0(ctx, base); return ctx.r3.u32; }
@@ -129,39 +130,34 @@ uint32_t CECPlayerSpellManager_UpdateNetworked(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(13, sub_822D2EE0, 0x822D2EE0) { ctx.r3.u64 = CECPlayerSpellManager_UpdateNetworked(ctx, base, ctx.r3.u32); }
 
-uint64_t CECPlayerSpellManager_Update(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(13, 0x822D3078)) { ctx.r3.u64 = arg1; __imp__sub_822D3078(ctx, base); return ctx.r3.u64; }
+uint64_t CECPlayerSpellManager_Update(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr) {
+	if (!UseLiftedCode(13, 0x822D3078)) { ctx.r3.u64 = playerSpellManagerAddr; __imp__sub_822D3078(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822D3078);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
-	if (int32_t(LOAD32(LOAD32((uint32_t)arg1 + 16) + 112)) != 0) {
+	if (int32_t(LOAD32(LOAD32((uint32_t)playerSpellManagerAddr + 16) + 112)) != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82612860(ctx, base, arg1);  // Lua_PlayerSpellManager_BuildPotentialTargetEntitiesList
+		n_sub_82612860(ctx, base, playerSpellManagerAddr);  // Lua_PlayerSpellManager_BuildPotentialTargetEntitiesList
 	}
 	ctx.r1.u64 = stack;
-	CECPlayerSpellManager_UpdateNetworked(ctx, base, arg1);
-	uint64_t result = n_sub_822D4820(ctx, base, (int64_t)arg1 + 484);
+	CECPlayerSpellManager_UpdateNetworked(ctx, base, playerSpellManagerAddr);
+	uint64_t result = n_sub_822D4820(ctx, base, (int64_t)playerSpellManagerAddr + 484);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(13, sub_822D3078, 0x822D3078) { ctx.r3.u64 = CECPlayerSpellManager_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t CECPlayerSpellManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t CECPlayerSpellManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820A68A4_B_ = int32_t(0x820A68A4);
-	if (!UseLiftedCode(39, 0x82610E30)) { ctx.r3.u64 = arg1; __imp__sub_82610E30(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(39, 0x82610E30)) { ctx.r3.u64 = classNameString; __imp__sub_82610E30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82610E30);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint64_t className = str_TXT_820A68A4_B_;
 	int32_t maxLength = -1;
-	CCharString_ConstructFromCStr(ctx, base, arg1, className, maxLength);
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return arg1;
+	CCharString_ConstructFromCStr(ctx, base, classNameString, className, maxLength);
+	return classNameString;
 }
 PROMOTED_ENTRY(39, sub_82610E30, 0x82610E30) { ctx.r3.u64 = CECPlayerSpellManager_GetClassName(ctx, base, ctx.r3.u64); }
 
@@ -233,11 +229,6 @@ uint64_t CECPlayerSpellManager_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 	uint32_t owner = playerSpellManager->m_owner;
 
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = spellManagerInitData;
-	ctx.r6.s64 = ntFailedFull;
-	ctx.r7.u64 = storeOffset2;
-	ctx.r8.u64 = storeOffset1;
-	ctx.r9.u64 = stackValueAddress;
 	ctx.v10 = storedVector;
 	ctx.v11 = splatVector;
 	ctx.v12 = loadedVector;
@@ -251,8 +242,8 @@ uint64_t CECPlayerSpellManager_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 }
 PROMOTED_ENTRY(39, sub_82610E70, 0x82610E70) { ctx.r3.u64 = CECPlayerSpellManager_Construct(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t CECPlayerSpellManager_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr, uint64_t arg2) {
-	if (!UseLiftedCode(39, 0x82610F48)) { ctx.r3.u64 = playerSpellManagerAddr; ctx.r4.u64 = arg2; __imp__sub_82610F48(ctx, base); return ctx.r3.u64; }
+uint64_t CECPlayerSpellManager_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr, uint64_t deleteFlag) {
+	if (!UseLiftedCode(39, 0x82610F48)) { ctx.r3.u64 = playerSpellManagerAddr; ctx.r4.u64 = deleteFlag; __imp__sub_82610F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82610F48);
 	uint32_t stack = ctx.r1.u64;
 	CECPlayerSpellManager* playerSpellManager = GameObject<CECPlayerSpellManager>(base, playerSpellManagerAddr);
@@ -267,17 +258,16 @@ uint64_t CECPlayerSpellManager_DeletingDestructor(CpuState& ctx, uint8_t* base, 
 	playerSpellManager->vtable = 0x820A8D10u;
 
 	uint64_t result = playerSpellManagerAddr;
-	if ((uint32_t)arg2 & 0x1) {
+	if ((uint32_t)deleteFlag & 0x1) {
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
 		HandleTarget_Free(ctx, base, playerSpellManagerAddr);
-		arg2 = ctx.r4.u64;
+		deleteFlag = ctx.r4.u64;
 		result = playerSpellManagerAddr;
 	}
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
+	ctx.r4.u64 = deleteFlag;
 	return result;
 }
 PROMOTED_ENTRY(39, sub_82610F48, 0x82610F48) { ctx.r3.u64 = CECPlayerSpellManager_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -348,8 +338,6 @@ uint64_t CECPlayerSpellManager_Initialise(CpuState& ctx, uint8_t* base, uint64_t
 		manager = LOAD32(manager + 12);
 		uint32_t localPlayer = LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 64);
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = savedR6;
-		ctx.r8.u64 = savedR8;
 		ctx.xer.ca = xerCa;
 		n_sub_82669B50(ctx, base, localPlayer, spellState);
 		pendingSpellState = ctx.r4.u64;
@@ -360,7 +348,6 @@ uint64_t CECPlayerSpellManager_Initialise(CpuState& ctx, uint8_t* base, uint64_t
 
 	ownerEntity = playerSpellManager->m_owner;
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = savedR8;
 	ctx.xer.ca = xerCa;
 	uint32_t isNetworked = Entity_IsNetworked(ctx, base, ownerEntity);
 	if ((isNetworked & 0xFF) != 0) {
@@ -373,7 +360,6 @@ uint64_t CECPlayerSpellManager_Initialise(CpuState& ctx, uint8_t* base, uint64_t
 		playerSpellManager->m_14 = newSpellState;
 	}
 
-	ctx.r4.u64 = pendingSpellState;
 	uint64_t result = CECPlayerSpellManager_ResetTargeting(ctx, base, playerSpellManagerAddr);
 
 	// Reset the spell charge/selection state and clear both slot tables.
@@ -460,7 +446,6 @@ uint64_t CECPlayerSpellManager_Shutdown(CpuState& ctx, uint8_t* base, uint64_t p
 		spellEntity = ctx.r4.u64;
 		playerSpellManager->m_14 = 0;
 	}
-	ctx.r4.u64 = spellEntity;
 	uint64_t result = n_sub_82612B48(ctx, base, playerSpellManagerAddr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -667,9 +652,6 @@ uint64_t n_sub_82612860(CpuState& ctx, uint8_t* base, uint64_t playerSpellManage
 		STORE_F32(stack + 180, float(f1));
 
 		uint32_t implArg = LOAD32(LOAD32(LOAD32(LOAD32(managerRoot + 12) + 88) + 4) + 12);
-		ctx.f6.f64 = f1;
-		ctx.f7.f64 = f0;
-		ctx.f8.f64 = f2;
 		PlayerSpellManager_BuildPotentialTargetEntitiesImpl(ctx, base, implArg, rect, params);
 		flags.ca = ctx.xer.ca;
 
@@ -753,7 +735,6 @@ uint64_t n_sub_82612B48(CpuState& ctx, uint8_t* base, uint32_t playerSpellManage
 	uint32_t spellEntryPtr = LOAD32(LOAD32(LOAD32(spellSourceGlobal + 12) + 88) + 4);
 	uint32_t firstSpellId = LOAD32(spellEntryPtr);
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = spellEntryPtr;
 	uint64_t firstLookup = n_sub_82264448(ctx, base, firstSpellId, spellCacheAddr);
 	uint32_t lookupOutput = ctx.r8.u32;
 
@@ -773,9 +754,6 @@ uint64_t n_sub_82612B48(CpuState& ctx, uint8_t* base, uint32_t playerSpellManage
 	}
 
 	uint32_t secondSpellId = LOAD32(LOAD32(LOAD32(LOAD32(spellSourceGlobal + 12) + 88) + 4));
-	ctx.r6.u64 = firstDeltaClz;
-	ctx.r7.u64 = firstDelta;
-	ctx.r8.u64 = lookupOutput;
 	uint64_t secondLookup = n_sub_82264448(ctx, base, secondSpellId, secondCacheAddr);
 	uint64_t secondDelta = secondLookup - (uint64_t)ownerBeforeSecondLookup;
 	uint32_t secondDeltaClz = (uint32_t)secondDelta == 0 ? 32 : __builtin_clz((uint32_t)secondDelta);
@@ -786,9 +764,6 @@ uint64_t n_sub_82612B48(CpuState& ctx, uint8_t* base, uint32_t playerSpellManage
 		uint64_t magicHud = playerSpellManager->m_10;
 		result = magicHud;
 		if ((uint32_t)magicHud != 0) {
-			ctx.r6.u64 = secondDeltaClz;
-			ctx.r7.u64 = firstMatches;
-			ctx.r8.u64 = secondDelta;
 			result = n_sub_8242EA00(ctx, base, magicHud, (uint64_t)TXT_83498FFC_G_, 200);
 			secondDeltaClz = ctx.r6.u64;
 			firstMatches = ctx.r7.u64;

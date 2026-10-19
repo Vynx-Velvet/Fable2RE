@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_8219DBD0(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_t targetEntity) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -34,8 +35,6 @@ uint64_t n_sub_8219DBD0(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_
 		STORE32(stack + 80, (uint32_t)g_820F1664);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = g_820F1664;
-		ctx.r10.u64 = 0;
 		EntityHandle_SetTarget(ctx, base, stack + 80, targetEntity);
 
 		uint32_t listEnd = door->m_54;
@@ -46,8 +45,6 @@ uint64_t n_sub_8219DBD0(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_
 		STORE32(stack + 80, (uint32_t)g_820F1664);
 		// state the callee may pass on; r4 still holds what the lookup left
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = foundPosition;
-		ctx.r10.u64 = (uint32_t)g_820F1664;
 		EntityHandle_Release(ctx, base, stack + 80);
 		callerR4 = ctx.r4.u64;
 		callerR8 = ctx.r8.u64;
@@ -134,7 +131,6 @@ uint64_t n_sub_822D0940(CpuState& ctx, uint8_t* base, uint64_t doorObject, uint6
 	if (found) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r9.u64 = reg9;
 		ctx.xer.ca = flags.ca;
 		result = CECNetwork_ShouldReplicateEntity(ctx, base, entryObject);
 		reg9 = ctx.r9.u64;
@@ -145,9 +141,6 @@ uint64_t n_sub_822D0940(CpuState& ctx, uint8_t* base, uint64_t doorObject, uint6
 			uint32_t rootChild = LOAD32(globalRoot + 12);
 			uint32_t messageTarget = LOAD32(rootChild + 140);
 			// state the callee may pass on
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = rootChild;
-			ctx.r9.u64 = g_820A43E8;
 			uint64_t uniqueId = Entity_GetUniqueId(ctx, base, doorEntity);
 			flags.ca = ctx.xer.ca;
 			result = Entity_PostFlagMessage(ctx, base, messageTarget, (uint64_t)stack + 80, uniqueId);
@@ -176,12 +169,8 @@ uint64_t CECDoor_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameOu
 	constexpr int32_t str_TXT_820BCD10_B_ = int32_t(0x820BCD10);
 	if (!UseLiftedCode(32, 0x825279B8)) { ctx.r3.u64 = classNameOut; __imp__sub_825279B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825279B8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameOut, str_TXT_820BCD10_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameOut;
 }
 PROMOTED_ENTRY(32, sub_825279B8, 0x825279B8) { ctx.r3.u64 = CECDoor_GetClassName(ctx, base, ctx.r3.u64); }
@@ -212,9 +201,7 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	// r13 supplies the MSR bits (0x8020) set while the reference count is reserved below.
 	const uint32_t msrFromR13 = ctx.r13.u32;
 
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 
 	SharedHandle_Release(ctx, base, doorAddr + 104);
 	C_820EFB9C_Destructor(ctx, base, doorAddr + 92);
@@ -228,7 +215,6 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if (rangeBegin != 0) {
 		uint32_t rangeEnd = LOAD32(rangeBlock + 8);
 		// state the callee may pass on
-		ctx.r3.u64 = rangeBlock;
 		HandleRange_ReleaseAll(ctx, base, rangeBegin, rangeEnd);
 		HandleTarget_Free(ctx, base, LOAD32(rangeBlock + 4));
 		reg4 = ctx.r4.u64;
@@ -270,7 +256,6 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	}
 
 	// state the callee may pass on
-	ctx.r4.u64 = reg4;
 	SharedHandle_Release(ctx, base, doorAddr + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, doorAddr + 56);
 
@@ -278,10 +263,7 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	uint32_t vtableSlot = (uint32_t)doorAddr != 0 ? (uint32_t)(doorAddr + 28) : 0;
 	STORE32(vtableSlot, 0x820A8F74u);
 
-	uint32_t result = CECVaultable_Dtor(ctx, base, (uint32_t)doorAddr);
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
-	return result;
+	return CECVaultable_Dtor(ctx, base, (uint32_t)doorAddr);
 }
 PROMOTED_ENTRY(32, sub_82527A90, 0x82527A90) { ctx.r3.u64 = n_sub_82527A90(ctx, base, ctx.r3.u64); }
 
@@ -316,8 +298,6 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t container = LOAD32(LOAD32(globalRoot + 12) + 88);
 				uint32_t containerFirst = LOAD32(LOAD32(container + 4));
 				// state the callee may pass on
-				ctx.r8.u64 = container;
-				ctx.r10.u64 = globalRoot;
 				ctx.xer.ca = flags.ca;
 				uint64_t entity = n_sub_82264448(ctx, base, containerFirst, entryAddr);
 				reg4 = entity;
@@ -340,9 +320,6 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			} while (index < (uint32_t)entryCount);
 		}
 		// state the callee may pass on
-		ctx.r4.u64 = reg4;
-		ctx.r7.u64 = entryCount;
-		ctx.r8.u64 = listBytes;
 		ctx.xer.ca = flags.ca;
 		result = SharedHandle_Release(ctx, base, listFieldAddr);
 		STORE32((uint32_t)listFieldAddr, 0u);
@@ -376,7 +353,6 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 		double curvePosition = double(LOAD_F32(curve + 40));
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = reg8;
 		Curve_EvaluateLinear(ctx, base, curve, curvePosition);
 		uint32_t curveFn = LOAD32(LOAD32(curve) + 28);
 		// state the callee may pass on
@@ -444,8 +420,6 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 		uint64_t sourceCount = (int32_t)sourceBytes >> 3;  // sign-extended, as the original passes it
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
 		ctx.xer.ca = flags.ca;
 		n_sub_821719D0(ctx, base, stack + 128, sourceCount, reg8);
 		flags.ca = ctx.xer.ca;
@@ -463,11 +437,6 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 		if ((int32_t)listCount == 0) listBegin = (uint64_t)stack + 128;
 
 		// state the callee may pass on
-		ctx.r5.u64 = listCount;
-		ctx.r6.u64 = listBytes;
-		ctx.r7.u64 = listEnd;
-		ctx.r8.u64 = 48;
-		ctx.f13.f64 = pairSecond;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -695,9 +664,6 @@ uint64_t n_sub_82528E30(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if ((result & 0xFF) != 0 && LOAD8((uint32_t)doorAddr + 42) == 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r6.u64 = reg6;
-		ctx.r7.u64 = reg7;
-		ctx.r8.u64 = reg8;
 		ctx.xer.ca = flags.ca;
 		result = Door_IsLockedForPlayer_Impl(ctx, base, doorAddr);
 		if ((result & 0xFF) == 0) {
@@ -900,8 +866,6 @@ uint64_t Door_IsLockedForPlayer_Impl(CpuState& ctx, uint8_t* base, uint32_t door
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = handleArray;
-		ctx.r9.u64 = handleContainer;
 		uint32_t playerEntity = (uint32_t)EntityHandle_Get(ctx, base, firstHandle);
 		r6Value = ctx.r6.u64;
 		r7Value = ctx.r7.u64;
@@ -1184,7 +1148,6 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.fpscr.disableFlushMode();
 	double zOffset = double(LOAD_F32(floatTable + 3688));
 	// state the callee may pass on
-	ctx.r3.u64 = (uint32_t)doorAddr;
 	ctx.v1 = inputVector;
 	ctx.v127 = inputVector;
 	n_sub_8252AE08(ctx, base, stack + 80, zOffset);
@@ -1194,7 +1157,6 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.fpscr.disableFlushMode();
 	zOffset = double(LOAD_F32(floatTable + 17056));
 	// state the callee may pass on
-	ctx.r3.u64 = (uint32_t)doorAddr;
 	ctx.v1 = inputVector;
 	n_sub_8252AE08(ctx, base, stack + 80, zOffset);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
@@ -1268,7 +1230,6 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 		ctx.fpscr.disableFlushMode();
 		zOffset = double(LOAD_F32(floatTable));
 		// state the callee may pass on
-		ctx.r3.u64 = (uint32_t)doorAddr;
 		ctx.v1 = inputVector;
 		n_sub_8252AE08(ctx, base, stack + 80, zOffset);
 		result = CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
@@ -1342,9 +1303,6 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			uint32_t firstHandle = LOAD32(handleArray);
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r7.u64 = r7Value;
-			ctx.r8.u64 = r8Value;
-			ctx.r9.u64 = handleArray;
 			ctx.xer.ca = carry;
 			uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, firstHandle);
 
@@ -1357,9 +1315,6 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t getEntityPos = LOAD32(LOAD32(entityPosSource) + 64);
 				callTarget.u64 = getEntityPos;
 				// r3/r4: the output and the object; r9/r10: state the callee may pass on
-				ctx.r3.u64 = stack + 80;
-				ctx.r4.u64 = entityPosSource;
-				ctx.r9.u64 = 1;
 				ctx.r10.u64 = getEntityPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -1389,17 +1344,12 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 					callTarget.u64 = getEntityPos2;
 					// r3/r4: the output and the object; r5, r6, r10, v11-v13: state the callee may pass on
 					ctx.r3.u64 = stack + 128;
-					ctx.r4.u64 = entityPosSource2;
-					ctx.r5.u64 = stack + 96;
-					ctx.r6.u64 = stack + 80;
-					ctx.r10.u64 = getEntityPos2;
 					ctx.v11 = distanceSq;
 					ctx.v12 = offset;
 					ctx.v13 = doorPos;
 					REX_CALL_INDIRECT_FUNC(callTarget.u32);
 					// v1: the position just fetched; r9: state the callee may pass on
 					SET_V8(ctx.v1, VLOAD((stack + 128) & ~0xF));
-					ctx.r9.u64 = stack + 128;
 					n_sub_8252AF38(ctx, base, doorAddr);
 				} else {
 					// state SpellShot_GetOwner below may pass on
@@ -1416,7 +1366,6 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			uint32_t handleArray2 = LOAD32(LOAD32(world2 + 88) + 4);
 			uint32_t firstHandle2 = LOAD32(handleArray2);
 			// state the callee may pass on (r4-r6 and v11-v13 as set above or as the last call left them)
-			ctx.r9.u64 = handleArray2;
 			result = SpellShot_GetOwner(ctx, base, firstHandle2);
 
 			uint32_t owner = (uint32_t)result;
@@ -1425,8 +1374,6 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t getOwnerPos = LOAD32(LOAD32(ownerPosSource) + 64);
 				callTarget.u64 = getOwnerPos;
 				// r3/r4: the output and the object; r10: state the callee may pass on
-				ctx.r3.u64 = stack + 144;
-				ctx.r4.u64 = ownerPosSource;
 				ctx.r10.u64 = getOwnerPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -1465,17 +1412,12 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				callTarget.u64 = getOwnerPos2;
 				// r3/r4: the output and the object; r5, r6, r10, v11-v13: state the callee may pass on
 				ctx.r3.u64 = stack + 176;
-				ctx.r4.u64 = ownerPosSource2;
-				ctx.r5.u64 = stack + 160;
-				ctx.r6.u64 = stack + 144;
-				ctx.r10.u64 = getOwnerPos2;
 				ctx.v11 = distanceSq;
 				ctx.v12 = offset;
 				ctx.v13 = doorPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				// v1: the position just fetched; r9: state the callee may pass on
 				SET_V8(ctx.v1, VLOAD((stack + 176) & ~0xF));
-				ctx.r9.u64 = stack + 176;
 				result = n_sub_8252AF38(ctx, base, doorAddr);
 			}
 		}

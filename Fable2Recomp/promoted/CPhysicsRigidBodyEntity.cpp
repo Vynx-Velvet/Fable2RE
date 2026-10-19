@@ -9,9 +9,10 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
-uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBody, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(0, 0x82175EF8)) { ctx.r3.u64 = rigidBody; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82175EF8(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity, uint64_t arg2, uint64_t arg3) {
+	if (!UseLiftedCode(0, 0x82175EF8)) { ctx.r3.u64 = rigidBodyEntity; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82175EF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82175EF8);
 	uint32_t stack = ctx.r1.u64;
 	PPCVRegister vec{};
@@ -19,7 +20,7 @@ uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBody, uint64
 	stack = PushStackFrame(base, stack, 144);
 	STORE64(stack + 176, arg2);
 	STORE64(stack + 184, arg3);
-	uint32_t rigidBodyId = LOAD32((uint32_t)rigidBody + 44);
+	uint32_t rigidBodyId = LOAD32((uint32_t)rigidBodyEntity + 44);
 	SET_V8(vec, VLOAD((stack + 176) & ~0xF));
 	VSTORE((stack + 112) & ~0xF, V8(vec));
 	ctx.fpscr.disableFlushMode();
@@ -44,9 +45,9 @@ uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBody, uint64
 PROMOTED_ENTRY(0, sub_82175EF8, 0x82175EF8) { ctx.r3.u64 = n_sub_82175EF8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82198D60  [224 bytes]
-uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t entity, uint32_t host) {
+uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint32_t rigidBodyEntity) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
-	if (!UseLiftedCode(1, 0x82198D60)) { ctx.r3.u64 = entity; ctx.r4.u64 = host; __imp__sub_82198D60(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(1, 0x82198D60)) { ctx.r3.u64 = boundingSphere; ctx.r4.u64 = rigidBodyEntity; __imp__sub_82198D60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82198D60);
 	PPCRegister scratch{};
 	uint32_t stack = ctx.r1.u64;
@@ -71,7 +72,7 @@ uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t entity, uint32_t 
 	ctx.r1.u64 = stack;
 	n_sub_82D7AAA8(ctx, base, cinfo);
 
-	const uint32_t rigidBody = LOAD32(host + 44);
+	const uint32_t rigidBody = LOAD32(rigidBodyEntity + 44);
 	hkpRigidBody_GetRigidBodyCinfo(ctx, base, rigidBody, cinfo);
 
 	const uint64_t rotationMatrix = uint64_t(stack) + 144;
@@ -118,27 +119,27 @@ uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t entity, uint32_t 
 	ctx.fpscr.disableFlushModeUnconditional();
 	radius = double(float(double(float(sqrt(double(LOAD_F32(stack + 96))))) * halfScale));
 	ctx.v1 = vCenter;
-	CBoundingSphere_Ctor(ctx, base, entity, radius);
+	CBoundingSphere_Ctor(ctx, base, boundingSphere, radius);
 
 	stack = PopStackFrame(stack, 432);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = dotResult;
 	ctx.f1.f64 = radius;
-	return entity;
+	return boundingSphere;
 }
 PROMOTED_ENTRY(1, sub_82198D60, 0x82198D60) { ctx.r3.u64 = n_sub_82198D60(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_821C0818(CpuState& ctx, uint8_t* base, uint64_t entity) {
-	if (!UseLiftedCode(2, 0x821C0818)) { ctx.r3.u64 = entity; __imp__sub_821C0818(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_821C0818(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity) {
+	if (!UseLiftedCode(2, 0x821C0818)) { ctx.r3.u64 = rigidBodyEntity; __imp__sub_821C0818(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821C0818);
 	uint32_t stack = ctx.r1.u64;
 	PPCVRegister savedVector = ctx.v1;
 	stack = PushStackFrame(base, stack, 112);
-	uint32_t target = LOAD32((uint32_t)entity + 44);
+	uint32_t rigidBody = LOAD32((uint32_t)rigidBodyEntity + 44);
 	uint32_t saveArea = stack + 80;
 	VSTORE(saveArea & ~0xF, V8(savedVector));
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82D7B7D0(ctx, base, target);
+	uint64_t result = n_sub_82D7B7D0(ctx, base, rigidBody);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
@@ -146,23 +147,23 @@ uint64_t n_sub_821C0818(CpuState& ctx, uint8_t* base, uint64_t entity) {
 PROMOTED_ENTRY(2, sub_821C0818, 0x821C0818) { ctx.r3.u64 = n_sub_821C0818(ctx, base, ctx.r3.u64); }
 
 // sub_8220BB00  [20 bytes]
-void CPhysicsRigidBodyEntity_GetPosition(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(5, 0x8220BB00)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_8220BB00(ctx, base); return; }
+void CPhysicsRigidBodyEntity_GetPosition(CpuState& ctx, uint8_t* base, uint32_t outPosition, uint32_t physicsRigidBodyEntity) {
+	if (!UseLiftedCode(5, 0x8220BB00)) { ctx.r3.u64 = outPosition; ctx.r4.u64 = physicsRigidBodyEntity; __imp__sub_8220BB00(ctx, base); return; }
 	LiftedFrame frame(0x8220BB00);
 
-	// arg2->m_2C points at a physics actor; its position vector sits 0x110 bytes in.
-	const uint32_t sourceVector = (LOAD32(arg2 + 0x2C) + 0x110u) & ~0xFu;
+	// physicsRigidBodyEntity->m_2C points at a physics actor; its position vector sits 0x110 bytes in.
+	const uint32_t sourceVector = (LOAD32(physicsRigidBodyEntity + 0x2C) + 0x110u) & ~0xFu;
 
 	PPCVRegister position{};
 	SET_V8(position, VLOAD(sourceVector));
-	VSTORE(arg1 & ~0xFu, V8(position));
+	VSTORE(outPosition & ~0xFu, V8(position));
 	return;
 }
 PROMOTED_ENTRY(5, sub_8220BB00, 0x8220BB00) { CPhysicsRigidBodyEntity_GetPosition(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 // sub_82232B08  [56 bytes]
-void CPhysicsRigidBodyEntity_GetPosition_82232B08(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(7, 0x82232B08)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82232B08(ctx, base); return; }
+void CPhysicsRigidBodyEntity_GetPosition_82232B08(CpuState& ctx, uint8_t* base, uint32_t outPosition, uint32_t physicsRigidBodyEntity) {
+	if (!UseLiftedCode(7, 0x82232B08)) { ctx.r3.u64 = outPosition; ctx.r4.u64 = physicsRigidBodyEntity; __imp__sub_82232B08(ctx, base); return; }
 	LiftedFrame frame(0x82232B08);
 	PPCRegister scratch{};
 	uint32_t translation{};
@@ -171,7 +172,7 @@ void CPhysicsRigidBodyEntity_GetPosition_82232B08(CpuState& ctx, uint8_t* base, 
 	PPCVRegister lane12{};
 	PPCVRegister position{};
 
-	translation = LOAD32(arg2 + 44) + 336;
+	translation = LOAD32(physicsRigidBodyEntity + 44) + 336;
 
 	// masked loads emulate the (possibly unaligned) AltiVec vector load at the translation address
 	scratch.u32 = translation + 4u;
@@ -185,7 +186,7 @@ void CPhysicsRigidBodyEntity_GetPosition_82232B08(CpuState& ctx, uint8_t* base, 
 	SET_V8(lane8, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 	SET_VF(lane8, simde_mm_blend_ps(VF(lane8), simde_mm_permute_ps(VF(lane12), 57), 4));
 	SET_VF(position, simde_mm_blend_ps(VF(position), simde_mm_permute_ps(VF(lane8), 78), 3));
-	VSTORE(arg1 & ~0xF, V8(position));
+	VSTORE(outPosition & ~0xF, V8(position));
 	return;
 }
 PROMOTED_ENTRY(7, sub_82232B08, 0x82232B08) { CPhysicsRigidBodyEntity_GetPosition_82232B08(ctx, base, ctx.r3.u32, ctx.r4.u32); }
@@ -216,7 +217,6 @@ uint64_t CPhysicsRigidBodyEntity_ScalarDeletingDestructor(CpuState& ctx, uint8_t
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
 	CPhysicsRigidBodyEntity_Destructor(ctx, base, arg1);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, arg1);
@@ -243,7 +243,6 @@ uint32_t CPhysicsRigidBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64
 		uint64_t stackTemp = (uint64_t)stack + 80;
 		uint32_t rigidBodyForWorldUpdate = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = vtablePtr;
 		n_sub_82D72550(ctx, base, stackTemp, world, rigidBodyForWorldUpdate);
 		world = ctx.r4.u64;
 		vtablePtr = ctx.r10.u64;
@@ -251,8 +250,6 @@ uint32_t CPhysicsRigidBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64
 
 	uint32_t rigidBody = physicsRigidBodyEntity->m_pRigidBody;
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = world;
-	ctx.r10.u64 = vtablePtr;
 	hkReferencedObject_RemoveReference(ctx, base, rigidBody);
 
 	uint32_t targetHandle = physicsRigidBodyEntity->m_34;
@@ -286,10 +283,6 @@ uint64_t CPhysicsRigidBodyEntity_AddToWorld(CpuState& ctx, uint8_t* base, uint32
 
 	uint32_t pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 
-	ctx.r7.u64 = flagIsZero;
-	ctx.r8.u64 = leadingZeros;
-	ctx.r9.u64 = globalFlagByte;
-	ctx.r10.s64 = g_83320000;
 	return n_sub_82D723B0(ctx, base, physicsWorld, pRigidBody, addToWorldMode);
 }
 PROMOTED_ENTRY(43, sub_82687B28, 0x82687B28) { ctx.r3.u64 = CPhysicsRigidBodyEntity_AddToWorld(ctx, base, ctx.r3.u32, ctx.r4.u64); }
@@ -330,7 +323,6 @@ uint64_t CPhysicsRigidBodyEntity_SetCollisionFilterInfo(CpuState& ctx, uint8_t* 
 		return 0;
 	}
 
-	ctx.r10.u64 = pRigidBody;
 	return n_sub_82D76CC8(ctx, base, pWorld, pRigidBody, 0, 1);
 }
 PROMOTED_ENTRY(43, sub_82687B80, 0x82687B80) { ctx.r3.u64 = CPhysicsRigidBodyEntity_SetCollisionFilterInfo(ctx, base, ctx.r3.u32, ctx.r4.u64); }
@@ -389,41 +381,41 @@ uint64_t CPhysicsRigidBodyEntity_ClearOwner(CpuState& ctx, uint8_t* base, uint64
 PROMOTED_ENTRY(43, sub_82687C10, 0x82687C10) { ctx.r3.u64 = CPhysicsRigidBodyEntity_ClearOwner(ctx, base, ctx.r3.u64); }
 
 // sub_82687C28  [60 bytes]
-uint64_t n_sub_82687C28(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(43, 0x82687C28)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82687C28(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82687C28(CpuState& ctx, uint8_t* base, uint64_t nameString, uint32_t rigidBodyEntity) {
+	if (!UseLiftedCode(43, 0x82687C28)) { ctx.r3.u64 = nameString; ctx.r4.u64 = rigidBodyEntity; __imp__sub_82687C28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C28);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 96);
-	uint32_t sourceObject = LOAD32(arg2 + 44);
-	uint32_t cStr = LOAD32(sourceObject + 112);
+	uint32_t rigidBody = LOAD32(rigidBodyEntity + 44);
+	uint32_t nameCStr = LOAD32(rigidBody + 112);
 	ctx.r1.u64 = stack;
-	CCharString_ConstructFromCStr(ctx, base, arg1, cStr, -1);
+	CCharString_ConstructFromCStr(ctx, base, nameString, nameCStr, -1);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return nameString;
 }
 PROMOTED_ENTRY(43, sub_82687C28, 0x82687C28) { ctx.r3.u64 = n_sub_82687C28(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82687C68(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(43, 0x82687C68)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82687C68(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82687C68(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint64_t linkedObjectId) {
+	if (!UseLiftedCode(43, 0x82687C68)) { ctx.r3.u64 = physicsRigidBodyEntity; ctx.r4.u64 = linkedObjectId; __imp__sub_82687C68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C68);
-	uint32_t linkedObject = LOAD32((uint32_t)arg1 + 44);
-	return n_sub_82D7C860(ctx, base, linkedObject, arg2);
+	uint32_t linkedObject = LOAD32((uint32_t)physicsRigidBodyEntity + 44);
+	return n_sub_82D7C860(ctx, base, linkedObject, linkedObjectId);
 }
 PROMOTED_ENTRY(43, sub_82687C68, 0x82687C68) { ctx.r3.u64 = n_sub_82687C68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(43, 0x82687C70)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82687C70(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint32_t linkedObjectId) {
+	if (!UseLiftedCode(43, 0x82687C70)) { ctx.r3.u64 = physicsRigidBodyEntity; ctx.r4.u64 = linkedObjectId; __imp__sub_82687C70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C70);
 
-	uint32_t rig = LOAD32((uint32_t)arg1 + 0x2C);
+	uint32_t rig = LOAD32((uint32_t)physicsRigidBodyEntity + 0x2C);
 	uint32_t entryCount = LOAD16(rig + 0x1F4);
 
 	if ((int32_t)entryCount > 0) {
 		uint32_t entries = LOAD32(rig + 0x1F0);
 		for (uint32_t i = 0; (int32_t)i < (int32_t)entryCount; i++) {
-			if (LOAD32(entries + i * 4) == arg2) {
-				n_sub_82D7C310(ctx, base, rig, arg2);
+			if (LOAD32(entries + i * 4) == linkedObjectId) {
+				n_sub_82D7C310(ctx, base, rig, linkedObjectId);
 				break;
 			}
 		}
@@ -434,13 +426,13 @@ uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t ar
 PROMOTED_ENTRY(43, sub_82687C70, 0x82687C70) { ctx.r3.u64 = n_sub_82687C70(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // sub_82687D30  [20 bytes]
-void n_sub_82687D30(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(43, 0x82687D30)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82687D30(ctx, base); return; }
+void n_sub_82687D30(CpuState& ctx, uint8_t* base, uint32_t outVector, uint32_t physicsRigidBodyEntity) {
+	if (!UseLiftedCode(43, 0x82687D30)) { ctx.r3.u64 = outVector; ctx.r4.u64 = physicsRigidBodyEntity; __imp__sub_82687D30(ctx, base); return; }
 	LiftedFrame frame(0x82687D30);
 	PPCVRegister value{};
-	uint32_t source = (LOAD32(arg2 + 0x2C) + 416u) & ~0xFu;
+	uint32_t source = (LOAD32(physicsRigidBodyEntity + 0x2C) + 416u) & ~0xFu;
 	SET_V8(value, VLOAD(source));
-	VSTORE(arg1 & ~0xF, V8(value));
+	VSTORE(outVector & ~0xF, V8(value));
 	return;
 }
 PROMOTED_ENTRY(43, sub_82687D30, 0x82687D30) { n_sub_82687D30(ctx, base, ctx.r3.u32, ctx.r4.u32); }
@@ -493,12 +485,6 @@ uint64_t n_sub_82687D48(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (!compare6.lt) {
 		pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg4Value;
-		ctx.r5.u64 = arg5Value;
-		ctx.r6.u64 = arg6Value;
-		ctx.r7.u64 = arg7Value;
-		ctx.r8.u64 = arg8Value;
-		ctx.r9.u64 = arg9Value;
 		ctx.v6 = eqMask;
 		ctx.v7 = orMask;
 		ctx.v8 = geMask;
@@ -556,7 +542,6 @@ uint64_t n_sub_82687D48(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (entityData != 0) {
 		uint32_t innerPtr = LOAD32(entityData);
 		if (innerPtr == 0) {
-			ctx.r10.u64 = innerPtr;
 			handle = EntityHandle_Release(ctx, base, handle);
 		} else {
 			refObj = innerPtr;
@@ -628,12 +613,6 @@ uint64_t n_sub_82687E60(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (!compare6.lt) {
 		uint32_t pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4Value;
-		ctx.r5.u64 = r5Value;
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
-		ctx.r9.u64 = r9Value;
 		ctx.v6 = eqMask;
 		ctx.v7 = orMask;
 		ctx.v8 = geMask;
@@ -692,7 +671,6 @@ uint64_t n_sub_82687E60(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (handleOwnerPtr != 0) {
 		uint32_t innerPtr = LOAD32(handleOwnerPtr);
 		if (innerPtr == 0) {
-			ctx.r10.u64 = innerPtr;
 			result = EntityHandle_Release(ctx, base, result);
 		} else {
 			flagObj = innerPtr;

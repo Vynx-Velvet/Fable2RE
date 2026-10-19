@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t CECNavigation_IsActive(CpuState& ctx, uint8_t* base, uint32_t navigationAddr) {
 	if (!UseLiftedCode(0, 0x821729A0)) { ctx.r3.u64 = navigationAddr; __imp__sub_821729A0(ctx, base); return ctx.r3.u32; }
@@ -132,9 +133,6 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	double distance = double(float(sqrt(double(LOAD_F32(stack + 96)))));
 
 	// state the callee may pass on
-	ctx.r6.s64 = g_820A0000;
-	ctx.r7.u64 = facingPointAddr;
-	ctx.r8.u64 = entityPointAddr;
 	uint64_t result = CECNavigation_GetNavigationData(ctx, base, (uint32_t)navigationAddr);
 
 	// From here on v9-v13 hold these vectors: every later call is handed them and returns them, and
@@ -147,7 +145,6 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 
 	if ((uint32_t)result != 0) {
 		// state the callee may pass on
-		ctx.r5.u64 = facingPointAddr;
 		result = CMoveGraphController_FindChildBByType(ctx, base, LOAD32((uint32_t)result + 24), g_83499170);
 		if ((uint32_t)result != 0) {
 			// the child's vtable slot +68 replaces the distance
@@ -169,7 +166,6 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	if ((skipTargetEntity & 0xFF) == 0) {
 		const uint64_t targetHandleAddr = navigationAddr + 128;
 		// state the callee may pass on (r5 already holds what the original passes)
-		ctx.r4.u64 = 0;
 		result = EntityHandle_IsValid(ctx, base, targetHandleAddr);
 		if ((result & 0xFF) != 0) {
 			const int32_t navigationState = (int32_t)(uint32_t)navigation->m_AC;
@@ -178,7 +174,6 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			if (navigationState != 6 && navigationState != 2) {
 				// state the callee may pass on: r7-r9 still hold what EntityHandle_IsValid left,
 				// and of r10 the original passes only the low word
-				ctx.r10.u64 = ctx.r10.u32;
 				const uint32_t targetEntity = EntityHandle_Get_825575C8(ctx, base, targetHandleAddr);
 				const uint32_t targetComponent = LOAD32(targetEntity + 124);
 
@@ -330,7 +325,6 @@ uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	if (shouldCopy) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = entityFlag;
 		const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 
 		// the entity's component at +124 writes a vector into the frame through its vtable slot +64
@@ -348,10 +342,10 @@ uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 		SET_V8(copiedVector, VLOAD((uint32_t)bufferAddr & ~0xF));
 		VSTORE(copyDestAddr & ~0xF, V8(copiedVector));
 
-		const uint32_t flag269 = navigation->m_269;
-		if (flag269 == 0) {
+		const uint32_t meshNeedsUpdate = navigation->m_269;
+		if (meshNeedsUpdate == 0) {
 			// callers read r7, r8 and v1 after the call
-			ctx.r7.u64 = flag269;
+			ctx.r7.u64 = meshNeedsUpdate;
 			ctx.r8.u64 = bufferAddr;
 			ctx.v1 = copiedVector;
 		} else {
@@ -360,8 +354,6 @@ uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 			const double floatArg1 = double(LOAD_F32((uint32_t)g_82100000 + 2000));
 			const double floatArg2 = double(LOAD_F32(0x8209BAA8u));
 			// state the callee may pass on
-			ctx.r8.u64 = bufferAddr;
-			ctx.r10.s64 = g_82100000;
 			ctx.v1 = copiedVector;
 			result = n_sub_82683428(ctx, base, 24, 1, navigationEntity, floatArg1, floatArg2);
 			// the callee's v1 is stored again (and stays in v1 for callers)
@@ -459,10 +451,6 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 				SET_V8(v2Value, VLOAD(0x8349AD70u & ~0xF));
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = stateR6;
-				ctx.r7.u64 = stateR7;
-				ctx.r8.u64 = stateR8;
-				ctx.r9.u64 = stateR9;
 				ctx.v1 = stateV3;
 				ctx.v2 = v2Value;
 				ctx.v3 = stateV3;
@@ -476,10 +464,6 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 			if (mode == 2) {
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
-				ctx.r6.u64 = stateR6;
-				ctx.r7.u64 = stateR7;
-				ctx.r8.u64 = stateR8;
-				ctx.r9.u64 = stateR9;
 				ctx.v3 = stateV3;
 				ctx.cr0 = stateCr0;
 				ctx.xer.ca = stateCarry;
@@ -501,10 +485,6 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 			SET_V8(v1Value, VLOAD(((uint32_t)navigation + 528u) & ~0xF));
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = stateR6;
-			ctx.r7.u64 = stateR7;
-			ctx.r8.u64 = stateR8;
-			ctx.r9.u64 = 528;
 			ctx.v1 = v1Value;
 			ctx.v2 = v2Value;
 			ctx.v3 = stateV3;
@@ -537,12 +517,8 @@ uint64_t CECNavigation_GetClassName(CpuState& ctx, uint8_t* base, uint64_t class
 	constexpr int32_t str_TXT_820A2F90_B_ = int32_t(0x820A2F90);
 	if (!UseLiftedCode(43, 0x826714D0)) { ctx.r3.u64 = classNameString; __imp__sub_826714D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826714D0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820A2F90_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(43, sub_826714D0, 0x826714D0) { ctx.r3.u64 = CECNavigation_GetClassName(ctx, base, ctx.r3.u64); }
@@ -559,7 +535,6 @@ uint64_t n_sub_82673510(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	stack = PushStackFrame(base, stack, 128);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	List_ClearRefCountedHandleNodes(ctx, base, navigationAddr + 648);
 
 	HandleTarget_Free(ctx, base, navigation->m_28C);
@@ -707,8 +682,6 @@ uint64_t n_sub_826735A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		STORE_F32(maxAccelerationAddr, float(scaledTXT_820C9C7C_B_));
 
 		// state the callee may pass on
-		ctx.r8.s64 = g_82100000;
-		ctx.r9.s64 = g_82100000;
 		CECNavigation_ClearCandidateData(ctx, base, (uint32_t)navigationAddr);
 
 		// the float registers as the computation above leaves them, for the call below
@@ -764,15 +737,11 @@ uint64_t n_sub_82674008(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 		STORE32(stack + 84, 0);
 		STORE32(stack + 80, (uint32_t)handleVtable);
 		// state the callee may pass on
-		ctx.r6.u64 = handleVtable;
-		ctx.r7.s64 = g_820F0000;
 		EntityHandle_SetTarget(ctx, base, stack + 80, entity);
 		EntityHandle_Assign(ctx, base, navigationAddr + 128, stack + 80);
 
 		STORE32(stack + 80, (uint32_t)handleVtable);
 		// state the callee may pass on
-		ctx.r4.u64 = handleVtable;
-		ctx.r5.s64 = g_820F0000;
 		EntityHandle_Release(ctx, base, stack + 80);
 
 		result = SharedHandle_Release(ctx, base, navigationAddr + 224);
@@ -1041,8 +1010,6 @@ uint64_t n_sub_82674C08(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (!alreadyTargeting) {
 			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
-				ctx.r4.u64 = r4Value;
-				ctx.r5.u64 = r5Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 272);
 				r5Value = ctx.r5.u64;
 			}
@@ -1051,17 +1018,12 @@ uint64_t n_sub_82674C08(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, uint32_t(g_820F1664));
 			// state the callee may pass on
-			ctx.r5.u64 = r5Value;
-			ctx.r9.s64 = g_820F1664;
-			ctx.r10.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, uint64_t(stack) + 80, target);
 			EntityHandle_Assign(ctx, base, navigationAddr + 128, uint64_t(stack) + 80);
 
 			const uint32_t handleVtable = uint32_t(g_820F0000) + 5732;
 			STORE32(stack + 80, handleVtable);
 			// state the callee may pass on (zero-extended this time)
-			ctx.r7.u64 = handleVtable;
-			ctx.r8.u64 = uint32_t(g_820F0000);
 			EntityHandle_Release(ctx, base, uint64_t(stack) + 80);
 
 			navigation->m_280 = (uint32_t)target;
@@ -1172,8 +1134,6 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (!alreadyTargeting) {
 			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
-				ctx.r4.u64 = r4Value;
-				ctx.r5.u64 = r5Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 272);
 				r5Value = ctx.r5.u64;
 			}
@@ -1182,17 +1142,12 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, uint32_t(g_820F1664));
 			// state the callee may pass on
-			ctx.r5.u64 = r5Value;
-			ctx.r9.s64 = g_820F1664;
-			ctx.r10.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, uint64_t(stack) + 80, targetEntity);
 			EntityHandle_Assign(ctx, base, navigationAddr + 128, uint64_t(stack) + 80);
 
 			const uint32_t handleVtable = uint32_t(g_820F0000) + 5732;
 			STORE32(stack + 80, handleVtable);
 			// state the callee may pass on (zero-extended this time)
-			ctx.r7.u64 = handleVtable;
-			ctx.r8.u64 = uint32_t(g_820F0000);
 			EntityHandle_Release(ctx, base, uint64_t(stack) + 80);
 
 			const uint32_t valuePairAddr = uint32_t(g_820A0000) - 27860;
@@ -1236,19 +1191,19 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 }
 PROMOTED_ENTRY(43, sub_82674D98, 0x82674D98) { ctx.r3.u64 = n_sub_82674D98(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t arg2, uint64_t initHandlePair, uint64_t valueB0, double floatArg1) {
+uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte, double floatArg1) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
-	if (!UseLiftedCode(43, 0x82674F00)) { ctx.r3.u64 = navigationAddr; ctx.r5.u64 = arg2; ctx.r6.u64 = initHandlePair; ctx.r7.u64 = valueB0; ctx.f1.f64 = floatArg1; __imp__sub_82674F00(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(43, 0x82674F00)) { ctx.r3.u64 = navigationAddr; ctx.r5.u64 = speed; ctx.r6.u64 = reinitFlag; ctx.r7.u64 = stateByte; ctx.f1.f64 = floatArg1; __imp__sub_82674F00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82674F00);
 	uint32_t stack = ctx.r1.u64;
 	CECNavigation* navigation = GameObject<CECNavigation>(base, navigationAddr);
 	// Register values as the lifted code tracks them: handed to callees, read back after calls; r4 and f1 are
 	// left for callers.
-	uint64_t r4Value = arg2;
-	uint64_t r5Value = arg2;
+	uint64_t r4Value = speed;
+	uint64_t r5Value = speed;
 	double f1Value = floatArg1;
 	uint64_t result = navigationAddr;
 	PPCRegister callTarget{};
@@ -1257,7 +1212,7 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	CECNavigation_SetSpeed(ctx, base, navigationAddr, arg2);
+	CECNavigation_SetSpeed(ctx, base, navigationAddr, speed);
 	double f13Value = ctx.f13.f64;
 
 	const uint32_t threshold = LOAD32(uint32_t(g_83320000) - 27380);
@@ -1281,11 +1236,8 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 
 		// Nothing more to do when m_AC / m_A8 already hold the values set below (5 / 3).
 		if (!(LOAD32(navigationAddr + 0xAC) == 5 && LOAD32(navigationAddr + 0xA8) == 3)) {
-			if ((initHandlePair & 0xFF) != 0) {
+			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
-				ctx.r4.u64 = r4Value;
-				ctx.r5.u64 = r5Value;
-				ctx.f1.f64 = f1Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 0x110);
 				r4Value = ctx.r4.u64;
 				r5Value = ctx.r5.u64;
@@ -1298,10 +1250,6 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(handleAddr + 4, 0u);
 			STORE32(handleAddr, uint32_t(g_820F1664));
 			// state the callee may pass on
-			ctx.r4.u64 = r4Value;
-			ctx.r5.u64 = r5Value;
-			ctx.r10.u64 = (uint64_t)(int64_t)g_820F1664;
-			ctx.f1.f64 = f1Value;
 			EntityHandle_Release(ctx, base, handleAddr);
 			f1Value = ctx.f1.f64;
 			f13Value = ctx.f13.f64;
@@ -1313,8 +1261,6 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			const uint32_t handleType = uint32_t(g_820F0000) + 5732;
 			STORE32(handleAddr, handleType);
 			// state the callee may pass on
-			ctx.r8.u64 = handleType;
-			ctx.r9.u64 = uint32_t(g_820F0000);
 			EntityHandle_Release(ctx, base, handleAddr);
 			f1Value = ctx.f1.f64;
 			f13Value = ctx.f13.f64;
@@ -1341,10 +1287,9 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			SET_V8(vectorConstant, VLOAD(0x8349AD70u & ~0xF));
 			navigation->m_280 = 0u;
 			VSTORE(((uint32_t)navigationAddr + 624u) & ~0xF, V8(vectorConstant));
-			navigation->m_B0 = (uint8_t)valueB0;
+			navigation->m_B0 = (uint8_t)stateByte;
 
 			// state the callee may pass on
-			ctx.f13.f64 = f13Value;
 			result = n_sub_826772A0(ctx, base, navigationAddr);
 			r4Value = ctx.r4.u64;
 			f1Value = ctx.f1.f64;
@@ -1379,7 +1324,6 @@ uint64_t n_sub_82675048(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	STORE32(scratchHandleAddr, uint32_t(g_820F1664));
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	ctx.r10.u64 = (uint64_t)(int64_t)g_820F1664;
 	EntityHandle_Release(ctx, base, scratchHandleAddr);
 
 	EntityHandle_Assign(ctx, base, navigationAddr + 128, scratchHandleAddr);
@@ -1388,8 +1332,6 @@ uint64_t n_sub_82675048(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	const uint64_t handleType = (uint64_t)((int64_t)g_820F0000 + 5732);
 	STORE32(scratchHandleAddr, (uint32_t)handleType);
 	// state the callee may pass on
-	ctx.r8.u64 = handleType;
-	ctx.r9.s64 = g_820F0000;
 	EntityHandle_Release(ctx, base, scratchHandleAddr);
 
 	const uint64_t vectorConstantAddr = (uint64_t)((int64_t)g_834A0000 - 21136);
@@ -1402,10 +1344,6 @@ uint64_t n_sub_82675048(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	VSTORE(((uint32_t)navigationAddr + 624) & ~0xF, V8(vectorConstant));
 
 	// state the callee may pass on
-	ctx.r4.u64 = 2;
-	ctx.r5.u64 = vectorConstantAddr;
-	ctx.r6.u64 = 624;
-	ctx.r7.s64 = g_834A0000;
 	n_sub_82192268(ctx, base, navigationAddr);
 	n_sub_82260CF0(ctx, base, navigationAddr);
 	const uint64_t result = n_sub_821820C8(ctx, base, navigationAddr);
@@ -1477,22 +1415,17 @@ uint64_t n_sub_826772A0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 }
 PROMOTED_ENTRY(43, sub_826772A0, 0x826772A0) { ctx.r3.u64 = n_sub_826772A0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82677638(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(43, 0x82677638)) { ctx.r3.u64 = arg1; __imp__sub_82677638(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82677638(CpuState& ctx, uint8_t* base, uint64_t navigation) {
+	if (!UseLiftedCode(43, 0x82677638)) { ctx.r3.u64 = navigation; __imp__sub_82677638(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82677638);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
-	n_sub_821B01D0(ctx, base, arg1);
-	uint64_t result = n_sub_826728C0(ctx, base, arg1 + 272);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	GameStackFrame stackFrame(ctx, base, 96);
+	n_sub_821B01D0(ctx, base, navigation);
+	return n_sub_826728C0(ctx, base, navigation + 272);
 }
 PROMOTED_ENTRY(43, sub_82677638, 0x82677638) { ctx.r3.u64 = n_sub_82677638(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(43, 0x82677670)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82677670(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t arg2) {
+	if (!UseLiftedCode(43, 0x82677670)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = arg2; __imp__sub_82677670(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82677670);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t interfacePtr = (uint32_t)arg2;
@@ -1510,7 +1443,7 @@ uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	result = ctx.r3.u64;
 
 	if ((int32_t)result == 10) {
-		result = n_sub_826776D0(ctx, base, arg1, arg2);
+		result = n_sub_826776D0(ctx, base, navigationAddr, arg2);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -1519,8 +1452,8 @@ uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 }
 PROMOTED_ENTRY(43, sub_82677670, 0x82677670) { ctx.r3.u64 = n_sub_82677670(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(43, 0x826776D0)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_826776D0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint32_t interfacePtr) {
+	if (!UseLiftedCode(43, 0x826776D0)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = interfacePtr; __imp__sub_826776D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826776D0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -1531,12 +1464,12 @@ uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t ar
 	uint64_t r7Value = ctx.r7.u64;
 	uint64_t r8Value = ctx.r8.u64;
 
-	uint64_t result = arg1;
+	uint64_t result = navigationAddr;
 	uint32_t animationControl = 0;
 	bool hasAnimationControl = false;
 
-	if (LOAD8(arg2 + 4) != 0) {
-		uint32_t component = LOAD32((uint32_t)arg1 + 4);
+	if (LOAD8(interfacePtr + 4) != 0) {
+		uint32_t component = LOAD32((uint32_t)navigationAddr + 4);
 		if ((LOAD32(component + 40) >> 26) & 1) {
 			uint32_t keyToSlot = LOAD32(component + 140);
 			if (keyToSlot != 0) {
@@ -1590,9 +1523,6 @@ uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t ar
 	if (hasAnimationControl) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		result = AnimationComponent_ReleaseAnimationControl(ctx, base, animationControl);
 

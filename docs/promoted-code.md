@@ -103,7 +103,9 @@ have reached). The reviewer works through this checklist:
    stays on the same side of a call as in the lifter's output: the callee may write that memory, and the
    differential check cannot show it (its stand-in callees write nothing). Keep
    floating-point mode switches (`ctx.fpscr`), traps, 32-bit wraparound and signed/unsigned comparisons.
-2. Names say what the code does; a name that contradicts the code is a defect (wrong is worse than none).
+2. Names say what the code does; a name that contradicts the code is a defect (wrong is worse than none). A
+   placeholder (`arg1`, `local7`, `flag144`, `self->m_1C`, `n_sub_X`) is a missing name: the review packet's
+   `readability:` flag lists them, and the function counts as human-readable only once none is left.
 3. Comments are true and do not restate the code; no quoted game text, no pasted decompiler output.
 4. No dead or leftover code that hides what the function does (unused variables, empty blocks left by
    removed hand-overs, casts that change nothing).

@@ -62,8 +62,13 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
   values through the CPU registers (`ctx.r11 = ...`) or keep the stack-frame bookkeeping, and nearly all the rest
   still call functions and use globals, variables or fields known only by address or offset. Progress now counts
   as human-readable only readable C++ with every name (`tools/rewrite/readability.py`): 88 functions, 0.2%, not
-  the 18.1% published earlier the same day, which counted every reviewed rewrite. Next: the readable form, then
-  naming ([finding](../research/findings/2026-10-19-readability-levels.md)).
+  the 18.1% published earlier the same day, which counted every reviewed rewrite. The same day: the start-up and
+  shut-down functions of global strings named after their global (4,014), the readable form (register code the
+  analysis shows unneeded removed, the frame and atexit in documented helpers; 3,410 functions, each re-checked)
+  and a naming step (1,475 variable names in modules; function and field names into the dictionary, applied with
+  the next re-lift): 4,072 of the 7,378 reviewed rewrites are readable C++ with every name, 10.0% of the game's
+  functions with the hand-written ones. Build and game checks (menu, load, play) pass
+  ([finding](../research/findings/2026-10-19-readability-levels.md)).
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 
@@ -72,7 +77,7 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 | Area | Evidence and current state | Remaining validation / work |
 |---|---|---|
 | Gameplay baseline | September/October findings record title-screen and in-world play | Repeatable regression coverage, full playthrough and save/load validation |
-| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/` (57 functions by hand); 7,378 reviewed rewrites in 249 published modules ([process](promoted-code.md)), of which 31 are readable C++ with every name, 3,053 readable with names still to give and 4,294 still at machine level (CPU registers in the code) ([levels](../research/findings/2026-10-19-readability-levels.md)); 254 more promoted, awaiting review | The readable form (no CPU registers in the body), then naming; whole-game reconstruction |
+| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/` (57 functions by hand); 7,378 reviewed rewrites in 249 published modules ([process](promoted-code.md)), of which 4,072 are readable C++ with every name, 1,421 readable with names still to give and 1,885 still at machine level (CPU registers in the code) ([levels](../research/findings/2026-10-19-readability-levels.md)); 254 more promoted, awaiting review | The readable form (no CPU registers in the body), then naming; whole-game reconstruction |
 | Automatic lifting | Lifter and fallback controls exist; [guide](lifted-code.md) records broad function coverage | Coverage counts are generation-specific and do not measure semantic readability or full-game correctness |
 | Rendering | Native D3D12 renderer, frontend, and GPU synchronization exist | Remaining packet/memory/shader dependencies; shader failures recorded on October 2 |
 | Debug tools | F2 menu, Lua bridge, original-menu gate, and replacement displays implemented; about 30 commands and WinterShrine loading were reported working | Verify each command; some retail bindings are absent or empty |

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_82C700F0(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 	if (!UseLiftedCode(92, 0x82C700F0)) { ctx.r3.u64 = arg1; __imp__sub_82C700F0(ctx, base); return ctx.r3.u64; }
@@ -26,10 +27,10 @@ uint64_t n_sub_82C700F0(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 PROMOTED_ENTRY(92, sub_82C700F0, 0x82C700F0) { ctx.r3.u64 = n_sub_82C700F0(ctx, base, ctx.r3.u32); }
 
 // sub_82C70118  [40 bytes]
-uint64_t n_sub_82C70118(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(92, 0x82C70118)) { ctx.r3.u64 = arg1; __imp__sub_82C70118(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C70118(CpuState& ctx, uint8_t* base, uint32_t object) {
+	if (!UseLiftedCode(92, 0x82C70118)) { ctx.r3.u64 = object; __imp__sub_82C70118(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C70118);
-	uint32_t refCountAddr = arg1 + 12;
+	uint32_t refCountAddr = object + 12;
 	uint32_t savedMsr = ctx.r13.u32;
 	uint64_t newCount{};
 	uint32_t lockToken{};
@@ -57,10 +58,10 @@ uint64_t n_sub_82C70118(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 PROMOTED_ENTRY(92, sub_82C70118, 0x82C70118) { ctx.r3.u64 = n_sub_82C70118(ctx, base, ctx.r3.u32); }
 
 // sub_82C70140  [204 bytes]
-uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr, uint64_t interfaceId, uint64_t interfaceOut) {
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
-	if (!UseLiftedCode(92, 0x82C70140)) { ctx.r3.u64 = virtualFileSystemAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C70140(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(92, 0x82C70140)) { ctx.r3.u64 = virtualFileSystemAddr; ctx.r4.u64 = interfaceId; ctx.r5.u64 = interfaceOut; __imp__sub_82C70140(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C70140);
 	uint32_t stack = ctx.r1.u64;
 	uint32_t result{};
@@ -68,14 +69,14 @@ uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	uint32_t typeNameByte{};
 	uint64_t nameDiff{};
 	PPCRegister callTarget{};
-	const uint32_t nameAddr = (uint32_t)arg2;
-	const uint32_t nameEnd = (uint32_t)arg2 + 16;
+	const uint32_t nameAddr = (uint32_t)interfaceId;
+	const uint32_t nameEnd = (uint32_t)interfaceId + 16;
 	CVirtualFileSystem* virtualFileSystem = GameObject<CVirtualFileSystem>(base, virtualFileSystemAddr);
 	stack = PushStackFrame(base, stack, 96);
 
 	const uint64_t errorNoInterface = 0xFFFFFFFF80004002ull;
 
-	STORE32((uint32_t)arg3, 0u);
+	STORE32((uint32_t)interfaceOut, 0u);
 
 	// The 16-byte name must match one of the two registered type names.
 	uint32_t i = (uint32_t)(g_820A0000 + 32256);
@@ -103,16 +104,16 @@ uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 		if ((int32_t)nameDiff != 0) {
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = arg2;
+			ctx.r4.u64 = interfaceId;
 			return errorNoInterface;
 		}
 	}
 
-	STORE32((uint32_t)arg3, (uint32_t)virtualFileSystemAddr);
+	STORE32((uint32_t)interfaceOut, (uint32_t)virtualFileSystemAddr);
 	if ((uint32_t)virtualFileSystemAddr == 0) {
 		stack = PopStackFrame(stack, 96);
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
+		ctx.r4.u64 = interfaceId;
 		return errorNoInterface;
 	}
 
@@ -120,12 +121,7 @@ uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	callTarget.u64 = (uint64_t)vtableMethod;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = virtualFileSystemAddr;
-	ctx.r4.u64 = arg2;
-	ctx.r5.u64 = arg3;
-	ctx.r7.u64 = lastNameByte;
-	ctx.r8.u64 = (uint64_t)nameEnd;
-	ctx.r9.u64 = nameDiff;
-	ctx.r10.u64 = vtableMethod;
+	ctx.r4.u64 = interfaceId;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 	result = 0;
@@ -147,7 +143,6 @@ uint64_t CVirtualFileSystem_AcquireVolumeA(CpuState& ctx, uint8_t* base, uint64_
 	uint64_t lockGuardPtr = String_Construct(ctx, base, lockGuard, virtualFileSystemAddr + 16, 0);
 
 	if (virtualFileSystem->m_VolumeARefCount == 0) {
-		ctx.r3.u64 = lockGuardPtr;
 		uint8_t created = n_sub_82C72A60(ctx, base) & 0xFF;
 		if (created == 0) {
 			CriticalSectionGuard_Release(ctx, base, lockGuard);
@@ -227,19 +222,12 @@ uint64_t CVirtualFileSystem_ReleaseVolumeA(CpuState& ctx, uint8_t* base, uint64_
 		uint32_t closeFn = LOAD32(vtable + 8);
 		PPCRegister callTarget{};
 		callTarget.u64 = (uint64_t)closeFn;
-		ctx.r3.u64 = (uint64_t)volumeA;
-		ctx.r9.u64 = (uint64_t)closeFn;
-		ctx.r10.u64 = (uint64_t)vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		flags.ca = ctx.xer.ca;
 
 		uint32_t vtable2 = LOAD32(volumeA);
 		uint32_t destroyFn = LOAD32(vtable2);
 		callTarget.u64 = (uint64_t)destroyFn;
-		ctx.r3.u64 = (uint64_t)volumeA;
-		ctx.r4.u64 = 1;
-		ctx.r7.u64 = (uint64_t)destroyFn;
-		ctx.r8.u64 = (uint64_t)vtable2;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		flags.ca = ctx.xer.ca;
 
@@ -270,7 +258,6 @@ uint64_t CVirtualFileSystem_AcquireVolumeB(CpuState& ctx, uint8_t* base, uint64_
 	uint64_t guard = String_Construct(ctx, base, guardAddr, virtualFileSystemAddr + 16, 0);
 
 	if (virtualFileSystem->m_VolumeBRefCount == 0) {
-		ctx.r3.u64 = guard;
 		uint32_t vfsReady = n_sub_82C72A60(ctx, base);
 		if ((vfsReady & 0xFF) == 0) {
 			CriticalSectionGuard_Release(ctx, base, guardAddr);
@@ -390,7 +377,6 @@ uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem
 		ctx.r1.u64 = stack;
 		n_sub_82CA9D30(ctx, base, textBuffer, widePath, charCount, flags);
 
-		ctx.r3.u64 = textBuffer;
 		uint64_t textHash = n_sub_82CFAC28(ctx, base);
 
 		uint32_t sourceStr = frameBase + 112;
@@ -423,13 +409,13 @@ uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem
 }
 PROMOTED_ENTRY(92, sub_82C71398, 0x82C71398) { ctx.r3.u64 = n_sub_82C71398(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(92, 0x82C71D68)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82C71D68(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem, uint64_t file, uint64_t flags) {
+	if (!UseLiftedCode(92, 0x82C71D68)) { ctx.r3.u64 = virtualFileSystem; ctx.r4.u64 = file; ctx.r8.u64 = flags; __imp__sub_82C71D68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C71D68);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 224);
 
-	uint32_t vfs = (uint32_t)arg1;
+	uint32_t vfs = (uint32_t)virtualFileSystem;
 	uint32_t lockGuard = stack + 96;    // scope guard on vfs+0x10, owns a path string (+16)
 	uint32_t guardPath = stack + 112;   // that path string
 	uint32_t tempPath = stack + 144;    // scratch string built from the wide name
@@ -449,16 +435,16 @@ uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ar
 	};
 
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = arg3;
+	ctx.r8.u64 = flags;
 	String_Construct(ctx, base, lockGuard, vfs + 16, 0);
 
 	STORE32(guardPath + 20, 0);
 	STORE32(guardPath + 24, 7);
 	STORE16(guardPath + 4, 0);
 
-	uint32_t vtable = LOAD32((uint32_t)arg2);
+	uint32_t vtable = LOAD32((uint32_t)file);
 	uint32_t getWideName = LOAD32(vtable + 16);
-	ctx.r3.u64 = arg2;
+	ctx.r3.u64 = file;
 	ctx.r4.u64 = wideNameOut;
 	ctx.r10.u64 = getWideName;
 	callTarget.u64 = getWideName;

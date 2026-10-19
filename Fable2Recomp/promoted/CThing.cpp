@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_8220B7E0(CpuState& ctx, uint8_t* base, uint32_t thingAddr) {
 	if (!UseLiftedCode(5, 0x8220B7E0)) { ctx.r3.u64 = thingAddr; __imp__sub_8220B7E0(ctx, base); return ctx.r3.u64; }
@@ -188,8 +189,6 @@ uint32_t n_sub_82A70298(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64
 	thing->vtable = 0x82005D78u;
 	uint32_t targetHandle = thing->m_274;
 	ctx.r1.u64 = stack;
-	ctx.r7.u64 = arg2;
-	ctx.r8.u64 = arg3;
 	HandleTarget_Free(ctx, base, targetHandle);
 	thing->m_274 = 0;
 
@@ -278,15 +277,11 @@ PROMOTED_ENTRY(76, sub_82A7F0C0, 0x82A7F0C0) { ctx.r3.u64 = n_sub_82A7F0C0(ctx, 
 uint64_t CThing_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t thisPtr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(77, 0x82A98278)) { ctx.r3.u64 = thisPtr; ctx.r4.u64 = deleteFlags; __imp__sub_82A98278(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98278);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 	CThing_Destructor(ctx, base, thisPtr);
 	if (uint32_t(deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, thisPtr);
 	}
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return thisPtr;
 }
 PROMOTED_ENTRY(77, sub_82A98278, 0x82A98278) { ctx.r3.u64 = CThing_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -321,7 +316,6 @@ uint32_t CThing_Destructor(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 		CSceneEntityVisualManager_RemoveVisual(ctx, base, visual, entityArg);
 	}
 
-	ctx.r4.u64 = entityArg;
 	List_ClearFreeNodes(ctx, base, (uint32_t)(thingAddr + 500));
 
 	uint32_t handle1F8 = thing->m_1F8;
@@ -732,22 +726,17 @@ PROMOTED_ENTRY(77, sub_82A98BC8, 0x82A98BC8) { ctx.r3.u64 = n_sub_82A98BC8(ctx, 
 uint64_t n_sub_82A98D68(CpuState& ctx, uint8_t* base, uint64_t thing) {
 	if (!UseLiftedCode(77, 0x82A98D68)) { ctx.r3.u64 = thing; __imp__sub_82A98D68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98D68);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	n_sub_82A98C28(ctx, base, thing);
-	uint64_t result = CThing_ClearChildren(ctx, base, thing);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
-	return result;
+	return CThing_ClearChildren(ctx, base, thing);
 }
 PROMOTED_ENTRY(77, sub_82A98D68, 0x82A98D68) { ctx.r3.u64 = n_sub_82A98D68(ctx, base, ctx.r3.u64); }
 
 // sub_82A98DA0  [4 bytes]
-uint64_t n_sub_82A98DA0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
-	if (!UseLiftedCode(77, 0x82A98DA0)) { ctx.r3.u64 = arg1; __imp__sub_82A98DA0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82A98DA0(CpuState& ctx, uint8_t* base, uint64_t thing) {
+	if (!UseLiftedCode(77, 0x82A98DA0)) { ctx.r3.u64 = thing; __imp__sub_82A98DA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98DA0);
-	uint64_t local1 = n_sub_82A98BC8(ctx, base, arg1);
+	uint64_t local1 = n_sub_82A98BC8(ctx, base, thing);
 	return local1;
 }
 PROMOTED_ENTRY(77, sub_82A98DA0, 0x82A98DA0) { ctx.r3.u64 = n_sub_82A98DA0(ctx, base, ctx.r3.u64); }

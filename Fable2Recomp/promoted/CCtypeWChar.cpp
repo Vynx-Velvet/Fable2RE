@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CCtypeWChar_Is(CpuState& ctx, uint8_t* base, uint64_t ctypeThis, uint32_t classMask, uint32_t character) {
 	if (!UseLiftedCode(92, 0x82C741D8)) { ctx.r3.u64 = ctypeThis; ctx.r4.u64 = classMask; ctx.r5.u64 = character; __imp__sub_82C741D8(ctx, base); return ctx.r3.u64; }
@@ -18,7 +19,6 @@ uint64_t CCtypeWChar_Is(CpuState& ctx, uint8_t* base, uint64_t ctypeThis, uint32
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = ctypeThis + 8;
 	uint32_t classFlags = n_sub_82CD2040(ctx, base, character);
 
 	// Only the low 16 bits of the masked flags decide membership.
@@ -236,7 +236,6 @@ uint64_t CCtypeWChar_Narrow(CpuState& ctx, uint8_t* base, uint64_t self, uint64_
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r5.u64 = conversionState;
 	ctx.r6.u64 = self + 24;
 	uint32_t conversionResult = CRT_WcToMbSingleByte(ctx, base, convertedByte, wideChar, r8Value);
 

@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint32_t n_sub_821B6348(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	constexpr int32_t str_TXT_82000E50_B_ = int32_t(0x82000E50);
@@ -223,10 +224,10 @@ uint32_t n_sub_821B6348(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 }
 PROMOTED_ENTRY(2, sub_821B6348, 0x821B6348) { ctx.r3.u64 = n_sub_821B6348(ctx, base, ctx.r3.u64); }
 
-uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t arg1) {
-	if (!UseLiftedCode(11, 0x822A92B8)) { ctx.r3.u64 = arg1; __imp__sub_822A92B8(ctx, base); return ctx.r3.u64; }
+uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t phasedAction) {
+	if (!UseLiftedCode(11, 0x822A92B8)) { ctx.r3.u64 = phasedAction; __imp__sub_822A92B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822A92B8);
-	uint32_t self = arg1;
+	uint32_t self = phasedAction;
 	uint32_t phaseCount = LOAD32(self + 0x78);
 	uint32_t phase = LOAD32(self + 0x70);
 	if (phaseCount == phase) {
@@ -237,7 +238,6 @@ uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 		PPCRegister callTarget{};
 		callTarget.u64 = (uint64_t)virtualIsFinished;
 		ctx.r3.u64 = phase;
-		ctx.r10.u64 = virtualIsFinished;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		return ctx.r3.u64;
 	}
@@ -325,7 +325,6 @@ uint64_t n_sub_826DF838(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 		uint32_t linked = LOAD32(linkedRoot);
 		if (linked == 0) {
 			ctx.r1.u64 = stack;
-			ctx.r10.u64 = linked;
 			result = EntityHandle_Release(ctx, base, result);
 			savedR9 = ctx.r9.u64;
 		} else {
@@ -439,12 +438,12 @@ uint64_t CPhasedAction_Clone(CpuState& ctx, uint8_t* base, uint64_t phasedAction
 PROMOTED_ENTRY(69, sub_8299C350, 0x8299C350) { ctx.r3.u64 = CPhasedAction_Clone(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_8299C3E8  [80 bytes]
-uint64_t CPhasedAction_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
-	if (!UseLiftedCode(69, 0x8299C3E8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_8299C3E8(ctx, base); return ctx.r3.u64; }
+uint64_t CPhasedAction_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t deleteFlags) {
+	if (!UseLiftedCode(69, 0x8299C3E8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = deleteFlags; __imp__sub_8299C3E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8299C3E8);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t self = arg1;
-	bool freeStorage = (uint32_t(arg2) & 0x1) != 0;
+	bool freeStorage = (uint32_t(deleteFlags) & 0x1) != 0;
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;

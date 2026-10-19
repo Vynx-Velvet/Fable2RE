@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (!UseLiftedCode(2, 0x821B1F00)) { ctx.r3.u64 = villagerAddr; __imp__sub_821B1F00(ctx, base); return ctx.r3.u64; }
@@ -41,7 +42,6 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (usableFlag != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = usableFlag;
 		result = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		const uint32_t entity = (uint32_t)result;
 		// r5-r8 and xer.ca as this call left them: the calls below receive them as the search and the list walks
@@ -124,9 +124,6 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 						if ((uint32_t)position >= LOAD32(list + 8)) ppc_trap(ctx, base, 22);
 						const uint32_t element = LOAD32((uint32_t)position);
 						// state the callee may pass on
-						ctx.r6.u64 = stateR6;
-						ctx.r7.u64 = stateR7;
-						ctx.r8.u64 = stateR8;
 						ctx.xer.ca = carry;
 						const bool passes = (n_sub_828513B8(ctx, base, entry, element) & 0xFF) != 0;
 						stateR6 = ctx.r6.u64;
@@ -151,9 +148,6 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 				}
 
 				// state the callee may pass on
-				ctx.r5.u64 = position;
-				ctx.r6.u64 = stateR6;
-				ctx.r7.u64 = stateR7;
 				ctx.xer.ca = carry;
 				result = n_sub_82193AD8(ctx, base, entry, villager->m_4);
 			}
@@ -235,7 +229,6 @@ uint64_t n_sub_8279E038(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = deleteFlags;
 	n_sub_8279E088(ctx, base, villagerAddr);
 	// bit 0: also free the object
 	if ((deleteFlags & 1) != 0) {
@@ -342,7 +335,6 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	auto findField = [&](int32_t fieldName) -> uint64_t {
 		const uint64_t nameHash = String_HashFnv1(ctx, base, fieldName, kHashSeed);
 		// state the callee may pass on
-		ctx.r4.u64 = kHashSeed;
 		const uint64_t record = IdRef_Get(ctx, base, idRefAddr);
 		return GameDB_FindFieldValue(ctx, base, record, nameHash, kFieldType);
 	};
@@ -355,7 +347,6 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 		const uint32_t list = LOAD32(LOAD32(globalRoot + 12) + 88);
 		const uint32_t firstObject = LOAD32(LOAD32(list + 4));
 		// state the callee may pass on
-		ctx.r8.u64 = list;
 		return n_sub_82264448(ctx, base, firstObject, idKeyAddr);
 	};
 	// a found entity is used only when bit 0x40 of its byte +0x90 is set
@@ -397,7 +388,6 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 
 	if (villager->m_AE != 0) {
 		// state the callee may pass on
-		ctx.r4.u64 = r4Value;
 		result = n_sub_8279F5C0(ctx, base, villagerAddr);
 		r4Value = ctx.r4.u64;
 	}
@@ -445,7 +435,6 @@ uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 
 		if (secondFlag != 0) {
 			// state the callee may pass on
-			ctx.r10.u64 = secondFlag;
 			result = EntityHandle_Get_825575C8(ctx, base, firstHandleAddr);
 			const uint32_t firstEntity = (uint32_t)result;
 			// r6-r10 and xer.ca as this call left them: the last handle lookup receives them as the lookup below
@@ -508,11 +497,6 @@ uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 				}
 
 				// state the callee may pass on
-				ctx.r6.u64 = stateR6;
-				ctx.r7.u64 = stateR7;
-				ctx.r8.u64 = stateR8;
-				ctx.r9.u64 = stateR9;
-				ctx.r10.u64 = stateR10;
 				ctx.xer.ca = carry;
 				const uint32_t secondEntity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, secondHandleAddr);
 				const uint32_t TXT_820C4790_L_ = villager->m_9C;
@@ -552,10 +536,6 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 		if (target == 0) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = objectAddr;
-			ctx.r8.u64 = listBegin;
-			ctx.r9.u64 = target;
-			ctx.r10.u64 = globalRoot;
 			EntityHandle_Release(ctx, base, handleAddr);
 			r7Value = ctx.r7.u64;
 		} else {
@@ -572,8 +552,6 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = objectAddr;
-		ctx.r8.u64 = listBegin;
-		ctx.r9.u64 = listBeginAgain;
 		const uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, firstObjectAgain);
 		const uint32_t referenced = LOAD32((uint32_t)objectAddr + 4);
 		r7Value = LOAD32(entity + 20);
@@ -584,7 +562,6 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	ctx.r7.u64 = r7Value;
 	const uint64_t result = n_sub_827A0318(ctx, base, villagerAddr, sameEntity);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
@@ -593,7 +570,6 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 PROMOTED_ENTRY(52, sub_827A0220, 0x827A0220) { ctx.r3.u64 = n_sub_827A0220(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(52, 0x827A0E00)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = target; __imp__sub_827A0E00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A0E00);
@@ -691,8 +667,6 @@ uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	EntityHandle_Assign(ctx, base, targetHandle, tempHandle);
 	STORE32(stack + 80, (uint32_t)handleVtable);
 	// state the callee may pass on
-	ctx.r8.u64 = handleVtable;
-	ctx.r9.s64 = g_820F0000;
 	result = EntityHandle_Release(ctx, base, tempHandle);
 
 	// New target: the same check. Without a flagged entity m_2C / m_30 are cleared.
@@ -724,8 +698,6 @@ uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	const uint32_t entityWord24 = LOAD32(newEntity + 24);
 	villager->m_30 = entityWord24;
 	// state the callee may pass on
-	ctx.r9.u64 = entityWord24;
-	ctx.r10.u64 = entityWord20;
 	const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, targetHandle);
 	const uint32_t entityFlags = LOAD32(entity + 44);
 	const uint32_t lookupEnabled = (entityFlags >> 1) & 1;
@@ -748,14 +720,14 @@ uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 PROMOTED_ENTRY(52, sub_827A0E00, 0x827A0E00) { ctx.r3.u64 = n_sub_827A0E00(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827A1AB8  [624 bytes]
-uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t arg2) {
+uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t jobSchedule) {
 	constexpr int32_t str_TXT_820D56D8_B_ = int32_t(0x820D56D8);
 	constexpr int32_t str_TXT_820D56E4_B_ = int32_t(0x820D56E4);
 	constexpr int32_t str_TXT_820D56F0_B_ = int32_t(0x820D56F0);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_8349E164 = int32_t(0x8349E164);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
-	if (!UseLiftedCode(53, 0x827A1AB8)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = arg2; __imp__sub_827A1AB8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(53, 0x827A1AB8)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = jobSchedule; __imp__sub_827A1AB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A1AB8);
 	constexpr uint64_t kHashSeed = 0xFFFFFFFF811C9DC5ull;  // FNV offset basis, sign-extended as the game loads it
 	uint32_t stack = ctx.r1.u64;
@@ -770,9 +742,9 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 		STORE32(schedule + 8, scheduleBegin);
 	}
 
-	if ((uint32_t)arg2 != 0) {
+	if ((uint32_t)jobSchedule != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_829FBC40(ctx, base, stack + 96, arg2, scheduleBegin);
+		n_sub_829FBC40(ctx, base, stack + 96, jobSchedule, scheduleBegin);
 		double f13 = ctx.f13.f64;  // f13 as the calls below are handed it
 		// the words n_sub_829FBC40 left at +96: entry array, end index, first index
 		const uint32_t entries = LOAD32(stack + 96);
@@ -828,8 +800,6 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 							STORE32(stack + 92, vecEnd);
 							STORE32(stack + 88, 0);
 							// state the callee may pass on
-							ctx.r5.u64 = 1;
-							ctx.f13.f64 = f13;
 							n_sub_823955A8(ctx, base, schedule, LOAD64(stack + 88), stack + 96);
 							f13 = ctx.f13.f64;
 						}
@@ -848,7 +818,6 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 PROMOTED_ENTRY(53, sub_827A1AB8, 0x827A1AB8) { ctx.r3.u64 = n_sub_827A1AB8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_827A1D28(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
-	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(53, 0x827A1D28)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = target; __imp__sub_827A1D28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A1D28);
@@ -869,8 +838,6 @@ uint64_t n_sub_827A1D28(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	EntityHandle_Assign(ctx, base, villagerHandle, tempHandle);
 	STORE32(stack + 80, (uint32_t)handleVtable);
 	// state the callee may pass on
-	ctx.r8.u64 = handleVtable;
-	ctx.r9.s64 = g_820F0000;
 	uint64_t result = EntityHandle_Release(ctx, base, tempHandle);
 
 	// m_64 / m_68 take words +20 / +24 of the entity the handle now refers to, or zero. A handle whose

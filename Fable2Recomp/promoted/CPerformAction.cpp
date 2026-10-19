@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr, uint64_t lookupData) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
@@ -41,7 +42,6 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 		uint32_t actionRef = n_sub_821C68D0(ctx, base, performAction->m_5C, performAction->m_60, performAction->m_64);
 		n_sub_827F0528(ctx, base, stack + 88, actionRef);
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = performActionAddr;
 		uint64_t result = n_sub_827F0358(ctx, base, performActionAddr + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -50,7 +50,6 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 
 	if (LOAD32((uint32_t)performActionAddr + 88) > 0) {
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = performActionAddr;
 		uint64_t result = n_sub_827F0358(ctx, base, performActionAddr + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -117,11 +116,8 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 	if (hasFoundValue) {
 		STORE32(stack + 80, 0);
 		ctx.xer.ca = flags.ca;
-		ctx.r7.u64 = scratchR7;
-		ctx.r8.u64 = scratchR8;
 		uint32_t handle = n_sub_821D8EC0(ctx, base, foundValue, actionNameAddr, 1, stack + 80);
 		n_sub_827F0528(ctx, base, stack + 88, handle);
-		ctx.r3.u64 = performActionAddr;
 		uint64_t result = n_sub_827F0358(ctx, base, stack + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -229,10 +225,7 @@ PROMOTED_ENTRY(9, sub_8226D3D8, 0x8226D3D8) { ctx.f1.f64 = CPerformAction_GetDur
 uint64_t CPerformAction_Clone(CpuState& ctx, uint8_t* base, uint64_t performActionAddr, uint64_t sourceAction) {
 	if (!UseLiftedCode(12, 0x822C00F8)) { ctx.r3.u64 = performActionAddr; ctx.r4.u64 = sourceAction; __imp__sub_822C00F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822C00F8);
-	uint32_t stack = ctx.r1.u64;
-
-	stack = PushStackFrame(base, stack, 112);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 112);
 
 	CPerformAction* performAction = GameObject<CPerformAction>(base, performActionAddr);
 
@@ -251,9 +244,6 @@ uint64_t CPerformAction_Clone(CpuState& ctx, uint8_t* base, uint64_t performActi
 	if (vtable != 0) {
 		n_sub_82180B28(ctx, base, vtable);
 	}
-
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	return performActionAddr;
 }
 PROMOTED_ENTRY(12, sub_822C00F8, 0x822C00F8) { ctx.r3.u64 = CPerformAction_Clone(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -263,7 +253,6 @@ uint64_t CPerformAction_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_
 	LiftedFrame frame(0x826D1E20);
 	uint32_t stack = PushStackFrame(base, ctx.r1.u64, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = arg2;
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, performAction + 0x88);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, performAction + 0x54);
 	HandleHolder_Dtor(ctx, base, performAction);
@@ -449,13 +438,9 @@ PROMOTED_ENTRY(46, sub_826DFA48, 0x826DFA48) { ctx.r3.u64 = CPerformAction_FindA
 uint64_t n_sub_826DFB58(CpuState& ctx, uint8_t* base, uint64_t handleAddr) {
 	if (!UseLiftedCode(46, 0x826DFB58)) { ctx.r4.u64 = handleAddr; __imp__sub_826DFB58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826DFB58);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	ctx.r4.u64 = handleAddr; // state the callee may pass on
 	SharedHandle_Release(ctx, base, handleAddr);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return 0;
 }
 PROMOTED_ENTRY(46, sub_826DFB58, 0x826DFB58) { ctx.r3.u64 = n_sub_826DFB58(ctx, base, ctx.r4.u64); }

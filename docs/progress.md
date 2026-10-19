@@ -2,11 +2,11 @@
 
 <!-- written by tools/progress.py from tracked files: do not edit by hand -->
 
-As of **2026-10-19**, **0.2%** of Lionhead's game functions are human-readable C++ in this repository (readable code with every name): 88 of 41,186, 0.0% of the game's code by size. Another 3,053 are readable code whose names are still to give, and 4,294 are rewrites that behave exactly like the original but still work through the CPU registers. Fable2RE rebuilds the game as readable C++ ([direction](project-direction.md)); this page counts how far that has come.
+As of **2026-10-19**, **10.0%** of Lionhead's game functions are human-readable C++ in this repository (readable code with every name): 4,129 of 41,186, 1.3% of the game's code by size. Another 1,421 are readable code whose names are still to give, and 1,885 are rewrites that behave exactly like the original but still work through the CPU registers. Fable2RE rebuilds the game as readable C++ ([direction](project-direction.md)); this page counts how far that has come.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="images/progress-dark.svg">
-  <img alt="0.2% of Lionhead's game functions are readable C++ with every name (88 of 41,186), as of 2026-10-19" src="images/progress-light.svg" width="860">
+  <img alt="10.0% of Lionhead's game functions are readable C++ with every name (4,129 of 41,186), as of 2026-10-19" src="images/progress-light.svg" width="860">
 </picture>
 
 ## Lionhead's game code
@@ -15,10 +15,10 @@ The game and engine code and its start-up initialisers: the code Lionhead wrote.
 
 | Kind | Functions | Share | Code bytes | Share |
 |---|---:|---:|---:|---:|
-| Readable C++ with every name | 31 | 0.1% | 424 | 0.0% |
+| Readable C++ with every name | 4,072 | 9.9% | 152,468 | 1.2% |
 | Readable C++, written by hand | 57 | 0.1% | 5,080 | 0.0% |
-| Readable C++, names still to do | 3,053 | 7.4% | 44,728 | 0.4% |
-| Rewritten, still at machine level | 4,294 | 10.4% | 524,152 | 4.3% |
+| Readable C++, names still to do | 1,421 | 3.5% | 43,464 | 0.4% |
+| Rewritten, still at machine level | 1,885 | 4.6% | 373,372 | 3.1% |
 | Machine-translated C++, exact and tested | 32,714 | 79.4% | 11,361,776 | 93.1% |
 | Recompiled only | 1,037 | 2.5% | 263,156 | 2.2% |
 | **Total** | **41,186** | | **12,199,316** | |
@@ -31,13 +31,14 @@ Each reviewed rewrite that is not readable C++ with every name yet, by what it s
 
 | Still has | Functions | Step that removes it |
 |---|---:|---|
-| unnamed function | 6,812 | naming |
-| cpu state | 4,294 | readable form: values passed as arguments, not through the CPU registers |
-| address | 4,054 | naming (the global) |
-| stack frame | 3,922 | readable form: the frame bookkeeping in the generated entry, not in the body |
-| unnamed callee | 3,788 | naming (the callee) |
+| unnamed function | 2,798 | naming |
+| address | 2,088 | naming (the global) |
+| cpu state | 1,885 | readable form: values passed as arguments, not through the CPU registers |
+| unnamed callee | 1,779 | naming (the callee) |
 | field offset | 1,608 | naming (the field, in the class model) |
-| machine variable name | 1,039 | naming (variables and parameters) |
+| stack frame | 1,504 | readable form: the frame bookkeeping in the generated entry, not in the body |
+| machine variable name | 510 | naming (variables and parameters) |
+| placeholder name | 135 |  |
 
 ## The whole executable
 
@@ -45,12 +46,12 @@ Every function of `default.xex`, by area ([scope](../research/catalog/scope.tsv)
 
 | Area | Functions | Human-readable | Names to do | Machine-level rewrite | Machine-translated | Recompiled only |
 |---|---:|---:|---:|---:|---:|---:|
-| Game and engine code | 32,344 | 88 (0.3%) | 571 (1.8%) | 1,461 (4.5%) | 29,187 (90.2%) | 1,037 (3.2%) |
-| Start-up initialisers | 8,842 | 0 (0.0%) | 2,482 (28.1%) | 2,833 (32.0%) | 3,527 (39.9%) | 0 (0.0%) |
+| Game and engine code | 32,344 | 115 (0.4%) | 625 (1.9%) | 1,380 (4.3%) | 29,187 (90.2%) | 1,037 (3.2%) |
+| Start-up initialisers | 8,842 | 4,014 (45.4%) | 796 (9.0%) | 505 (5.7%) | 3,527 (39.9%) | 0 (0.0%) |
 | Middleware libraries | 11,437 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 11,231 (98.2%) | 206 (1.8%) |
 | System libraries | 7,059 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 6,435 (91.2%) | 624 (8.8%) |
 | Unidentified code | 1,179 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 1,138 (96.5%) | 41 (3.5%) |
-| **All** | **60,861** | **88** (0.1%) | | | | |
+| **All** | **60,861** | **4,129** (6.8%) | | | | |
 
 ## Names
 
@@ -70,7 +71,7 @@ A row for every day the numbers changed in this repository (rows before 2026-10-
 
 | Date | Human-readable | Share | Names to do | Machine-level rewrite | By hand | Machine-translated | Recompiled only | Named in the dictionary |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026-10-19 | 88 | 0.2% | 3,053 | 4,294 | 57 | 32,714 | 1,037 | 5,232 |
+| 2026-10-19 | 4,129 | 10.0% | 1,421 | 1,885 | 57 | 32,714 | 1,037 | 5,232 |
 | 2026-10-17 | 71 | 0.2% | 133 | 1,294 | 57 | 38,651 | 1,037 | 5,232 |
 | 2026-10-15 | 71 | 0.2% | 121 | 1,071 | 57 | 38,886 | 1,037 | 5,232 |
 

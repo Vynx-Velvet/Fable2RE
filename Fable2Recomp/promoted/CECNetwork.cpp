@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECNetwork_ShouldReplicateEntity(CpuState& ctx, uint8_t* base, uint32_t object) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -153,12 +154,8 @@ uint64_t CECNetwork_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNam
 	constexpr int32_t str_TXT_820A2F30_B_ = int32_t(0x820A2F30);
 	if (!UseLiftedCode(18, 0x8237D278)) { ctx.r3.u64 = classNameString; __imp__sub_8237D278(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8237D278);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820A2F30_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(18, sub_8237D278, 0x8237D278) { ctx.r3.u64 = CECNetwork_GetClassName(ctx, base, ctx.r3.u64); }
@@ -204,8 +201,6 @@ uint64_t n_sub_8237DBF8(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
 		}
 	}
 	// state the callee may pass on
-	ctx.r8.u64 = lastBit;
-	ctx.r9.u64 = lastTested;
 	return n_sub_82392C88(ctx, base, entity, networkAddr);
 }
 PROMOTED_ENTRY(18, sub_8237DBF8, 0x8237DBF8) { ctx.r3.u64 = n_sub_8237DBF8(ctx, base, ctx.r3.u64); }
@@ -233,8 +228,6 @@ uint32_t n_sub_823885C8(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 		uint32_t manager = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 		uint32_t messageQueue = LOAD32(manager + 140);
 		// state the callee may pass on
-		ctx.r6.u64 = manager;
-		ctx.r7.s64 = g_83490000;
 		result = n_sub_8238ACA0(ctx, base, messageQueue, message, uniqueId);
 		network->m_60 = uint8_t(1);
 	}

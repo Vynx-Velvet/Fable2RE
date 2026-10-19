@@ -9,17 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECOnFire_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8E90_B_ = int32_t(0x820C8E90);
 	if (!UseLiftedCode(61, 0x8289B3A0)) { ctx.r3.u64 = classNameString; __imp__sub_8289B3A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289B3A0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820C8E90_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(61, sub_8289B3A0, 0x8289B3A0) { ctx.r3.u64 = CECOnFire_GetClassName(ctx, base, ctx.r3.u64); }
@@ -82,15 +79,12 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 			int64_t handleType = (int64_t)g_820F0000 + 5732;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleType);
-			ctx.r7.u64 = (uint64_t)handleType;
 			ctx.r8.s64 = g_820F0000;
 			EntityHandle_SetTarget(ctx, base, stack + 80, target);
 
 			EntityHandle_Assign(ctx, base, (uint32_t)onFireAddr + 116, stack + 80);
 
 			STORE32(stack + 80, (uint32_t)handleType);
-			ctx.r5.u64 = (uint64_t)handleType;
-			ctx.r6.s64 = g_820F0000;
 			result = EntityHandle_Release(ctx, base, stack + 80);
 
 			savedR5 = ctx.r5.u64;
@@ -102,8 +96,6 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 		uint32_t fieldC = onFire->m_C;
 		endingR4 = fieldC;
 		if (fieldC <= 3) {
-			ctx.r5.u64 = savedR5;
-			ctx.r6.u64 = savedR6;
 			ctx.r7.u64 = savedR7;
 			ctx.r8.u64 = savedR8;
 			result = n_sub_8289CC38(ctx, base, onFireAddr, fieldC);
@@ -222,19 +214,19 @@ uint64_t n_sub_8289BD90(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 }
 PROMOTED_ENTRY(61, sub_8289BD90, 0x8289BD90) { ctx.r3.u64 = n_sub_8289BD90(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t arg1) {
+uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t onFireAddr) {
 	constexpr int32_t g_83360000 = int32_t(0x83360000);
-	if (!UseLiftedCode(61, 0x8289C460)) { ctx.r3.u64 = arg1; __imp__sub_8289C460(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(61, 0x8289C460)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289C460(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289C460);
 	uint32_t stack = ctx.r1.u32;
 	stack = PushStackFrame(base, stack, 96);
 
 	// Per-fire-type tunables table; each entry is 28 bytes.
 	const uint32_t fireParams = uint32_t(g_83360000) - 4256;
-	const uint32_t fireType = LOAD32(arg1 + 36);
+	const uint32_t fireType = LOAD32(onFireAddr + 36);
 	const uint32_t entry = fireType * 28;
 	ctx.fpscr.disableFlushMode();
-	const double heat = double(LOAD_F32(arg1 + 60));
+	const double heat = double(LOAD_F32(onFireAddr + 60));
 
 	uint64_t r7Value = ctx.r7.u64;
 	uint32_t stage = 0;
@@ -245,17 +237,17 @@ uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 		// Below the main band: only the hottest band can ignite.
 		ctx.fpscr.disableFlushMode();
 		lastThreshold = double(LOAD_F32(entry + fireParams + 20));
-		if (!(heat < lastThreshold) && LOAD8(arg1 + 100) != 0) {
+		if (!(heat < lastThreshold) && LOAD8(onFireAddr + 100) != 0) {
 			stage = 3;
 		}
-	} else if (LOAD8(arg1 + 97) != 0) {
-		r7Value = LOAD8(arg1 + 98);
+	} else if (LOAD8(onFireAddr + 97) != 0) {
+		r7Value = LOAD8(onFireAddr + 98);
 		stage = 2;
 		if (r7Value != 0) {
 			lastThreshold = double(LOAD_F32(entry + fireParams + 12));
 			if (!(heat < lastThreshold)) {
 				ctx.r1.u64 = stack;
-				const uint32_t blocked = n_sub_824BD028(ctx, base, LOAD32(arg1 + 4));
+				const uint32_t blocked = n_sub_824BD028(ctx, base, LOAD32(onFireAddr + 4));
 				if ((blocked & 0xFF) == 0) {
 					stage = 1;
 					stack = PopStackFrame(stack, 96);
@@ -276,8 +268,8 @@ uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 }
 PROMOTED_ENTRY(61, sub_8289C460, 0x8289C460) { ctx.r3.u64 = n_sub_8289C460(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint32_t arg2) {
-	if (!UseLiftedCode(61, 0x8289CC38)) { ctx.r3.u64 = onFireAddr; ctx.r4.u64 = arg2; __imp__sub_8289CC38(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint32_t fireState) {
+	if (!UseLiftedCode(61, 0x8289CC38)) { ctx.r3.u64 = onFireAddr; ctx.r4.u64 = fireState; __imp__sub_8289CC38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289CC38);
 	uint32_t stack = ctx.r1.u64;
 	CECOnFire* onFire = GameObject<CECOnFire>(base, onFireAddr);
@@ -289,18 +281,17 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	constexpr uint32_t kFloatHigh  = kFloatTable + 9228;  // 0x8209B8D8
 	constexpr uint32_t kStateByteAddr = 0x8335EF61;       // 0x83360000 - 4256 + 1
 
-	const uint32_t jumpEntry = LOAD32((uint32_t)(0x828A0000 - 13208) + (arg2 << 2));
+	const uint32_t jumpEntry = LOAD32((uint32_t)(0x828A0000 - 13208) + (fireState << 2));
 
 	uint64_t result = 0;
 	uint32_t outR4 = 0;
 	uint64_t outR8 = 0;
 	float value = 0.0f;
 
-	switch (arg2) {
+	switch (fireState) {
 	case 0: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
 		result = n_sub_8289E4B0(ctx, base, onFireAddr);
 		outR8 = ctx.r8.u64;
 		uint32_t stateWord = onFire->m_18;
@@ -328,7 +319,6 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 1: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
 		n_sub_8289E308(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
@@ -362,7 +352,6 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 2: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
 		n_sub_8289E4B0(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
@@ -387,7 +376,6 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 3: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = arg2;
 		n_sub_8289E4B0(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
@@ -484,8 +472,6 @@ uint32_t n_sub_8289CEE8(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				SET_V8(vecSaved, VLOAD(uint32_t(dataBuf) & ~0xF));
 				uint32_t entity2C = onFire->m_2C;
 				uint32_t entity28 = onFire->m_28;
-				ctx.r8.u64 = dataBuf;
-				ctx.f13.f64 = fireLevel;
 				uint64_t entityHandle = EntityHandle_Get_825575C8(ctx, base, handleSource);
 				SET_V8(vecCopy, V8(vecSaved));
 				ctx.fpscr.disableFlushMode();
@@ -591,15 +577,6 @@ uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				uint32_t field2C = onFire->m_2C;
 				uint32_t field28 = onFire->m_28;
 
-				ctx.r5.u64 = 1;
-				ctx.r7.u64 = typeBurns;
-				ctx.r8.u64 = typeTableIndex;
-				ctx.r9.u64 = typeEntryOffset;
-				ctx.r10.u64 = typeIndex;
-				ctx.f1.f64 = burnRate;
-				ctx.f11.f64 = reg11;
-				ctx.f12.f64 = reg12;
-				ctx.f13.f64 = reg13;
 
 				uint64_t sourceHandle = EntityHandle_Get_825575C8(ctx, base, sourceHandleAddr);
 				reg13 = ctx.f13.f64;
@@ -763,10 +740,6 @@ uint64_t n_sub_8289D108(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				frames = 1;
 
 			uint32_t fireObj = static_cast<uint32_t>(onFire->m_4);
-			ctx.r7.u64 = 0;
-			ctx.r8.u64 = local15;
-			ctx.r9.u64 = local16;
-			ctx.f1.f64 = local2;
 			onFireAddr = n_sub_824B9528(ctx, base, fireObj, static_cast<uint64_t>(frames),
 				static_cast<uint64_t>(frames), frames);
 			local11 = ctx.r4.u64;
@@ -799,7 +772,6 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 	stack = PushStackFrame(base, stack, 144);
 
 	constexpr uint32_t kNullHandle = 0x820F1664;      // 0x820F0000 + 5732
-	constexpr uint32_t kGlobalBase = 0x820F0000;
 	constexpr uint32_t kFadeConsts = 0x820994B4;      // 0x820A0000 - 27468
 
 	// Values the original keeps live in r6..r10 across the calls below.
@@ -822,9 +794,6 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 
 		if (emitterFlags == 0) {
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = slotIndex;
-			ctx.r5.u64 = instant;
-			ctx.r10.u64 = emitterFlags;
 			result = EntityHandle_Release(ctx, base, handleAddr);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -834,7 +803,6 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = slotIndex;
 		ctx.r5.u64 = instant;
-		ctx.r10.u64 = emitterFlags;
 		result = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		r6v = ctx.r6.u64;
 		r7v = ctx.r7.u64;
@@ -902,11 +870,7 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 				fadeOutTime = (double)LOAD_F32(kFadeConsts);
 			}
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = r6v;
-			ctx.r7.u64 = r7v;
 			ctx.r8.u64 = r8v;
-			ctx.r9.u64 = r9v;
-			ctx.r10.u64 = r10v;
 			result = n_sub_8247EB68(ctx, base, particleId, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
 			if (!instantKill) {
 				stack = PopStackFrame(stack, 144);
@@ -924,7 +888,6 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 		STORE32(stack + 84, 0);
 		STORE32(tempHandle, kNullHandle);
 		ctx.r1.u64 = stack;
-		ctx.r10.u64 = kNullHandle;
 		EntityHandle_Release(ctx, base, tempHandle);
 
 		ctx.r1.u64 = stack;
@@ -932,8 +895,6 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 
 		STORE32(tempHandle, kNullHandle);
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = kNullHandle;
-		ctx.r9.u64 = kGlobalBase;
 		result = EntityHandle_Release(ctx, base, tempHandle);
 	}
 
@@ -943,9 +904,9 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 }
 PROMOTED_ENTRY(61, sub_8289D9D8, 0x8289D9D8) { ctx.r3.u64 = n_sub_8289D9D8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t arg1) {
+uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t onFire) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(61, 0x8289E308)) { ctx.r3.u64 = arg1; __imp__sub_8289E308(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(61, 0x8289E308)) { ctx.r3.u64 = onFire; __imp__sub_8289E308(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289E308);
 	uint32_t stack = ctx.r1.u64;
 
@@ -956,8 +917,8 @@ uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 
 	bool enabled = LOAD8(settings + 0x34) != 0 && LOAD8(settings + 0x35) != 0;
 
-	if (enabled && LOAD8(arg1 + 0x62) != 0) {
-		uint32_t entity = LOAD32(arg1 + 4);
+	if (enabled && LOAD8(onFire + 0x62) != 0) {
+		uint32_t entity = LOAD32(onFire + 4);
 		if ((LOAD32(entity + 36) >> 21) & 1) {
 			uint32_t target;
 			uint32_t indexTable = LOAD32(entity + 140);
@@ -992,22 +953,22 @@ uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 				}
 			}
 			ctx.r1.u64 = stack;
-			arg1 = CECEntityModeManager_HasMode(ctx, base, target, 46);
-			if ((arg1 & 0xFF) == 0) {
-				arg1 = n_sub_823F1EB0(ctx, base, target, 46);
+			onFire = CECEntityModeManager_HasMode(ctx, base, target, 46);
+			if ((onFire & 0xFF) == 0) {
+				onFire = n_sub_823F1EB0(ctx, base, target, 46);
 			}
 		}
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	return arg1;
+	return onFire;
 }
 PROMOTED_ENTRY(61, sub_8289E308, 0x8289E308) { ctx.r3.u64 = n_sub_8289E308(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t onFire) {
 	constexpr uint32_t g_83490000 = 0x83490000;
-	if (!UseLiftedCode(61, 0x8289E4B0)) { ctx.r3.u64 = arg1; __imp__sub_8289E4B0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(61, 0x8289E4B0)) { ctx.r3.u64 = onFire; __imp__sub_8289E4B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289E4B0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -1020,7 +981,7 @@ uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	bool hasAnimId = false;
 
 	if (shouldCheck) {
-		uint32_t entity = LOAD32((uint32_t)arg1 + 4);
+		uint32_t entity = LOAD32((uint32_t)onFire + 4);
 		if ((LOAD32(entity + 36) >> 21) & 1) {
 			uint32_t animComponent = LOAD32(entity + 140);
 			if (animComponent != 0) {
@@ -1063,7 +1024,7 @@ uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	if (!hasAnimId) {
 		stack = PopStackFrame(stack, 112);
 		ctx.r1.u64 = stack;
-		return arg1;
+		return onFire;
 	}
 
 	ctx.r1.u64 = stack;

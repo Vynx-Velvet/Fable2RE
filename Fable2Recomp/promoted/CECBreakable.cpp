@@ -9,17 +9,14 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CECBreakable_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820BD02C_B_ = int32_t(0x820BD02C);
 	if (!UseLiftedCode(32, 0x8252DBB0)) { ctx.r3.u64 = classNameString; __imp__sub_8252DBB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8252DBB0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
-	ctx.r1.u64 = stack;
+	GameStackFrame stackFrame(ctx, base, 96);
 	CCharString_ConstructFromCStr(ctx, base, classNameString, str_TXT_820BD02C_B_, -1);
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return classNameString;
 }
 PROMOTED_ENTRY(32, sub_8252DBB0, 0x8252DBB0) { ctx.r3.u64 = CECBreakable_GetClassName(ctx, base, ctx.r3.u64); }
@@ -44,7 +41,6 @@ uint64_t CECBreakable_Destructor(CpuState& ctx, uint8_t* base, uint64_t breakabl
 	uint32_t pendingHandle = breakable->m_88;
 
 	if (pendingHandle != 0) {
-		ctx.r3.u64 = handleListAddr;
 		HandleRange_ReleaseAll(ctx, base, pendingHandle, LOAD32(handleListAddr + 8));
 		HandleTarget_Free(ctx, base, LOAD32(handleListAddr + 4));
 		pendingHandle = ctx.r4.u64;
@@ -55,8 +51,6 @@ uint64_t CECBreakable_Destructor(CpuState& ctx, uint8_t* base, uint64_t breakabl
 	STORE32(handleListAddr + 12, 0);
 	breakable->m_50 = resetHandleValue;
 
-	ctx.r4.u64 = pendingHandle;
-	ctx.r10.u64 = resetHandleValue;
 	EntityHandle_Release(ctx, base, objAddr + 80);
 	breakable->m_54 = 0;
 
@@ -111,7 +105,6 @@ uint64_t CECBreakable_SerializeState(CpuState& ctx, uint8_t* base, uint64_t arg1
 	CCharString_ConstructFromCStr(ctx, base, (uint64_t)(stack + 80), (uint64_t)str_TXT_820BD0F0_B_, (int64_t)-1);
 	uint32_t nameData = LOAD32(stack + 80);
 	uint64_t defaultValue = (nameData == 0) ? (uint64_t)(int64_t)g_8209003F : (uint64_t)LOAD32(nameData);
-	ctx.r4.u64 = defaultValue;
 	IStream_SerializeFloat(ctx, base, serializer, arg1 + 88);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, (uint64_t)(stack + 80));
 
@@ -172,8 +165,6 @@ uint64_t CECBreakable_SerializeState(CpuState& ctx, uint8_t* base, uint64_t arg1
 				uint64_t uidLow = (uint64_t)LOAD32(stack + 88);
 				STORE32(stack + 80, 0);
 				if (uidLow != 0 || LOAD32(stack + 92) != 0) {
-					ctx.r8.u64 = uidLow;
-					ctx.r9.u64 = refCount;
 					VectorPair32_PushBack(ctx, base, (uint64_t)LOAD32(breakable + 148), (uint64_t)(stack + 88));
 					uidLow = ctx.r8.u64;
 					refCount = ctx.r9.u64;
@@ -227,9 +218,6 @@ uint64_t CECBreakable_SerializeState(CpuState& ctx, uint8_t* base, uint64_t arg1
 		if (entityHandle != 0) {
 			entity = LOAD32(entityHandle);
 			if (entity == 0) {
-				ctx.r8.u64 = (uint64_t)(int64_t)entryCount;
-				ctx.r9.u64 = byteSize;
-				ctx.r10.u64 = 0;
 				elementAddr = EntityHandle_Release(ctx, base, elementAddr);
 				byteSize = ctx.r9.u64;
 			} else {
@@ -290,13 +278,10 @@ uint64_t CECBreakable_ApplyPendingOpenEntities(CpuState& ctx, uint8_t* base, uin
 			uint32_t entityList = LOAD32(LOAD32(manager + 12) + 88);
 			uint32_t handle = LOAD32(LOAD32(entityList + 4));
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = entityList;
-			ctx.r10.u64 = manager;
 			entity = n_sub_82264448(ctx, base, handle, entryAddr);
 			if (entity != 0) {
 				uint32_t breakFlag = LOAD8((uint32_t)entity + 144) & 64;
 				if (breakFlag != 0) {
-					ctx.r10.u64 = breakFlag;
 					n_sub_82530DE8(ctx, base, breakableAddr, entity, 1);  // Lua_Breakable_SetOpenForEntity
 					entity = ctx.r4.u64;
 				}
@@ -306,9 +291,6 @@ uint64_t CECBreakable_ApplyPendingOpenEntities(CpuState& ctx, uint8_t* base, uin
 			count = (int32_t)pendingBytes >> 3;
 		}
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = entity;
-		ctx.r7.u64 = (uint64_t)(int64_t)count;
-		ctx.r8.u64 = pendingBytes;
 		breakableAddr = SharedHandle_Release(ctx, base, pendingListAddr);
 		STORE32(pendingListAddr, 0u);
 	}
@@ -334,9 +316,6 @@ uint64_t CECBreakable_ResetPieces(CpuState& ctx, uint8_t* base, uint64_t breakab
 	uint64_t pieceType = (isVaultable != 0) ? (uint64_t)TXT_834985B4_G_ : (uint64_t)TXT_834985B0_G_;
 
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = pieceType;
-	ctx.r9.u64 = isVaultable;
-	ctx.r10.u64 = flags;
 	n_sub_82682EE0(ctx, base, pieceAddr);
 
 	STORE32((uint32_t)pieceAddr, 0u);
@@ -508,7 +487,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 			STORE32(searchHandle + 4, 0);
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = arg3;
-			ctx.r10.u64 = targetFlags;
 			EntityHandle_SetTarget(ctx, base, searchHandle, targetEntity);
 			uint32_t owner = breakable->m_8C;
 			returnValue = EntityHandleList_Find(ctx, base, findHandle, listAddr, searchHandle);
@@ -521,10 +499,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 		if (searchArmed) {
 			STORE32(searchHandle, handleTag);
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = arg2;
-			ctx.r5.u64 = arg3;
-			ctx.r9.u64 = 1;
-			ctx.r10.u64 = foundOpen ? 1 : 0;
 			returnValue = EntityHandle_Release(ctx, base, searchHandle);
 			arg2 = ctx.r4.u64;
 			arg3 = ctx.r5.u64;
@@ -537,8 +511,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 			STORE32(searchHandle + 4, 0);
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = arg3;
-			ctx.r9.u64 = releaseR9;
-			ctx.r10.u64 = releaseR10;
 			EntityHandle_SetTarget(ctx, base, searchHandle, targetEntity);
 			Vector8_PushBack(ctx, base, listAddr, searchHandle);
 			STORE32(searchHandle, handleTag);
@@ -554,8 +526,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 			STORE32(searchHandle + 4, 0);
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = arg3;
-			ctx.r9.u64 = 0;
-			ctx.r10.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, searchHandle, targetEntity);
 			uint32_t owner = breakable->m_8C;
 			returnValue = EntityHandleList_Find(ctx, base, findHandle, listAddr, searchHandle);
@@ -569,10 +539,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 		if (closeArmed) {
 			STORE32(searchHandle, handleTag);
 			ctx.r1.u64 = stack;
-			ctx.r4.u64 = arg2;
-			ctx.r5.u64 = arg3;
-			ctx.r9.u64 = findR9;
-			ctx.r10.u64 = 2;
 			returnValue = EntityHandle_Release(ctx, base, searchHandle);
 			arg2 = ctx.r4.u64;
 			arg3 = ctx.r5.u64;
@@ -585,8 +551,6 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 			STORE32(searchHandle + 4, 0);
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = arg3;
-			ctx.r9.u64 = closeReleaseR9;
-			ctx.r10.u64 = closeReleaseR10;
 			EntityHandle_SetTarget(ctx, base, searchHandle, targetEntity);
 			uint32_t findResult = EntityHandleList_Find(ctx, base, findHandle, listAddr, searchHandle);
 			uint64_t foundValue = LOAD64(findResult);
@@ -607,8 +571,8 @@ uint64_t n_sub_82530DE8(CpuState& ctx, uint8_t* base, uint64_t breakableAddr, ui
 }
 PROMOTED_ENTRY(32, sub_82530DE8, 0x82530DE8) { ctx.r3.u64 = n_sub_82530DE8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t Breakable_PostSetOpenForEntityMessage(CpuState& ctx, uint8_t* base, uint32_t breakableAddr, uint64_t targetEntity, uint64_t arg3) {
-	if (!UseLiftedCode(32, 0x82531230)) { ctx.r3.u64 = breakableAddr; ctx.r4.u64 = targetEntity; ctx.r5.u64 = arg3; __imp__sub_82531230(ctx, base); return ctx.r3.u64; }
+uint64_t Breakable_PostSetOpenForEntityMessage(CpuState& ctx, uint8_t* base, uint32_t breakableAddr, uint64_t targetEntity, uint64_t isOpen) {
+	if (!UseLiftedCode(32, 0x82531230)) { ctx.r3.u64 = breakableAddr; ctx.r4.u64 = targetEntity; ctx.r5.u64 = isOpen; __imp__sub_82531230(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82531230);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t reg6 = ctx.r6.u64;
@@ -678,11 +642,9 @@ uint64_t Breakable_PostSetOpenForEntityMessage(CpuState& ctx, uint8_t* base, uin
 		ctx.xer.ca = flags.ca;
 		entityId = CECNetwork_ShouldReplicateEntity(ctx, base, entityId);
 		if ((uint32_t(entityId) & 0xFF) != 0) {
-			STORE8(stack + 84, (uint8_t)arg3);
+			STORE8(stack + 84, (uint8_t)isOpen);
 			STORE64(stack + 88, 0);
 			STORE32(stack + 80, 0x820A43F4u);
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
 			uint64_t messageId = Entity_GetUniqueId(ctx, base, targetEntity);
 			flags.ca = ctx.xer.ca;
 			STORE64(stack + 88, messageId);
@@ -692,7 +654,7 @@ uint64_t Breakable_PostSetOpenForEntityMessage(CpuState& ctx, uint8_t* base, uin
 			flags.ca = ctx.xer.ca;
 			entityId = Hittable_PostSetOnlyHittableByEntity(ctx, base, hittable, stack + 80, senderId);
 			targetEntity = ctx.r4.u64;
-			arg3 = ctx.r5.u64;
+			isOpen = ctx.r5.u64;
 			reg6 = ctx.r6.u64;
 			reg7 = ctx.r7.u64;
 		}
@@ -701,7 +663,7 @@ uint64_t Breakable_PostSetOpenForEntityMessage(CpuState& ctx, uint8_t* base, uin
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = targetEntity;
-	ctx.r5.u64 = arg3;
+	ctx.r5.u64 = isOpen;
 	ctx.r6.u64 = reg6;
 	ctx.r7.u64 = reg7;
 	return entityId;
@@ -779,9 +741,6 @@ uint64_t CECBreakable_InitPhysicsSimulation(CpuState& ctx, uint8_t* base, uint64
 			uint32_t simEntry = LOAD32(simEntryPtr + 4);
 
 			ctx.r1.u64 = stack;
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
 			ctx.xer.ca = flags.ca;
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820BD03C_B_, -1);
 
@@ -815,7 +774,6 @@ uint64_t CECBreakable_InitPhysicsSimulation(CpuState& ctx, uint8_t* base, uint64
 		if ((isDynamicSimulation & 0xFF) == 0 && LOAD32(breakablePtr + 128) == 0xFFFFFFFF) {
 			uint32_t container2 = breakable->m_4;
 			ctx.r1.u64 = stack;
-			ctx.r9.u64 = r9Value;
 			breakableAddr = n_sub_82639C30(ctx, base, container2);
 			STORE32(breakablePtr + 128, (uint32_t)breakableAddr);   // breakable->m_80
 		}
@@ -892,7 +850,6 @@ uint64_t CECBreakable_ReleasePhysicsHandle(CpuState& ctx, uint8_t* base, uint32_
 		handleId = LOAD32(recordAddr + 60);
 		if ((int32_t)handleId != -1) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = savedR8;
 			ctx.xer.ca = flags.ca;
 			handleId = n_sub_8263A788(ctx, base, handleId, 4);
 			savedR8 = ctx.r8.u64;
@@ -903,7 +860,6 @@ uint64_t CECBreakable_ReleasePhysicsHandle(CpuState& ctx, uint8_t* base, uint32_
 		handleId = breakable->m_80;
 		if ((int32_t)handleId != -1) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = savedR8;
 			ctx.xer.ca = flags.ca;
 			handleId = n_sub_8263A788(ctx, base, handleId, 4);
 			savedR8 = ctx.r8.u64;
@@ -1000,7 +956,6 @@ uint64_t BreakablePieceList_Clear(CpuState& ctx, uint8_t* base, uint64_t breakab
 	if (liveBegin != liveEnd) {
 		for (uint32_t resetSlot = liveBegin; resetSlot != liveEnd; resetSlot += 12) {
 			ctx.r1.u64 = stack;
-			ctx.r8.u64 = savedR8;
 			result = SharedPtrPair_Reset(ctx, base, resetSlot);
 			savedR8 = ctx.r8.u64;
 		}

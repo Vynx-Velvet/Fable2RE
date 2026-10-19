@@ -9,6 +9,7 @@
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 uint64_t CPhysicsBodyEntity_ComputeBoundingSphere(CpuState& ctx, uint8_t* base, uint64_t outBoundingSphere, uint64_t sourceEntity) {
 	constexpr int32_t g_8209B948 = int32_t(0x8209B948);
@@ -99,7 +100,6 @@ uint64_t CPhysicsBodyEntity_SetOwner(CpuState& ctx, uint8_t* base, uint32_t phys
 		return 0;
 	}
 	uint32_t body2 = physicsBodyEntity->m_body;
-	ctx.r10.u64 = body;
 	uint64_t result = n_sub_82D76A18(ctx, base, world, body2, 1);
 	return result;
 }
@@ -150,8 +150,8 @@ uint64_t n_sub_821F8BC8(CpuState& ctx, uint8_t* base, uint64_t physicsBodyEntity
 }
 PROMOTED_ENTRY(4, sub_821F8BC8, 0x821F8BC8) { ctx.r3.u64 = n_sub_821F8BC8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82202248(CpuState& ctx, uint8_t* base, uint64_t self, uint32_t owner) {
-	if (!UseLiftedCode(5, 0x82202248)) { ctx.r3.u64 = self; ctx.r4.u64 = owner; __imp__sub_82202248(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82202248(CpuState& ctx, uint8_t* base, uint64_t outPosition, uint32_t owner) {
+	if (!UseLiftedCode(5, 0x82202248)) { ctx.r3.u64 = outPosition; ctx.r4.u64 = owner; __imp__sub_82202248(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82202248);
 	PPCRegister loadAddress{};
 	uint32_t stack = ctx.r1.u32;
@@ -184,11 +184,11 @@ uint64_t n_sub_82202248(CpuState& ctx, uint8_t* base, uint64_t self, uint32_t ow
 	SET_VF(atOffset8, simde_mm_blend_ps(VF(atOffset8), simde_mm_permute_ps(VF(constantVector), 57), 4));
 	SET_VF(atOffset0, simde_mm_blend_ps(VF(atOffset0), simde_mm_permute_ps(VF(atOffset4), 57), 4));
 	SET_VF(atOffset0, simde_mm_blend_ps(VF(atOffset0), simde_mm_permute_ps(VF(atOffset8), 78), 3));
-	VSTORE((uint32_t)self & ~0xF, V8(atOffset0));
+	VSTORE((uint32_t)outPosition & ~0xF, V8(atOffset0));
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	return self;
+	return outPosition;
 }
 PROMOTED_ENTRY(5, sub_82202248, 0x82202248) { ctx.r3.u64 = n_sub_82202248(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
@@ -241,12 +241,12 @@ uint64_t n_sub_822110C0(CpuState& ctx, uint8_t* base, uint64_t entity, uint32_t 
 PROMOTED_ENTRY(5, sub_822110C0, 0x822110C0) { ctx.r3.u64 = n_sub_822110C0(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // sub_82213BB8  [20 bytes]
-void CPhysicsBodyEntity_SetPosition(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
-	if (!UseLiftedCode(5, 0x82213BB8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82213BB8(ctx, base); return; }
+void CPhysicsBodyEntity_SetPosition(CpuState& ctx, uint8_t* base, uint32_t physicsBodyEntity, uint32_t sourcePhysicsBodyEntity) {
+	if (!UseLiftedCode(5, 0x82213BB8)) { ctx.r3.u64 = physicsBodyEntity; ctx.r4.u64 = sourcePhysicsBodyEntity; __imp__sub_82213BB8(ctx, base); return; }
 	LiftedFrame frame(0x82213BB8);
 
-	uint32_t sourceAddress = (LOAD32(arg2 + 44) + 208u) & ~0xFu;
-	uint32_t destAddress = arg1 & ~0xFu;
+	uint32_t sourceAddress = (LOAD32(sourcePhysicsBodyEntity + 44) + 208u) & ~0xFu;
+	uint32_t destAddress = physicsBodyEntity & ~0xFu;
 
 	PPCVRegister position{};
 	SET_V8(position, VLOAD(sourceAddress));
@@ -293,16 +293,16 @@ uint64_t n_sub_8223B550(CpuState& ctx, uint8_t* base, uint64_t entity) {
 }
 PROMOTED_ENTRY(7, sub_8223B550, 0x8223B550) { ctx.r3.u64 = n_sub_8223B550(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82265720(CpuState& ctx, uint8_t* base, uint32_t physicsBodyEntityAddr, uint64_t arg2, uint64_t arg3) {
-	if (!UseLiftedCode(9, 0x82265720)) { ctx.r3.u64 = physicsBodyEntityAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82265720(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_82265720(CpuState& ctx, uint8_t* base, uint32_t physicsBodyEntityAddr, uint64_t quaternionLow, uint64_t quaternionHigh) {
+	if (!UseLiftedCode(9, 0x82265720)) { ctx.r3.u64 = physicsBodyEntityAddr; ctx.r4.u64 = quaternionLow; ctx.r5.u64 = quaternionHigh; __imp__sub_82265720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82265720);
 	uint32_t stack = ctx.r1.u64;
 	CPhysicsBodyEntity* physicsBodyEntity = GameObject<CPhysicsBodyEntity>(base, physicsBodyEntityAddr);
 	stack = PushStackFrame(base, stack, 256);
 
-	// arg2/arg3 carry the new local rotation as four packed floats.
-	STORE64(stack + 288, arg2);
-	STORE64(stack + 296, arg3);
+	// quaternionLow/quaternionHigh carry the new local rotation as four packed floats.
+	STORE64(stack + 288, quaternionLow);
+	STORE64(stack + 296, quaternionHigh);
 	PPCVRegister quatPacked{};
 	SET_V8(quatPacked, VLOAD((stack + 288) & ~0xF));
 	VSTORE((stack + 128) & ~0xF, V8(quatPacked));
@@ -458,8 +458,8 @@ uint32_t CPhysicsBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64_t ph
 PROMOTED_ENTRY(22, sub_823EE528, 0x823EE528) { ctx.r3.u64 = CPhysicsBodyEntity_Destructor(ctx, base, ctx.r3.u64); }
 
 // sub_823EE5E0  [100 bytes]
-uint64_t n_sub_823EE5E0(CpuState& ctx, uint8_t* base, uint64_t physicsBodyEntityAddr, uint64_t arg2) {
-	if (!UseLiftedCode(22, 0x823EE5E0)) { ctx.r3.u64 = physicsBodyEntityAddr; ctx.r4.u64 = arg2; __imp__sub_823EE5E0(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_823EE5E0(CpuState& ctx, uint8_t* base, uint64_t physicsBodyEntityAddr, uint64_t rigidBodyOwner) {
+	if (!UseLiftedCode(22, 0x823EE5E0)) { ctx.r3.u64 = physicsBodyEntityAddr; ctx.r4.u64 = rigidBodyOwner; __imp__sub_823EE5E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823EE5E0);
 	uint32_t stack = ctx.r1.u64;
 	CPhysicsBodyEntity* physicsBodyEntity = GameObject<CPhysicsBodyEntity>(base, physicsBodyEntityAddr);
@@ -471,11 +471,11 @@ uint64_t n_sub_823EE5E0(CpuState& ctx, uint8_t* base, uint64_t physicsBodyEntity
 		if (handleOwner != 0) {
 			uint32_t sharedHandle2 = physicsBodyEntity->m_sharedHandle;
 			uint32_t handleOwner2 = n_sub_82E3FCB0(ctx, base, sharedHandle2);
-			STORE32(handleOwner2 + 12, (uint32_t)arg2);
+			STORE32(handleOwner2 + 12, (uint32_t)rigidBodyOwner);
 		}
 	}
 	ctx.r1.u64 = stack;
-	uint64_t result = RigidBodyOwnerHandle_Set(ctx, base, physicsBodyEntityAddr, arg2);
+	uint64_t result = RigidBodyOwnerHandle_Set(ctx, base, physicsBodyEntityAddr, rigidBodyOwner);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
