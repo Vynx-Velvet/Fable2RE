@@ -180,15 +180,17 @@ def header_for(struct, key, info):
 
 
 def free_module(n):
-    """(module, header line) of a function without a class: the functions of the start-up and shut-down areas of
-    global objects (thousands of look-alikes) by 64 KiB page, the others free_functions."""
+    """(module, header lines) of a function without a class: the functions of the start-up and shut-down areas of
+    global objects (thousands of look-alikes) by 64 KiB page, the others free_functions. (No quotes in the
+    header: tools/validate_commit.py refuses a comment that quotes text.)"""
     import scope
+    import textwrap
     addr = int(n[4:], 16)
     for lo, hi, area, what in scope.ranges():
         if lo <= addr < hi and area == 'game-static':
             kind = 'startup_area' if what.startswith('Start-up') else 'shutdown_area'
-            return (f'{kind}_{addr >> 16:04X}',
-                    f'// Functions of the area "{what}" at 0x{addr >> 16:04X}xxxx, as readable C++.')
+            text = f'{what} at 0x{addr >> 16:04X}xxxx, as readable C++.'
+            return f'{kind}_{addr >> 16:04X}', '\n'.join('// ' + l for l in textwrap.wrap(text, 88))
     return 'free_functions', '// Functions of no known class, as readable C++.'
 
 
