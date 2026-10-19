@@ -1,9 +1,21 @@
 # Promoted code: model rewrites as published source
 
-`Fable2Recomp/src/game/promoted/` holds game functions reconstructed as readable C++, one module per class.
-They are replacement code in the sense of [CONTRIBUTING](../CONTRIBUTING.md): authored for this project,
-checked against the original and reviewed. Machine output that has not gone through these steps (the
-lifter's files, `Fable2Recomp/rewritten/`, answers of the rewrite runners) stays local.
+`Fable2Recomp/src/game/promoted/` holds game functions rewritten from the lifter's code on their way to readable
+C++, one module per class. They are replacement code in the sense of [CONTRIBUTING](../CONTRIBUTING.md):
+authored for this project, checked against the original and reviewed. Machine output that has not gone through
+these steps (the lifter's files, `Fable2Recomp/rewritten/`, answers of the rewrite runners) stays local.
+
+**Behaving like the original is not the same as readable.** Each function has a readability level
+(`python tools/rewrite/readability.py`, measured on the published text; the progress page counts by it):
+
+| Level | What it means | What takes it to the next level |
+|---|---|---|
+| rewrite | Checked and reviewed, but the body still passes values through the CPU registers (`ctx.r11.s64 = ...`, `ctx.r3`) or keeps the stack-frame bookkeeping (`PushStackFrame`) | The readable form: values as arguments and results, the bookkeeping in the generated entry, not in the body |
+| readable | Plain C++, but names are still to give: the function (`n_sub_83250030`), what it calls (`n_sub_82CA3700`), globals (`g_832A0000 + 12536`), variables and parameters (`arg1`, `local12`), fields (`LOAD32(self + 144)`, `self->m_1C`) | Naming: the dictionary (`research/names/`) and the class model's fields, applied to every module |
+| named | Readable C++ in which every name says what it is | (done: counted as human-readable) |
+
+Only the last level counts as human-readable in the [progress](progress.md) headline
+([finding](../research/findings/2026-10-19-readability-levels.md)).
 
 The repository holds them in `Fable2Recomp/promoted/`, without the game's text, and setup writes them to
 `src/game/promoted/` from your own copy ([below](#without-the-games-text)), the same text byte for byte as on
@@ -46,7 +58,7 @@ stages anything and `check` among its checks. `src/game/promoted/` is ignored by
 
 ## How a function gets here
 
-1. **Rewrite.** A language model rewrites the lifter's exact code for one function into readable C++
+1. **Rewrite.** A language model rewrites the lifter's exact code for one function into C++ meant to be read
    (`tools/rewrite/`, mostly DeepSeek `deepseek-flash` through `run_api.py`; the packet each function came
    from is in `Fable2Recomp/rewritten/manifest.tsv`, local). Input: the user's own copy, lifted locally.
 2. **Differential check.** `tools/rewrite/check.py` runs the rewrite and the recompiled original on the same

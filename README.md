@@ -32,18 +32,20 @@ How much of the game is human-readable C++ in this repository, counted from its 
 <!-- progress:begin (written by tools/progress.py from tracked files: do not edit by hand) -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/progress-dark.svg">
-  <img alt="18.1% of Lionhead's game functions are human-readable C++ (7,435 of 41,186), as of 2026-10-19" src="docs/images/progress-light.svg" width="860">
+  <img alt="0.2% of Lionhead's game functions are readable C++ with every name (88 of 41,186), as of 2026-10-19" src="docs/images/progress-light.svg" width="860">
 </picture>
 
 | Lionhead's game code | Functions | Share |
 |---|---:|---:|
-| Human-readable C++, reviewed | 7,378 | 17.9% |
-| Human-readable C++, written by hand | 57 | 0.1% |
+| Readable C++ with every name | 31 | 0.1% |
+| Readable C++, written by hand | 57 | 0.1% |
+| Readable C++, names still to do | 3,053 | 7.4% |
+| Rewritten, still at machine level | 4,294 | 10.4% |
 | Machine-translated C++, exact and tested | 32,714 | 79.4% |
 | Recompiled only | 1,037 | 2.5% |
 | **All of Lionhead's functions** | **41,186** | |
 
-249 reviewed class modules; 5,232 of the game's functions (12.7%) carry a name in the shared dictionary. By code size, 4.7% of the game is human-readable so far (7,435 functions). Details, every area of the executable and the history: [conversion progress](docs/progress.md). Counted by `tools/progress.py` from the files in this repository, as of 2026-10-19.
+Human-readable means readable C++ with every name: no CPU registers in the code, and the function, what it calls, its globals, variables and fields all named (`tools/rewrite/readability.py`). The 7,378 rewritten functions in 249 published modules all pass a strict check against the original and a review; most still need their names, or still work through the CPU registers. 5,232 of the game's functions (12.7%) carry a name in the shared dictionary. By code size, 0.0% of the game is human-readable so far (88 functions). Details, every area of the executable and the history: [conversion progress](docs/progress.md). Counted by `tools/progress.py` from the files in this repository, as of 2026-10-19.
 <!-- progress:end -->
 
 ## Where we are today
