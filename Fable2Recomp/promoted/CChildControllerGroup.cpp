@@ -1,9 +1,9 @@
 // CChildControllerGroup (vtable 0x8200C2D8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82C39C30(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr) {
+uint64_t CChildControllerGroup_CreateController(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr) {
 	if (!UseLiftedCode(91, 0x82C39C30)) { ctx.r3.u64 = childControllerGroupAddr; __imp__sub_82C39C30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C39C30);
 	CChildControllerGroup* childControllerGroup = GameObject<CChildControllerGroup>(base, childControllerGroupAddr);
@@ -27,7 +27,7 @@ uint64_t n_sub_82C39C30(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(91, sub_82C39C30, 0x82C39C30) { ctx.r3.u64 = n_sub_82C39C30(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(91, sub_82C39C30, 0x82C39C30) { ctx.r3.u64 = CChildControllerGroup_CreateController(ctx, base, ctx.r3.u64); }
 
 void n_sub_82C39DF0(CpuState& ctx, uint8_t* base, uint32_t arg1, uint32_t arg2) {
 	if (!UseLiftedCode(91, 0x82C39DF0)) { ctx.r4.u64 = arg1; ctx.r5.u64 = arg2; __imp__sub_82C39DF0(ctx, base); return; }
@@ -126,8 +126,7 @@ PROMOTED_ENTRY(91, sub_82C3A200, 0x82C3A200) { ctx.r3.u64 = CChildControllerGrou
 uint64_t n_sub_82C3A2D0(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t arg2) {
 	if (!UseLiftedCode(91, 0x82C3A2D0)) { ctx.r3.u64 = childControllerGroupAddr; ctx.r4.u64 = arg2; __imp__sub_82C3A2D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3A2D0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
+	GameStackFrame stackFrame(ctx, base, 112);
 
 	uint64_t originalArg2 = arg2;
 
@@ -136,19 +135,16 @@ uint64_t n_sub_82C3A2D0(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 		uint32_t current = LOAD32((uint32_t)childControllerGroupAddr + 20);
 		uint32_t end = LOAD32((uint32_t)childControllerGroupAddr + 24);
 		if (current > end) {
-			ctx.r1.u64 = stack;
 			ppc_trap(ctx, base, 22);
 		}
 		while (true) {
 			uint32_t arrayEnd = LOAD32(vectorAddr + 8);
 			uint32_t begin = LOAD32(vectorAddr + 4);
 			if (begin > arrayEnd) {
-				ctx.r1.u64 = stack;
 				ppc_trap(ctx, base, 22);
 			}
 			if (current != arrayEnd) {
 				if (current >= end) {
-					ctx.r1.u64 = stack;
 					ppc_trap(ctx, base, 22);
 				}
 				childControllerGroupAddr = LOAD32(current);
@@ -157,7 +153,6 @@ uint64_t n_sub_82C3A2D0(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 					uint32_t func = LOAD32(LOAD32(child) + 64);
 					PPCRegister callTarget{};
 					callTarget.u64 = (uint64_t)func;
-					ctx.r1.u64 = stack;
 					ctx.r3.u64 = child;
 					ctx.r4.u64 = 0;
 					ctx.r5.u64 = originalArg2;
@@ -169,21 +164,18 @@ uint64_t n_sub_82C3A2D0(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 				}
 				end = LOAD32(vectorAddr + 8);
 				if (current >= end) {
-					ctx.r1.u64 = stack;
 					ppc_trap(ctx, base, 22);
 				}
 				current += 8;
 				continue;
 			}
-			ctx.r1.u64 = stack;
+			ctx.r9.u64 = begin;
+			ctx.r10.u64 = arrayEnd;
 			childControllerGroupAddr = n_sub_82C08DA8(ctx, base);
 			arg2 = ctx.r4.u64;
 			break;
 		}
 	}
-
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
 	ctx.r4.u64 = arg2;
 	return childControllerGroupAddr;
 }
@@ -316,7 +308,7 @@ uint64_t CChildControllerGroup_ShutdownChildren(CpuState& ctx, uint8_t* base, ui
 }
 PROMOTED_ENTRY(91, sub_82C3A430, 0x82C3A430) { ctx.r3.u64 = CChildControllerGroup_ShutdownChildren(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C3A4D8(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t listener) {
+uint64_t CChildControllerGroup_AddListener(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t listener) {
 	if (!UseLiftedCode(91, 0x82C3A4D8)) { ctx.r3.u64 = childControllerGroupAddr; ctx.r4.u64 = listener; __imp__sub_82C3A4D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3A4D8);
 	uint32_t stack = ctx.r1.u64;
@@ -328,7 +320,7 @@ uint64_t n_sub_82C3A4D8(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	uint32_t group = (uint32_t)childControllerGroupAddr;
 	uint32_t callbackData = (uint32_t)listener;
 
-	result = n_sub_82C50270(ctx, base, group + 4, listener);
+	result = RefPtrList_Add(ctx, base, group + 4, listener);
 
 	// child list: current cursor at group+20, begin pointer at list+4, end pointer at list+8
 	uint32_t childList = group + 16;
@@ -374,9 +366,9 @@ uint64_t n_sub_82C3A4D8(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3A4D8, 0x82C3A4D8) { ctx.r3.u64 = n_sub_82C3A4D8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3A4D8, 0x82C3A4D8) { ctx.r3.u64 = CChildControllerGroup_AddListener(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C3A580(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t listener) {
+uint64_t CChildControllerGroup_RemoveListener(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t listener) {
 	if (!UseLiftedCode(91, 0x82C3A580)) { ctx.r3.u64 = childControllerGroupAddr; ctx.r4.u64 = listener; __imp__sub_82C3A580(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3A580);
 	uint32_t stack = ctx.r1.u64;
@@ -388,7 +380,7 @@ uint64_t n_sub_82C3A580(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	uint32_t listHeader = self + 16;         // T167518: begin at +4, end at +8
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82C505E8(ctx, base, childControllerGroupAddr + 4, listener);
+	uint64_t result = RefPtrList_Remove(ctx, base, childControllerGroupAddr + 4, listener);
 
 	uint32_t listLimit = LOAD32(listHeader + 8);
 	uint32_t entry = LOAD32(self + 20);
@@ -432,7 +424,7 @@ uint64_t n_sub_82C3A580(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3A580, 0x82C3A580) { ctx.r3.u64 = n_sub_82C3A580(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3A580, 0x82C3A580) { ctx.r3.u64 = CChildControllerGroup_RemoveListener(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint32_t CChildControllerGroup_Destructor(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr) {
 	constexpr int32_t g_83330000 = int32_t(0x83330000);
@@ -475,6 +467,8 @@ uint32_t CChildControllerGroup_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t stackByte = LOAD8(stack + 80);
 		uint32_t count = LOAD32(childrenCBlockAddr + 8);
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = rangeBase;
+		ctx.r6.u64 = stackByte;
 		ReleaseRefRange_Stride8(ctx, base, childrenC, count);
 		uint32_t childPtr = LOAD32(childrenCBlockAddr + 4);
 		HandleTarget_FreeThunk(ctx, base, childPtr);
@@ -490,6 +484,8 @@ uint32_t CChildControllerGroup_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t stackByte = LOAD8(stack + 80);
 		uint32_t count = LOAD32(childrenBBlockAddr + 8);
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = rangeBase;
+		ctx.r6.u64 = stackByte;
 		ReleaseRefRange_Stride8(ctx, base, childrenB, count);
 		uint32_t childPtr = LOAD32(childrenBBlockAddr + 4);
 		HandleTarget_FreeThunk(ctx, base, childPtr);
@@ -505,6 +501,8 @@ uint32_t CChildControllerGroup_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t stackByte = LOAD8(stack + 80);
 		uint32_t count = LOAD32(childrenABlockAddr + 8);
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = rangeBase;
+		ctx.r6.u64 = stackByte;
 		ReleaseRefRange_Stride8(ctx, base, childrenA, count);
 		uint32_t childPtr = LOAD32(childrenABlockAddr + 4);
 		HandleTarget_FreeThunk(ctx, base, childPtr);
@@ -515,7 +513,7 @@ uint32_t CChildControllerGroup_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 	STORE32(childrenABlockAddr + 12, 0);
 
 	ctx.r1.u64 = stack;
-	n_sub_82C502D8(ctx, base, controllerAddr);
+	RefPtrList_Destructor(ctx, base, controllerAddr);
 	uint32_t groupAddr = (uint32_t)childControllerGroupAddr;
 	C_8200A34C_Destructor(ctx, base, groupAddr);
 	stack = PopStackFrame(stack, 128);
@@ -542,7 +540,7 @@ uint64_t CChildControllerGroup_ScalarDeletingDestructor(CpuState& ctx, uint8_t* 
 }
 PROMOTED_ENTRY(91, sub_82C3ABA8, 0x82C3ABA8) { ctx.r3.u64 = CChildControllerGroup_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C3B298(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t updateContext) {
+uint64_t ChildControllerGroup_Update(CpuState& ctx, uint8_t* base, uint64_t childControllerGroupAddr, uint64_t updateContext) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_8200C27C = int32_t(0x8200C27C);
 	constexpr int32_t g_832D60B4 = int32_t(0x832D60B4);
@@ -679,7 +677,7 @@ uint64_t n_sub_82C3B298(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 				local29 = (uint64_t)LOAD32(stack + 80) - (uint64_t)v4c;
 				STORE32(stack + 80, (uint32_t)local29);
 				if ((int32_t)local29 != 0) {
-					consumedBudget = n_sub_82C08CE8(ctx, base, local29);
+					consumedBudget = Budget_Consume(ctx, base, local29);
 					childControllerGroup->m_4C = uint32_t(consumedBudget + (uint64_t)childControllerGroup->m_4C);
 					stack = PopStackFrame(stack, 240);
 					ctx.r1.u64 = stack;
@@ -947,4 +945,4 @@ uint64_t n_sub_82C3B298(CpuState& ctx, uint8_t* base, uint64_t childControllerGr
 	ctx.r4.u64 = updateContext;
 	return childControllerGroupAddr;
 }
-PROMOTED_ENTRY(91, sub_82C3B298, 0x82C3B298) { ctx.r3.u64 = n_sub_82C3B298(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3B298, 0x82C3B298) { ctx.r3.u64 = ChildControllerGroup_Update(ctx, base, ctx.r3.u64, ctx.r4.u64); }

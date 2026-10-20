@@ -1,9 +1,9 @@
 // CGuiOptionsAudioScreen (vtable 0x820E4768): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -80,6 +80,8 @@ uint32_t CGuiOptionsAudioScreen_Construct(CpuState& ctx, uint8_t* base, uint64_t
 
 	// state the callees may pass on
 	ctx.r8.s64 = g_820A0000;
+	ctx.f12.f64 = initial54;
+	ctx.f13.f64 = initial4C;
 
 	// build one menu entry and append it to the screen's item list
 	auto addMenuEntry = [&](uint32_t (*entryConstructor)(CpuState&, uint8_t*, uint64_t),
@@ -95,7 +97,7 @@ uint32_t CGuiOptionsAudioScreen_Construct(CpuState& ctx, uint8_t* base, uint64_t
 			entryRef = stack + 80;
 			STORE32(stack + 84, 0);
 		}
-		n_sub_8247BDD0(ctx, base, itemListAddr, entryRef, index);
+		RbTree_InsertOrAssignByKey(ctx, base, itemListAddr, entryRef, index);
 	};
 
 	addMenuEntry(n_sub_82885D68, 56, 0);
@@ -115,7 +117,7 @@ uint64_t CGuiOptionsAudioScreen_ScalarDeletingDtor(CpuState& ctx, uint8_t* base,
 	LiftedFrame frame(0x828DA380);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
-	n_sub_825828F8(ctx, base, object);
+	CGuiScrollList_Cleanup(ctx, base, object);
 	if ((deleteFlags & 1) != 0) {
 		HandleTarget_Free(ctx, base, object);
 	}
@@ -148,7 +150,7 @@ uint64_t CGuiOptionsAudioScreen_Setup(CpuState& ctx, uint8_t* base, uint64_t gui
 	// fills stack+96..104 with the three volumes and stack+108 with the output mode
 	uint32_t settingsArg = LOAD32(audioSettings + 148);
 	uint32_t foundArg = LOAD32(foundValue + 40);
-	n_sub_824E6D28(ctx, base, stack + 96, settingsArg, foundArg);
+	AudioSettings_GetVolumesAndOutputMode(ctx, base, stack + 96, settingsArg, foundArg);
 
 	ctx.fpscr.disableFlushMode();
 	float loadedMusicVolume = LOAD_F32(stack + 100);
@@ -167,6 +169,8 @@ uint64_t CGuiOptionsAudioScreen_Setup(CpuState& ctx, uint8_t* base, uint64_t gui
 	uint64_t voiceKey = int64_t(g_820E0000) + 18116;
 
 	// state the callee may pass on
+	ctx.f12.f64 = double(loadedVoiceVolume);
+	ctx.f13.f64 = double(loadedMusicVolume);
 	uint64_t soundsString = CCharString_ConstructFromCStr(ctx, base, stack + 84, soundsKey, -1);
 	LocalisedText_InitFromKey(ctx, base, stack + 88, soundsString);
 	uint64_t musicString = CCharString_ConstructFromCStr(ctx, base, stack + 80, musicKey, -1);
@@ -180,26 +184,26 @@ uint64_t CGuiOptionsAudioScreen_Setup(CpuState& ctx, uint8_t* base, uint64_t gui
 
 	ctx.fpscr.disableFlushMode();
 	double soundVolume = double(guiOptionsAudioScreen->m_SoundVolume);
-	uint64_t soundEntryHandle = n_sub_828D9FE8(ctx, base, stack + 96, itemListAddr, 0);
+	uint64_t soundEntryHandle = CGuiOptionsItemList_GetHandleByIndex(ctx, base, stack + 96, itemListAddr, 0);
 	ctx.fpscr.disableFlushMode();
 	ctx.r3.u64 = (uint32_t)guiOptionsAudioScreenAddr;  // state the callee may pass on
-	n_sub_828DA770(ctx, base, soundEntryHandle, page, g_8349CC94, stack + 88, soundVolume);
+	CGuiOptionsAudioScreen_SetupVolumeItem(ctx, base, soundEntryHandle, page, g_8349CC94, stack + 88, soundVolume);
 
 	ctx.fpscr.disableFlushMode();
 	double musicVolume = double(guiOptionsAudioScreen->m_MusicVolume);
-	uint64_t musicEntryHandle = n_sub_828D9FE8(ctx, base, stack + 96, itemListAddr, 1);
+	uint64_t musicEntryHandle = CGuiOptionsItemList_GetHandleByIndex(ctx, base, stack + 96, itemListAddr, 1);
 	ctx.fpscr.disableFlushMode();
 	ctx.r3.u64 = (uint32_t)guiOptionsAudioScreenAddr;  // state the callee may pass on
-	n_sub_828DA770(ctx, base, musicEntryHandle, page, g_8349CC98, stack + 84, musicVolume);
+	CGuiOptionsAudioScreen_SetupVolumeItem(ctx, base, musicEntryHandle, page, g_8349CC98, stack + 84, musicVolume);
 
 	ctx.fpscr.disableFlushMode();
 	double voiceVolume = double(guiOptionsAudioScreen->m_VoiceVolume);
-	uint64_t voiceEntryHandle = n_sub_828D9FE8(ctx, base, stack + 96, itemListAddr, 2);
+	uint64_t voiceEntryHandle = CGuiOptionsItemList_GetHandleByIndex(ctx, base, stack + 96, itemListAddr, 2);
 	ctx.fpscr.disableFlushMode();
 	ctx.r3.u64 = (uint32_t)guiOptionsAudioScreenAddr;  // state the callee may pass on
-	n_sub_828DA770(ctx, base, voiceEntryHandle, page, g_8349CC9C, stack + 80, voiceVolume);
+	CGuiOptionsAudioScreen_SetupVolumeItem(ctx, base, voiceEntryHandle, page, g_8349CC9C, stack + 80, voiceVolume);
 
-	uint64_t outputEntryHandle = n_sub_828D9FE8(ctx, base, stack + 96, itemListAddr, 3);
+	uint64_t outputEntryHandle = CGuiOptionsItemList_GetHandleByIndex(ctx, base, stack + 96, itemListAddr, 3);
 	ctx.r6.u64 = g_8349CCA0;  // state the callee may pass on
 	CGuiOptionsAudioScreen_SetupOutputChoices(ctx, base, guiOptionsAudioScreenAddr, outputEntryHandle, page);
 
@@ -228,11 +232,11 @@ uint32_t CGuiOptionsAudioScreen_SelectItem(CpuState& ctx, uint8_t* base, uint64_
 	stack = PushStackFrame(base, stack, 128);
 	uint64_t itemListAddr = guiOptionsAudioScreenAddr + 28;
 	ctx.r1.u64 = stack;
-	n_sub_828D8FF0(ctx, base, itemListAddr, selectedIndex);
+	CGuiOptionsItemList_SelectIndex(ctx, base, itemListAddr, selectedIndex);
 
 	// look the selected entry up twice; each lookup fills the handle at entryHandleAddr
 	uint32_t entryHandleAddr = stack + 80;
-	n_sub_828D9FE8(ctx, base, entryHandleAddr, itemListAddr, guiOptionsAudioScreen->m_SelectedItem);
+	CGuiOptionsItemList_GetHandleByIndex(ctx, base, entryHandleAddr, itemListAddr, guiOptionsAudioScreen->m_SelectedItem);
 	ctx.fpscr.disableFlushMode();
 	float entryValue = LOAD_F32(LOAD32(entryHandleAddr) + 16);
 	float lowerBound = LOAD_F32(0x820994B4u);
@@ -241,7 +245,7 @@ uint32_t CGuiOptionsAudioScreen_SelectItem(CpuState& ctx, uint8_t* base, uint64_
 	}
 	SharedHandle_Release(ctx, base, entryHandleAddr);
 
-	n_sub_828D9FE8(ctx, base, entryHandleAddr, itemListAddr, guiOptionsAudioScreen->m_SelectedItem);
+	CGuiOptionsItemList_GetHandleByIndex(ctx, base, entryHandleAddr, itemListAddr, guiOptionsAudioScreen->m_SelectedItem);
 	ctx.fpscr.disableFlushMode();
 	entryValue = LOAD_F32(LOAD32(entryHandleAddr) + 20);
 	if (!(entryValue < lowerBound)) {
@@ -255,7 +259,7 @@ uint32_t CGuiOptionsAudioScreen_SelectItem(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(63, sub_828DA600, 0x828DA600) { ctx.r3.u64 = CGuiOptionsAudioScreen_SelectItem(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_828DA6A8(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr) {
+uint64_t CGuiOptionsAudioScreen_ReleaseIfNotKept(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr) {
 	if (!UseLiftedCode(63, 0x828DA6A8)) { ctx.r3.u64 = guiOptionsAudioScreenAddr; __imp__sub_828DA6A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828DA6A8);
 	uint32_t stack = ctx.r1.u64;
@@ -284,6 +288,8 @@ uint64_t n_sub_828DA6A8(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 			uint32_t teardownFunc = LOAD32(LOAD32(ownedObject) + 28);
 			callTarget.u64 = teardownFunc;
 			ctx.r3.u64 = ownedObject;
+			ctx.r9.u64 = 0;
+			ctx.r10.u64 = teardownFunc;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = OwnedPtr_Reset(ctx, base, ownedPtrAddr);
 		}
@@ -292,9 +298,9 @@ uint64_t n_sub_828DA6A8(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(63, sub_828DA6A8, 0x828DA6A8) { ctx.r3.u64 = n_sub_828DA6A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(63, sub_828DA6A8, 0x828DA6A8) { ctx.r3.u64 = CGuiOptionsAudioScreen_ReleaseIfNotKept(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828DA720(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr) {
+uint64_t CGuiOptionsAudioScreen_ReleaseOwnedObject(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr) {
 	if (!UseLiftedCode(63, 0x828DA720)) { ctx.r3.u64 = guiOptionsAudioScreenAddr; __imp__sub_828DA720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828DA720);
 	uint32_t stack = ctx.r1.u64;
@@ -318,9 +324,9 @@ uint64_t n_sub_828DA720(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(63, sub_828DA720, 0x828DA720) { ctx.r3.u64 = n_sub_828DA720(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(63, sub_828DA720, 0x828DA720) { ctx.r3.u64 = CGuiOptionsAudioScreen_ReleaseOwnedObject(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_828DA770(CpuState& ctx, uint8_t* base, uint64_t entryHandleAddr, uint64_t page, uint64_t controlName, uint64_t labelText, double volume) {
+uint32_t CGuiOptionsAudioScreen_SetupVolumeItem(CpuState& ctx, uint8_t* base, uint64_t entryHandleAddr, uint64_t page, uint64_t controlName, uint64_t labelText, double volume) {
 	if (!UseLiftedCode(63, 0x828DA770)) { ctx.r4.u64 = entryHandleAddr; ctx.r5.u64 = page; ctx.r6.u64 = controlName; ctx.r7.u64 = labelText; ctx.f1.f64 = volume; __imp__sub_828DA770(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828DA770);
 	uint32_t stack = ctx.r1.u64;
@@ -339,9 +345,9 @@ uint32_t n_sub_828DA770(CpuState& ctx, uint8_t* base, uint64_t entryHandleAddr, 
 	ctx.f1.f64 = volume;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	if ((ctx.r3.u32 & 0xFF) != 0) {
-		n_sub_82886008(ctx, base, entry, labelText);
+		CGuiOptionsItem_SetLabel(ctx, base, entry, labelText);
 		ctx.fpscr.disableFlushMode();
-		n_sub_82885F50(ctx, base, entry, volume);
+		CGuiOptionsItem_SetValue(ctx, base, entry, volume);
 		SharedHandle_Release(ctx, base, entryHandleAddr);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
@@ -352,7 +358,7 @@ uint32_t n_sub_828DA770(CpuState& ctx, uint8_t* base, uint64_t entryHandleAddr, 
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(63, sub_828DA770, 0x828DA770) { ctx.r3.u64 = n_sub_828DA770(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(63, sub_828DA770, 0x828DA770) { ctx.r3.u64 = CGuiOptionsAudioScreen_SetupVolumeItem(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.f1.f64); }
 
 // Builds the TV / hi-fi / surround choices of the item held by the shared handle at itemHandleAddr,
 // passes the screen's output mode to it and releases the handle. Returns 1 when the choices were built.
@@ -401,12 +407,12 @@ uint32_t CGuiOptionsAudioScreen_SetupOutputChoices(CpuState& ctx, uint8_t* base,
 	LocalisedText_InitFromKey(ctx, base, stack + 80, surroundCharString);
 
 	uint64_t choiceListAddr = (uint64_t)item + 44;
-	n_sub_82356488(ctx, base, choiceListAddr, stack + 88);
-	n_sub_82356488(ctx, base, choiceListAddr, stack + 84);
-	n_sub_82356488(ctx, base, choiceListAddr, stack + 80);
+	Vector_PushBack_82356488(ctx, base, choiceListAddr, stack + 88);
+	Vector_PushBack_82356488(ctx, base, choiceListAddr, stack + 84);
+	Vector_PushBack_82356488(ctx, base, choiceListAddr, stack + 80);
 
 	uint32_t audioOutputMode = guiOptionsAudioScreen->m_AudioOutputMode;
-	n_sub_828862E8(ctx, base, item, audioOutputMode);
+	CGuiOptionsItem_SetSelectedIndex(ctx, base, item, audioOutputMode);
 
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 84);
@@ -433,17 +439,17 @@ uint64_t CGuiOptionsAudioScreen_SetAudioVolumes(CpuState& ctx, uint8_t* base, ui
 	ctx.r7.u64 = audioOutputMode;
 	ctx.f2.f64 = musicVolume;
 	ctx.f3.f64 = voiceVolume;
-	n_sub_829F88B0(ctx, base, soundVolume);
+	AudioManager_SetSoundVolume(ctx, base, soundVolume);
 
 	ctx.fpscr.disableFlushMode();
 	ctx.r3.u64 = audioManager;
-	n_sub_829F8AC0(ctx, base, musicVolume);
+	AudioManager_SetMusicVolume(ctx, base, musicVolume);
 
 	ctx.fpscr.disableFlushMode();
-	n_sub_829F8948(ctx, base, audioManager, voiceVolume);
+	AudioManager_SetVoiceVolume(ctx, base, audioManager, voiceVolume);
 
 	ctx.r3.u64 = audioManager;
-	uint64_t result = n_sub_829F8B58(ctx, base, audioOutputMode);
+	uint64_t result = AudioManager_SetSpeakerMode(ctx, base, audioOutputMode);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
@@ -462,7 +468,7 @@ uint64_t CGuiOptionsAudioScreen_HandleInput(CpuState& ctx, uint8_t* base, uint64
 	stack = PushStackFrame(base, stack, 144);
 	guiOptionsAudioScreen->m_60 = controllerIndex;
 	ctx.r1.u64 = stack;
-	uint64_t inputAction = n_sub_82841730(ctx, base, guiOptionsAudioScreenAddr + 60, inputCode);
+	uint64_t inputAction = Input_GetActionForController(ctx, base, guiOptionsAudioScreenAddr + 60, inputCode);
 
 	uint32_t actionIndex = (uint32_t)inputAction - 28;
 	if (actionIndex <= 9) {
@@ -476,7 +482,7 @@ uint64_t CGuiOptionsAudioScreen_HandleInput(CpuState& ctx, uint8_t* base, uint64
 			ctx.r0.u64 = jumpTableEntry;
 			CGuiOptionsAudioScreen_SelectItem(ctx, base, guiOptionsAudioScreenAddr, (uint32_t)(selectedItem - 1));
 			uint64_t selectionSound = TXT_83498778_G_;
-			n_sub_82306098(ctx, base, stack + 80, LOAD32(0x834968A4u), selectionSound);
+			Sound_CreateFromEvent(ctx, base, stack + 80, LOAD32(0x834968A4u), selectionSound);
 			uint64_t resetResult = OwnedPtr_Reset(ctx, base, stack + 80);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -488,7 +494,7 @@ uint64_t CGuiOptionsAudioScreen_HandleInput(CpuState& ctx, uint8_t* base, uint64
 			ctx.r0.u64 = jumpTableEntry;
 			CGuiOptionsAudioScreen_SelectItem(ctx, base, guiOptionsAudioScreenAddr, (uint32_t)(selectedItem + 1));
 			uint64_t selectionSound = TXT_8349877C_G_;
-			n_sub_82306098(ctx, base, stack + 88, LOAD32(0x834968A4u), selectionSound);
+			Sound_CreateFromEvent(ctx, base, stack + 88, LOAD32(0x834968A4u), selectionSound);
 			uint64_t resetResult = OwnedPtr_Reset(ctx, base, stack + 88);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -499,16 +505,18 @@ uint64_t CGuiOptionsAudioScreen_HandleInput(CpuState& ctx, uint8_t* base, uint64
 			// Hand the action to the selected item (vtable slot 2), then re-apply the volumes.
 			uint32_t selectedItem = guiOptionsAudioScreen->m_SelectedItem;
 			ctx.r0.u64 = jumpTableEntry;
-			uint64_t itemHandleAddr = n_sub_828D9FE8(ctx, base, stack + 96, guiOptionsAudioScreenAddr + 28, selectedItem);
+			uint64_t itemHandleAddr = CGuiOptionsItemList_GetHandleByIndex(ctx, base, stack + 96, guiOptionsAudioScreenAddr + 28, selectedItem);
 			uint32_t item = LOAD32((uint32_t)itemHandleAddr);
 			uint32_t itemVtable = LOAD32(item);
 			uint32_t method = LOAD32(itemVtable + 8);
 			callTarget.u64 = method;
 			ctx.r3.u64 = item;
+			ctx.r4.u64 = inputAction;
+			ctx.r10.u64 = method;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			SharedHandle_Release(ctx, base, stack + 96);
 			CGuiOptionsAudioScreen_ApplyVolumes(ctx, base, guiOptionsAudioScreenAddr, 0);
-			uint64_t result = n_sub_828DAC88(ctx, base, guiOptionsAudioScreenAddr, selectedItem);
+			uint64_t result = CGuiOptionsAudioScreen_UpdateItemSound(ctx, base, guiOptionsAudioScreenAddr, selectedItem);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
 			return result;
@@ -532,6 +540,7 @@ uint64_t CGuiOptionsAudioScreen_HandleInput(CpuState& ctx, uint8_t* base, uint64
 			uint32_t method = LOAD32((uint32_t)guiOptionsAudioScreen->vtable + 4);
 			callTarget.u64 = method;
 			ctx.r3.u64 = guiOptionsAudioScreenAddr;
+			ctx.r10.u64 = method;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -549,7 +558,7 @@ PROMOTED_ENTRY(63, sub_828DAAF8, 0x828DAAF8) { ctx.r3.u64 = CGuiOptionsAudioScre
 
 // Unless the sound held in m_64 handles the item index (its vtable slot 4), item 0 creates the
 // SE_GUI_EAT_ITEM sound and item 2 the one named by a text key; the new sound replaces m_64.
-uint64_t n_sub_828DAC88(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr, uint64_t itemIndex) {
+uint64_t CGuiOptionsAudioScreen_UpdateItemSound(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioScreenAddr, uint64_t itemIndex) {
 	constexpr int32_t str_TXT_820E4740_B_ = int32_t(0x820E4740);
 	constexpr int32_t TXT_8349875C_G_ = int32_t(0x8349875C);
 	if (!UseLiftedCode(63, 0x828DAC88)) { ctx.r3.u64 = guiOptionsAudioScreenAddr; ctx.r4.u64 = itemIndex; __imp__sub_828DAC88(ctx, base); return ctx.r3.u64; }
@@ -582,7 +591,7 @@ uint64_t n_sub_828DAC88(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 			uint64_t newSoundSlot = (uint64_t)stack + 96;
 			uint32_t soundSource = LOAD32(0x834968A4u);
 			ctx.r1.u64 = stack;
-			uint64_t newSound = n_sub_82306098(ctx, base, newSoundSlot, soundSource, eatItemSound);
+			uint64_t newSound = Sound_CreateFromEvent(ctx, base, newSoundSlot, soundSource, eatItemSound);
 			RefPtr_Assign(ctx, base, soundSlotAddr, newSound);
 			result = OwnedPtr_Reset(ctx, base, newSoundSlot);
 		} else if (item == 2) {
@@ -591,7 +600,7 @@ uint64_t n_sub_828DAC88(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 			CCharString_ConstructFromCStr(ctx, base, soundKey, str_TXT_820E4740_B_, -1);
 			uint64_t newSoundSlot = (uint64_t)stack + 88;
 			uint32_t soundSource = LOAD32(0x834968A4u);
-			uint64_t newSound = n_sub_82306098(ctx, base, newSoundSlot, soundSource, soundKey);
+			uint64_t newSound = Sound_CreateFromEvent(ctx, base, newSoundSlot, soundSource, soundKey);
 			RefPtr_Assign(ctx, base, soundSlotAddr, newSound);
 			OwnedPtr_Reset(ctx, base, newSoundSlot);
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, soundKey);
@@ -602,4 +611,4 @@ uint64_t n_sub_828DAC88(CpuState& ctx, uint8_t* base, uint64_t guiOptionsAudioSc
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(63, sub_828DAC88, 0x828DAC88) { ctx.r3.u64 = n_sub_828DAC88(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(63, sub_828DAC88, 0x828DAC88) { ctx.r3.u64 = CGuiOptionsAudioScreen_UpdateItemSound(ctx, base, ctx.r3.u64, ctx.r4.u64); }

@@ -1,9 +1,9 @@
 // CEmitterGroup (vtable 0x8200C37C): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -22,7 +22,7 @@ void CEmitterGroup_SetPosition(CpuState& ctx, uint8_t* base, uint32_t emitterGro
 PROMOTED_ENTRY(5, sub_8220A608, 0x8220A608) { CEmitterGroup_SetPosition(ctx, base, ctx.r3.u32); }
 
 // Copies m_24 and the vector at +80 (the one CEmitterGroup_SetPosition stores) to the two output addresses.
-void n_sub_82C3E008(CpuState& ctx, uint8_t* base, uint32_t emitterGroupAddr, uint32_t outM24Addr, uint32_t outPositionAddr) {
+void CEmitterGroup_GetM24AndPosition(CpuState& ctx, uint8_t* base, uint32_t emitterGroupAddr, uint32_t outM24Addr, uint32_t outPositionAddr) {
 	if (!UseLiftedCode(91, 0x82C3E008)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = outM24Addr; ctx.r5.u64 = outPositionAddr; __imp__sub_82C3E008(ctx, base); return; }
 	LiftedFrame frame(0x82C3E008);
 	CEmitterGroup* emitterGroup = GameObject<CEmitterGroup>(base, emitterGroupAddr);
@@ -31,7 +31,7 @@ void n_sub_82C3E008(CpuState& ctx, uint8_t* base, uint32_t emitterGroupAddr, uin
 	SET_V8(position, VLOAD((emitterGroupAddr + 80u) & ~0xF));
 	VSTORE(outPositionAddr & ~0xF, V8(position));
 }
-PROMOTED_ENTRY(91, sub_82C3E008, 0x82C3E008) { n_sub_82C3E008(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
+PROMOTED_ENTRY(91, sub_82C3E008, 0x82C3E008) { CEmitterGroup_GetM24AndPosition(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
 
 // Polar method: draws u and v as 2 * rand / 32767 - 1 until s = u*u + v*v lies strictly between the threshold
 // at 0x820990B0 (1e-4) and 1 and Math_IsNaN(s) is zero, then returns
@@ -148,7 +148,7 @@ PROMOTED_ENTRY(91, sub_82C3E020, 0x82C3E020) { ctx.r3.u64 = Random_Gaussian(ctx,
 // radius uniform between the floats at radiusRangeAddr + 8 and + 12. Stores (cos * radius, c, sin * radius, c) to
 // outVecAddr, c being the constant at 0x82000C0C (0.0). Returns its z stack slot address (left in r3), sin in f1.
 // randR8 is r8 as the caller left it: CRT_Rand only forwards r8 down to _getptd.
-uint32_t n_sub_82C3E118(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t outVecAddr, uint64_t radiusRangeAddr, uint64_t randR8) {
+uint32_t CEmitterGroup_GetRandomRingPoint(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t outVecAddr, uint64_t radiusRangeAddr, uint64_t randR8) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	if (!UseLiftedCode(91, 0x82C3E118)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = outVecAddr; ctx.r5.u64 = radiusRangeAddr; ctx.r8.u64 = randR8; __imp__sub_82C3E118(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C3E118);
@@ -246,13 +246,13 @@ uint32_t n_sub_82C3E118(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.f1.f64 = sinAngle;   // callers read f1 after the call
 	return zSlotAddr;
 }
-PROMOTED_ENTRY(91, sub_82C3E118, 0x82C3E118) { ctx.r3.u64 = n_sub_82C3E118(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(91, sub_82C3E118, 0x82C3E118) { ctx.r3.u64 = CEmitterGroup_GetRandomRingPoint(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
 
 // sub_82C3E498  [212 bytes]
 // Builds a layer entry from target's first word, has the factory (virtual at +12) create an object into a temporary
 // reference, assigns it to the reference at target + 4 and, if one was created, passes that reference to
-// n_sub_82C50130 together with the group's +56 member.
-uint32_t n_sub_82C3E498(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t factory, uint64_t target) {
+// LayerManager_RegisterChild together with the group's +56 member.
+uint32_t CEmitterGroup_CreateLayerFromTarget(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t factory, uint64_t target) {
 	if (!UseLiftedCode(91, 0x82C3E498)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = factory; ctx.r5.u64 = target; __imp__sub_82C3E498(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C3E498);
 	uint32_t stack = ctx.r1.u64;
@@ -267,7 +267,7 @@ uint32_t n_sub_82C3E498(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = factory;
 	ctx.r5.u64 = target;
-	n_sub_821D5BA0(ctx, base, layerEntry);
+	CCharString_Constructor(ctx, base, layerEntry);
 
 	LayerEntry_SetValues(ctx, base, layerEntry, 0, LOAD32((uint32_t)target));
 	LayerEntry_SetField32(ctx, base, layerEntry, 5);
@@ -302,7 +302,7 @@ uint32_t n_sub_82C3E498(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, 0);
 	if (assignedPtr != 0) {
-		n_sub_82C50130(ctx, base, emitterGroupAddr + 56, targetRef);
+		LayerManager_RegisterChild(ctx, base, emitterGroupAddr + 56, targetRef);
 	}
 
 	uint32_t result = CCharString_ReleaseMember(ctx, base, layerEntry);
@@ -310,16 +310,16 @@ uint32_t n_sub_82C3E498(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3E498, 0x82C3E498) { ctx.r3.u64 = n_sub_82C3E498(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(91, sub_82C3E498, 0x82C3E498) { ctx.r3.u64 = CEmitterGroup_CreateLayerFromTarget(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82C3E570  [312 bytes]
 // Stores a truncated Random_Gaussian sample (mean and deviation both the float at request + 4) at request + 24.
-// When m_duration is not below the double at 0x820990B8 (1e-4): gets a point from n_sub_82C3E118, sets up a layer
-// entry (handing the point to n_sub_82BFC910 in v1), has the factory (virtual at +12) create an object for it into
-// the reference at request + 16 and, if one was created, passes that reference to n_sub_82C50130 with the group's
+// When m_duration is not below the double at 0x820990B8 (1e-4): gets a point from CEmitterGroup_GetRandomRingPoint, sets up a layer
+// entry (handing the point to LayerEntry_SetPosition in v1), has the factory (virtual at +12) create an object for it into
+// the reference at request + 16 and, if one was created, passes that reference to LayerManager_RegisterChild with the group's
 // +56 member and calls the object's virtual at +12 with m_duration in f1. Returns 1 when an object was created.
 // randR8 is r8 as the caller left it, handed on to Random_Gaussian.
-uint64_t n_sub_82C3E570(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t factory, uint64_t request, uint64_t randR8) {
+uint64_t CEmitterGroup_CreateTimedLayerFromRequest(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t factory, uint64_t request, uint64_t randR8) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(91, 0x82C3E570)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = factory; ctx.r5.u64 = request; ctx.r8.u64 = randR8; __imp__sub_82C3E570(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3E570);
@@ -361,15 +361,15 @@ uint64_t n_sub_82C3E570(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	// state the callee may pass on
 	ctx.r10.s64 = g_820A0000;
 	ctx.f13.f64 = duration;
-	n_sub_82C3E118(ctx, base, emitterGroupAddr, pointSlot, request, ctx.r8.u64);
+	CEmitterGroup_GetRandomRingPoint(ctx, base, emitterGroupAddr, pointSlot, request, ctx.r8.u64);
 
-	n_sub_821D5BA0(ctx, base, layerEntry);
+	CCharString_Constructor(ctx, base, layerEntry);
 	LayerEntry_SetValues(ctx, base, layerEntry, 0, LOAD32(requestAddr));
 	LayerEntry_SetField32(ctx, base, layerEntry, 2);
 	PPCVRegister point{};
 	SET_V8(point, VLOAD(pointSlot & ~0xF));
-	ctx.v1 = point;   // handed to n_sub_82BFC910 in v1
-	n_sub_82BFC910(ctx, base, layerEntry);
+	ctx.v1 = point;   // handed to LayerEntry_SetPosition in v1
+	LayerEntry_SetPosition(ctx, base, layerEntry);
 
 	uint32_t factoryVtable = LOAD32((uint32_t)factory);
 	uint32_t createFn = LOAD32(factoryVtable + 12);
@@ -403,7 +403,7 @@ uint64_t n_sub_82C3E570(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		return 0;
 	}
 
-	n_sub_82C50130(ctx, base, emitterGroupAddr + 56, requestRef);
+	LayerManager_RegisterChild(ctx, base, emitterGroupAddr + 56, requestRef);
 
 	uint32_t created = LOAD32(requestRef);
 	ctx.fpscr.disableFlushMode();
@@ -420,7 +420,7 @@ uint64_t n_sub_82C3E570(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.r1.u64 = stack;
 	return 1;
 }
-PROMOTED_ENTRY(91, sub_82C3E570, 0x82C3E570) { ctx.r3.u64 = n_sub_82C3E570(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(91, sub_82C3E570, 0x82C3E570) { ctx.r3.u64 = CEmitterGroup_CreateTimedLayerFromRequest(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
 
 // sub_82C3E6A8  [332 bytes]
 uint64_t CEmitterGroup_AreAllChildrenFinished(CpuState& ctx, uint8_t* base, uint32_t emitterGroupAddr) {
@@ -527,7 +527,7 @@ uint64_t CEmitterGroup_AreAllChildrenFinished(CpuState& ctx, uint8_t* base, uint
 }
 PROMOTED_ENTRY(91, sub_82C3E6A8, 0x82C3E6A8) { ctx.r3.u64 = CEmitterGroup_AreAllChildrenFinished(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C3EA10(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr) {
+uint64_t CEmitterGroup_StartAllChildren(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr) {
 	if (!UseLiftedCode(91, 0x82C3EA10)) { ctx.r3.u64 = emitterGroupAddr; __imp__sub_82C3EA10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3EA10);
 	uint32_t stack = ctx.r1.u64;
@@ -623,13 +623,13 @@ uint64_t n_sub_82C3EA10(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3EA10, 0x82C3EA10) { ctx.r3.u64 = n_sub_82C3EA10(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(91, sub_82C3EA10, 0x82C3EA10) { ctx.r3.u64 = CEmitterGroup_StartAllChildren(ctx, base, ctx.r3.u64); }
 
 // sub_82C3EB80  [476 bytes]
 // Runs once per group (byte 0x6D guards it): asks every emitter in both lists whether it stays (vtable slot 0)
 // and, when it answers false, calls its slot 8 with the second argument, releases the reference control
 // object kept next to it and clears that {emitter, control} pair. The list walks keep the checked-iterator traps.
-uint64_t n_sub_82C3EB80(CpuState& ctx, uint8_t* base, uint64_t groupAddr, uint64_t callbackArg) {
+uint64_t CEmitterGroup_RemoveDeadEmitters(CpuState& ctx, uint8_t* base, uint64_t groupAddr, uint64_t callbackArg) {
 	if (!UseLiftedCode(91, 0x82C3EB80)) { ctx.r3.u64 = groupAddr; ctx.r4.u64 = callbackArg; __imp__sub_82C3EB80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3EB80);
 	uint32_t stack = ctx.r1.u64;
@@ -787,12 +787,12 @@ uint64_t n_sub_82C3EB80(CpuState& ctx, uint8_t* base, uint64_t groupAddr, uint64
 	ctx.r4.u64 = r4Value;  // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3EB80, 0x82C3EB80) { ctx.r3.u64 = n_sub_82C3EB80(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3EB80, 0x82C3EB80) { ctx.r3.u64 = CEmitterGroup_RemoveDeadEmitters(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C3EE90  [300 bytes]
-// Calls n_sub_82C505E8 on the member at +56, then vtable slot 2 of every emitter in both lists with the second
+// Calls RefPtrList_Remove on the member at +56, then vtable slot 2 of every emitter in both lists with the second
 // argument. The callbacks may change the lists, so the end is re-read every step (checked-iterator traps kept).
-uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t contextArg) {
+uint64_t CEmitterGroup_NotifyEmitters(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t contextArg) {
 	if (!UseLiftedCode(91, 0x82C3EE90)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = contextArg; __imp__sub_82C3EE90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C3EE90);
 	uint32_t stack = ctx.r1.u64;
@@ -800,7 +800,7 @@ uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	uint64_t result = n_sub_82C505E8(ctx, base, emitterGroupAddr + 56, contextArg);
+	uint64_t result = RefPtrList_Remove(ctx, base, emitterGroupAddr + 56, contextArg);
 
 	uint32_t emitterNode = emitterGroup->m_emitterListBegin;
 	uint32_t checkedEnd = emitterGroup->m_emitterListEnd;
@@ -872,13 +872,13 @@ uint64_t n_sub_82C3EE90(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3EE90, 0x82C3EE90) { ctx.r3.u64 = n_sub_82C3EE90(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3EE90, 0x82C3EE90) { ctx.r3.u64 = CEmitterGroup_NotifyEmitters(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C3EFC0  [220 bytes]
 // For every node of the emitter list: when the slot is empty or the emitter's vtable slot 0 returns non-zero,
-// n_sub_82C3E498 fills the node's slot anew; then the emitter now in the slot gets vtable slot 3 called with
+// CEmitterGroup_CreateLayerFromTarget fills the node's slot anew; then the emitter now in the slot gets vtable slot 3 called with
 // the group's duration. Returns the last value r3 held (the group when the list is empty).
-uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t emitterFactory) {
+uint32_t CEmitterGroup_UpdateEmitters(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr, uint64_t emitterFactory) {
 	if (!UseLiftedCode(91, 0x82C3EFC0)) { ctx.r3.u64 = emitterGroupAddr; ctx.r4.u64 = emitterFactory; __imp__sub_82C3EFC0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C3EFC0);
 	uint32_t stack = ctx.r1.u64;
@@ -909,7 +909,7 @@ uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		}
 
 		uint32_t emitter = LOAD32(node + 4);
-		// r9 carries the list begin, the slot 0 result or what n_sub_82C3E498 left into the next call.
+		// r9 carries the list begin, the slot 0 result or what CEmitterGroup_CreateLayerFromTarget left into the next call.
 		uint64_t r9Value = listBegin;
 		bool refill = true;
 		if (emitter != 0) {
@@ -927,7 +927,7 @@ uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 		if (refill) {
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			n_sub_82C3E498(ctx, base, emitterGroupAddr, emitterFactory, node);
+			CEmitterGroup_CreateLayerFromTarget(ctx, base, emitterGroupAddr, emitterFactory, node);
 			r4Value = ctx.r4.u64;
 			r9Value = ctx.r9.u64;
 		}
@@ -958,7 +958,7 @@ uint32_t n_sub_82C3EFC0(CpuState& ctx, uint8_t* base, uint64_t emitterGroupAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C3EFC0, 0x82C3EFC0) { ctx.r3.u64 = n_sub_82C3EFC0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C3EFC0, 0x82C3EFC0) { ctx.r3.u64 = CEmitterGroup_UpdateEmitters(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C3F1E0  [92 bytes]
 // The second argument is an object (n_sub_82C3E228 makes virtual calls on it), passed unchanged to all
@@ -976,8 +976,8 @@ uint64_t CEmitterGroup_Update(CpuState& ctx, uint8_t* base, uint64_t emitterGrou
 		ctx.r1.u64 = stack;
 		ctx.r8.u64 = arg3;
 		n_sub_82C3E228(ctx, base, emitterGroup, contextObject);
-		n_sub_82C3EFC0(ctx, base, emitterGroup, contextObject);
-		result = n_sub_82C3F0A0(ctx, base, emitterGroup, contextObject, ctx.r8.u64);
+		CEmitterGroup_UpdateEmitters(ctx, base, emitterGroup, contextObject);
+		result = CEmitterGroup_UpdateTimedEmitters(ctx, base, emitterGroup, contextObject, ctx.r8.u64);
 		r4Value = ctx.r4.u64;
 	}
 
@@ -1000,12 +1000,13 @@ uint32_t CEmitterGroup_Destruct(CpuState& ctx, uint8_t* base, uint64_t emitterGr
 	stack = PushStackFrame(base, stack, 128);
 	emitterGroup->vtable = 0x8200C37Cu;
 	ctx.r1.u64 = stack;
-	n_sub_82C502D8(ctx, base, (int64_t)emitterGroupAddr + 56);
+	RefPtrList_Destructor(ctx, base, (int64_t)emitterGroupAddr + 56);
 
 	uint32_t timedListBegin = emitterGroup->m_timedListBegin;
 	if (timedListBegin != 0) {
 		uint32_t timedListEnd = LOAD32(timedListRoot + 8);
 		// state the callee may pass on: the list root and a byte of this frame the function never writes
+		ctx.r5.u64 = (int64_t)emitterGroupAddr + 20;
 		ctx.r6.u64 = LOAD8(stack + 80);
 		ReleaseRefRange_Stride28(ctx, base, timedListBegin, timedListEnd);
 		HandleTarget_FreeThunk(ctx, base, LOAD32(timedListRoot + 4));
@@ -1018,6 +1019,7 @@ uint32_t CEmitterGroup_Destruct(CpuState& ctx, uint8_t* base, uint64_t emitterGr
 	if (emitterListBegin != 0) {
 		uint32_t emitterListEnd = LOAD32(emitterListRoot + 8);
 		// state the callee may pass on
+		ctx.r5.u64 = (int64_t)emitterGroupAddr + 4;
 		ctx.r6.u64 = LOAD8(stack + 80);
 		ReleaseRefRange_Stride12(ctx, base, emitterListBegin, emitterListEnd);
 		HandleTarget_FreeThunk(ctx, base, LOAD32(emitterListRoot + 4));

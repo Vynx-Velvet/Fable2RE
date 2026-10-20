@@ -1,9 +1,9 @@
 // CPhasedAction (vtable 0x820054D0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint32_t n_sub_821B6348(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
+uint32_t CPhasedAction_StartAction(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	constexpr int32_t str_TXT_82000E50_B_ = int32_t(0x82000E50);
 	if (!UseLiftedCode(2, 0x821B6348)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_821B6348(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821B6348);
@@ -222,7 +222,7 @@ uint32_t n_sub_821B6348(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 	ctx.r9.u64 = liveR9b;
 	return result;
 }
-PROMOTED_ENTRY(2, sub_821B6348, 0x821B6348) { ctx.r3.u64 = n_sub_821B6348(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(2, sub_821B6348, 0x821B6348) { ctx.r3.u64 = CPhasedAction_StartAction(ctx, base, ctx.r3.u64); }
 
 uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t phasedAction) {
 	if (!UseLiftedCode(11, 0x822A92B8)) { ctx.r3.u64 = phasedAction; __imp__sub_822A92B8(ctx, base); return ctx.r3.u64; }
@@ -238,6 +238,7 @@ uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t phasedA
 		PPCRegister callTarget{};
 		callTarget.u64 = (uint64_t)virtualIsFinished;
 		ctx.r3.u64 = phase;
+		ctx.r10.u64 = virtualIsFinished;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		return ctx.r3.u64;
 	}
@@ -253,7 +254,7 @@ uint64_t CPhasedAction_IsFinished(CpuState& ctx, uint8_t* base, uint32_t phasedA
 }
 PROMOTED_ENTRY(11, sub_822A92B8, 0x822A92B8) { ctx.r3.u64 = CPhasedAction_IsFinished(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_822A9500(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
+uint64_t CPhasedAction_NotifyPhaseStarted(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	constexpr int32_t g_82001D24 = int32_t(0x82001D24);
 	if (!UseLiftedCode(11, 0x822A9500)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_822A9500(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822A9500);
@@ -305,9 +306,9 @@ uint64_t n_sub_822A9500(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 	ctx.r1.u64 = stack;
 	return phasedActionAddr;
 }
-PROMOTED_ENTRY(11, sub_822A9500, 0x822A9500) { ctx.r3.u64 = n_sub_822A9500(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(11, sub_822A9500, 0x822A9500) { ctx.r3.u64 = CPhasedAction_NotifyPhaseStarted(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826DF838(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
+uint64_t CPhasedAction_Start(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	if (!UseLiftedCode(46, 0x826DF838)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_826DF838(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826DF838);
 	uint32_t stack = ctx.r1.u64;
@@ -335,7 +336,7 @@ uint64_t n_sub_826DF838(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 	if (canAdvance) {
 		if (LOAD8((uint32_t)phasedActionAddr + 0x48) == 0) {
 			ctx.r1.u64 = stack;
-			n_sub_821B6348(ctx, base, phasedActionAddr);
+			CPhasedAction_StartAction(ctx, base, phasedActionAddr);
 			savedR9 = ctx.r9.u64;
 		}
 
@@ -367,7 +368,7 @@ uint64_t n_sub_826DF838(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(46, sub_826DF838, 0x826DF838) { ctx.r3.u64 = n_sub_826DF838(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(46, sub_826DF838, 0x826DF838) { ctx.r3.u64 = CPhasedAction_Start(ctx, base, ctx.r3.u64); }
 
 uint32_t CPhasedAction_AssignSharedPtr96(CpuState& ctx, uint8_t* base, uint64_t phasedAction, uint64_t arg2) {
 	if (!UseLiftedCode(48, 0x8270C0B8)) { ctx.r3.u64 = phasedAction; ctx.r4.u64 = arg2; __imp__sub_8270C0B8(ctx, base); return ctx.r3.u32; }
@@ -429,7 +430,7 @@ uint64_t CPhasedAction_Clone(CpuState& ctx, uint8_t* base, uint64_t phasedAction
 	C_820F1270_Clone(ctx, base, phasedActionAddr, newAction);
 	uint32_t vtable = phasedAction->vtable;
 	if (vtable != 0) {
-		n_sub_82180B28(ctx, base, vtable);
+		Vector_Clear12(ctx, base, vtable);
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -498,7 +499,7 @@ uint64_t CPhasedAction_CreatePhases(CpuState& ctx, uint8_t* base, uint64_t phase
 		uint64_t phaseAlloc = operator_new(ctx, base, 124);
 		uint64_t phase = 0;
 		if ((uint32_t)phaseAlloc != 0) {
-			phase = n_sub_82867078(ctx, base, phaseAlloc, phasedActionAddr + 128, 0);
+			phase = C_82005338_Construct(ctx, base, phaseAlloc, phasedActionAddr + 128, 0);
 		}
 		phaseHandle = C_820F1270_Clone(ctx, base, phaseSlot, phase);
 		CPhasedAction_AssignSharedPtr96(ctx, base, phasedActionAddr, phaseHandle);
@@ -506,14 +507,14 @@ uint64_t CPhasedAction_CreatePhases(CpuState& ctx, uint8_t* base, uint64_t phase
 		phaseAlloc = operator_new(ctx, base, 124);
 		phase = 0;
 		if ((uint32_t)phaseAlloc != 0) {
-			phase = n_sub_82867078(ctx, base, phaseAlloc, phasedActionAddr + 132, 0);
+			phase = C_82005338_Construct(ctx, base, phaseAlloc, phasedActionAddr + 132, 0);
 		}
 		phaseHandle = C_820F1270_Clone(ctx, base, phaseSlot, phase);
 		C_820DE818_AssignSharedPtr104(ctx, base, phasedActionAddr, phaseHandle);
 
 		phaseAlloc = operator_new(ctx, base, 124);
 		if ((uint32_t)phaseAlloc != 0) {
-			targetPhase = n_sub_82867078(ctx, base, phaseAlloc, phasedActionAddr + 136, 0);
+			targetPhase = C_82005338_Construct(ctx, base, phaseAlloc, phasedActionAddr + 136, 0);
 		}
 	} else {
 		ctx.r1.u64 = stack;
@@ -521,7 +522,7 @@ uint64_t CPhasedAction_CreatePhases(CpuState& ctx, uint8_t* base, uint64_t phase
 		uint32_t phaseVtable = (uint32_t)g_82005430;
 		uint64_t phase = 0;
 		if ((uint32_t)phaseAlloc != 0) {
-			n_sub_827F05D0(ctx, base, phaseAlloc, 1, phasedActionAddr + 128, 0);
+			C_820F0D08_Construct(ctx, base, phaseAlloc, 1, phasedActionAddr + 128, 0);
 			STORE32((uint32_t)phaseAlloc, phaseVtable);
 			phase = phaseAlloc;
 		}
@@ -531,7 +532,7 @@ uint64_t CPhasedAction_CreatePhases(CpuState& ctx, uint8_t* base, uint64_t phase
 		phaseAlloc = operator_new(ctx, base, 120);
 		phase = 0;
 		if ((uint32_t)phaseAlloc != 0) {
-			n_sub_827F05D0(ctx, base, phaseAlloc, 1, phasedActionAddr + 132, 0);
+			C_820F0D08_Construct(ctx, base, phaseAlloc, 1, phasedActionAddr + 132, 0);
 			STORE32((uint32_t)phaseAlloc, phaseVtable);
 			phase = phaseAlloc;
 		}
@@ -540,7 +541,7 @@ uint64_t CPhasedAction_CreatePhases(CpuState& ctx, uint8_t* base, uint64_t phase
 
 		phaseAlloc = operator_new(ctx, base, 120);
 		if ((uint32_t)phaseAlloc != 0) {
-			n_sub_827F05D0(ctx, base, phaseAlloc, 1, phasedActionAddr + 136, 0);
+			C_820F0D08_Construct(ctx, base, phaseAlloc, 1, phasedActionAddr + 136, 0);
 			STORE32((uint32_t)phaseAlloc, phaseVtable);
 			targetPhase = phaseAlloc;
 		}
@@ -571,7 +572,7 @@ uint64_t CPhasedAction_SetActivePhase(CpuState& ctx, uint8_t* base, uint64_t pha
 		if ((int32_t)currentPhase != 0) {
 			ctx.r1.u64 = stack;
 			ctx.r4.u64 = newPhase;  // state the callee may pass on
-			n_sub_826DF838(ctx, base, phasedActionAddr);
+			CPhasedAction_Start(ctx, base, phasedActionAddr);
 			n_sub_82285D10(ctx, base, phasedActionAddr);
 		}
 		uint64_t currentPhaseField = phasedActionAddr + 120;
@@ -601,13 +602,13 @@ uint64_t CPhasedAction_SetActivePhase(CpuState& ctx, uint8_t* base, uint64_t pha
 PROMOTED_ENTRY(70, sub_829C5D80, 0x829C5D80) { ctx.r3.u64 = CPhasedAction_SetActivePhase(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_829C5E10  [8 bytes]
-uint64_t n_sub_829C5E10(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
+uint64_t CPhasedAction_AdvanceCurrentPhase(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	if (!UseLiftedCode(70, 0x829C5E10)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_829C5E10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829C5E10);
 	uint32_t currentPhase = GameObject<CPhasedAction>(base, phasedActionAddr)->m_CurrentPhase;
-	return n_sub_826DF838(ctx, base, currentPhase);
+	return CPhasedAction_Start(ctx, base, currentPhase);
 }
-PROMOTED_ENTRY(70, sub_829C5E10, 0x829C5E10) { ctx.r3.u64 = n_sub_829C5E10(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(70, sub_829C5E10, 0x829C5E10) { ctx.r3.u64 = CPhasedAction_AdvanceCurrentPhase(ctx, base, ctx.r3.u64); }
 
 uint64_t CPhasedAction_ClearActivePhase(CpuState& ctx, uint8_t* base, uint64_t phasedActionAddr) {
 	if (!UseLiftedCode(70, 0x829C5E18)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_829C5E18(ctx, base); return ctx.r3.u64; }
@@ -659,7 +660,7 @@ PROMOTED_ENTRY(70, sub_829C5E68, 0x829C5E68) { ctx.r3.u64 = CPhasedAction_Reset(
 // Returns 1 when the target phase's check (vtable slot +52) passes, when the loop phase's
 // check passes while the current phase is not the target phase, or when the start phase
 // is current and its check passes; otherwise 0.
-uint64_t n_sub_829C5EA0(CpuState& ctx, uint8_t* base, uint32_t phasedActionAddr) {
+uint64_t CPhasedAction_CheckPhaseConditions(CpuState& ctx, uint8_t* base, uint32_t phasedActionAddr) {
 	if (!UseLiftedCode(70, 0x829C5EA0)) { ctx.r3.u64 = phasedActionAddr; __imp__sub_829C5EA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829C5EA0);
 	uint32_t stack = ctx.r1.u64;
@@ -723,4 +724,4 @@ uint64_t n_sub_829C5EA0(CpuState& ctx, uint8_t* base, uint32_t phasedActionAddr)
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(70, sub_829C5EA0, 0x829C5EA0) { ctx.r3.u64 = n_sub_829C5EA0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(70, sub_829C5EA0, 0x829C5EA0) { ctx.r3.u64 = CPhasedAction_CheckPhaseConditions(ctx, base, ctx.r3.u32); }

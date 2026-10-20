@@ -1,9 +1,9 @@
 // CSoundContainer (vtable 0x8200B578): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -12,7 +12,7 @@
 #include "lifted/readable_support.h"
 
 // sub_82C20CC0  [24 bytes]
-void n_sub_82C20CC0(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, uint32_t soundIdOut, uint32_t vectorOut) {
+void CSoundContainer_GetData(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, uint32_t soundIdOut, uint32_t vectorOut) {
 	if (!UseLiftedCode(90, 0x82C20CC0)) { ctx.r3.u64 = soundContainerAddr; ctx.r4.u64 = soundIdOut; ctx.r5.u64 = vectorOut; __imp__sub_82C20CC0(ctx, base); return; }
 	LiftedFrame frame(0x82C20CC0);
 	PPCVRegister vectorData{};
@@ -22,10 +22,10 @@ void n_sub_82C20CC0(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, u
 	VSTORE(vectorOut & ~0xF, V8(vectorData));
 	return;
 }
-PROMOTED_ENTRY(90, sub_82C20CC0, 0x82C20CC0) { n_sub_82C20CC0(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
+PROMOTED_ENTRY(90, sub_82C20CC0, 0x82C20CC0) { CSoundContainer_GetData(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
 
 // sub_82C20CD8  [304 bytes]
-uint64_t n_sub_82C20CD8(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2) {
+uint64_t CSoundContainer_ApplySoundParameters(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	if (!UseLiftedCode(90, 0x82C20CD8)) { ctx.r4.u64 = soundContainer; ctx.r5.u64 = arg2; __imp__sub_82C20CD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20CD8);
@@ -143,10 +143,10 @@ uint64_t n_sub_82C20CD8(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r9.u64 = callerR9;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(90, sub_82C20CD8, 0x82C20CD8) { ctx.r3.u64 = n_sub_82C20CD8(ctx, base, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(90, sub_82C20CD8, 0x82C20CD8) { ctx.r3.u64 = CSoundContainer_ApplySoundParameters(ctx, base, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82C20E08  [116 bytes]
-uint64_t n_sub_82C20E08(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
+uint64_t CSoundContainer_ForEachSubSoundSlot14(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
 	if (!UseLiftedCode(90, 0x82C20E08)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackUserData; __imp__sub_82C20E08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20E08);
 	uint32_t stack = ctx.r1.u64;
@@ -182,9 +182,9 @@ uint64_t n_sub_82C20E08(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C20E08, 0x82C20E08) { ctx.r3.u64 = n_sub_82C20E08(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C20E08, 0x82C20E08) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot14(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C20E80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callArg) {
+uint64_t CSoundContainer_ForEachSubSoundSlot18(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callArg) {
 	if (!UseLiftedCode(90, 0x82C20E80)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callArg; __imp__sub_82C20E80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20E80);
 	uint32_t stack = ctx.r1.u64;
@@ -223,9 +223,9 @@ uint64_t n_sub_82C20E80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = callArg;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C20E80, 0x82C20E80) { ctx.r3.u64 = n_sub_82C20E80(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C20E80, 0x82C20E80) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C20EF8(CpuState& ctx, uint8_t* base, uint64_t soundContainer) {
+uint64_t CSoundContainer_ForEachSubSoundSlot1C(CpuState& ctx, uint8_t* base, uint64_t soundContainer) {
 	if (!UseLiftedCode(90, 0x82C20EF8)) { ctx.r3.u64 = soundContainer; __imp__sub_82C20EF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20EF8);
 	uint32_t stack = ctx.r1.u64;
@@ -260,10 +260,10 @@ uint64_t n_sub_82C20EF8(CpuState& ctx, uint8_t* base, uint64_t soundContainer) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C20EF8, 0x82C20EF8) { ctx.r3.u64 = n_sub_82C20EF8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(90, sub_82C20EF8, 0x82C20EF8) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot1C(ctx, base, ctx.r3.u64); }
 
 // sub_82C20F80  [164 bytes]
-uint64_t n_sub_82C20F80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2, uint64_t arg3) {
+uint64_t CSoundContainer_ForEachSubSoundSlot20AndRelease(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(90, 0x82C20F80)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C20F80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C20F80);
 	uint32_t stack = ctx.r1.u64;
@@ -313,10 +313,10 @@ uint64_t n_sub_82C20F80(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = arg2;
 	return current;
 }
-PROMOTED_ENTRY(90, sub_82C20F80, 0x82C20F80) { ctx.r3.u64 = n_sub_82C20F80(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(90, sub_82C20F80, 0x82C20F80) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot20AndRelease(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82C21028  [116 bytes]
-uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
+uint64_t CSoundContainer_ForEachSubSoundSlot4(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
 	if (!UseLiftedCode(90, 0x82C21028)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackUserData; __imp__sub_82C21028(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C21028);
 	uint32_t stack = ctx.r1.u64;
@@ -352,9 +352,9 @@ uint64_t n_sub_82C21028(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = r4Out;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C21028, 0x82C21028) { ctx.r3.u64 = n_sub_82C21028(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C21028, 0x82C21028) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot4(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C210A0(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
+uint64_t CSoundContainer_ForEachSubSoundSlot8(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackUserData) {
 	if (!UseLiftedCode(90, 0x82C210A0)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackUserData; __imp__sub_82C210A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C210A0);
 	uint32_t stack = ctx.r1.u64;
@@ -393,9 +393,9 @@ uint64_t n_sub_82C210A0(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = r4Out;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C210A0, 0x82C210A0) { ctx.r3.u64 = n_sub_82C210A0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C210A0, 0x82C210A0) { ctx.r3.u64 = CSoundContainer_ForEachSubSoundSlot8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackData) {
+uint64_t CSoundContainer_SetSubSoundCallbackData(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t callbackData) {
 	if (!UseLiftedCode(90, 0x82C21118)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = callbackData; __imp__sub_82C21118(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C21118);
 	uint32_t stack = ctx.r1.u64;
@@ -432,7 +432,7 @@ uint64_t n_sub_82C21118(CpuState& ctx, uint8_t* base, uint64_t soundContainer, u
 	ctx.r4.u64 = callbackData;
 	return current;
 }
-PROMOTED_ENTRY(90, sub_82C21118, 0x82C21118) { ctx.r3.u64 = n_sub_82C21118(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C21118, 0x82C21118) { ctx.r3.u64 = CSoundContainer_SetSubSoundCallbackData(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C21238  [444 bytes]
 uint64_t CSoundContainer_WriteXml(CpuState& ctx, uint8_t* base, uint32_t soundContainerAddr, uint64_t xmlWriter) {
@@ -453,7 +453,7 @@ uint64_t CSoundContainer_WriteXml(CpuState& ctx, uint8_t* base, uint32_t soundCo
 	uint32_t closeTagHolder = stack + 88;   // CharStringHolder for a closing tag
 
 
-	n_sub_82BFF710(ctx, base, tagHolder);
+	CharStringHolder_Construct(ctx, base, tagHolder);
 	CharStringHolder_ConstructFromCString(ctx, base, tagHolder, str_TXT_8200B5AC_B_);
 	CharStringHolder_ConstructFromCString(ctx, base, tagHolder, g_82000C80);
 	uint64_t openingText = CharStringHolder_GetCStr(ctx, base, tagHolder);
@@ -470,7 +470,7 @@ uint64_t CSoundContainer_WriteXml(CpuState& ctx, uint8_t* base, uint32_t soundCo
 	while (node != 0) {
 		if (LOAD32(node) != 0) {
 
-			n_sub_82BFF710(ctx, base, tagHolder);
+			CharStringHolder_Construct(ctx, base, tagHolder);
 			CharStringHolder_ConstructFromCString(ctx, base, tagHolder, str_TXT_8200B5BC_B_2);
 			CharStringHolder_ConstructFromCString(ctx, base, tagHolder, g_82000C80);
 			uint64_t subSoundOpenText = CharStringHolder_GetCStr(ctx, base, tagHolder);
@@ -492,7 +492,7 @@ uint64_t CSoundContainer_WriteXml(CpuState& ctx, uint8_t* base, uint32_t soundCo
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 
-			n_sub_82BFF710(ctx, base, closeTagHolder);
+			CharStringHolder_Construct(ctx, base, closeTagHolder);
 			CharStringHolder_ConstructFromCString(ctx, base, closeTagHolder, str_TXT_8200B5BC_B_);
 			CharStringHolder_ConstructFromCString(ctx, base, closeTagHolder, g_82000C80);
 			uint64_t subSoundCloseText = CharStringHolder_GetCStr(ctx, base, closeTagHolder);
@@ -510,7 +510,7 @@ uint64_t CSoundContainer_WriteXml(CpuState& ctx, uint8_t* base, uint32_t soundCo
 	}
 
 
-	n_sub_82BFF710(ctx, base, closeTagHolder);
+	CharStringHolder_Construct(ctx, base, closeTagHolder);
 	CharStringHolder_ConstructFromCString(ctx, base, closeTagHolder, str_TXT_8200B5AC_B_2);
 	CharStringHolder_ConstructFromCString(ctx, base, closeTagHolder, g_82000C80);
 	uint64_t closingText = CharStringHolder_GetCStr(ctx, base, closeTagHolder);
@@ -586,7 +586,7 @@ uint32_t CSoundContainer_Dtor(CpuState& ctx, uint8_t* base, uint32_t soundContai
 }
 PROMOTED_ENTRY(90, sub_82C22EC8, 0x82C22EC8) { ctx.r3.u64 = CSoundContainer_Dtor(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAddr, uint64_t arg2) {
+uint64_t CSoundContainer_UpdateSubSounds(CpuState& ctx, uint8_t* base, uint64_t soundContainerAddr, uint64_t arg2) {
 	if (!UseLiftedCode(90, 0x82C22FB0)) { ctx.r3.u64 = soundContainerAddr; ctx.r4.u64 = arg2; __imp__sub_82C22FB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C22FB0);
 	uint32_t stack = ctx.r1.u64;
@@ -627,7 +627,8 @@ uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAdd
 			arg2 = ctx.r4.u64;
 			flag = vtableResult & 0xFF;
 			if (flag == 0) {
-				result = n_sub_82C20CD8(ctx, base, savedArg2, node);
+				ctx.r9.u64 = flag;
+				result = CSoundContainer_ApplySoundParameters(ctx, base, savedArg2, node);
 				arg2 = ctx.r4.u64;
 				flag = ctx.r9.u64;
 				node = nextToVisit;
@@ -687,7 +688,7 @@ uint64_t n_sub_82C22FB0(CpuState& ctx, uint8_t* base, uint64_t soundContainerAdd
 	ctx.r4.u64 = arg2;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C22FB0, 0x82C22FB0) { ctx.r3.u64 = n_sub_82C22FB0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(90, sub_82C22FB0, 0x82C22FB0) { ctx.r3.u64 = CSoundContainer_UpdateSubSounds(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CSoundContainer_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t soundContainer, uint64_t arg2) {
 	if (!UseLiftedCode(90, 0x82C23198)) { ctx.r3.u64 = soundContainer; ctx.r4.u64 = arg2; __imp__sub_82C23198(ctx, base); return ctx.r3.u64; }

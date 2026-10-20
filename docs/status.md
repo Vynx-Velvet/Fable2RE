@@ -69,6 +69,16 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
   the next re-lift): 4,072 of the 7,378 reviewed rewrites are readable C++ with every name, 10.0% of the game's
   functions with the hand-written ones. Build and game checks (menu, load, play) pass
   ([finding](../research/findings/2026-10-19-readability-levels.md)).
+- *Correction (2026-10-20).* The readable form of 2026-10-19 dropped register hand-overs whose value was a frame
+  address or a variable, and (its first run) hand-overs before a call through a pointer: 362 promoted functions,
+  published in that day's progress. One of them, `CBoneDriverGroup_ApplyTransformToBoneDrivers`, handed
+  `BoneDriver_Update` stale pointers and crashed Havok 8 s after Continue on the save the game writes at New Game
+  start; the strict check cannot see a dropped hand-over of a frame address (its stand-in callees read nothing),
+  and the game checks did not reach that code. Found with `tools/lift/bisect_crash.py` (13 runs); the rule is
+  fixed, 359 of the 362 are written again with it and pass the strict check, 3 are demoted. The game checks now
+  include `newgame` (the prologue through the intro cutscene) and `resume` (Continue on the New Game-start save);
+  the suite of five passes. The count of readable, named functions is unchanged, 15.2%
+  ([finding](../research/findings/2026-10-20-prologue-and-continue-crash.md)).
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 

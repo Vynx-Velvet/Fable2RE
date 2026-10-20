@@ -1,9 +1,9 @@
 // CECCarrying (vtable 0x82004320): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -21,7 +21,7 @@ uint64_t CECCarrying_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNa
 }
 PROMOTED_ENTRY(31, sub_824FE470, 0x824FE470) { ctx.r3.u64 = CECCarrying_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uint64_t nameString) {
+uint32_t CECCarrying_AddEntry(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uint64_t nameString) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(31, 0x824FE4B0)) { ctx.r3.u64 = carryingAddr; ctx.r4.u64 = nameString; __imp__sub_824FE4B0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824FE4B0);
@@ -73,7 +73,7 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 		ctx.r8.u64 = capacityBytes;
 		ctx.r9.u64 = count;
 		ctx.r10.u64 = capacityCount;
-		n_sub_82505610(ctx, base, entryListAddr, LOAD64(stack + 88), stack + 96);
+		Vector_InsertEntry(ctx, base, entryListAddr, LOAD64(stack + 88), stack + 96);
 		capacityBytes = ctx.r8.u64;
 		count = ctx.r9.u32;
 		capacityCount = ctx.r10.u32;
@@ -90,7 +90,7 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 
 	STORE32(stack + 80, entryKey);
 	CCharString_CopyConstruct(ctx, base, stack + 84, nameString);
-	n_sub_82343668(ctx, base, carryingAddr + 0x20, stack + 80);
+	Vector_InsertPair(ctx, base, carryingAddr + 0x20, stack + 80);
 	uint32_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
 	carrying->m_31 = 1;
 
@@ -98,23 +98,23 @@ uint32_t n_sub_824FE4B0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_824FE4B0, 0x824FE4B0) { ctx.r3.u64 = n_sub_824FE4B0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(31, sub_824FE4B0, 0x824FE4B0) { ctx.r3.u64 = CECCarrying_AddEntry(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_824FE5E0(CpuState& ctx, uint8_t* base, uint64_t objectPtr, uint64_t flags) {
+uint64_t CECCarrying_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t objectPtr, uint64_t flags) {
 	if (!UseLiftedCode(31, 0x824FE5E0)) { ctx.r3.u64 = objectPtr; ctx.r4.u64 = flags; __imp__sub_824FE5E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FE5E0);
 	GameStackFrame stackFrame(ctx, base, 112);
 	// state the callee may pass on
 	ctx.r4.u64 = flags;
-	n_sub_824FE630(ctx, base, objectPtr);
+	CECCarrying_Destructor(ctx, base, objectPtr);
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectPtr);
 	}
 	return objectPtr;
 }
-PROMOTED_ENTRY(31, sub_824FE5E0, 0x824FE5E0) { ctx.r3.u64 = n_sub_824FE5E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(31, sub_824FE5E0, 0x824FE5E0) { ctx.r3.u64 = CECCarrying_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_824FEA18(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint32_t key) {
+uint64_t CECCarrying_FindKeyValue(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint32_t key) {
 	constexpr int32_t g_834A5B6C = int32_t(0x834A5B6C);
 	if (!UseLiftedCode(31, 0x824FEA18)) { ctx.r3.u64 = carryingAddr; ctx.r4.u64 = key; __imp__sub_824FEA18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FEA18);
@@ -168,9 +168,9 @@ uint64_t n_sub_824FEA18(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	}
 	return (uint64_t)found + 4;
 }
-PROMOTED_ENTRY(31, sub_824FEA18, 0x824FEA18) { ctx.r3.u64 = n_sub_824FEA18(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(31, sub_824FEA18, 0x824FEA18) { ctx.r3.u64 = CECCarrying_FindKeyValue(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
+uint64_t CECCarrying_ReleaseHandleArray(CpuState& ctx, uint8_t* base, uint64_t self) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(31, 0x824FEF28)) { ctx.r3.u64 = self; __imp__sub_824FEF28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FEF28);
@@ -206,7 +206,7 @@ uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
 
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			uint64_t entity = n_sub_82264448(ctx, base, lookupObject, element + 4);
+			uint64_t entity = EntityManager_LookupEntity(ctx, base, lookupObject, element + 4);
 			reg5 = entity;
 			reg7 = ctx.r7.u64;
 			reg8 = ctx.r8.u64;
@@ -233,6 +233,9 @@ uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
 		}
 
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = reg5;
+		ctx.r7.u64 = reg7;
+		ctx.r8.u64 = reg8;
 		result = SharedHandle_Release(ctx, base, handleSlot);
 		STORE32((uint32_t)handleSlot, 0u);
 	}
@@ -240,17 +243,17 @@ uint64_t n_sub_824FEF28(CpuState& ctx, uint8_t* base, uint64_t self) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_824FEF28, 0x824FEF28) { ctx.r3.u64 = n_sub_824FEF28(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_824FEF28, 0x824FEF28) { ctx.r3.u64 = CECCarrying_ReleaseHandleArray(ctx, base, ctx.r3.u64); }
 
 // The original is a single branch to sub_824FF1A0.
-uint64_t n_sub_824FF048(CpuState& ctx, uint8_t* base, uint64_t self) {
+uint64_t CECCarrying_CleanupCarriedEntities(CpuState& ctx, uint8_t* base, uint64_t self) {
 	if (!UseLiftedCode(31, 0x824FF048)) { ctx.r3.u64 = self; __imp__sub_824FF048(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FF048);
-	return n_sub_824FF1A0(ctx, base, self);
+	return CECCarrying_CleanupCarriedEntitiesImpl(ctx, base, self);
 }
-PROMOTED_ENTRY(31, sub_824FF048, 0x824FF048) { ctx.r3.u64 = n_sub_824FF048(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_824FF048, 0x824FF048) { ctx.r3.u64 = CECCarrying_CleanupCarriedEntities(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_824FF050(CpuState& ctx, uint8_t* base, uint32_t carryingAddr) {
+uint32_t CECCarrying_ShouldReplicate(CpuState& ctx, uint8_t* base, uint32_t carryingAddr) {
 	if (!UseLiftedCode(31, 0x824FF050)) { ctx.r3.u64 = carryingAddr; __imp__sub_824FF050(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824FF050);
 	uint32_t stack = ctx.r1.u32;
@@ -340,9 +343,9 @@ uint32_t n_sub_824FF050(CpuState& ctx, uint8_t* base, uint32_t carryingAddr) {
 	ctx.xer.ca = xer.ca;
 	return shouldReplicate ? 1 : 0;
 }
-PROMOTED_ENTRY(31, sub_824FF050, 0x824FF050) { ctx.r3.u64 = n_sub_824FF050(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(31, sub_824FF050, 0x824FF050) { ctx.r3.u64 = CECCarrying_ShouldReplicate(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_824FF1A0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
+uint64_t CECCarrying_CleanupCarriedEntitiesImpl(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	if (!UseLiftedCode(31, 0x824FF1A0)) { ctx.r3.u64 = carryingAddr; __imp__sub_824FF1A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824FF1A0);
 	uint32_t stack = ctx.r1.u64;
@@ -383,10 +386,10 @@ uint64_t n_sub_824FF1A0(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_824FF1A0, 0x824FF1A0) { ctx.r3.u64 = n_sub_824FF1A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_824FF1A0, 0x824FF1A0) { ctx.r3.u64 = CECCarrying_CleanupCarriedEntitiesImpl(ctx, base, ctx.r3.u64); }
 
 // Returns 1 when the carrying has an entry for the name's hash whose entity is missing or lacks flag 0x40, else 0.
-uint32_t n_sub_824FF290(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint64_t nameString) {
+uint32_t CECCarrying_IsEntryInvalid(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint64_t nameString) {
 	if (!UseLiftedCode(31, 0x824FF290)) { ctx.r3.u64 = carryingAddr; ctx.r4.u64 = nameString; __imp__sub_824FF290(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824FF290);
 	uint32_t stack = ctx.r1.u64;
@@ -452,6 +455,10 @@ uint32_t n_sub_824FF290(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	}
 
 	// state the callee may pass on
+	ctx.r6.u64 = r6Value;
+	ctx.r7.u64 = entriesEnd;
+	ctx.r8.u64 = offset;
+	ctx.r9.u64 = cursor;
 	ctx.cr0.lt = compare0.lt;
 	ctx.cr0.gt = compare0.gt;
 	ctx.cr0.eq = compare0.eq;
@@ -464,11 +471,11 @@ uint32_t n_sub_824FF290(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	ctx.r1.u64 = stack;
 	return entityValid ? 0 : 1;
 }
-PROMOTED_ENTRY(31, sub_824FF290, 0x824FF290) { ctx.r3.u64 = n_sub_824FF290(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(31, sub_824FF290, 0x824FF290) { ctx.r3.u64 = CECCarrying_IsEntryInvalid(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // Walks the carrying's 12-byte entries: releases handles whose entity is gone, and for each valid entity
 // (flag 0x40) with bit 18 of +0x2C set appends the 16-byte elements of its key-82 object to destVector.
-uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint64_t destVector) {
+uint32_t CECCarrying_CollectElements(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uint64_t destVector) {
 	if (!UseLiftedCode(31, 0x824FF650)) { ctx.r3.u64 = carryingAddr; ctx.r4.u64 = destVector; __imp__sub_824FF650(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824FF650);
 	uint32_t stack = ctx.r1.u64;
@@ -562,8 +569,11 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 					uint64_t totalCount = (uint64_t)(int64_t)((int32_t)destBytes >> 4) + (uint64_t)(int64_t)((int32_t)sourceBytes >> 4);
 					ctx.r1.u64 = stack;
 					// state the callee may pass on
+					ctx.r5.u64 = sourceBytes;
+					ctx.r6.u64 = destBytes;
+					ctx.r7.u64 = sourceBegin;
 					ctx.xer.ca = flags.ca;
-					result = n_sub_82504F88(ctx, base, destVector, totalCount, sourceEnd);
+					result = Vector16_Reserve(ctx, base, destVector, totalCount, sourceEnd);
 					savedR6 = ctx.r6.u64;
 					savedR7 = ctx.r7.u64;
 					flags.ca = ctx.xer.ca;
@@ -601,11 +611,11 @@ uint32_t n_sub_824FF650(CpuState& ctx, uint8_t* base, uint32_t carryingAddr, uin
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_824FF650, 0x824FF650) { ctx.r3.u64 = n_sub_824FF650(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(31, sub_824FF650, 0x824FF650) { ctx.r3.u64 = CECCarrying_CollectElements(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // Rebuilds the map at +72: gathers 16-byte entries with sub_824FF650, empties the map, then per entry inserts
 // sub_82545AF0's result when the id at +0 has a non-zero GameDB field, and that field when the id at +8 has one.
-uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
+uint32_t CECCarrying_RebuildPropertyMap(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	if (!UseLiftedCode(31, 0x824FF8B8)) { ctx.r3.u64 = carryingAddr; __imp__sub_824FF8B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824FF8B8);
 	uint32_t stack = ctx.r1.u64;
@@ -622,7 +632,7 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	STORE32(stack + 120, 0);
 	STORE32(stack + 124, 0);
 	ctx.r1.u64 = stack;
-	n_sub_824FF650(ctx, base, carryingAddr, stack + 112);
+	CECCarrying_CollectElements(ctx, base, carryingAddr, stack + 112);
 
 	uint64_t propertyMap = carryingAddr + 72;
 	uint32_t result = PropertyMap_EraseSubtree(ctx, base, propertyMap, LOAD32((uint32_t)carrying->m_4C + 4));
@@ -656,7 +666,7 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 				savedR7 = ctx.r7.u64;
 				savedR8 = ctx.r8.u64;
 				if (LOAD32(stack + 80) != 0) {
-					uint32_t insertValue = n_sub_82545AF0(ctx, base, entry);
+					uint32_t insertValue = GameDB_GetTypeForIdRef(ctx, base, entry);
 					STORE32(stack + 80, insertValue);
 					ctx.cr0.lt = compare0.lt;
 					ctx.cr0.gt = compare0.gt;
@@ -739,7 +749,7 @@ uint32_t n_sub_824FF8B8(CpuState& ctx, uint8_t* base, uint64_t carryingAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_824FF8B8, 0x824FF8B8) { ctx.r3.u64 = n_sub_824FF8B8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_824FF8B8, 0x824FF8B8) { ctx.r3.u64 = CECCarrying_RebuildPropertyMap(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_82503338(CpuState& ctx, uint8_t* base, uint64_t carryingAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);

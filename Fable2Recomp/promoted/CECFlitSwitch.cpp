@@ -1,9 +1,9 @@
 // CECFlitSwitch (vtable 0x82003208): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -28,21 +28,21 @@ uint64_t CECFlitSwitch_GetClassName(CpuState& ctx, uint8_t* base, uint64_t class
 }
 PROMOTED_ENTRY(32, sub_825337D8, 0x825337D8) { ctx.r3.u64 = CECFlitSwitch_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82533DA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t destroyFlags) {
+uint64_t CECFlitSwitch_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t destroyFlags) {
 	if (!UseLiftedCode(32, 0x82533DA0)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = destroyFlags; __imp__sub_82533DA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82533DA0);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = destroyFlags;  // state the callee may pass on
-	n_sub_82533DF0(ctx, base, flitSwitchAddr);
+	CECFlitSwitch_Destructor(ctx, base, flitSwitchAddr);
 	// bit 0: also free the object's memory
 	if ((destroyFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, flitSwitchAddr);
 	}
 	return flitSwitchAddr;
 }
-PROMOTED_ENTRY(32, sub_82533DA0, 0x82533DA0) { ctx.r3.u64 = n_sub_82533DA0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(32, sub_82533DA0, 0x82533DA0) { ctx.r3.u64 = CECFlitSwitch_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82533DF0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint32_t CECFlitSwitch_Destructor(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(32, 0x82533DF0)) { ctx.r3.u64 = flitSwitchAddr; __imp__sub_82533DF0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82533DF0);
@@ -74,7 +74,7 @@ uint32_t n_sub_82533DF0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (entriesBegin != 0) {
 		uint32_t entriesEnd = flitSwitch->m_60;
 		ctx.r3.u64 = entriesVectorAddr;  // state the callee may pass on
-		n_sub_82538980(ctx, base, entriesBegin, entriesEnd);
+		CECFlitSwitch_DestroyEntryRange(ctx, base, entriesBegin, entriesEnd);
 		HandleTarget_Free(ctx, base, flitSwitch->m_5C);
 		r4State = ctx.r4.u64;
 	}
@@ -102,9 +102,9 @@ uint32_t n_sub_82533DF0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82533DF0, 0x82533DF0) { ctx.r3.u64 = n_sub_82533DF0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82533DF0, 0x82533DF0) { ctx.r3.u64 = CECFlitSwitch_Destructor(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82534948(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_Initialise(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	constexpr int32_t str_TXT_820BD448_B_ = int32_t(0x820BD448);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -125,11 +125,11 @@ uint64_t n_sub_82534948(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (sharedIdPtr != 0) {
 		uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
 		uint32_t mapHolder = LOAD32(LOAD32(LOAD32(globalRoot + 12) + 88) + 4);
-		// n_sub_82264448 searches the map at +136 of its first argument for the 64-bit id
+		// EntityManager_LookupEntity searches the map at +136 of its first argument for the 64-bit id
 		uint32_t idMapOwner = LOAD32(mapHolder);
 		ctx.r1.u64 = stack;
 		ctx.r8.u64 = mapHolder;  // state the callee may pass on
-		uint64_t target = n_sub_82264448(ctx, base, idMapOwner, sharedIdPtr);
+		uint64_t target = EntityManager_LookupEntity(ctx, base, idMapOwner, sharedIdPtr);
 
 		STORE32(handleBuf, entityHandleVtable);
 		STORE32(handleBuf + 4, 0);
@@ -142,14 +142,14 @@ uint64_t n_sub_82534948(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	}
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_821D9F40(ctx, base, handleBuf, flitSwitchAddr);
+	uint64_t result = Component_GetId(ctx, base, handleBuf, flitSwitchAddr);
 	if (LOAD32(handleBuf) != 0) {
 		uint64_t trailHash = String_HashFnv1(ctx, base, str_TXT_820BD448_B_, fnvOffsetBasis);
 		ctx.r4.u64 = fnvOffsetBasis;  // state the callee may pass on
 		uint64_t idRef = IdRef_Get(ctx, base, handleBuf);
 		uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, idRef, trailHash, 6);
 		uint32_t TXT_820BD448_L_ = (fieldValue != 0) ? LOAD32(fieldValue) : 0;
-		uint64_t trailTarget = n_sub_82537768(ctx, base, flitSwitchAddr, TXT_820BD448_L_);
+		uint64_t trailTarget = CECFlitSwitch_CreateFlitParticle(ctx, base, flitSwitchAddr, TXT_820BD448_L_);
 
 		STORE32(handleBuf, entityHandleVtable);
 		STORE32(handleBuf + 4, 0);
@@ -211,9 +211,9 @@ uint64_t n_sub_82534948(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82534948, 0x82534948) { ctx.r3.u64 = n_sub_82534948(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82534948, 0x82534948) { ctx.r3.u64 = CECFlitSwitch_Initialise(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82534B98(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_ActivateCurrentEntry(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (!UseLiftedCode(32, 0x82534B98)) { ctx.r3.u64 = flitSwitchAddr; __imp__sub_82534B98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82534B98);
 	CECFlitSwitch* flitSwitch = GameObject<CECFlitSwitch>(base, flitSwitchAddr);
@@ -242,19 +242,19 @@ uint64_t n_sub_82534B98(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 
 	ctx.r6.u64 = entryCount;  // state the callee may pass on
 	ctx.r8.u64 = entriesStart;
-	return n_sub_82536AF0(ctx, base, flitSwitchAddr, entryAddr, 0);
+	return CECFlitSwitch_ActivateEntry(ctx, base, flitSwitchAddr, entryAddr, 0);
 }
-PROMOTED_ENTRY(32, sub_82534B98, 0x82534B98) { ctx.r3.u64 = n_sub_82534B98(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82534B98, 0x82534B98) { ctx.r3.u64 = CECFlitSwitch_ActivateCurrentEntry(ctx, base, ctx.r3.u64); }
 
 // sub_82534BF8  [4 bytes]
-uint64_t n_sub_82534BF8(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_ReleaseAttachedEntities(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (!UseLiftedCode(32, 0x82534BF8)) { ctx.r3.u64 = flitSwitchAddr; __imp__sub_82534BF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82534BF8);
-	return n_sub_82534C00(ctx, base, flitSwitchAddr);
+	return CECFlitSwitch_ReleaseAttachedEntitiesImpl(ctx, base, flitSwitchAddr);
 }
-PROMOTED_ENTRY(32, sub_82534BF8, 0x82534BF8) { ctx.r3.u64 = n_sub_82534BF8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82534BF8, 0x82534BF8) { ctx.r3.u64 = CECFlitSwitch_ReleaseAttachedEntities(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82534C00(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_ReleaseAttachedEntitiesImpl(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	if (!UseLiftedCode(32, 0x82534C00)) { ctx.r3.u64 = flitSwitchAddr; __imp__sub_82534C00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82534C00);
 	uint32_t stack = ctx.r1.u64;
@@ -294,9 +294,9 @@ uint64_t n_sub_82534C00(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82534C00, 0x82534C00) { ctx.r3.u64 = n_sub_82534C00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82534C00, 0x82534C00) { ctx.r3.u64 = CECFlitSwitch_ReleaseAttachedEntitiesImpl(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82534EA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_Update(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	constexpr int32_t TXT_834985C4_G_ = int32_t(0x834985C4);
 	if (!UseLiftedCode(32, 0x82534EA0)) { ctx.r3.u64 = flitSwitchAddr; __imp__sub_82534EA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82534EA0);
@@ -308,9 +308,9 @@ uint64_t n_sub_82534EA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.r1.u64 = stack;
 	n_sub_82536228(ctx, base, flitSwitchAddr, TXT_834985C4_G_);  // Lua_FlitSwitch_SetMesh
 
-	uint64_t result = n_sub_82537410(ctx, base, flitSwitchAddr);
-	// r6 and r8 as this function leaves them for its callers: what n_sub_82537410 left,
-	// replaced below by the entry count and array start, or by what n_sub_82536F98 left
+	uint64_t result = CECFlitSwitch_Close(ctx, base, flitSwitchAddr);
+	// r6 and r8 as this function leaves them for its callers: what CECFlitSwitch_Close left,
+	// replaced below by the entry count and array start, or by what CECFlitSwitch_TriggerEntryEntity left
 	uint64_t outR6 = ctx.r6.u64;
 	uint64_t outR8 = ctx.r8.u64;
 
@@ -327,7 +327,7 @@ uint64_t n_sub_82534EA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 				uint64_t entryAddr = entriesStart + (uint64_t)((uint32_t)entryIndex * 80u);
 				if (LOAD32((uint32_t)entryAddr + 64) != 0) {
 					ctx.r8.u64 = entriesStart;  // state the callee may pass on
-					result = n_sub_82536F98(ctx, base, entryAddr, outR6, entriesBytes);
+					result = CECFlitSwitch_TriggerEntryEntity(ctx, base, entryAddr, outR6, entriesBytes);
 					outR6 = ctx.r6.u64;
 					outR8 = ctx.r8.u64;
 				} else {
@@ -344,9 +344,9 @@ uint64_t n_sub_82534EA0(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.r8.u64 = outR8;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82534EA0, 0x82534EA0) { ctx.r3.u64 = n_sub_82534EA0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82534EA0, 0x82534EA0) { ctx.r3.u64 = CECFlitSwitch_Update(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t nameString) {
+uint32_t CECFlitSwitch_SetParticleByName(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t nameString) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	if (!UseLiftedCode(33, 0x82536500)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = nameString; __imp__sub_82536500(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82536500);
@@ -380,12 +380,13 @@ uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	if (destroyFlag != 0) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r4.u64 = r4AfterGet;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, target);
 	}
 
 	ctx.r1.u64 = stack;
-	uint32_t result = n_sub_821D9F40(ctx, base, idRefAddr, flitSwitchAddr);
+	uint32_t result = Component_GetId(ctx, base, idRefAddr, flitSwitchAddr);
 	if (LOAD32(idRefAddr) != 0) {
 		uint64_t idRef = IdRef_Get(ctx, base, idRefAddr);
 		uint64_t dbEntry = GameDB_ReadU32Field(ctx, base, idRef, 0xFFFFFFFF820BD514ull);  // field-name string at 0x820BD514
@@ -397,7 +398,7 @@ uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 			uint64_t nameHash = String_HashFnv1(ctx, base, nameText, 0xFFFFFFFF811C9DC5ull);
 			uint32_t fieldValueAddr = GameDB_FindFieldValue(ctx, base, dbEntry, nameHash, 6);
 			uint32_t fieldValue = (fieldValueAddr != 0) ? LOAD32(fieldValueAddr) : 0;
-			result = n_sub_82536628(ctx, base, flitSwitchAddr, fieldValue);
+			result = CECFlitSwitch_SetParticle(ctx, base, flitSwitchAddr, fieldValue);
 		}
 	}
 
@@ -405,9 +406,9 @@ uint32_t n_sub_82536500(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82536500, 0x82536500) { ctx.r3.u64 = n_sub_82536500(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(33, sub_82536500, 0x82536500) { ctx.r3.u64 = CECFlitSwitch_SetParticleByName(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t particleValue) {
+uint32_t CECFlitSwitch_SetParticle(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, uint64_t particleValue) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(33, 0x82536628)) { ctx.r3.u64 = flitSwitchAddr; ctx.r4.u64 = particleValue; __imp__sub_82536628(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82536628);
@@ -441,6 +442,7 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	if (destroyFlag != 0) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r4.u64 = r4AfterGet;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, target);
 	}
@@ -448,7 +450,7 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	// Point a temporary EntityHandle on the stack at the new target, copy it into the switch's
 	// handle, then reset its vtable and release it.
 	ctx.r1.u64 = stack;
-	uint64_t newTarget = n_sub_82537768(ctx, base, flitSwitchAddr, particleValue);
+	uint64_t newTarget = CECFlitSwitch_CreateFlitParticle(ctx, base, flitSwitchAddr, particleValue);
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, entityHandleVtable);
 	ctx.r10.s64 = g_820F1664;  // state the callee may pass on
@@ -462,7 +464,7 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 	// When bit 27 of the owner's (m_4) word at +44 is set, find the value stored under key 91: through
 	// the slot table at +140 if there is one, else by a lower-bound search of the sorted {key, value}
 	// pairs at +72..+76 (when the key is missing, the value slot just past the end, end + 4, is read).
-	// That value and particleValue go to n_sub_82388FD8, whose result is returned.
+	// That value and particleValue go to CECNetwork_ReplicateEntity, whose result is returned.
 	uint32_t owner = flitSwitch->m_4;
 	uint32_t result = 0;
 	if ((LOAD32(owner + 44) >> 27) & 1) {
@@ -501,16 +503,16 @@ uint32_t n_sub_82536628(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr, u
 			}
 		}
 		ctx.xer.ca = carry;  // state the callee may pass on
-		result = n_sub_82388FD8(ctx, base, entry91, particleValue);
+		result = CECNetwork_ReplicateEntity(ctx, base, entry91, particleValue);
 	}
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82536628, 0x82536628) { ctx.r3.u64 = n_sub_82536628(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(33, sub_82536628, 0x82536628) { ctx.r3.u64 = CECFlitSwitch_SetParticle(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
+uint32_t CECFlitSwitch_Open(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 	constexpr int32_t str_TXT_820BCDBC_B_ = int32_t(0x820BCDBC);
 	constexpr int32_t g_820C0000 = int32_t(0x820C0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -573,10 +575,11 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 			uint32_t openEntry = lookup(owner, 49);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
+			ctx.r6.u64 = r6Out;
 			ctx.cr0 = cr0Out;
 			ctx.xer.ca = flags.ca;
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820BCDBC_B_, -1);
-			n_sub_827F05D0(ctx, base, stack + 112, 2, stack + 80, 0);
+			C_820F0D08_Construct(ctx, base, stack + 112, 2, stack + 80, 0);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 			const int64_t holderVtable = (int64_t)g_820C0000 - 10248;
 			STORE32(stack + 112, (uint32_t)holderVtable);
@@ -639,9 +642,9 @@ uint32_t n_sub_82537120(CpuState& ctx, uint8_t* base, uint32_t flitSwitchAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82537120, 0x82537120) { ctx.r3.u64 = n_sub_82537120(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(33, sub_82537120, 0x82537120) { ctx.r3.u64 = CECFlitSwitch_Open(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
+uint64_t CECFlitSwitch_Close(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	constexpr int32_t str_TXT_820BCE3C_B_ = int32_t(0x820BCE3C);
 	constexpr int32_t g_820C0000 = int32_t(0x820C0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -726,9 +729,10 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 			uint32_t closeEntry = lookup(owner, 49, &r6Out);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
+			ctx.r6.u64 = r6Out;
 			ctx.xer.ca = carry;
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820BCE3C_B_, -1);
-			n_sub_827F05D0(ctx, base, stack + 112, 4, stack + 80, 0);
+			C_820F0D08_Construct(ctx, base, stack + 112, 4, stack + 80, 0);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 			const int64_t holderVtable = (int64_t)g_820C0000 - 10168;
 			STORE32(stack + 112, (uint32_t)holderVtable);
@@ -778,4 +782,4 @@ uint64_t n_sub_82537410(CpuState& ctx, uint8_t* base, uint64_t flitSwitchAddr) {
 	ctx.xer.ca = carry;  // callers read the carry after the call
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82537410, 0x82537410) { ctx.r3.u64 = n_sub_82537410(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_82537410, 0x82537410) { ctx.r3.u64 = CECFlitSwitch_Close(ctx, base, ctx.r3.u64); }

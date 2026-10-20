@@ -1,9 +1,9 @@
 // CECChest (vtable 0x820037D8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
+uint64_t CECChest_UpdateOpenProgress(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(11, 0x82295920)) { ctx.r3.u64 = chestAddr; __imp__sub_82295920(ctx, base); return ctx.r3.u64; }
@@ -42,14 +42,16 @@ uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 				ctx.r10.u64 = fn;
 				ctx.f1.f64 = threshold;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				result = n_sub_8253DC80(ctx, base, chestAddr);
+				result = CECChest_Open(ctx, base, chestAddr);
 			} else {
 				uint32_t global = LOAD32(uint32_t(g_83490000) + 26912u);
 				uint32_t a = LOAD32(LOAD32(global + 12) + 88);
 				uint32_t b = LOAD32(a + 4);
 				uint32_t c = LOAD32(b);
+				ctx.r8.u64 = b;
+				ctx.r9.u64 = a;
 				uint32_t handle = EntityHandle_Get(ctx, base, c);
-				double value = n_sub_82207928(ctx, base, handle);
+				double value = Game_GetDeltaTime(ctx, base, handle);
 				uint32_t curTarget = chest->m_10;
 				ctx.fpscr.disableFlushMode();
 				double divisor = LOAD_F64(uint32_t(g_83320000) - 27376u);
@@ -68,7 +70,7 @@ uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 					ctx.f12.f64 = ratioF;
 					ctx.f13.f64 = baseF;
 					REX_CALL_INDIRECT_FUNC(callTarget.u32);
-					result = n_sub_8253DC80(ctx, base, chestAddr);
+					result = CECChest_Open(ctx, base, chestAddr);
 				} else {
 					uint32_t fn = LOAD32(LOAD32(curTarget) + 20);
 					callTarget.u64 = (uint64_t)fn;
@@ -150,7 +152,7 @@ uint64_t n_sub_82295920(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	ctx.r4.u64 = 0;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_82295920, 0x82295920) { ctx.r3.u64 = n_sub_82295920(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(11, sub_82295920, 0x82295920) { ctx.r3.u64 = CECChest_UpdateOpenProgress(ctx, base, ctx.r3.u64); }
 
 uint64_t CECChest_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820BDC28_B_ = int32_t(0x820BDC28);
@@ -187,11 +189,12 @@ uint64_t n_sub_8253D218(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	}
 
 	uint32_t chestOwner = chest->m_4;
-	return n_sub_82392C88(ctx, base, chestOwner, chestAddr);
+	ctx.r9.u64 = flagA;
+	return CECDoor_UpdateOpenStateForEntity(ctx, base, chestOwner, chestAddr);
 }
 PROMOTED_ENTRY(33, sub_8253D218, 0x8253D218) { ctx.r3.u64 = n_sub_8253D218(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8253D268(CpuState& ctx, uint8_t* base, uint64_t chestAddr, uint64_t stream, uint64_t flags) {
+uint64_t CECChest_Serialize(CpuState& ctx, uint8_t* base, uint64_t chestAddr, uint64_t stream, uint64_t flags) {
 	constexpr int32_t str_TXT_820ADDD8_B_ = int32_t(0x820ADDD8);
 	constexpr int32_t str_TXT_820BCDBC_B_ = int32_t(0x820BCDBC);
 	constexpr int32_t str_TXT_820BDC34_B_ = int32_t(0x820BDC34);
@@ -224,16 +227,17 @@ uint64_t n_sub_8253D268(CpuState& ctx, uint8_t* base, uint64_t chestAddr, uint64
 
 	uint32_t isOpen = chest->m_C;
 	if (isOpen != 0 && (flags & 0xFF) == 0) {
-		result = n_sub_8253DC80(ctx, base, chestAddr);
+		ctx.r7.u64 = isOpen;
+		result = CECChest_Open(ctx, base, chestAddr);
 	}
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_8253D268, 0x8253D268) { ctx.r3.u64 = n_sub_8253D268(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(33, sub_8253D268, 0x8253D268) { ctx.r3.u64 = CECChest_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
-uint32_t n_sub_8253D758(CpuState& ctx, uint8_t* base, uint32_t chestAddr) {
+uint32_t CECChest_EnableInteraction(CpuState& ctx, uint8_t* base, uint32_t chestAddr) {
 	if (!UseLiftedCode(33, 0x8253D758)) { ctx.r3.u64 = chestAddr; __imp__sub_8253D758(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8253D758);
 	uint32_t stack = ctx.r1.u64;
@@ -272,7 +276,7 @@ uint32_t n_sub_8253D758(CpuState& ctx, uint8_t* base, uint32_t chestAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_8253D758, 0x8253D758) { ctx.r3.u64 = n_sub_8253D758(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(33, sub_8253D758, 0x8253D758) { ctx.r3.u64 = CECChest_EnableInteraction(ctx, base, ctx.r3.u32); }
 
 uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64_t actionName, uint32_t arg3) {
 	if (!UseLiftedCode(33, 0x8253D7C8)) { ctx.r3.u64 = chestAddr; ctx.r4.u64 = actionName; ctx.r5.u64 = arg3; __imp__sub_8253D7C8(ctx, base); return ctx.r3.u32; }
@@ -338,7 +342,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 	if (hasComponent) {
 		ctx.r1.u64 = stack;
 		ctx.xer.ca = flags.ca;
-		chestAddr = n_sub_822A1A50(ctx, base, stack + 80, component, actionName);
+		chestAddr = Animation_GetPose(ctx, base, stack + 80, component, actionName);
 		actionName = ctx.r4.u64;
 		uint64_t local40 = ctx.r6.u64;
 		uint64_t local44 = ctx.r7.u64;
@@ -404,7 +408,11 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 				STORE32(stack + 96, firstObject);
 				STORE32(stack + 80, 0);
 				uint32_t componentData = LOAD32(otherComponent + 0x94);
+				ctx.r6.u64 = local40;
+				ctx.r7.u64 = local44;
 				ctx.r8.u64 = local47;
+				ctx.r9.u64 = local53;
+				ctx.r10.u64 = local60;
 				ctx.xer.ca = flags.ca;
 				chestAddr = n_sub_822001F8(ctx, base, stack + 96, stack + 80);
 				actionName = ctx.r4.u64;
@@ -428,7 +436,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 					uint32_t elementBytes = LOAD32(componentData + 0x30) - LOAD32(componentData + 0x2C);
 					flags.ca = ((int32_t)elementBytes < 0) & ((elementBytes & 0x7) != 0);
 					ctx.xer.ca = flags.ca;
-					n_sub_821719D0(ctx, base, stack + 96,
+					Vector_ConstructWithCount(ctx, base, stack + 96,
 					               (int32_t)elementBytes >> 3,
 					               countArg);
 					flags.ca = ctx.xer.ca;
@@ -445,7 +453,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 					ctx.cr0.so = compare0.so;
 					n_sub_822351F0(ctx, base, secondObject, element, componentData, 3, 0, 0, amount);
 					flags.ca = ctx.xer.ca;
-					n_sub_8254F4E8(ctx, base, otherComponent, stack + 96);
+					Component_ApplyDataList(ctx, base, otherComponent, stack + 96);
 					flags.ca = ctx.xer.ca;
 					n_sub_82B6F5A0(ctx, base, component + 24, stack + 96, ctx.r8.u64);
 					flags.ca = ctx.xer.ca;
@@ -530,7 +538,7 @@ uint32_t n_sub_8253D7C8(CpuState& ctx, uint8_t* base, uint32_t chestAddr, uint64
 }
 PROMOTED_ENTRY(33, sub_8253D7C8, 0x8253D7C8) { ctx.r3.u64 = n_sub_8253D7C8(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_8253DC80(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
+uint64_t CECChest_Open(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	constexpr int32_t str_TXT_820BCDBC_B_ = int32_t(0x820BCDBC);
 	if (!UseLiftedCode(33, 0x8253DC80)) { ctx.r3.u64 = chestAddr; __imp__sub_8253DC80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8253DC80);
@@ -539,21 +547,21 @@ uint64_t n_sub_8253DC80(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	CECChest* chest = GameObject<CECChest>(base, chestAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_8253DD60(ctx, base, chestAddr);
-	n_sub_8253D758(ctx, base, chestAddr);
+	CECChest_ReleaseHandle(ctx, base, chestAddr);
+	CECChest_EnableInteraction(ctx, base, chestAddr);
 	uint64_t actionName = (uint64_t)stack + 80;
 	CCharString_ConstructFromCStr(ctx, base, actionName, str_TXT_820BCDBC_B_, -1);
 	n_sub_8253D7C8(ctx, base, chestAddr, actionName, 1);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, actionName);
 	chest->m_C = uint8_t(1);
-	openStatus = n_sub_8253DF30(ctx, base, chestAddr);
+	openStatus = CECChest_GiveContents(ctx, base, chestAddr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return openStatus;
 }
-PROMOTED_ENTRY(33, sub_8253DC80, 0x8253DC80) { ctx.r3.u64 = n_sub_8253DC80(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_8253DC80, 0x8253DC80) { ctx.r3.u64 = CECChest_Open(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8253DD60(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
+uint64_t CECChest_ReleaseHandle(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	if (!UseLiftedCode(33, 0x8253DD60)) { ctx.r3.u64 = chestAddr; __imp__sub_8253DD60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8253DD60);
 	uint32_t stack = ctx.r1.u64;
@@ -624,7 +632,7 @@ uint64_t n_sub_8253DD60(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 		if (hasResult) {
 			ctx.r1.u64 = stack;
 			ctx.xer.ca = flags.ca;
-			n_sub_822ADE58(ctx, base, lookupResult, handle);
+			AnimationManager_ReleaseHandle(ctx, base, lookupResult, handle);
 			passR6 = ctx.r6.u64;
 			passR7 = ctx.r7.u64;
 			passR8 = ctx.r8.u64;
@@ -677,15 +685,16 @@ uint64_t n_sub_8253DD60(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 
 	uint64_t handleAddr = chestAddr + 16;
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handle;
 	uint64_t released = SharedHandle_Release(ctx, base, handleAddr);
 	chest->m_10 = 0;
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return released;
 }
-PROMOTED_ENTRY(33, sub_8253DD60, 0x8253DD60) { ctx.r3.u64 = n_sub_8253DD60(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_8253DD60, 0x8253DD60) { ctx.r3.u64 = CECChest_ReleaseHandle(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
+uint64_t CECChest_GiveContents(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(33, 0x8253DF30)) { ctx.r3.u64 = chestAddr; __imp__sub_8253DF30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8253DF30);
@@ -701,6 +710,7 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 		uint32_t handle = LOAD32(handleSlot);
 
 		ctx.r1.u64 = stack;
+		ctx.r9.u64 = handleSlot;
 		uint64_t entityHandle = EntityHandle_Get(ctx, base, handle);
 		result = entityHandle;
 		uint32_t entity = uint32_t(entityHandle);
@@ -758,8 +768,8 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 				uint64_t ownerField = uint64_t(owner) + 172;
 				uint32_t container = LOAD32(owner + 172);
 				if (container != 0 && LOAD32(container + 4) != 0) {
-					uint64_t reward = n_sub_828924A8(ctx, base, ownerField);
-					uint32_t slot = uint32_t(n_sub_828923B8(ctx, base, itemId, ownerField));
+					uint64_t reward = CECWorldMapInfo_HashRegionName(ctx, base, ownerField);
+					uint32_t slot = uint32_t(WorldMapInfo_LookupKeyByName(ctx, base, itemId, ownerField));
 					STORE32(stack + 80, slot);
 					uint64_t arg = n_sub_82892960(ctx, base, uint64_t(itemId) + 60, uint64_t(stack) + 80);
 					result = n_sub_8288D768(ctx, base, arg, uint32_t(reward));
@@ -773,11 +783,11 @@ uint64_t n_sub_8253DF30(CpuState& ctx, uint8_t* base, uint64_t chestAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_8253DF30, 0x8253DF30) { ctx.r3.u64 = n_sub_8253DF30(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_8253DF30, 0x8253DF30) { ctx.r3.u64 = CECChest_GiveContents(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_8253E168(CpuState& ctx, uint8_t* base, uint64_t chest) {
 	if (!UseLiftedCode(33, 0x8253E168)) { ctx.r3.u64 = chest; __imp__sub_8253E168(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8253E168);
-	return n_sub_8253DD60(ctx, base, chest);
+	return CECChest_ReleaseHandle(ctx, base, chest);
 }
 PROMOTED_ENTRY(33, sub_8253E168, 0x8253E168) { ctx.r3.u64 = n_sub_8253E168(ctx, base, ctx.r3.u64); }

@@ -1,9 +1,9 @@
 // CPropertyContainer (vtable 0x820F19A4): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -391,6 +391,8 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 			STORE32(stack + 80, 3u);
 			holder = LOAD32(kDescriptorGlobalB);
 			descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
+			ctx.r4.u64 = descriptor;
+			ctx.r9.u64 = flags;
 			IStream_SerializeU32(ctx, base, saveStream, stack + 80);
 
 			endFn = LOAD32(streamVtable + 12);
@@ -404,7 +406,9 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 		STORE32(stack + 84, propertyContainer->m_entryCount);
 		holder = LOAD32(kDescriptorGlobalN);
 		descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
-		n_sub_82A08FC8(ctx, base, saveStream, stack + 84);
+		ctx.r4.u64 = descriptor;
+		ctx.r9.u64 = flags;
+		IStream_SerializeUInt32(ctx, base, saveStream, stack + 84);
 
 		// Walk the container's entry map from its leftmost node up to the
 		// header node (_Myhead), which doubles as end().
@@ -433,7 +437,9 @@ uint64_t CPropertyContainer_Save(CpuState& ctx, uint8_t* base, uint32_t property
 			STORE32(stack + 88, LOAD32(node + 12));
 			holder = LOAD32(kDescriptorGlobalK);
 			descriptor = holder != 0 ? LOAD32(holder) : kDefaultDescriptor;
-			n_sub_82A08FC8(ctx, base, saveStream, stack + 88);
+			ctx.r4.u64 = descriptor;
+			ctx.r9.u64 = iteratorValue;
+			IStream_SerializeUInt32(ctx, base, saveStream, stack + 88);
 
 			if (node == LOAD32(iteratorOwner + 4)) {
 				ppc_trap(ctx, base, 22);
@@ -563,7 +569,7 @@ uint32_t CPropertyContainer_Clear(CpuState& ctx, uint8_t* base, uint32_t propert
 }
 PROMOTED_ENTRY(141, sub_83218350, 0x83218350) { ctx.r3.u64 = CPropertyContainer_Clear(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_83218598(CpuState& ctx, uint8_t* base, uint64_t propertyContainerAddr, uint64_t sourceHandle) {
+uint32_t CPropertyContainer_AddProperty(CpuState& ctx, uint8_t* base, uint64_t propertyContainerAddr, uint64_t sourceHandle) {
 	if (!UseLiftedCode(141, 0x83218598)) { ctx.r3.u64 = propertyContainerAddr; ctx.r4.u64 = sourceHandle; __imp__sub_83218598(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x83218598);
 	uint32_t stack = ctx.r1.u64;
@@ -617,7 +623,7 @@ uint32_t n_sub_83218598(CpuState& ctx, uint8_t* base, uint64_t propertyContainer
 	ctx.r9.u64 = flags;
 	return (uint32_t)changeResult;
 }
-PROMOTED_ENTRY(141, sub_83218598, 0x83218598) { ctx.r3.u64 = n_sub_83218598(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(141, sub_83218598, 0x83218598) { ctx.r3.u64 = CPropertyContainer_AddProperty(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t propertyContainerAddr, uint64_t loadStream) {
 	if (!UseLiftedCode(141, 0x83218630)) { ctx.r3.u64 = propertyContainerAddr; ctx.r4.u64 = loadStream; __imp__sub_83218630(ctx, base); return ctx.r3.u32; }
@@ -673,28 +679,28 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 		case 2: {
 			property = operator_new(ctx, base, 20);
 			if (property != 0) {
-				property = n_sub_83215D98(ctx, base, property);
+				property = CPropertyType2_Construct(ctx, base, property);
 			}
 			break;
 		}
 		case 4: {
 			property = operator_new(ctx, base, 32);
 			if (property != 0) {
-				property = n_sub_83215BF0(ctx, base, property);
+				property = CPropertyType4_Construct(ctx, base, property);
 			}
 			break;
 		}
 		case 16: {
 			property = operator_new(ctx, base, 44);
 			if (property != 0) {
-				property = n_sub_83215D18(ctx, base, property);
+				property = CPropertyType16_Construct(ctx, base, property);
 			}
 			break;
 		}
 		case 32: {
 			property = operator_new(ctx, base, 24);
 			if (property != 0) {
-				property = n_sub_83215CB8(ctx, base, property);
+				property = CPropertyType32_Construct(ctx, base, property);
 			}
 			break;
 		}
@@ -713,14 +719,14 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 		case 1024: {
 			property = operator_new(ctx, base, 28);
 			if (property != 0) {
-				property = n_sub_83215A80(ctx, base, property);
+				property = CPropertyType1024_Construct(ctx, base, property);
 			}
 			break;
 		}
 		case 2048: {
 			property = operator_new(ctx, base, 20);
 			if (property != 0) {
-				property = n_sub_83215A28(ctx, base, property);
+				property = CPropertyType2048_Construct(ctx, base, property);
 			}
 			break;
 		}
@@ -747,7 +753,7 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 		ctx.r10.u64 = propertyLoadFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-		n_sub_83218598(ctx, base, propertyContainerAddr, stack + 88);
+		CPropertyContainer_AddProperty(ctx, base, propertyContainerAddr, stack + 88);
 		result = SharedHandle_Release(ctx, base, stack + 88);
 	}
 
@@ -788,8 +794,8 @@ uint32_t CPropertyContainer_Destruct(CpuState& ctx, uint8_t* base, uint64_t prop
 	STORE32(secondHead, secondHead);
 	STORE32(secondHead + 8, secondHead);
 
-	n_sub_8233DD70(ctx, base, secondHeader);
-	uint32_t result = n_sub_82A12668(ctx, base, entriesHeader);
+	StdMap_DestroyGlobal_8233DD70(ctx, base, secondHeader);
+	uint32_t result = ClearLinkedList(ctx, base, entriesHeader);
 
 	propertyContainer->vtable = 0x820F1A5Cu;
 
@@ -799,7 +805,7 @@ uint32_t CPropertyContainer_Destruct(CpuState& ctx, uint8_t* base, uint64_t prop
 }
 PROMOTED_ENTRY(141, sub_83218A40, 0x83218A40) { ctx.r3.u64 = CPropertyContainer_Destruct(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_83219DF8(CpuState& ctx, uint8_t* base, uint64_t propertyContainerAddr, uint64_t stream, uint64_t notifyFlag, uint64_t entityId) {
+uint64_t CPropertyContainer_LoadFromStream(CpuState& ctx, uint8_t* base, uint64_t propertyContainerAddr, uint64_t stream, uint64_t notifyFlag, uint64_t entityId) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(141, 0x83219DF8)) { ctx.r3.u64 = propertyContainerAddr; ctx.r4.u64 = stream; ctx.r5.u64 = notifyFlag; ctx.r6.u64 = entityId; __imp__sub_83219DF8(ctx, base); return ctx.r3.u64; }
@@ -867,7 +873,7 @@ uint64_t n_sub_83219DF8(CpuState& ctx, uint8_t* base, uint64_t propertyContainer
 			if ((int32_t)version == 1) {
 				CPropertyContainer_Load(ctx, base, propertyContainerAddr, stream);
 			} else {
-				n_sub_83219588(ctx, base, propertyContainerAddr, stream, version);
+				CPropertyContainer_LoadLegacy(ctx, base, propertyContainerAddr, stream, version);
 			}
 		} else {
 			STORE32(versionAddr, 1u);
@@ -900,4 +906,4 @@ uint64_t n_sub_83219DF8(CpuState& ctx, uint8_t* base, uint64_t propertyContainer
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(141, sub_83219DF8, 0x83219DF8) { ctx.r3.u64 = n_sub_83219DF8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(141, sub_83219DF8, 0x83219DF8) { ctx.r3.u64 = CPropertyContainer_LoadFromStream(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }

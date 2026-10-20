@@ -1,9 +1,9 @@
 // CVirtualFileSystem (vtable 0x8200E17C): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82C700F0(CpuState& ctx, uint8_t* base, uint32_t arg1) {
+uint64_t CVirtualFileSystem_AddRef(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 	if (!UseLiftedCode(92, 0x82C700F0)) { ctx.r3.u64 = arg1; __imp__sub_82C700F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C700F0);
 	// CVirtualFileSystem::AddRef: atomically increment the reference count word at offset 0x0C.
@@ -24,10 +24,10 @@ uint64_t n_sub_82C700F0(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 	} while (!__sync_bool_compare_and_swap(refCountWord, oldWord, __builtin_bswap32((uint32_t)newRefCount)));
 	return newRefCount;
 }
-PROMOTED_ENTRY(92, sub_82C700F0, 0x82C700F0) { ctx.r3.u64 = n_sub_82C700F0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(92, sub_82C700F0, 0x82C700F0) { ctx.r3.u64 = CVirtualFileSystem_AddRef(ctx, base, ctx.r3.u32); }
 
 // sub_82C70118  [40 bytes]
-uint64_t n_sub_82C70118(CpuState& ctx, uint8_t* base, uint32_t object) {
+uint64_t CVirtualFileSystem_ReleaseRefCount(CpuState& ctx, uint8_t* base, uint32_t object) {
 	if (!UseLiftedCode(92, 0x82C70118)) { ctx.r3.u64 = object; __imp__sub_82C70118(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C70118);
 	uint32_t refCountAddr = object + 12;
@@ -55,10 +55,10 @@ uint64_t n_sub_82C70118(CpuState& ctx, uint8_t* base, uint32_t object) {
 	} while (!compare0.eq);
 	return newCount;
 }
-PROMOTED_ENTRY(92, sub_82C70118, 0x82C70118) { ctx.r3.u64 = n_sub_82C70118(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(92, sub_82C70118, 0x82C70118) { ctx.r3.u64 = CVirtualFileSystem_ReleaseRefCount(ctx, base, ctx.r3.u32); }
 
 // sub_82C70140  [204 bytes]
-uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr, uint64_t interfaceId, uint64_t interfaceOut) {
+uint64_t CVirtualFileSystem_QueryInterface(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr, uint64_t interfaceId, uint64_t interfaceOut) {
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(92, 0x82C70140)) { ctx.r3.u64 = virtualFileSystemAddr; ctx.r4.u64 = interfaceId; ctx.r5.u64 = interfaceOut; __imp__sub_82C70140(ctx, base); return ctx.r3.u64; }
@@ -122,6 +122,11 @@ uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = virtualFileSystemAddr;
 	ctx.r4.u64 = interfaceId;
+	ctx.r5.u64 = interfaceOut;
+	ctx.r7.u64 = lastNameByte;
+	ctx.r8.u64 = (uint64_t)nameEnd;
+	ctx.r9.u64 = nameDiff;
+	ctx.r10.u64 = vtableMethod;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 	result = 0;
@@ -129,7 +134,7 @@ uint64_t n_sub_82C70140(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C70140, 0x82C70140) { ctx.r3.u64 = n_sub_82C70140(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(92, sub_82C70140, 0x82C70140) { ctx.r3.u64 = CVirtualFileSystem_QueryInterface(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CVirtualFileSystem_AcquireVolumeA(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr) {
 	if (!UseLiftedCode(92, 0x82C70210)) { ctx.r3.u64 = virtualFileSystemAddr; __imp__sub_82C70210(ctx, base); return ctx.r3.u64; }
@@ -143,7 +148,7 @@ uint64_t CVirtualFileSystem_AcquireVolumeA(CpuState& ctx, uint8_t* base, uint64_
 	uint64_t lockGuardPtr = String_Construct(ctx, base, lockGuard, virtualFileSystemAddr + 16, 0);
 
 	if (virtualFileSystem->m_VolumeARefCount == 0) {
-		uint8_t created = n_sub_82C72A60(ctx, base) & 0xFF;
+		uint8_t created = CVirtualFileSystem_EnsureInitialized(ctx, base) & 0xFF;
 		if (created == 0) {
 			CriticalSectionGuard_Release(ctx, base, lockGuard);
 			stack = PopStackFrame(stack, 112);
@@ -154,13 +159,13 @@ uint64_t CVirtualFileSystem_AcquireVolumeA(CpuState& ctx, uint8_t* base, uint64_
 		uint32_t volumeStorage = operator_new(ctx, base, 296);
 		uint32_t newVolume;
 		if (volumeStorage != 0) {
-			newVolume = n_sub_82C72760(ctx, base, volumeStorage, virtualFileSystemAddr);
+			newVolume = VolumeA_Constructor(ctx, base, volumeStorage, virtualFileSystemAddr);
 		} else {
 			newVolume = 0;
 		}
 		virtualFileSystem->m_VolumeA = newVolume;
 
-		uint8_t initialized = n_sub_82C727A8(ctx, base, newVolume) & 0xFF;
+		uint8_t initialized = VolumeA_Initialize(ctx, base, newVolume) & 0xFF;
 		uint32_t volumeA = virtualFileSystem->m_VolumeA;
 		if (initialized == 0) {
 			if (volumeA != 0) {
@@ -180,7 +185,7 @@ uint64_t CVirtualFileSystem_AcquireVolumeA(CpuState& ctx, uint8_t* base, uint64_
 			return 0xFFFFFFFF80004005ull;
 		}
 
-		n_sub_82B386B8(ctx, base, volumeA);
+		Volume_Activate(ctx, base, volumeA);
 	}
 
 	uint32_t oldRefCount = virtualFileSystem->m_VolumeARefCount;
@@ -222,12 +227,19 @@ uint64_t CVirtualFileSystem_ReleaseVolumeA(CpuState& ctx, uint8_t* base, uint64_
 		uint32_t closeFn = LOAD32(vtable + 8);
 		PPCRegister callTarget{};
 		callTarget.u64 = (uint64_t)closeFn;
+		ctx.r3.u64 = (uint64_t)volumeA;
+		ctx.r9.u64 = (uint64_t)closeFn;
+		ctx.r10.u64 = (uint64_t)vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		flags.ca = ctx.xer.ca;
 
 		uint32_t vtable2 = LOAD32(volumeA);
 		uint32_t destroyFn = LOAD32(vtable2);
 		callTarget.u64 = (uint64_t)destroyFn;
+		ctx.r3.u64 = (uint64_t)volumeA;
+		ctx.r4.u64 = 1;
+		ctx.r7.u64 = (uint64_t)destroyFn;
+		ctx.r8.u64 = (uint64_t)vtable2;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		flags.ca = ctx.xer.ca;
 
@@ -258,7 +270,7 @@ uint64_t CVirtualFileSystem_AcquireVolumeB(CpuState& ctx, uint8_t* base, uint64_
 	uint64_t guard = String_Construct(ctx, base, guardAddr, virtualFileSystemAddr + 16, 0);
 
 	if (virtualFileSystem->m_VolumeBRefCount == 0) {
-		uint32_t vfsReady = n_sub_82C72A60(ctx, base);
+		uint32_t vfsReady = CVirtualFileSystem_EnsureInitialized(ctx, base);
 		if ((vfsReady & 0xFF) == 0) {
 			CriticalSectionGuard_Release(ctx, base, guardAddr);
 			stack = PopStackFrame(stack, 112);
@@ -269,13 +281,13 @@ uint64_t CVirtualFileSystem_AcquireVolumeB(CpuState& ctx, uint8_t* base, uint64_
 		uint32_t volumeStorage = operator_new(ctx, base, 292);
 		uint32_t volumeB;
 		if (volumeStorage != 0) {
-			volumeB = n_sub_82C72C48(ctx, base, volumeStorage, virtualFileSystemAddr);
+			volumeB = VolumeB_Constructor(ctx, base, volumeStorage, virtualFileSystemAddr);
 		} else {
 			volumeB = 0;
 		}
 		virtualFileSystem->m_VolumeB = volumeB;
 
-		uint32_t volumeInitOk = n_sub_82C72C90(ctx, base, volumeB);
+		uint32_t volumeInitOk = VolumeB_Initialize(ctx, base, volumeB);
 		volumeB = virtualFileSystem->m_VolumeB;
 		if ((volumeInitOk & 0xFF) == 0) {
 			if (volumeB != 0) {
@@ -292,7 +304,7 @@ uint64_t CVirtualFileSystem_AcquireVolumeB(CpuState& ctx, uint8_t* base, uint64_
 			ctx.r1.u64 = stack;
 			return 0xFFFFFFFF80004005ull;
 		}
-		n_sub_82B386B8(ctx, base, volumeB);
+		Volume_Activate(ctx, base, volumeB);
 	}
 
 	uint32_t refCount = virtualFileSystem->m_VolumeBRefCount;
@@ -354,7 +366,7 @@ uint64_t CVirtualFileSystem_SetTimeoutSeconds(CpuState& ctx, uint8_t* base, uint
 }
 PROMOTED_ENTRY(92, sub_82C70550, 0x82C70550) { ctx.r3.u64 = CVirtualFileSystem_SetTimeoutSeconds(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem, uint64_t widePath, uint64_t wideStrSource, uint64_t lookupArg, uint64_t flags) {
+uint64_t CVirtualFileSystem_AddFile(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem, uint64_t widePath, uint64_t wideStrSource, uint64_t lookupArg, uint64_t flags) {
 	if (!UseLiftedCode(92, 0x82C71398)) { ctx.r3.u64 = virtualFileSystem; ctx.r4.u64 = widePath; ctx.r5.u64 = wideStrSource; ctx.r6.u64 = lookupArg; ctx.r8.u64 = flags; __imp__sub_82C71398(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C71398);
 	uint32_t stack = ctx.r1.u64;
@@ -375,9 +387,10 @@ uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem
 
 		uint32_t textBuffer = stack + 80;
 		ctx.r1.u64 = stack;
-		n_sub_82CA9D30(ctx, base, textBuffer, widePath, charCount, flags);
+		WString_ToNarrowString(ctx, base, textBuffer, widePath, charCount, flags);
 
-		uint64_t textHash = n_sub_82CFAC28(ctx, base);
+		ctx.r3.u64 = textBuffer;
+		uint64_t textHash = NetDll_inet_addr(ctx, base);
 
 		uint32_t sourceStr = frameBase + 112;
 		BasicWString_ConstructFromWideCStr(ctx, base, sourceStr, wideStrSource, ctx.r8.u64);
@@ -388,7 +401,7 @@ uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem
 			STORE16(frameBase + 84, 0);
 			uint32_t searchStr = frameBase + 80;
 			BasicWString_AssignSubstr(ctx, base, searchStr, sourceStr, 0, -1, ctx.r8.u64);
-			uint32_t found = n_sub_82C70A00(ctx, base, virtualFileSystem, textHash, searchStr, lookupArg);
+			uint32_t found = CVirtualFileSystem_AddFileEntry(ctx, base, virtualFileSystem, textHash, searchStr, lookupArg);
 			if ((found & 0xFF) != 0) {
 				WString_Tidy(ctx, base, sourceStr);
 				ctx.r1.u64 = frameBase + 192;
@@ -407,9 +420,9 @@ uint64_t n_sub_82C71398(CpuState& ctx, uint8_t* base, uint32_t virtualFileSystem
 	ctx.r4.u64 = widePath;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C71398, 0x82C71398) { ctx.r3.u64 = n_sub_82C71398(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(92, sub_82C71398, 0x82C71398) { ctx.r3.u64 = CVirtualFileSystem_AddFile(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem, uint64_t file, uint64_t flags) {
+uint64_t CVirtualFileSystem_RemoveFile(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem, uint64_t file, uint64_t flags) {
 	if (!UseLiftedCode(92, 0x82C71D68)) { ctx.r3.u64 = virtualFileSystem; ctx.r4.u64 = file; ctx.r8.u64 = flags; __imp__sub_82C71D68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C71D68);
 	uint32_t stack = ctx.r1.u64;
@@ -469,7 +482,7 @@ uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	STORE16(tempPath + 4, 0);
 
 	uint32_t fileMap = vfs + 52;
-	n_sub_82C70E38(ctx, base, foundEntry, fileMap, guardPath, ctx.r8.u64);
+	CVirtualFileSystem_FindFile(ctx, base, foundEntry, fileMap, guardPath, ctx.r8.u64);
 
 	uint32_t entryOwner = LOAD32(foundEntry);
 	uint32_t endNode = LOAD32(fileMap + 4);
@@ -488,7 +501,7 @@ uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 			ppc_trap(ctx, base, 22);
 		}
 		uint32_t fileObject = LOAD32(node + 40);
-		n_sub_82C71590(ctx, base, foundEntry, fileMap, LOAD64(foundEntry), ctx.r8.u64);
+		FileMap_Erase(ctx, base, foundEntry, fileMap, LOAD64(foundEntry), ctx.r8.u64);
 		uint32_t dispose = LOAD32(LOAD32(fileObject) + 8);
 		ctx.r3.u64 = fileObject;
 		ctx.r10.u64 = dispose;
@@ -501,9 +514,9 @@ uint64_t n_sub_82C71D68(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C71D68, 0x82C71D68) { ctx.r3.u64 = n_sub_82C71D68(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(92, sub_82C71D68, 0x82C71D68) { ctx.r3.u64 = CVirtualFileSystem_RemoveFile(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C725A8(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr) {
+uint64_t CVirtualFileSystem_Destructor(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystemAddr) {
 	if (!UseLiftedCode(92, 0x82C725A8)) { ctx.r3.u64 = virtualFileSystemAddr; __imp__sub_82C725A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C725A8);
 	uint32_t stack = ctx.r1.u64;
@@ -513,7 +526,7 @@ uint64_t n_sub_82C725A8(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	virtualFileSystem->vtable = 0x8200E17Cu;
 
 	ctx.r1.u64 = stack;
-	n_sub_82C045B8(ctx, base, (uint32_t)virtualFileSystemAddr + 0x40);
+	List_Clear(ctx, base, (uint32_t)virtualFileSystemAddr + 0x40);
 
 	HandleTarget_FreeThunk(ctx, base, virtualFileSystem->m_44);
 	virtualFileSystem->m_44 = 0;
@@ -530,7 +543,7 @@ uint64_t n_sub_82C725A8(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 
 	uint64_t firstIterator = LOAD64(stack + 88);
 	uint64_t secondIterator = LOAD64(stack + 80);
-	n_sub_82C722F0(ctx, base, stack + 88, listSentinelAddr, firstIterator, secondIterator);
+	FileMap_EraseRange(ctx, base, stack + 88, listSentinelAddr, firstIterator, secondIterator);
 
 	HandleTarget_FreeThunk(ctx, base, virtualFileSystem->m_38);
 	virtualFileSystem->m_38 = 0;
@@ -543,4 +556,4 @@ uint64_t n_sub_82C725A8(CpuState& ctx, uint8_t* base, uint64_t virtualFileSystem
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C725A8, 0x82C725A8) { ctx.r3.u64 = n_sub_82C725A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(92, sub_82C725A8, 0x82C725A8) { ctx.r3.u64 = CVirtualFileSystem_Destructor(ctx, base, ctx.r3.u64); }

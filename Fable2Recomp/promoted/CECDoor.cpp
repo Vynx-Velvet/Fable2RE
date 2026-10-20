@@ -1,9 +1,9 @@
 // CECDoor (vtable 0x82003D98): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_8219DBD0(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_t targetEntity) {
+uint64_t CECDoor_GetTransitionStateForEntity(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_t targetEntity) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(1, 0x8219DBD0)) { ctx.r3.u64 = doorAddr; ctx.r4.u64 = targetEntity; __imp__sub_8219DBD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8219DBD0);
@@ -59,10 +59,10 @@ uint64_t n_sub_8219DBD0(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_
 	ctx.r8.u64 = callerR8;
 	return transitioning;
 }
-PROMOTED_ENTRY(1, sub_8219DBD0, 0x8219DBD0) { ctx.r3.u64 = n_sub_8219DBD0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(1, sub_8219DBD0, 0x8219DBD0) { ctx.r3.u64 = CECDoor_GetTransitionStateForEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_822D0940 = Lua_Door_SetLocked (Lua Door.SetLocked)  [388 bytes]
-uint64_t n_sub_822D0940(CpuState& ctx, uint8_t* base, uint64_t doorObject, uint64_t isLocked) {
+uint64_t Lua_Door_SetLocked(CpuState& ctx, uint8_t* base, uint64_t doorObject, uint64_t isLocked) {
 	constexpr int32_t g_820A43E8 = int32_t(0x820A43E8);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(13, 0x822D0940)) { ctx.r3.u64 = doorObject; ctx.r4.u64 = isLocked; __imp__sub_822D0940(ctx, base); return ctx.r3.u64; }
@@ -162,7 +162,7 @@ uint64_t n_sub_822D0940(CpuState& ctx, uint8_t* base, uint64_t doorObject, uint6
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(13, sub_822D0940, 0x822D0940) { ctx.r3.u64 = n_sub_822D0940(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(13, sub_822D0940, 0x822D0940) { ctx.r3.u64 = Lua_Door_SetLocked(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_825279B8  [60 bytes]
 uint64_t CECDoor_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameOut) {
@@ -175,7 +175,7 @@ uint64_t CECDoor_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameOu
 }
 PROMOTED_ENTRY(32, sub_825279B8, 0x825279B8) { ctx.r3.u64 = CECDoor_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82527A40(CpuState& ctx, uint8_t* base, uint64_t door, uint64_t deleteFlags) {
+uint64_t CECDoor_Delete(CpuState& ctx, uint8_t* base, uint64_t door, uint64_t deleteFlags) {
 	if (!UseLiftedCode(32, 0x82527A40)) { ctx.r3.u64 = door; ctx.r4.u64 = deleteFlags; __imp__sub_82527A40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82527A40);
 	uint32_t stack = ctx.r1.u64;
@@ -183,7 +183,7 @@ uint64_t n_sub_82527A40(CpuState& ctx, uint8_t* base, uint64_t door, uint64_t de
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = deleteFlags;
-	n_sub_82527A90(ctx, base, door);
+	CECDoor_Destructor(ctx, base, door);
 	// Bit 0 also frees the door object itself.
 	if (deleteFlags & 0x1) {
 		HandleTarget_Free(ctx, base, door);
@@ -192,9 +192,9 @@ uint64_t n_sub_82527A40(CpuState& ctx, uint8_t* base, uint64_t door, uint64_t de
 	ctx.r1.u64 = stack;
 	return door;
 }
-PROMOTED_ENTRY(32, sub_82527A40, 0x82527A40) { ctx.r3.u64 = n_sub_82527A40(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(32, sub_82527A40, 0x82527A40) { ctx.r3.u64 = CECDoor_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+uint32_t CECDoor_Destructor(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if (!UseLiftedCode(32, 0x82527A90)) { ctx.r3.u64 = doorAddr; __imp__sub_82527A90(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82527A90);
 	CECDoor* door = GameObject<CECDoor>(base, doorAddr);
@@ -256,6 +256,7 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	}
 
 	// state the callee may pass on
+	ctx.r4.u64 = reg4;
 	SharedHandle_Release(ctx, base, doorAddr + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, doorAddr + 56);
 
@@ -265,9 +266,9 @@ uint32_t n_sub_82527A90(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 
 	return CECVaultable_Dtor(ctx, base, (uint32_t)doorAddr);
 }
-PROMOTED_ENTRY(32, sub_82527A90, 0x82527A90) { ctx.r3.u64 = n_sub_82527A90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82527A90, 0x82527A90) { ctx.r3.u64 = CECDoor_Destructor(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+uint64_t CECDoor_SetOpenForListedEntities(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(32, 0x82528A20)) { ctx.r3.u64 = doorAddr; __imp__sub_82528A20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82528A20);
@@ -277,12 +278,12 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	stack = PushStackFrame(base, stack, 128);
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, door->m_4, doorAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, door->m_4, doorAddr);
 	// Value r4 carries into the final release; the calls below replace it.
 	uint64_t reg4 = ctx.r4.u64;
 
 	// m_68 points to a list of 8-byte entries (begin at +4, end at +8). Every entry that resolves to an
-	// entity with flag 0x40 set at +144 is handed to n_sub_82529BE8; the list is released afterwards.
+	// entity with flag 0x40 set at +144 is handed to Lua_Door_SetOpenForEntity; the list is released afterwards.
 	uint64_t listFieldAddr = doorAddr + 104;
 	uint32_t list = door->m_68;
 	if (list != 0) {
@@ -299,14 +300,14 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t containerFirst = LOAD32(LOAD32(container + 4));
 				// state the callee may pass on
 				ctx.xer.ca = flags.ca;
-				uint64_t entity = n_sub_82264448(ctx, base, containerFirst, entryAddr);
+				uint64_t entity = EntityManager_LookupEntity(ctx, base, containerFirst, entryAddr);
 				reg4 = entity;
 
 				if ((uint32_t)entity != 0) {
 					uint32_t entityFlag = LOAD8((uint32_t)entity + 144) & 64;
 					if (entityFlag != 0) {
 						ctx.r10.u64 = entityFlag;  // state the callee may pass on
-						n_sub_82529BE8(ctx, base, doorAddr, entity, 1);  // Lua_Door_SetOpenForEntity
+						Lua_Door_SetOpenForEntity(ctx, base, doorAddr, entity, 1);  // Lua_Door_SetOpenForEntity
 						reg4 = ctx.r4.u64;
 					}
 				}
@@ -320,6 +321,9 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			} while (index < (uint32_t)entryCount);
 		}
 		// state the callee may pass on
+		ctx.r4.u64 = reg4;
+		ctx.r7.u64 = entryCount;
+		ctx.r8.u64 = listBytes;
 		ctx.xer.ca = flags.ca;
 		result = SharedHandle_Release(ctx, base, listFieldAddr);
 		STORE32((uint32_t)listFieldAddr, 0u);
@@ -328,7 +332,7 @@ uint64_t n_sub_82528A20(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82528A20, 0x82528A20) { ctx.r3.u64 = n_sub_82528A20(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82528A20, 0x82528A20) { ctx.r3.u64 = CECDoor_SetOpenForListedEntities(ctx, base, ctx.r3.u64); }
 
 uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint64_t reg8) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
@@ -413,15 +417,17 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 
 	if (hasComponent) {
 		// stack + 128 holds a temporary list of 48-byte entries (begin at +132, end at +136) that
-		// n_sub_821719D0 builds and the end of this block frees.
+		// Vector_ConstructWithCount builds and the end of this block frees.
 		uint32_t componentData = LOAD32(component + 148);
 		uint64_t sourceBytes = (uint64_t)LOAD32(componentData + 48) - (uint64_t)LOAD32(componentData + 44);
 		flags.ca = ((int32_t)sourceBytes < 0) & (((uint32_t)sourceBytes & 7) != 0);
 		uint64_t sourceCount = (int32_t)sourceBytes >> 3;  // sign-extended, as the original passes it
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = reg6;
+		ctx.r7.u64 = reg7;
 		ctx.xer.ca = flags.ca;
-		n_sub_821719D0(ctx, base, stack + 128, sourceCount, reg8);
+		Vector_ConstructWithCount(ctx, base, stack + 128, sourceCount, reg8);
 		flags.ca = ctx.xer.ca;
 
 		uint32_t listEnd = LOAD32(stack + 136);
@@ -437,11 +443,15 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 		if ((int32_t)listCount == 0) listBegin = (uint64_t)stack + 128;
 
 		// state the callee may pass on
+		ctx.r5.u64 = listCount;
+		ctx.r6.u64 = listBytes;
+		ctx.r7.u64 = listEnd;
+		ctx.f13.f64 = pairSecond;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
 		ctx.cr0.so = compare0.so;
-		uint32_t sharedSlot = n_sub_8225FB20(ctx, base, (uint64_t)stack + 104, door->m_40);
+		uint32_t sharedSlot = IntMap_FindRefCountedForObject(ctx, base, (uint64_t)stack + 104, door->m_40);
 		compare0.lt = ctx.cr0.lt;
 		compare0.gt = ctx.cr0.gt;
 		compare0.eq = ctx.cr0.eq;
@@ -511,7 +521,7 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
 		ctx.cr0.so = compare0.so;
-		n_sub_8254F4E8(ctx, base, component, stack + 128);
+		Component_ApplyDataList(ctx, base, component, stack + 128);
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
 		reg8 = ctx.r8.u64;
@@ -594,7 +604,7 @@ uint64_t Door_SetOpenImpl(CpuState& ctx, uint8_t* base, uint32_t doorAddr, uint6
 }
 PROMOTED_ENTRY(32, sub_82528B08, 0x82528B08) { ctx.r3.u64 = Door_SetOpenImpl(ctx, base, ctx.r3.u32, ctx.r8.u64); }
 
-uint64_t n_sub_82528E30(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+uint64_t CECDoor_OpenForPlayer(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if (!UseLiftedCode(32, 0x82528E30)) { ctx.r3.u64 = doorAddr; __imp__sub_82528E30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82528E30);
 	uint32_t stack = ctx.r1.u64;
@@ -664,11 +674,13 @@ uint64_t n_sub_82528E30(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if ((result & 0xFF) != 0 && LOAD8((uint32_t)doorAddr + 42) == 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = reg6;
+		ctx.r7.u64 = reg7;
 		ctx.xer.ca = flags.ca;
 		result = Door_IsLockedForPlayer_Impl(ctx, base, doorAddr);
 		if ((result & 0xFF) == 0) {
 			Door_SetOpenState(ctx, base, doorAddr, 0, 1, 0);
-			result = n_sub_822D0940(ctx, base, doorAddr, 1);  // Lua_Door_SetLocked
+			result = Lua_Door_SetLocked(ctx, base, doorAddr, 1);  // Lua_Door_SetLocked
 			if (LOAD8((uint32_t)doorAddr + 42) == 0) {
 				entity = door->m_4;
 				if ((LOAD32(entity + 36) >> 23) & 1) {
@@ -683,10 +695,10 @@ uint64_t n_sub_82528E30(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82528E30, 0x82528E30) { ctx.r3.u64 = n_sub_82528E30(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82528E30, 0x82528E30) { ctx.r3.u64 = CECDoor_OpenForPlayer(ctx, base, ctx.r3.u64); }
 
 // sub_82529BE8 = Lua_Door_SetOpenForEntity (Lua Door.SetOpenForEntity)  [716 bytes]
-uint64_t n_sub_82529BE8(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_t targetEntity, uint64_t shouldOpenArg) {
+uint64_t Lua_Door_SetOpenForEntity(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_t targetEntity, uint64_t shouldOpenArg) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(32, 0x82529BE8)) { ctx.r3.u64 = doorAddr; ctx.r4.u64 = targetEntity; ctx.r5.u64 = shouldOpenArg; __imp__sub_82529BE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82529BE8);
@@ -841,7 +853,7 @@ uint64_t n_sub_82529BE8(CpuState& ctx, uint8_t* base, uint64_t doorAddr, uint64_
 	ctx.r1.u64 = stack;
 	return canOpenForEntity;
 }
-PROMOTED_ENTRY(32, sub_82529BE8, 0x82529BE8) { ctx.r3.u64 = n_sub_82529BE8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(32, sub_82529BE8, 0x82529BE8) { ctx.r3.u64 = Lua_Door_SetOpenForEntity(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t Door_IsLockedForPlayer_Impl(CpuState& ctx, uint8_t* base, uint32_t doorObject) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -866,6 +878,8 @@ uint64_t Door_IsLockedForPlayer_Impl(CpuState& ctx, uint8_t* base, uint32_t door
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r8.u64 = handleArray;
+		ctx.r9.u64 = handleContainer;
 		uint32_t playerEntity = (uint32_t)EntityHandle_Get(ctx, base, firstHandle);
 		r6Value = ctx.r6.u64;
 		r7Value = ctx.r7.u64;
@@ -927,7 +941,7 @@ uint64_t Door_IsLockedForPlayer_Impl(CpuState& ctx, uint8_t* base, uint32_t door
 						}
 					}
 
-					uint32_t lockState = (uint32_t)n_sub_821C2C18(ctx, base, component);
+					uint32_t lockState = (uint32_t)LockComponent_GetLockState(ctx, base, component);
 					isLocked = ((int32_t)lockState < 2) ? 0 : 1;
 				}
 			}
@@ -1000,7 +1014,7 @@ PROMOTED_ENTRY(32, sub_8252AC50, 0x8252AC50) { ctx.r3.u64 = Door_SetOpenForEntit
 // sub_8252AE08  [300 bytes]
 // Callers pass a CCharString in r4 (stringAddr), a vector in v1 and a float in f1 that is added to the
 // vector's third lane (zOffset).
-uint32_t n_sub_8252AE08(CpuState& ctx, uint8_t* base, uint64_t stringAddr, double zOffset) {
+uint32_t CECDoor_PlayEffect(CpuState& ctx, uint8_t* base, uint64_t stringAddr, double zOffset) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(32, 0x8252AE08)) { ctx.r4.u64 = stringAddr; ctx.f1.f64 = zOffset; __imp__sub_8252AE08(ctx, base); return ctx.r3.u32; }
@@ -1104,7 +1118,7 @@ uint32_t n_sub_8252AE08(CpuState& ctx, uint8_t* base, uint64_t stringAddr, doubl
 	uint32_t callResult = ctx.r3.u32;
 
 	uint32_t inner = LOAD32(LOAD32(callResult + 4));
-	n_sub_821DDE30(ctx, base, stack + 112, inner, 1);
+	EffectManager_AddEffect(ctx, base, stack + 112, inner, 1);
 
 	// tear down the C_820A6754 object built at stack+112: members at +36 and +32 released, vtable set back
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 148);
@@ -1118,10 +1132,10 @@ uint32_t n_sub_8252AE08(CpuState& ctx, uint8_t* base, uint64_t stringAddr, doubl
 	ctx.r0.u64 = 0xFFFFFFD0;
 	return released;
 }
-PROMOTED_ENTRY(32, sub_8252AE08, 0x8252AE08) { ctx.r3.u64 = n_sub_8252AE08(ctx, base, ctx.r4.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(32, sub_8252AE08, 0x8252AE08) { ctx.r3.u64 = CECDoor_PlayEffect(ctx, base, ctx.r4.u64, ctx.f1.f64); }
 
 // sub_8252AF38  [612 bytes]
-uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+uint64_t Door_AddWorldTextAtPosition(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	constexpr int32_t g_8209B4E0 = int32_t(0x8209B4E0);
 	constexpr int32_t g_820BCE44 = int32_t(0x820BCE44);
 	constexpr int32_t g_820BCE50 = int32_t(0x820BCE50);
@@ -1130,8 +1144,8 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	constexpr int32_t g_820BCE8C = int32_t(0x820BCE8C);
 	if (!UseLiftedCode(32, 0x8252AF38)) { ctx.r3.u64 = doorAddr; __imp__sub_8252AF38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8252AF38);
-	PPCVRegister savedV127 = ctx.v127;  // restored on return: the first n_sub_8252AE08 call gets v1 in v127
-	const PPCVRegister inputVector = ctx.v1;  // handed on in v1 to every n_sub_8252AE08 call
+	PPCVRegister savedV127 = ctx.v127;  // restored on return: the first CECDoor_PlayEffect call gets v1 in v127
+	const PPCVRegister inputVector = ctx.v1;  // handed on in v1 to every CECDoor_PlayEffect call
 	uint32_t stack = ctx.r1.u64;
 	CECDoor* door = GameObject<CECDoor>(base, doorAddr);
 	const uint32_t floatTable = uint32_t(g_8209B4E0);
@@ -1139,7 +1153,7 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	VSTORE((stack + 0xFFFFFFD0u) & ~0xF, V8(savedV127));
 	stack = PushStackFrame(base, stack, 144);
 
-	// Strings are built in turn at stack+80 and handed to n_sub_8252AE08 with floats from g_8209B4E0: one
+	// Strings are built in turn at stack+80 and handed to CECDoor_PlayEffect with floats from g_8209B4E0: one
 	// chosen by the open state, one chosen by door->m_21 and, when the door's entity has a component of
 	// type 64, the narrow string at +128 of the entity it refers to (or a fixed string).
 	ctx.r1.u64 = stack;
@@ -1150,7 +1164,7 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	// state the callee may pass on
 	ctx.v1 = inputVector;
 	ctx.v127 = inputVector;
-	n_sub_8252AE08(ctx, base, stack + 80, zOffset);
+	CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
 
 	CCharString_AssignFromWideStr(ctx, base, stack + 80, door->m_21 ? g_820BCE68 : g_820BCE78);
@@ -1158,7 +1172,7 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	zOffset = double(LOAD_F32(floatTable + 17056));
 	// state the callee may pass on
 	ctx.v1 = inputVector;
-	n_sub_8252AE08(ctx, base, stack + 80, zOffset);
+	CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
 
 	// Component of type 64 of the door's entity (door->m_4), present when bit 0 of its +44 word is set:
@@ -1231,7 +1245,7 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 		zOffset = double(LOAD_F32(floatTable));
 		// state the callee may pass on
 		ctx.v1 = inputVector;
-		n_sub_8252AE08(ctx, base, stack + 80, zOffset);
+		CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
 		result = CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
 	}
 
@@ -1242,14 +1256,14 @@ uint64_t n_sub_8252AF38(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_8252AF38, 0x8252AF38) { ctx.r3.u64 = n_sub_8252AF38(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_8252AF38, 0x8252AF38) { ctx.r3.u64 = Door_AddWorldTextAtPosition(ctx, base, ctx.r3.u64); }
 
 // sub_8252B420  [628 bytes]
 // When the byte at 0x83496A79 is set and the door's entity has a component of type 23 (bit 23 of its +36
 // word): the position (vtable offset 64 of the object at +124) of the entity behind the first handle, and
 // then of the owner SpellShot_GetOwner gives for that handle, is compared with the door entity's position;
-// within the squared distance at 0x82099320, n_sub_8252AF38 runs with that position in v1.
-uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+// within the squared distance at 0x82099320, Door_AddWorldTextAtPosition runs with that position in v1.
+uint64_t Door_UpdateNearbyWorldText(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(32, 0x8252B420)) { ctx.r3.u64 = doorAddr; __imp__sub_8252B420(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8252B420);
@@ -1303,6 +1317,9 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			uint32_t firstHandle = LOAD32(handleArray);
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
+			ctx.r7.u64 = r7Value;
+			ctx.r8.u64 = r8Value;
+			ctx.r9.u64 = handleArray;
 			ctx.xer.ca = carry;
 			uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, firstHandle);
 
@@ -1315,6 +1332,9 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t getEntityPos = LOAD32(LOAD32(entityPosSource) + 64);
 				callTarget.u64 = getEntityPos;
 				// r3/r4: the output and the object; r9/r10: state the callee may pass on
+				ctx.r3.u64 = stack + 80;
+				ctx.r4.u64 = entityPosSource;
+				ctx.r9.u64 = 1;
 				ctx.r10.u64 = getEntityPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -1344,13 +1364,18 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 					callTarget.u64 = getEntityPos2;
 					// r3/r4: the output and the object; r5, r6, r10, v11-v13: state the callee may pass on
 					ctx.r3.u64 = stack + 128;
+					ctx.r4.u64 = entityPosSource2;
+					ctx.r5.u64 = stack + 96;
+					ctx.r6.u64 = stack + 80;
+					ctx.r10.u64 = getEntityPos2;
 					ctx.v11 = distanceSq;
 					ctx.v12 = offset;
 					ctx.v13 = doorPos;
 					REX_CALL_INDIRECT_FUNC(callTarget.u32);
 					// v1: the position just fetched; r9: state the callee may pass on
 					SET_V8(ctx.v1, VLOAD((stack + 128) & ~0xF));
-					n_sub_8252AF38(ctx, base, doorAddr);
+					ctx.r9.u64 = stack + 128;
+					Door_AddWorldTextAtPosition(ctx, base, doorAddr);
 				} else {
 					// state SpellShot_GetOwner below may pass on
 					ctx.r4.u64 = stack + 112;
@@ -1366,6 +1391,7 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 			uint32_t handleArray2 = LOAD32(LOAD32(world2 + 88) + 4);
 			uint32_t firstHandle2 = LOAD32(handleArray2);
 			// state the callee may pass on (r4-r6 and v11-v13 as set above or as the last call left them)
+			ctx.r9.u64 = handleArray2;
 			result = SpellShot_GetOwner(ctx, base, firstHandle2);
 
 			uint32_t owner = (uint32_t)result;
@@ -1374,6 +1400,8 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				uint32_t getOwnerPos = LOAD32(LOAD32(ownerPosSource) + 64);
 				callTarget.u64 = getOwnerPos;
 				// r3/r4: the output and the object; r10: state the callee may pass on
+				ctx.r3.u64 = stack + 144;
+				ctx.r4.u64 = ownerPosSource;
 				ctx.r10.u64 = getOwnerPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -1412,13 +1440,18 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 				callTarget.u64 = getOwnerPos2;
 				// r3/r4: the output and the object; r5, r6, r10, v11-v13: state the callee may pass on
 				ctx.r3.u64 = stack + 176;
+				ctx.r4.u64 = ownerPosSource2;
+				ctx.r5.u64 = stack + 160;
+				ctx.r6.u64 = stack + 144;
+				ctx.r10.u64 = getOwnerPos2;
 				ctx.v11 = distanceSq;
 				ctx.v12 = offset;
 				ctx.v13 = doorPos;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				// v1: the position just fetched; r9: state the callee may pass on
 				SET_V8(ctx.v1, VLOAD((stack + 176) & ~0xF));
-				result = n_sub_8252AF38(ctx, base, doorAddr);
+				ctx.r9.u64 = stack + 176;
+				result = Door_AddWorldTextAtPosition(ctx, base, doorAddr);
 			}
 		}
 	}
@@ -1427,9 +1460,9 @@ uint64_t n_sub_8252B420(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.r1.u64 = stack;
 	return result;  // r4 stays as the last call left it (or as on entry)
 }
-PROMOTED_ENTRY(32, sub_8252B420, 0x8252B420) { ctx.r3.u64 = n_sub_8252B420(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_8252B420, 0x8252B420) { ctx.r3.u64 = Door_UpdateNearbyWorldText(ctx, base, ctx.r3.u64); }
 
-// The outline handle in door->m_3C is -1 when unset; a set one is passed to n_sub_8263A788 with 4 and
+// The outline handle in door->m_3C is -1 when unset; a set one is passed to Outline_RemoveHandle with 4 and
 // cleared, and that call's result is returned (otherwise the unset handle).
 uint64_t Lua_Door_RemoveOutlineForLineFiring(CpuState& ctx, uint8_t* base, uint32_t doorAddr) {
 	if (!UseLiftedCode(32, 0x8252B6D8)) { ctx.r3.u64 = doorAddr; __imp__sub_8252B6D8(ctx, base); return ctx.r3.u64; }
@@ -1441,7 +1474,7 @@ uint64_t Lua_Door_RemoveOutlineForLineFiring(CpuState& ctx, uint8_t* base, uint3
 	uint64_t result = outlineHandle;
 	if ((int32_t)outlineHandle != -1) {
 		ctx.r1.u64 = stack;
-		result = n_sub_8263A788(ctx, base, outlineHandle, 4);
+		result = Outline_RemoveHandle(ctx, base, outlineHandle, 4);
 		door->m_3C = 0xFFFFFFFFu;
 	}
 	stack = PopStackFrame(stack, 96);
@@ -1450,10 +1483,10 @@ uint64_t Lua_Door_RemoveOutlineForLineFiring(CpuState& ctx, uint8_t* base, uint3
 }
 PROMOTED_ENTRY(32, sub_8252B6D8, 0x8252B6D8) { ctx.r3.u64 = Lua_Door_RemoveOutlineForLineFiring(ctx, base, ctx.r3.u32); }
 
-// The handle in door->m_3C (-1 when unset): with door->m_20 set, a set handle is passed to n_sub_8263A788
+// The handle in door->m_3C (-1 when unset): with door->m_20 set, a set handle is passed to Outline_RemoveHandle
 // with 4 and unset (as Lua_Door_RemoveOutlineForLineFiring does); otherwise an unset handle becomes what
-// n_sub_82639C30 returns for the door's entity.
-uint64_t n_sub_8252B720(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
+// Door_CreateOutlineHandle returns for the door's entity.
+uint64_t Door_UpdateOutlineHandle(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	if (!UseLiftedCode(32, 0x8252B720)) { ctx.r3.u64 = doorAddr; __imp__sub_8252B720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8252B720);
 	uint32_t stack = ctx.r1.u64;
@@ -1466,13 +1499,13 @@ uint64_t n_sub_8252B720(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 		result = outlineHandle;
 		if ((int32_t)outlineHandle != -1) {
 			ctx.r1.u64 = stack;
-			result = n_sub_8263A788(ctx, base, outlineHandle, 4);
+			result = Outline_RemoveHandle(ctx, base, outlineHandle, 4);
 			door->m_3C = 0xFFFFFFFFu;
 		}
 	} else if ((int32_t)door->m_3C == -1) {
 		uint32_t doorEntity = door->m_4;
 		ctx.r1.u64 = stack;
-		result = n_sub_82639C30(ctx, base, doorEntity);
+		result = Door_CreateOutlineHandle(ctx, base, doorEntity);
 		door->m_3C = (uint32_t)result;
 	}
 
@@ -1480,7 +1513,7 @@ uint64_t n_sub_8252B720(CpuState& ctx, uint8_t* base, uint64_t doorAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_8252B720, 0x8252B720) { ctx.r3.u64 = n_sub_8252B720(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_8252B720, 0x8252B720) { ctx.r3.u64 = Door_UpdateOutlineHandle(ctx, base, ctx.r3.u64); }
 
 uint64_t Door_PruneInvalidEntityHandles(CpuState& ctx, uint8_t* base, uint32_t doorAddr) {
 	if (!UseLiftedCode(61, 0x828AB598)) { ctx.r3.u64 = doorAddr; __imp__sub_828AB598(ctx, base); return ctx.r3.u64; }

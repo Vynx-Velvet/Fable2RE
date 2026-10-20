@@ -1,9 +1,9 @@
 // CBlockComponent (vtable 0x8200AC34): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -29,16 +29,16 @@ uint64_t Lua_Block_GetLastCompletedBlockTime(CpuState& ctx, uint8_t* base, uint6
 }
 PROMOTED_ENTRY(30, sub_824F4A80, 0x824F4A80) { ctx.r3.u64 = Lua_Block_GetLastCompletedBlockTime(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8279DEC0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t Lua_Block_IsBlocking_8279DEC0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	if (!UseLiftedCode(52, 0x8279DEC0)) { ctx.r3.u64 = arg1; __imp__sub_8279DEC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8279DEC0);
 	uint32_t blockComponent = (uint32_t)arg1;
 	return LOAD8(blockComponent + 0xA8);
 }
-PROMOTED_ENTRY(52, sub_8279DEC0, 0x8279DEC0) { ctx.r3.u64 = n_sub_8279DEC0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_8279DEC0, 0x8279DEC0) { ctx.r3.u64 = Lua_Block_IsBlocking_8279DEC0(ctx, base, ctx.r3.u64); }
 
 // sub_82C0B268  [28 bytes]
-uint64_t n_sub_82C0B268(CpuState& ctx, uint8_t* base, uint64_t blockComponentAddr) {
+uint64_t CBlockComponent_SetEnabled(CpuState& ctx, uint8_t* base, uint64_t blockComponentAddr) {
 	if (!UseLiftedCode(89, 0x82C0B268)) { ctx.r3.u64 = blockComponentAddr; __imp__sub_82C0B268(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0B268);
 	if ((uint32_t)blockComponentAddr == 0) return blockComponentAddr;
@@ -51,7 +51,7 @@ uint64_t n_sub_82C0B268(CpuState& ctx, uint8_t* base, uint64_t blockComponentAdd
 	REX_CALL_INDIRECT_FUNC(virtualFn);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(89, sub_82C0B268, 0x82C0B268) { ctx.r3.u64 = n_sub_82C0B268(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(89, sub_82C0B268, 0x82C0B268) { ctx.r3.u64 = CBlockComponent_SetEnabled(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_82C0BDD0(CpuState& ctx, uint8_t* base, uint64_t blockComponent, double value) {
 	if (!UseLiftedCode(89, 0x82C0BDD0)) { ctx.r3.u64 = blockComponent; ctx.f1.f64 = value; __imp__sub_82C0BDD0(ctx, base); return ctx.r3.u64; }
@@ -163,7 +163,7 @@ uint64_t CBlockComponent_Ctor(CpuState& ctx, uint8_t* base, uint64_t blockCompon
 
 	blockComponent->vtable = 0x8200AC34u;
 	ctx.r1.u64 = stack;
-	n_sub_821D5BA0(ctx, base, blockComponentAddr + 4);
+	CCharString_Constructor(ctx, base, blockComponentAddr + 4);
 
 	blockComponent->m_48 = 0;
 	blockComponent->m_4C = 0;
@@ -233,12 +233,12 @@ uint32_t CBlockComponent_Dtor(CpuState& ctx, uint8_t* base, uint64_t blockCompon
 		CBlockComponent_UnlinkFromList(ctx, base, list, blockComponentAddr);
 	}
 
-	// n_sub_82C0DF98 looks m_48 up through the object at m_80 and may decrement a byte counter of the entry it finds.
+	// BlockMap_ReleaseEntry looks m_48 up through the object at m_80 and may decrement a byte counter of the entry it finds.
 	uint32_t object80 = blockComponent->m_80;
 	if (object80 != 0) {
 		uint32_t value48 = blockComponent->m_48;
 		ctx.r1.u64 = stack;
-		n_sub_82C0DF98(ctx, base, object80, value48);
+		BlockMap_ReleaseEntry(ctx, base, object80, value48);
 		r4Value = ctx.r4.u64;
 		blockComponent->m_80 = 0;
 	}

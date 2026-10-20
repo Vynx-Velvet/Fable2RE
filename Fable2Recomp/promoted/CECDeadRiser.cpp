@@ -1,9 +1,9 @@
 // CECDeadRiser (vtable 0x820E0098): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -52,14 +52,14 @@ uint64_t CECDeadRiser_Destructor(CpuState& ctx, uint8_t* base, uint64_t deadRise
 }
 PROMOTED_ENTRY(61, sub_82898820, 0x82898820) { ctx.r3.u64 = CECDeadRiser_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82898898(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
+uint64_t CECDeadRiser_Init(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	if (!UseLiftedCode(61, 0x82898898)) { ctx.r3.u64 = deadRiserAddr; __imp__sub_82898898(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82898898);
 	uint32_t stack = ctx.r1.u64;
 	CECDeadRiser* deadRiser = GameObject<CECDeadRiser>(base, deadRiserAddr);
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, deadRiser->m_4, deadRiserAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, deadRiser->m_4, deadRiserAddr);
 	ctx.fpscr.disableFlushMode();
 	float spawnDelay = LOAD_F32(0x820994B4u);
 	float spawnDelay2 = LOAD_F32(0x8209F48Cu);
@@ -73,7 +73,7 @@ uint64_t n_sub_82898898(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_82898898, 0x82898898) { ctx.r3.u64 = n_sub_82898898(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_82898898, 0x82898898) { ctx.r3.u64 = CECDeadRiser_Init(ctx, base, ctx.r3.u64); }
 
 uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, uint64_t serializer, uint64_t serializeFlags) {
 	if (!UseLiftedCode(61, 0x82898900)) { ctx.r3.u64 = deadRiserAddr; ctx.r4.u64 = serializer; ctx.r6.u64 = serializeFlags; __imp__sub_82898900(ctx, base); return ctx.r3.u64; }
@@ -106,6 +106,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 	uint32_t currStateNameObj = LOAD32(stack + 80);
 	uint64_t currStateName = emptyStringData;
 	if (currStateNameObj != 0) currStateName = LOAD32(currStateNameObj);
+	ctx.r4.u64 = currStateName;
 	IStream_SerializeU32(ctx, base, serializer, stack + 84);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	deadRiser->m_CurrState = LOAD32(stack + 84);
@@ -115,6 +116,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t nameObj = LOAD32(stack + 80);
 		uint64_t name = emptyStringData;
 		if (nameObj != 0) name = LOAD32(nameObj);
+		ctx.r4.u64 = name;
 		IStream_SerializeFloat(ctx, base, serializer, valueAddr);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	};
@@ -130,6 +132,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 		uint32_t nameObj = LOAD32(stack + 80);
 		uint64_t name = emptyStringData;
 		if (nameObj != 0) name = LOAD32(nameObj);
+		ctx.r4.u64 = name;
 		IStream_SerializeU32(ctx, base, serializer, valueAddr);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	};
@@ -144,7 +147,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 	serializeString(str_TXT_820E004C_B_, deadRiserAddr + 17);
 
 	CCharString_ConstructFromCStr(ctx, base, stack + 80, (uint64_t)(int64_t)str_TXT_820D0A08_B_, -1);
-	n_sub_8244DAE0(ctx, base, deadRiserAddr + 52, stack + 80, serializer);
+	UID_Serialize(ctx, base, deadRiserAddr + 52, stack + 80, serializer);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
 	uint32_t lowByte = (uint32_t)(serializeFlags & 0xFF);
@@ -157,7 +160,7 @@ uint64_t CECDeadRiser_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(61, sub_82898900, 0x82898900) { ctx.r3.u64 = CECDeadRiser_SerializeProperties(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
-uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
+uint64_t CECDeadRiser_Update_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(61, 0x82898BB0)) { ctx.r3.u64 = deadRiserAddr; __imp__sub_82898BB0(ctx, base); return ctx.r3.u64; }
@@ -170,7 +173,7 @@ uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	const double radius = double(deadRiser->m_20);
 	ctx.f2.f64 = double(deadRiser->m_1C);
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_8289A398(ctx, base, deadRiserAddr, radius);
+	uint64_t result = CECDeadRiser_UpdateVisuals(ctx, base, deadRiserAddr, radius);
 	uint64_t arg4 = ctx.r4.u64;
 
 	if (LOAD8((uint32_t)deadRiserAddr + 18) != 0) {
@@ -181,12 +184,13 @@ uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 		if (hasTargetSlots) {
 			const uint32_t manager = LOAD32((uint32_t)g_83490000 + 26912);
 			const uint32_t entityList = LOAD32(LOAD32(LOAD32(manager + 12) + 88) + 4);
-			const uint64_t entity = n_sub_82264448(ctx, base, LOAD32(entityList), arg4);
+			const uint64_t entity = EntityManager_LookupEntity(ctx, base, LOAD32(entityList), arg4);
 
 			const uint32_t handleAddr = stack + 80;
 			const uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
 			STORE32(handleAddr + 4, 0);
 			STORE32(handleAddr, (uint32_t)handleVtable);
+			ctx.r6.u64 = handleVtable;
 			EntityHandle_SetTarget(ctx, base, handleAddr, entity);
 			EntityHandle_Assign(ctx, base, (uint32_t)deadRiserAddr + 60, handleAddr);
 			STORE32(handleAddr, (uint32_t)handleVtable);
@@ -194,10 +198,11 @@ uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 			arg4 = ctx.r4.u64;
 		}
 		if (LOAD8((uint32_t)deadRiserAddr + 16) != 0) {
+			ctx.r4.u64 = arg4;
 			result = EntityHandle_Get_825575C8(ctx, base, (uint32_t)deadRiserAddr + 60);
 			arg4 = ctx.r4.u64;
 			if ((uint32_t)result != 0) {
-				result = n_sub_828993F0(ctx, base, deadRiserAddr);
+				result = CECDeadRiser_SetupCastingEntity(ctx, base, deadRiserAddr);
 				arg4 = ctx.r4.u64;
 			}
 		}
@@ -208,9 +213,9 @@ uint64_t n_sub_82898BB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	ctx.r4.u64 = arg4;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_82898BB0, 0x82898BB0) { ctx.r3.u64 = n_sub_82898BB0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_82898BB0, 0x82898BB0) { ctx.r3.u64 = CECDeadRiser_Update_82898BB0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82898CB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
+uint64_t CECDeadRiser_ClearSetup(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	if (!UseLiftedCode(61, 0x82898CB0)) { ctx.r3.u64 = deadRiserAddr; __imp__sub_82898CB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82898CB0);
 	uint32_t stack = ctx.r1.u64;
@@ -218,16 +223,16 @@ uint64_t n_sub_82898CB0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr) {
 	stack = PushStackFrame(base, stack, 96);
 	if (deadRiser->m_10 != 0) {
 		ctx.r1.u64 = stack;
-		deadRiserAddr = n_sub_82899C08(ctx, base, deadRiserAddr);
+		deadRiserAddr = CECDeadRiser_ReleaseCastingSetup(ctx, base, deadRiserAddr);
 		deadRiser->m_10 = uint8_t(0);
 	}
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return deadRiserAddr;
 }
-PROMOTED_ENTRY(61, sub_82898CB0, 0x82898CB0) { ctx.r3.u64 = n_sub_82898CB0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_82898CB0, 0x82898CB0) { ctx.r3.u64 = CECDeadRiser_ClearSetup(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, uint64_t arg2) {
+uint64_t CECDeadRiser_HandleEntityEvent(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(61, 0x82899DC0)) { ctx.r3.u64 = deadRiserAddr; ctx.r4.u64 = arg2; __imp__sub_82899DC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82899DC0);
@@ -276,6 +281,8 @@ uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, ui
 	uint32_t sourceEntity = LOAD32(ownerSlot);
 
 	ctx.r1.u64 = stack;
+	ctx.r8.u64 = ownerSlot;
+	ctx.r9.u64 = activeObj;
 
 	uint64_t owner = (isHero != 0)
 		? SpellShot_GetOwner(ctx, base, sourceEntity)
@@ -288,9 +295,9 @@ uint64_t n_sub_82899DC0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, ui
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_82899DC0, 0x82899DC0) { ctx.r3.u64 = n_sub_82899DC0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_82899DC0, 0x82899DC0) { ctx.r3.u64 = CECDeadRiser_HandleEntityEvent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, double deltaTime) {
+uint32_t CECDeadRiser_UpdateScaleAndAlpha(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, double deltaTime) {
 	if (!UseLiftedCode(61, 0x8289A2C0)) { ctx.r3.u64 = deadRiserAddr; ctx.f1.f64 = deltaTime; __imp__sub_8289A2C0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289A2C0);
 
@@ -392,11 +399,17 @@ uint32_t n_sub_8289A2C0(CpuState& ctx, uint8_t* base, uint64_t deadRiserAddr, do
 	}
 
 	ctx.fpscr.disableFlushMode();
+	ctx.f2.f64 = (double)currentPitch;
+	ctx.f4.f64 = regF4;
 	ctx.f5 = regF5;
+	ctx.f6.f64 = regF6;
 	ctx.f7 = regF7;
+	ctx.f8.f64 = regF8;
+	ctx.f9.f64 = regF9;
 	ctx.f10 = regF10;
+	ctx.f11.f64 = regF11;
 	ctx.f12 = regF12;
 
-	return n_sub_8289A398(ctx, base, deadRiserAddr, (double)currentYaw);
+	return CECDeadRiser_UpdateVisuals(ctx, base, deadRiserAddr, (double)currentYaw);
 }
-PROMOTED_ENTRY(61, sub_8289A2C0, 0x8289A2C0) { ctx.r3.u64 = n_sub_8289A2C0(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(61, sub_8289A2C0, 0x8289A2C0) { ctx.r3.u64 = CECDeadRiser_UpdateScaleAndAlpha(ctx, base, ctx.r3.u64, ctx.f1.f64); }

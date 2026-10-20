@@ -1,9 +1,9 @@
 // BasicString (vtable 0x820CCE94): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -39,8 +39,8 @@ uint64_t BasicString_AssignSubstr(CpuState& ctx, uint8_t* base, uint64_t dstStri
 		// Assigning part of the string to itself: erase what follows the range, then what precedes it.
 		ctx.r1.u64 = stack;
 		ctx.r6.u64 = effectiveRequestedLength;
-		n_sub_822F1F60(ctx, base, dstStringAddr, copyLength + startOffset, -1, r8Value);
-		n_sub_822F1F60(ctx, base, dstStringAddr, 0, startOffset, ctx.r8.u64);
+		BasicString_Erase(ctx, base, dstStringAddr, copyLength + startOffset, -1, r8Value);
+		BasicString_Erase(ctx, base, dstStringAddr, 0, startOffset, ctx.r8.u64);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
 		return dstStringAddr;
@@ -91,6 +91,7 @@ uint64_t BasicString_AssignPtrLen(CpuState& ctx, uint8_t* base, uint64_t basicSt
 	if (sourceIsInternal) {
 		// The source lies inside this string's own characters: assign it as a substring of itself.
 		ctx.r1.u64 = stack;
+		ctx.r9.u64 = capacity;
 		uint64_t assigned = BasicString_AssignSubstr(ctx, base, basicStringAddr, basicStringAddr, sourceChars - data, charCount, r8Value);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
@@ -98,6 +99,7 @@ uint64_t BasicString_AssignPtrLen(CpuState& ctx, uint8_t* base, uint64_t basicSt
 	}
 
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = capacity;
 	uint32_t growResult = BasicString_Grow(ctx, base, basicStringAddr, charCount, 0, r8Value);
 	if ((growResult & 0xFF) != 0) {
 		uint32_t newCapacity = basicString->capacity;
@@ -278,7 +280,7 @@ uint32_t BasicString_Assign(CpuState& ctx, uint8_t* base, uint64_t basicStringAd
 }
 PROMOTED_ENTRY(14, sub_822F1DB0, 0x822F1DB0) { ctx.r3.u64 = BasicString_Assign(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
 
-uint32_t n_sub_822F1F60(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, uint64_t position, uint64_t count, uint64_t r8Value) {
+uint32_t BasicString_Erase(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, uint64_t position, uint64_t count, uint64_t r8Value) {
 	if (!UseLiftedCode(14, 0x822F1F60)) { ctx.r3.u64 = basicStringAddr; ctx.r4.u64 = position; ctx.r5.u64 = count; ctx.r8.u64 = r8Value; __imp__sub_822F1F60(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822F1F60);
 	uint32_t stack = ctx.r1.u64;
@@ -306,6 +308,8 @@ uint32_t n_sub_822F1F60(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 		// Move the characters after the erased range down over it.
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r9.u64 = charsFromPosition;
+		ctx.r10.u64 = data;
 		memcpy_s(ctx, base, eraseStart, (uint64_t)capacity - position, eraseStart + eraseCount, charsFromPosition - eraseCount, capacity);
 		r8Value = ctx.r8.u64;
 
@@ -322,7 +326,7 @@ uint32_t n_sub_822F1F60(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 	ctx.r8.u64 = r8Value;
 	return (uint32_t)basicStringAddr;
 }
-PROMOTED_ENTRY(14, sub_822F1F60, 0x822F1F60) { ctx.r3.u64 = n_sub_822F1F60(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(14, sub_822F1F60, 0x822F1F60) { ctx.r3.u64 = BasicString_Erase(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
 
 uint64_t BasicString_ConstructFromCStr(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, uint64_t sourceText, uint64_t r8Value) {
 	if (!UseLiftedCode(14, 0x822F2020)) { ctx.r3.u64 = basicStringAddr; ctx.r4.u64 = sourceText; ctx.r8.u64 = r8Value; __imp__sub_822F2020(ctx, base); return ctx.r3.u64; }
@@ -351,7 +355,7 @@ uint64_t BasicString_ConstructFromCStr(CpuState& ctx, uint8_t* base, uint64_t ba
 }
 PROMOTED_ENTRY(14, sub_822F2020, 0x822F2020) { ctx.r3.u64 = BasicString_ConstructFromCStr(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint32_t n_sub_826C2E98(CpuState& ctx, uint8_t* base, uint32_t basicStringAddr) {
+uint32_t BasicString_Destructor(CpuState& ctx, uint8_t* base, uint32_t basicStringAddr) {
 	if (!UseLiftedCode(45, 0x826C2E98)) { ctx.r3.u64 = basicStringAddr; __imp__sub_826C2E98(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x826C2E98);
 	uint32_t stack = ctx.r1.u64;
@@ -370,7 +374,7 @@ uint32_t n_sub_826C2E98(CpuState& ctx, uint8_t* base, uint32_t basicStringAddr) 
 	ctx.r1.u64 = stack;
 	return lastResult;
 }
-PROMOTED_ENTRY(45, sub_826C2E98, 0x826C2E98) { ctx.r3.u64 = n_sub_826C2E98(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(45, sub_826C2E98, 0x826C2E98) { ctx.r3.u64 = BasicString_Destructor(ctx, base, ctx.r3.u32); }
 
 uint64_t n_sub_826C2EF0(CpuState& ctx, uint8_t* base, uint64_t basicString) {
 	if (!UseLiftedCode(45, 0x826C2EF0)) { ctx.r3.u64 = basicString; __imp__sub_826C2EF0(ctx, base); return ctx.r3.u64; }
@@ -386,7 +390,7 @@ uint64_t n_sub_826C2EF8(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr) 
 }
 PROMOTED_ENTRY(45, sub_826C2EF8, 0x826C2EF8) { ctx.r3.u64 = n_sub_826C2EF8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826C2F00(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
+uint64_t BasicString_ConstructFromCStr8(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
 	if (!UseLiftedCode(45, 0x826C2F00)) { ctx.r3.u64 = resultString; ctx.r4.u64 = source; ctx.r8.u64 = arg3; __imp__sub_826C2F00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826C2F00);
 	uint32_t stack = ctx.r1.u64;
@@ -398,9 +402,9 @@ uint64_t n_sub_826C2F00(CpuState& ctx, uint8_t* base, uint64_t resultString, uin
 	ctx.r1.u64 = stack;
 	return resultString;
 }
-PROMOTED_ENTRY(45, sub_826C2F00, 0x826C2F00) { ctx.r3.u64 = n_sub_826C2F00(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(45, sub_826C2F00, 0x826C2F00) { ctx.r3.u64 = BasicString_ConstructFromCStr8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint64_t n_sub_826C2F38(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
+uint64_t BasicString_ConstructFromCStr16(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
 	if (!UseLiftedCode(45, 0x826C2F38)) { ctx.r3.u64 = resultString; ctx.r4.u64 = source; ctx.r8.u64 = arg3; __imp__sub_826C2F38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826C2F38);
 	uint32_t stack = ctx.r1.u64;
@@ -412,9 +416,9 @@ uint64_t n_sub_826C2F38(CpuState& ctx, uint8_t* base, uint64_t resultString, uin
 	ctx.r1.u64 = stack;
 	return resultString;
 }
-PROMOTED_ENTRY(45, sub_826C2F38, 0x826C2F38) { ctx.r3.u64 = n_sub_826C2F38(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(45, sub_826C2F38, 0x826C2F38) { ctx.r3.u64 = BasicString_ConstructFromCStr16(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint64_t n_sub_826C2F70(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
+uint64_t BasicString_ConstructFromCStr20(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t source, uint64_t arg3) {
 	if (!UseLiftedCode(45, 0x826C2F70)) { ctx.r3.u64 = resultString; ctx.r4.u64 = source; ctx.r8.u64 = arg3; __imp__sub_826C2F70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826C2F70);
 	uint32_t stack = ctx.r1.u64;
@@ -426,17 +430,17 @@ uint64_t n_sub_826C2F70(CpuState& ctx, uint8_t* base, uint64_t resultString, uin
 	ctx.r1.u64 = stack;
 	return resultString;
 }
-PROMOTED_ENTRY(45, sub_826C2F70, 0x826C2F70) { ctx.r3.u64 = n_sub_826C2F70(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(45, sub_826C2F70, 0x826C2F70) { ctx.r3.u64 = BasicString_ConstructFromCStr20(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 // Destroys the object (sub_826C2E98) and, when bit 0 of deleteFlags is set, also frees the object's own memory.
-uint64_t n_sub_826C2FA8(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, uint64_t deleteFlags) {
+uint64_t BasicString_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(45, 0x826C2FA8)) { ctx.r3.u64 = basicStringAddr; ctx.r4.u64 = deleteFlags; __imp__sub_826C2FA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826C2FA8);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_826C2E98(ctx, base, basicStringAddr);
+	BasicString_Destructor(ctx, base, basicStringAddr);
 	if (deleteFlags & 0x1) {
 		HandleTarget_Free(ctx, base, basicStringAddr);
 	}
@@ -444,4 +448,4 @@ uint64_t n_sub_826C2FA8(CpuState& ctx, uint8_t* base, uint64_t basicStringAddr, 
 	ctx.r1.u64 = stack;
 	return basicStringAddr;
 }
-PROMOTED_ENTRY(45, sub_826C2FA8, 0x826C2FA8) { ctx.r3.u64 = n_sub_826C2FA8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(45, sub_826C2FA8, 0x826C2FA8) { ctx.r3.u64 = BasicString_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }

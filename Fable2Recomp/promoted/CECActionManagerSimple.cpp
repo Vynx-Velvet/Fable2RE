@@ -1,9 +1,9 @@
 // CECActionManagerSimple (vtable 0x82006DF8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821DAB78(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
+uint64_t CECActionManagerSimple_IsCurrentActionType3(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(3, 0x821DAB78)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_821DAB78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821DAB78);
 	uint32_t stack = ctx.r1.u64;
@@ -50,9 +50,9 @@ uint64_t n_sub_821DAB78(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821DAB78, 0x821DAB78) { ctx.r3.u64 = n_sub_821DAB78(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(3, sub_821DAB78, 0x821DAB78) { ctx.r3.u64 = CECActionManagerSimple_IsCurrentActionType3(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
+uint64_t CECActionManagerSimple_InterruptCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(5, 0x8220A618)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_8220A618(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8220A618);
@@ -94,6 +94,7 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r5.u64 = heldObjectForRelease;
 	SharedHandle_Release(ctx, base, previousActionSlot);
 	STORE32(previousActionSlot, 0);
 
@@ -131,6 +132,7 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 				handedR9 = lockState;
 			} while (!compare0.eq);
 		}
+		ctx.r9.u64 = handedR9;
 		n_sub_8226B5C0(ctx, base, currentAction);
 		if (currentAction == LOAD32(currentActionSlot)) {
 			uint32_t actionCheckFn = LOAD32(LOAD32(currentAction) + 24);
@@ -153,7 +155,7 @@ uint64_t n_sub_8220A618(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(5, sub_8220A618, 0x8220A618) { ctx.r3.u64 = n_sub_8220A618(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(5, sub_8220A618, 0x8220A618) { ctx.r3.u64 = CECActionManagerSimple_InterruptCurrentAction(ctx, base, ctx.r3.u64); }
 
 uint64_t CECActionManagerSimple_IsActionActive(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(10, 0x82290020)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_82290020(ctx, base); return ctx.r3.u64; }
@@ -247,7 +249,7 @@ uint64_t CECActionManagerSimple_SetAction(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(11, sub_8229EB80, 0x8229EB80) { ctx.r3.u64 = CECActionManagerSimple_SetAction(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_822B7078(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
+uint64_t CECActionManagerSimple_AbortCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(12, 0x822B7078)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_822B7078(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822B7078);
 	uint32_t stack = ctx.r1.u64;
@@ -297,7 +299,7 @@ uint64_t n_sub_822B7078(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 		SharedPtr_Assign(ctx, base, previousActionSlot, actionRef);
 		SharedHandle_Release(ctx, base, currentActionSlot);
 		STORE32(currentActionSlot, 0u);
-		n_sub_826DF838(ctx, base, currentAction);
+		CPhasedAction_Start(ctx, base, currentAction);
 		n_sub_82285D10(ctx, base, currentAction);
 		result = SharedHandle_Release(ctx, base, actionRef);
 	}
@@ -306,7 +308,7 @@ uint64_t n_sub_822B7078(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(12, sub_822B7078, 0x822B7078) { ctx.r3.u64 = n_sub_822B7078(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(12, sub_822B7078, 0x822B7078) { ctx.r3.u64 = CECActionManagerSimple_AbortCurrentAction(ctx, base, ctx.r3.u64); }
 
 uint64_t CECActionManagerSimple_CanInterruptCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t priority, uint64_t forceInterrupt) {
 	if (!UseLiftedCode(12, 0x822CB140)) { ctx.r3.u64 = actionManagerSimpleAddr; ctx.r4.u64 = priority; ctx.r5.u64 = forceInterrupt; __imp__sub_822CB140(ctx, base); return ctx.r3.u64; }
@@ -422,7 +424,7 @@ uint64_t CECActionManagerSimple_DeletingDestructor(CpuState& ctx, uint8_t* base,
 }
 PROMOTED_ENTRY(68, sub_8297BC18, 0x8297BC18) { ctx.r3.u64 = CECActionManagerSimple_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8297BD40(CpuState& ctx, uint8_t* base, uint64_t actionManager, uint64_t action) {
+uint64_t CECActionManagerSimple_SetHeldObject(CpuState& ctx, uint8_t* base, uint64_t actionManager, uint64_t action) {
 	if (!UseLiftedCode(68, 0x8297BD40)) { ctx.r3.u64 = actionManager; ctx.r4.u64 = action; __imp__sub_8297BD40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BD40);
 	uint32_t stack = ctx.r1.u64;
@@ -457,9 +459,9 @@ uint64_t n_sub_8297BD40(CpuState& ctx, uint8_t* base, uint64_t actionManager, ui
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_8297BD40, 0x8297BD40) { ctx.r3.u64 = n_sub_8297BD40(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(68, sub_8297BD40, 0x8297BD40) { ctx.r3.u64 = CECActionManagerSimple_SetHeldObject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8297BDB0(CpuState& ctx, uint8_t* base, uint64_t actionManager) {
+uint64_t CECActionManagerSimple_HasCombatComponent(CpuState& ctx, uint8_t* base, uint64_t actionManager) {
 	if (!UseLiftedCode(68, 0x8297BDB0)) { ctx.r3.u64 = actionManager; __imp__sub_8297BDB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BDB0);
 	uint32_t stack = ctx.r1.u64;
@@ -480,7 +482,7 @@ uint64_t n_sub_8297BDB0(CpuState& ctx, uint8_t* base, uint64_t actionManager) {
 	ctx.r1.u64 = stack;
 	return hasCombatComponent;
 }
-PROMOTED_ENTRY(68, sub_8297BDB0, 0x8297BDB0) { ctx.r3.u64 = n_sub_8297BDB0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_8297BDB0, 0x8297BDB0) { ctx.r3.u64 = CECActionManagerSimple_HasCombatComponent(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_8297BF50(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(68, 0x8297BF50)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_8297BF50(ctx, base); return ctx.r3.u64; }
@@ -529,13 +531,13 @@ uint64_t n_sub_8297BF70(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 }
 PROMOTED_ENTRY(68, sub_8297BF70, 0x8297BF70) { ctx.r3.u64 = n_sub_8297BF70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8297BFE0(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t actionAddr) {
+uint64_t CECActionManagerSimple_CanInterruptCurrentActionWithAction(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t actionAddr) {
 	if (!UseLiftedCode(68, 0x8297BFE0)) { ctx.r3.u64 = actionManagerSimpleAddr; ctx.r4.u64 = actionAddr; __imp__sub_8297BFE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BFE0);
 	uint32_t actionPriority = LOAD32((uint32_t)actionAddr + 52);
 	return CECActionManagerSimple_CanInterruptCurrentAction(ctx, base, actionManagerSimpleAddr, actionPriority, 0);
 }
-PROMOTED_ENTRY(68, sub_8297BFE0, 0x8297BFE0) { ctx.r3.u64 = n_sub_8297BFE0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(68, sub_8297BFE0, 0x8297BFE0) { ctx.r3.u64 = CECActionManagerSimple_CanInterruptCurrentActionWithAction(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t Lua_Talk_IsTalking(CpuState& ctx, uint8_t* base, uint32_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(68, 0x8297BFF0)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_8297BFF0(ctx, base); return ctx.r3.u64; }
@@ -546,7 +548,7 @@ uint64_t Lua_Talk_IsTalking(CpuState& ctx, uint8_t* base, uint32_t actionManager
 }
 PROMOTED_ENTRY(68, sub_8297BFF0, 0x8297BFF0) { ctx.r3.u64 = Lua_Talk_IsTalking(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8297C008(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
+uint64_t CECActionManagerSimple_IsCurrentActionLowPriority(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(68, 0x8297C008)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_8297C008(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297C008);
 	uint32_t stack = ctx.r1.u64;
@@ -571,7 +573,7 @@ uint64_t n_sub_8297C008(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_8297C008, 0x8297C008) { ctx.r3.u64 = n_sub_8297C008(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_8297C008, 0x8297C008) { ctx.r3.u64 = CECActionManagerSimple_IsCurrentActionLowPriority(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_8297C068(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr) {
 	if (!UseLiftedCode(68, 0x8297C068)) { ctx.r3.u64 = actionManagerSimpleAddr; __imp__sub_8297C068(ctx, base); return ctx.r3.u64; }
@@ -615,35 +617,33 @@ PROMOTED_ENTRY(68, sub_8297C0C8, 0x8297C0C8) { ctx.r3.u64 = n_sub_8297C0C8(ctx, 
 uint64_t CECActionManagerSimple_ReleaseCurrentAction(CpuState& ctx, uint8_t* base, uint64_t manager) {
 	if (!UseLiftedCode(68, 0x8297C0D8)) { ctx.r3.u64 = manager; __imp__sub_8297C0D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297C0D8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
+	GameStackFrame stackFrame(ctx, base, 96);
 	uint64_t currentActionSlot = manager + 16;  // m_pCurrentAction
 	uint64_t result = LOAD32((uint32_t)currentActionSlot);
 	if ((uint32_t)result != 0) {
 		uint32_t action = (uint32_t)result;
 		PPCRegister callTarget{};
 		callTarget.u64 = LOAD32(LOAD32(action) + 24);
-		ctx.r1.u64 = stack;
 		ctx.r3.u64 = action;
 		ctx.r10.u64 = callTarget.u64;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// r9 as the two calls below receive it: the low byte of the virtual call's result,
-		// or what n_sub_826DF838 left there
+		// or what CPhasedAction_Start left there
 		uint64_t r9Value = ctx.r3.u32 & 0xFF;
 		if (r9Value == 0) {
-			n_sub_826DF838(ctx, base, LOAD32((uint32_t)currentActionSlot));
+			ctx.r9.u64 = r9Value;
+			CPhasedAction_Start(ctx, base, LOAD32((uint32_t)currentActionSlot));
 			r9Value = ctx.r9.u64;
 		}
 		action = LOAD32((uint32_t)currentActionSlot);
 		if (LOAD8(action + 73) == 0) {
+			ctx.r9.u64 = r9Value;
 			n_sub_82285D10(ctx, base, action);
 		}
 		result = SharedHandle_Release(ctx, base, currentActionSlot);
 		STORE32((uint32_t)currentActionSlot, 0u);
 	}
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(68, sub_8297C0D8, 0x8297C0D8) { ctx.r3.u64 = CECActionManagerSimple_ReleaseCurrentAction(ctx, base, ctx.r3.u64); }
@@ -753,8 +753,12 @@ uint64_t CECActionManagerSimple_ApplyAlpha(CpuState& ctx, uint8_t* base, uint64_
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			ctx.r5.u64 = actionManagerSimpleAddr;
+			ctx.r6.u64 = r6Value;
+			ctx.r7.u64 = r7Value;
+			ctx.r8.u64 = r8Value;
+			ctx.r9.u64 = r9Value;
 			ctx.xer.ca = carry;
-			result = n_sub_82547EC8(ctx, base, result, alpha);
+			result = CECGraphicAppearance_SetAlpha(ctx, base, result, alpha);
 		}
 	}
 	stack = PopStackFrame(stack, 96);
@@ -763,7 +767,7 @@ uint64_t CECActionManagerSimple_ApplyAlpha(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(68, sub_8297C208, 0x8297C208) { ctx.r3.u64 = CECActionManagerSimple_ApplyAlpha(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8297C358(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t actionManagerAddr, uint64_t insertLineBreaks) {
+uint64_t CECActionManagerSimple_GetActionDescription(CpuState& ctx, uint8_t* base, uint64_t resultString, uint64_t actionManagerAddr, uint64_t insertLineBreaks) {
 	constexpr int32_t g_82000BF4 = int32_t(0x82000BF4);
 	constexpr int32_t g_820ED7E8 = int32_t(0x820ED7E8);
 	constexpr int32_t g_834A5B6C = int32_t(0x834A5B6C);
@@ -850,4 +854,4 @@ uint64_t n_sub_8297C358(CpuState& ctx, uint8_t* base, uint64_t resultString, uin
 	ctx.r1.u64 = stack;
 	return resultString;
 }
-PROMOTED_ENTRY(68, sub_8297C358, 0x8297C358) { ctx.r3.u64 = n_sub_8297C358(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(68, sub_8297C358, 0x8297C358) { ctx.r3.u64 = CECActionManagerSimple_GetActionDescription(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }

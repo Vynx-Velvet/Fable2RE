@@ -1,9 +1,9 @@
 // EntityHandle (vtable 0x820F1664): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t actionManager, uint64_t hitResponseTable) {
+uint64_t EntityHandle_ConstructFromHitResponse(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t actionManager, uint64_t hitResponseTable) {
 	if (!UseLiftedCode(1, 0x82195F20)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = hitResponseTable; __imp__sub_82195F20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82195F20);
 	uint32_t stack = ctx.r1.u64;
@@ -41,7 +41,8 @@ uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 				// take an extra reference on the shared handle's control block
 				STORE32(controlBlock, LOAD32(controlBlock) + 1);
 			}
-			n_sub_822A4648(ctx, base, entityHandleAddr, actionManager, stack + 88, 1);
+			ctx.r9.u64 = savedR9;
+			EntityHandle_InitFromAction(ctx, base, entityHandleAddr, actionManager, stack + 88, 1);
 			SharedHandle_Release(ctx, base, newHandleAddr);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -57,7 +58,7 @@ uint64_t n_sub_82195F20(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r1.u64 = stack;
 	return entityHandleAddr;
 }
-PROMOTED_ENTRY(1, sub_82195F20, 0x82195F20) { ctx.r3.u64 = n_sub_82195F20(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(1, sub_82195F20, 0x82195F20) { ctx.r3.u64 = EntityHandle_ConstructFromHitResponse(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t EntityHandle_CopyConstruct(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t sourceHandle) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -138,7 +139,7 @@ uint64_t EntityHandle_SetTarget(CpuState& ctx, uint8_t* base, uint64_t entityHan
 }
 PROMOTED_ENTRY(5, sub_822149C8, 0x822149C8) { ctx.r3.u64 = EntityHandle_SetTarget(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t sourceHandle, uint64_t flags) {
+uint32_t EntityHandle_InitFromAction(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t sourceHandle, uint64_t flags) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(11, 0x822A4648)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = sourceHandle; ctx.r6.u64 = flags; __imp__sub_822A4648(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822A4648);
@@ -192,7 +193,8 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 
 	if (isPrepared != 0) {
 		uint32_t currentObject = LOAD32(handleAddr);
-		n_sub_826DF838(ctx, base, currentObject);
+		ctx.r9.u64 = isPrepared;
+		CPhasedAction_Start(ctx, base, currentObject);
 		isPrepared = ctx.r9.u64;
 		uint32_t currentObject2 = LOAD32(handleAddr);
 		if (currentObject2 != 0) {
@@ -233,6 +235,7 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	uint32_t managerCounter = LOAD32(manager + 12);
 	uint32_t managerOwner = LOAD32(manager + 4);
 	uint32_t targetObject = LOAD32(handleAddr);
+	ctx.r9.u64 = isPrepared;
 	n_sub_821B6668(ctx, base, targetObject, managerOwner, managerCounter);
 
 	uint32_t entityObject = LOAD32(handleAddr);
@@ -243,7 +246,10 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	entityHandle->m_4 = 0;
 	entityHandle->vtable = entityVtable;
 	uint32_t entityExtra = LOAD32(entityObject + 60);
+	ctx.r6.u64 = entityObject;
+	ctx.r7.u64 = entityVtable;
 	ctx.r8.u64 = 0;
+	ctx.r9.u64 = nextManagerCounter;
 	EntityHandle_SetTarget(ctx, base, resultHandleAddr, target);
 	entityHandle->m_8 = entityExtra;
 
@@ -254,9 +260,9 @@ uint32_t n_sub_822A4648(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	ctx.r1.u64 = stack;
 	return (uint32_t)resultHandleAddr;
 }
-PROMOTED_ENTRY(11, sub_822A4648, 0x822A4648) { ctx.r3.u64 = n_sub_822A4648(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(11, sub_822A4648, 0x822A4648) { ctx.r3.u64 = EntityHandle_InitFromAction(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint64_t n_sub_822BE660(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t sourceEntity) {
+uint64_t EntityHandle_ConstructFromSource(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t sourceEntity) {
 	if (!UseLiftedCode(12, 0x822BE660)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = sourceEntity; __imp__sub_822BE660(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822BE660);
 	uint32_t stack = ctx.r1.u64;
@@ -287,7 +293,7 @@ uint64_t n_sub_822BE660(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r1.u64 = stack;
 	return entityHandleAddr;
 }
-PROMOTED_ENTRY(12, sub_822BE660, 0x822BE660) { ctx.r3.u64 = n_sub_822BE660(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(12, sub_822BE660, 0x822BE660) { ctx.r3.u64 = EntityHandle_ConstructFromSource(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t C_820F1664_Constructor(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t target, uint64_t targetId) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -311,7 +317,7 @@ uint64_t C_820F1664_Constructor(CpuState& ctx, uint8_t* base, uint64_t entityHan
 }
 PROMOTED_ENTRY(18, sub_8237D2B8, 0x8237D2B8) { ctx.r3.u64 = C_820F1664_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t deleteFlag) {
+uint64_t EntityHandle_Destructor_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t deleteFlag) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(27, 0x82488D18)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = deleteFlag; __imp__sub_82488D18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82488D18);
@@ -330,7 +336,7 @@ uint64_t n_sub_82488D18(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r1.u64 = stack;
 	return entityHandleAddr;
 }
-PROMOTED_ENTRY(27, sub_82488D18, 0x82488D18) { ctx.r3.u64 = n_sub_82488D18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(27, sub_82488D18, 0x82488D18) { ctx.r3.u64 = EntityHandle_Destructor_82488D18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint32_t LookAtHandle_CopyConstruct(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t sourceHandle) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -359,7 +365,7 @@ uint32_t LookAtHandle_CopyConstruct(CpuState& ctx, uint8_t* base, uint64_t entit
 }
 PROMOTED_ENTRY(37, sub_825BC258, 0x825BC258) { ctx.r3.u64 = LookAtHandle_CopyConstruct(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t lookupContext, uint32_t lookupContainer, uint64_t arg4, uint64_t arg5) {
+uint64_t EntityHandle_ConstructFromLookup(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t lookupContext, uint32_t lookupContainer, uint64_t arg4, uint64_t arg5) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(47, 0x82706348)) { ctx.r3.u64 = entityHandleAddr; ctx.r4.u64 = lookupContext; ctx.r5.u64 = lookupContainer; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_82706348(ctx, base); return ctx.r3.u64; }
@@ -485,7 +491,7 @@ uint64_t n_sub_82706348(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 	ctx.r4.u64 = lookupContext;
 	return entityHandleAddr;
 }
-PROMOTED_ENTRY(47, sub_82706348, 0x82706348) { ctx.r3.u64 = n_sub_82706348(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(47, sub_82706348, 0x82706348) { ctx.r3.u64 = EntityHandle_ConstructFromLookup(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
 
 uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr, uint64_t lookupContext, uint32_t lookupContainer, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -616,7 +622,7 @@ uint64_t n_sub_82706550(CpuState& ctx, uint8_t* base, uint64_t entityHandleAddr,
 PROMOTED_ENTRY(47, sub_82706550, 0x82706550) { ctx.r3.u64 = n_sub_82706550(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_8279C730  [460 bytes]
-uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t typeFactory, uint64_t typeMap) {
+uint64_t EntityHandle_CreateFromTypeMap(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t typeFactory, uint64_t typeMap) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(52, 0x8279C730)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = typeFactory; ctx.r5.u64 = typeMap; __imp__sub_8279C730(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8279C730);
@@ -695,7 +701,12 @@ uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = (uint64_t)stack + 80;
 		ctx.r4.u64 = (uint64_t)valueOffset + mapValue;
+		ctx.r5.u64 = typeMap;
+		ctx.r6.u64 = argReg6;
+		ctx.r7.u64 = argReg7;
 		ctx.r8.u64 = argReg8;
+		ctx.r9.u64 = factoryCall;
+		ctx.r10.u64 = valueOffset;
 		ctx.xer.ca = flags.ca;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint32_t created = ctx.r3.u64;
@@ -715,10 +726,10 @@ uint64_t n_sub_8279C730(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	ctx.r4.u64 = typeFactory;
 	return resultHandleAddr;
 }
-PROMOTED_ENTRY(52, sub_8279C730, 0x8279C730) { ctx.r3.u64 = n_sub_8279C730(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(52, sub_8279C730, 0x8279C730) { ctx.r3.u64 = EntityHandle_CreateFromTypeMap(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_8297BCA8  [148 bytes]
-uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t owner, uint64_t arg4) {
+uint64_t EntityHandle_FromInterruptibleActionOwner(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManager, uint64_t owner, uint64_t arg4) {
 	if (!UseLiftedCode(68, 0x8297BCA8)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManager; ctx.r5.u64 = owner; ctx.r6.u64 = arg4; __imp__sub_8297BCA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BCA8);
 	uint32_t stack = ctx.r1.u64;
@@ -740,7 +751,7 @@ uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 		ctx.r10.u64 = virtualMethod;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t returnedHandle = ctx.r3.u64;
-		n_sub_822A4648(ctx, base, resultHandleAddr, actionManager, returnedHandle, 0);
+		EntityHandle_InitFromAction(ctx, base, resultHandleAddr, actionManager, returnedHandle, 0);
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
 		return resultHandleAddr;
@@ -752,10 +763,10 @@ uint64_t n_sub_8297BCA8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	ctx.r1.u64 = stack;
 	return resultHandleAddr;
 }
-PROMOTED_ENTRY(68, sub_8297BCA8, 0x8297BCA8) { ctx.r3.u64 = n_sub_8297BCA8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(68, sub_8297BCA8, 0x8297BCA8) { ctx.r3.u64 = EntityHandle_FromInterruptibleActionOwner(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_8297BDF8  [340 bytes]
-uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManagerAddr, uint64_t actionOwnerAddr, uint64_t arg4) {
+uint64_t EntityHandle_FromInterruptibleActionManager(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t actionManagerAddr, uint64_t actionOwnerAddr, uint64_t arg4) {
 	if (!UseLiftedCode(68, 0x8297BDF8)) { ctx.r3.u64 = resultHandleAddr; ctx.r4.u64 = actionManagerAddr; ctx.r5.u64 = actionOwnerAddr; ctx.r6.u64 = arg4; __imp__sub_8297BDF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BDF8);
 	uint32_t casAddr{};
@@ -841,7 +852,7 @@ uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	} else {
 		copyAndAddReference();
 		ctx.r9.u64 = savedR9;
-		n_sub_822A4648(ctx, base, resultHandleAddr, actionManagerAddr, (uint64_t)stack + 88, 0);
+		EntityHandle_InitFromAction(ctx, base, resultHandleAddr, actionManagerAddr, (uint64_t)stack + 88, 0);
 	}
 
 	SharedHandle_Release(ctx, base, sharedHandleAddr);
@@ -849,4 +860,4 @@ uint64_t n_sub_8297BDF8(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr,
 	ctx.r1.u64 = stack;
 	return resultHandleAddr;
 }
-PROMOTED_ENTRY(68, sub_8297BDF8, 0x8297BDF8) { ctx.r3.u64 = n_sub_8297BDF8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(68, sub_8297BDF8, 0x8297BDF8) { ctx.r3.u64 = EntityHandle_FromInterruptibleActionManager(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }

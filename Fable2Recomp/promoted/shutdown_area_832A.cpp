@@ -1,9 +1,9 @@
 // Shut-down destructors of global objects at 0x832Axxxx, as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -179,13 +179,13 @@ uint64_t Destroy_TXT_83497384_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0270, 0x832A0270) { ctx.r3.u64 = Destroy_TXT_83497384_G_(ctx, base); }
 
-uint64_t n_sub_832A0280(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_834F7318(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F7318 = int32_t(0x834F7318);
 	if (!UseLiftedCode(145, 0x832A0280)) { __imp__sub_832A0280(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0280);
 	return SharedHandle_Release(ctx, base, g_834F7318);
 }
-PROMOTED_ENTRY(145, sub_832A0280, 0x832A0280) { ctx.r3.u64 = n_sub_832A0280(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0280, 0x832A0280) { ctx.r3.u64 = DestroyGlobalSharedHandle_834F7318(ctx, base); }
 
 uint64_t Destroy_TXT_83497388_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497388_G_ = int32_t(0x83497388);
@@ -275,29 +275,29 @@ uint64_t Destroy_TXT_834973B0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0330, 0x832A0330) { ctx.r3.u64 = Destroy_TXT_834973B0_G_(ctx, base); }
 
-uint64_t n_sub_832A0340(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834973B4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973B4 = int32_t(0x834973B4);
 	if (!UseLiftedCode(145, 0x832A0340)) { __imp__sub_832A0340(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0340);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834973B4);
 }
-PROMOTED_ENTRY(145, sub_832A0340, 0x832A0340) { ctx.r3.u64 = n_sub_832A0340(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0340, 0x832A0340) { ctx.r3.u64 = DestroyGlobalCCharString_834973B4(ctx, base); }
 
-uint64_t n_sub_832A0350(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834973B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973B8 = int32_t(0x834973B8);
 	if (!UseLiftedCode(145, 0x832A0350)) { __imp__sub_832A0350(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0350);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834973B8);
 }
-PROMOTED_ENTRY(145, sub_832A0350, 0x832A0350) { ctx.r3.u64 = n_sub_832A0350(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0350, 0x832A0350) { ctx.r3.u64 = DestroyGlobalCCharString_834973B8(ctx, base); }
 
-uint64_t n_sub_832A0360(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834973BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973BC = int32_t(0x834973BC);
 	if (!UseLiftedCode(145, 0x832A0360)) { __imp__sub_832A0360(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0360);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834973BC);
 }
-PROMOTED_ENTRY(145, sub_832A0360, 0x832A0360) { ctx.r3.u64 = n_sub_832A0360(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0360, 0x832A0360) { ctx.r3.u64 = DestroyGlobalCCharString_834973BC(ctx, base); }
 
 uint64_t Destroy_TXT_834973C0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834973C0_G_ = int32_t(0x834973C0);
@@ -371,13 +371,13 @@ uint64_t Destroy_TXT_834973E0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A03F0, 0x832A03F0) { ctx.r3.u64 = Destroy_TXT_834973E0_G_(ctx, base); }
 
-uint64_t n_sub_832A0400(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834973E4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973E4 = int32_t(0x834973E4);
 	if (!UseLiftedCode(145, 0x832A0400)) { __imp__sub_832A0400(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0400);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834973E4);
 }
-PROMOTED_ENTRY(145, sub_832A0400, 0x832A0400) { ctx.r3.u64 = n_sub_832A0400(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0400, 0x832A0400) { ctx.r3.u64 = DestroyGlobalCCharString_834973E4(ctx, base); }
 
 uint64_t Destroy_TXT_834973E8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834973E8_G_ = int32_t(0x834973E8);
@@ -387,31 +387,31 @@ uint64_t Destroy_TXT_834973E8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0410, 0x832A0410) { ctx.r3.u64 = Destroy_TXT_834973E8_G_(ctx, base); }
 
-uint64_t n_sub_832A0420(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834973EC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973EC = int32_t(0x834973EC);
 	if (!UseLiftedCode(145, 0x832A0420)) { __imp__sub_832A0420(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0420);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834973EC);
 }
-PROMOTED_ENTRY(145, sub_832A0420, 0x832A0420) { ctx.r3.u64 = n_sub_832A0420(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0420, 0x832A0420) { ctx.r3.u64 = DestroyGlobalCCharString_834973EC(ctx, base); }
 
-uint64_t n_sub_832A0430(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharStringStruct_834973F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834973F0 = int32_t(0x834973F0);
 	if (!UseLiftedCode(145, 0x832A0430)) { __imp__sub_832A0430(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0430);
 	uint64_t object = g_834973F0;
-	return n_sub_82358038(ctx, base);
+	return CCharStringStruct_DestroyGlobal_834973F0(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A0430, 0x832A0430) { ctx.r3.u64 = n_sub_832A0430(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0430, 0x832A0430) { ctx.r3.u64 = DestroyGlobalCCharStringStruct_834973F0(ctx, base); }
 
-uint64_t n_sub_832A0440(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharStringHandleStruct_83497400(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497400 = int32_t(0x83497400);
 	if (!UseLiftedCode(145, 0x832A0440)) { __imp__sub_832A0440(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0440);
 	uint64_t object = g_83497400;
-	return n_sub_823580A0(ctx, base);
+	return CCharStringHandleStruct_DestroyGlobal_83497400(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A0440, 0x832A0440) { ctx.r3.u64 = n_sub_832A0440(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0440, 0x832A0440) { ctx.r3.u64 = DestroyGlobalCCharStringHandleStruct_83497400(ctx, base); }
 
 uint64_t Destroy_TXT_8349741C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349741C_G_ = int32_t(0x8349741C);
@@ -709,13 +709,13 @@ uint64_t Destroy_TXT_8349751C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0750, 0x832A0750) { ctx.r3.u64 = Destroy_TXT_8349751C_G_(ctx, base); }
 
-uint64_t n_sub_832A0760(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83497520(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497520 = int32_t(0x83497520);
 	if (!UseLiftedCode(145, 0x832A0760)) { __imp__sub_832A0760(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0760);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83497520);
 }
-PROMOTED_ENTRY(145, sub_832A0760, 0x832A0760) { ctx.r3.u64 = n_sub_832A0760(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0760, 0x832A0760) { ctx.r3.u64 = DestroyGlobalCCharString_83497520(ctx, base); }
 
 uint64_t Destroy_TXT_83497524_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497524_G_ = int32_t(0x83497524);
@@ -749,13 +749,13 @@ uint64_t Destroy_TXT_83497530_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A07A0, 0x832A07A0) { ctx.r3.u64 = Destroy_TXT_83497530_G_(ctx, base); }
 
-uint64_t n_sub_832A07B0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83497534(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497534 = int32_t(0x83497534);
 	if (!UseLiftedCode(145, 0x832A07B0)) { __imp__sub_832A07B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A07B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83497534);
 }
-PROMOTED_ENTRY(145, sub_832A07B0, 0x832A07B0) { ctx.r3.u64 = n_sub_832A07B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A07B0, 0x832A07B0) { ctx.r3.u64 = DestroyGlobalCCharString_83497534(ctx, base); }
 
 uint64_t Destroy_TXT_83497538_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497538_G_ = int32_t(0x83497538);
@@ -901,21 +901,21 @@ uint64_t Destroy_TXT_83497624_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0B68, 0x832A0B68) { ctx.r3.u64 = Destroy_TXT_83497624_G_(ctx, base); }
 
-uint64_t n_sub_832A0B78(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83497630(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497630 = int32_t(0x83497630);
 	if (!UseLiftedCode(145, 0x832A0B78)) { __imp__sub_832A0B78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0B78);
 	return List_Destroy(ctx, base, g_83497630);
 }
-PROMOTED_ENTRY(145, sub_832A0B78, 0x832A0B78) { ctx.r3.u64 = n_sub_832A0B78(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0B78, 0x832A0B78) { ctx.r3.u64 = DestroyGlobalList_83497630(ctx, base); }
 
-uint64_t n_sub_832A0B88(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349763C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349763C = int32_t(0x8349763C);
 	if (!UseLiftedCode(145, 0x832A0B88)) { __imp__sub_832A0B88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0B88);
 	return List_Destroy(ctx, base, g_8349763C);
 }
-PROMOTED_ENTRY(145, sub_832A0B88, 0x832A0B88) { ctx.r3.u64 = n_sub_832A0B88(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0B88, 0x832A0B88) { ctx.r3.u64 = DestroyGlobalList_8349763C(ctx, base); }
 
 uint64_t Destroy_TXT_83497648_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497648_G_ = int32_t(0x83497648);
@@ -966,7 +966,7 @@ uint64_t Destroy_TXT_8349765C_G_(CpuState& ctx, uint8_t* base) {
 PROMOTED_ENTRY(145, sub_832A0BE8, 0x832A0BE8) { ctx.r3.u64 = Destroy_TXT_8349765C_G_(ctx, base); }
 
 // sub_832A0CB8  [84 bytes]
-uint64_t n_sub_832A0CB8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_8349766C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349766C = int32_t(0x8349766C);
 	if (!UseLiftedCode(145, 0x832A0CB8)) { __imp__sub_832A0CB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0CB8);
@@ -985,32 +985,32 @@ uint64_t n_sub_832A0CB8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A0CB8, 0x832A0CB8) { ctx.r3.u64 = n_sub_832A0CB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0CB8, 0x832A0CB8) { ctx.r3.u64 = ClearHandleTargetGlobal_8349766C(ctx, base); }
 
-uint64_t n_sub_832A0D10(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83497680(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497680 = int32_t(0x83497680);
 	if (!UseLiftedCode(145, 0x832A0D10)) { __imp__sub_832A0D10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0D10);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83497680);
 }
-PROMOTED_ENTRY(145, sub_832A0D10, 0x832A0D10) { ctx.r3.u64 = n_sub_832A0D10(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0D10, 0x832A0D10) { ctx.r3.u64 = DestroyGlobalCCharString_83497680(ctx, base); }
 
-uint64_t n_sub_832A0D20(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83497684(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497684 = int32_t(0x83497684);
 	if (!UseLiftedCode(145, 0x832A0D20)) { __imp__sub_832A0D20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0D20);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83497684);
 }
-PROMOTED_ENTRY(145, sub_832A0D20, 0x832A0D20) { ctx.r3.u64 = n_sub_832A0D20(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0D20, 0x832A0D20) { ctx.r3.u64 = DestroyGlobalCCharString_83497684(ctx, base); }
 
-uint64_t n_sub_832A0D30(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83497688(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497688 = int32_t(0x83497688);
 	if (!UseLiftedCode(145, 0x832A0D30)) { __imp__sub_832A0D30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0D30);
 	uint64_t object = g_83497688;
-	return n_sub_82394830(ctx, base);
+	return LinkedList_DestroyGlobal_82394830(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A0D30, 0x832A0D30) { ctx.r3.u64 = n_sub_832A0D30(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0D30, 0x832A0D30) { ctx.r3.u64 = DestroyGlobalList_83497688(ctx, base); }
 
 uint64_t Destroy_TXT_83497694_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497694_G_ = int32_t(0x83497694);
@@ -1060,21 +1060,21 @@ uint64_t Destroy_TXT_834976A8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0D90, 0x832A0D90) { ctx.r3.u64 = Destroy_TXT_834976A8_G_(ctx, base); }
 
-uint64_t n_sub_832A0DA0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalVector_834976C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834976C0 = int32_t(0x834976C0);
 	if (!UseLiftedCode(145, 0x832A0DA0)) { __imp__sub_832A0DA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0DA0);
 	return Vector_DestroyAndFree(ctx, base, g_834976C0);
 }
-PROMOTED_ENTRY(145, sub_832A0DA0, 0x832A0DA0) { ctx.r3.u64 = n_sub_832A0DA0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0DA0, 0x832A0DA0) { ctx.r3.u64 = DestroyGlobalVector_834976C0(ctx, base); }
 
-uint64_t n_sub_832A0DB0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalVector_834976D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834976D0 = int32_t(0x834976D0);
 	if (!UseLiftedCode(145, 0x832A0DB0)) { __imp__sub_832A0DB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0DB0);
 	return Vector_DestroyAndFree(ctx, base, g_834976D0);
 }
-PROMOTED_ENTRY(145, sub_832A0DB0, 0x832A0DB0) { ctx.r3.u64 = n_sub_832A0DB0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0DB0, 0x832A0DB0) { ctx.r3.u64 = DestroyGlobalVector_834976D0(ctx, base); }
 
 uint64_t Destroy_TXT_834976E8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834976E8_G_ = int32_t(0x834976E8);
@@ -1100,13 +1100,13 @@ uint64_t Destroy_TXT_834976F0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0DE0, 0x832A0DE0) { ctx.r3.u64 = Destroy_TXT_834976F0_G_(ctx, base); }
 
-uint64_t n_sub_832A0DF0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalVector_834976F8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834976F8 = int32_t(0x834976F8);
 	if (!UseLiftedCode(145, 0x832A0DF0)) { __imp__sub_832A0DF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A0DF0);
 	return Vector_DestroyAndFree(ctx, base, g_834976F8);
 }
-PROMOTED_ENTRY(145, sub_832A0DF0, 0x832A0DF0) { ctx.r3.u64 = n_sub_832A0DF0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A0DF0, 0x832A0DF0) { ctx.r3.u64 = DestroyGlobalVector_834976F8(ctx, base); }
 
 uint64_t Destroy_TXT_83497708_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497708_G_ = int32_t(0x83497708);
@@ -1316,7 +1316,7 @@ uint64_t Destroy_TXT_83497788_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A0FC0, 0x832A0FC0) { ctx.r3.u64 = Destroy_TXT_83497788_G_(ctx, base); }
 
-uint64_t n_sub_832A1018(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_83497798(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497798 = int32_t(0x83497798);
 	if (!UseLiftedCode(145, 0x832A1018)) { __imp__sub_832A1018(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1018);
@@ -1335,47 +1335,47 @@ uint64_t n_sub_832A1018(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A1018, 0x832A1018) { ctx.r3.u64 = n_sub_832A1018(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1018, 0x832A1018) { ctx.r3.u64 = ClearHandleTargetGlobal_83497798(ctx, base); }
 
-uint64_t n_sub_832A1070(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834977A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834977A8 = int32_t(0x834977A8);
 	if (!UseLiftedCode(145, 0x832A1070)) { __imp__sub_832A1070(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1070);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834977A8);
 }
-PROMOTED_ENTRY(145, sub_832A1070, 0x832A1070) { ctx.r3.u64 = n_sub_832A1070(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1070, 0x832A1070) { ctx.r3.u64 = DestroyGlobalCCharString_834977A8(ctx, base); }
 
-uint64_t n_sub_832A1080(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834977AC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834977AC = int32_t(0x834977AC);
 	if (!UseLiftedCode(145, 0x832A1080)) { __imp__sub_832A1080(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1080);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834977AC);
 }
-PROMOTED_ENTRY(145, sub_832A1080, 0x832A1080) { ctx.r3.u64 = n_sub_832A1080(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1080, 0x832A1080) { ctx.r3.u64 = DestroyGlobalCCharString_834977AC(ctx, base); }
 
-uint64_t n_sub_832A1090(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalVector_834977B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834977B0 = int32_t(0x834977B0);
 	if (!UseLiftedCode(145, 0x832A1090)) { __imp__sub_832A1090(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1090);
 	return Vector_DestroyAndFree(ctx, base, g_834977B0);
 }
-PROMOTED_ENTRY(145, sub_832A1090, 0x832A1090) { ctx.r3.u64 = n_sub_832A1090(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1090, 0x832A1090) { ctx.r3.u64 = DestroyGlobalVector_834977B0(ctx, base); }
 
-uint64_t n_sub_832A10A0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834977C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834977C0 = int32_t(0x834977C0);
 	if (!UseLiftedCode(145, 0x832A10A0)) { __imp__sub_832A10A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A10A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834977C0);
 }
-PROMOTED_ENTRY(145, sub_832A10A0, 0x832A10A0) { ctx.r3.u64 = n_sub_832A10A0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A10A0, 0x832A10A0) { ctx.r3.u64 = DestroyGlobalCCharString_834977C0(ctx, base); }
 
-uint64_t n_sub_832A10B0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834977C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834977C4 = int32_t(0x834977C4);
 	if (!UseLiftedCode(145, 0x832A10B0)) { __imp__sub_832A10B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A10B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834977C4);
 }
-PROMOTED_ENTRY(145, sub_832A10B0, 0x832A10B0) { ctx.r3.u64 = n_sub_832A10B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A10B0, 0x832A10B0) { ctx.r3.u64 = DestroyGlobalCCharString_834977C4(ctx, base); }
 
 uint64_t Destroy_TXT_834977E0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834977E0_G_ = int32_t(0x834977E0);
@@ -1425,21 +1425,21 @@ uint64_t Destroy_TXT_834977F8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1110, 0x832A1110) { ctx.r3.u64 = Destroy_TXT_834977F8_G_(ctx, base); }
 
-uint64_t n_sub_832A1120(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834F52D8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F52D8 = int32_t(0x834F52D8);
 	if (!UseLiftedCode(145, 0x832A1120)) { __imp__sub_832A1120(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1120);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834F52D8);
 }
-PROMOTED_ENTRY(145, sub_832A1120, 0x832A1120) { ctx.r3.u64 = n_sub_832A1120(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1120, 0x832A1120) { ctx.r3.u64 = DestroyGlobalCCharString_834F52D8(ctx, base); }
 
-uint64_t n_sub_832A1130(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834F52DC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F52DC = int32_t(0x834F52DC);
 	if (!UseLiftedCode(145, 0x832A1130)) { __imp__sub_832A1130(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1130);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834F52DC);
 }
-PROMOTED_ENTRY(145, sub_832A1130, 0x832A1130) { ctx.r3.u64 = n_sub_832A1130(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1130, 0x832A1130) { ctx.r3.u64 = DestroyGlobalCCharString_834F52DC(ctx, base); }
 
 uint64_t Destroy_TXT_8349780C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349780C_G_ = int32_t(0x8349780C);
@@ -1545,14 +1545,14 @@ uint64_t Destroy_TXT_8349783C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1200, 0x832A1200) { ctx.r3.u64 = Destroy_TXT_8349783C_G_(ctx, base); }
 
-uint64_t n_sub_832A1210(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83497840(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497840 = int32_t(0x83497840);
 	if (!UseLiftedCode(145, 0x832A1210)) { __imp__sub_832A1210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1210);
 	uint64_t object = g_83497840;
-	return n_sub_823D2B90(ctx, base);
+	return List_DestroyGlobal_83497840(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A1210, 0x832A1210) { ctx.r3.u64 = n_sub_832A1210(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1210, 0x832A1210) { ctx.r3.u64 = DestroyGlobalList_83497840(ctx, base); }
 
 uint64_t Destroy_TXT_8349784C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349784C_G_ = int32_t(0x8349784C);
@@ -1618,14 +1618,14 @@ uint64_t Destroy_TXT_8349786C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1290, 0x832A1290) { ctx.r3.u64 = Destroy_TXT_8349786C_G_(ctx, base); }
 
-uint64_t n_sub_832A12A0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83497870(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497870 = int32_t(0x83497870);
 	if (!UseLiftedCode(145, 0x832A12A0)) { __imp__sub_832A12A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A12A0);
 	uint64_t object = g_83497870;
-	return n_sub_823F4870(ctx, base);
+	return List_DestroyGlobal_83497870(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A12A0, 0x832A12A0) { ctx.r3.u64 = n_sub_832A12A0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A12A0, 0x832A12A0) { ctx.r3.u64 = DestroyGlobalList_83497870(ctx, base); }
 
 uint64_t Destroy_TXT_8349787C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349787C_G_ = int32_t(0x8349787C);
@@ -2315,13 +2315,13 @@ uint64_t Destroy_TXT_83497BF4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1870, 0x832A1870) { ctx.r3.u64 = Destroy_TXT_83497BF4_G_(ctx, base); }
 
-uint64_t n_sub_832A1880(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharStringB_83497BF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497BF8 = int32_t(0x83497BF8);
 	if (!UseLiftedCode(145, 0x832A1880)) { __imp__sub_832A1880(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1880);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_83497BF8);
 }
-PROMOTED_ENTRY(145, sub_832A1880, 0x832A1880) { ctx.r3.u64 = n_sub_832A1880(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1880, 0x832A1880) { ctx.r3.u64 = DestroyGlobalCCharStringB_83497BF8(ctx, base); }
 
 uint64_t Destroy_TXT_83497BFC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497BFC_G_ = int32_t(0x83497BFC);
@@ -2755,14 +2755,14 @@ uint64_t Destroy_TXT_83497DA0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1C38, 0x832A1C38) { ctx.r3.u64 = Destroy_TXT_83497DA0_G_(ctx, base); }
 
-uint64_t n_sub_832A1C48(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83497DA4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497DA4 = int32_t(0x83497DA4);
 	if (!UseLiftedCode(145, 0x832A1C48)) { __imp__sub_832A1C48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1C48);
 	uint64_t object = g_83497DA4;
-	return n_sub_8241C228(ctx, base);
+	return List_DestroyGlobal_83497DA4(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A1C48, 0x832A1C48) { ctx.r3.u64 = n_sub_832A1C48(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1C48, 0x832A1C48) { ctx.r3.u64 = DestroyGlobalList_83497DA4(ctx, base); }
 
 uint64_t Destroy_TXT_83497DB0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497DB0_G_ = int32_t(0x83497DB0);
@@ -2820,13 +2820,13 @@ uint64_t Destroy_TXT_83497DC8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1CB8, 0x832A1CB8) { ctx.r3.u64 = Destroy_TXT_83497DC8_G_(ctx, base); }
 
-uint64_t n_sub_832A1CC8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_83497DCC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497DCC = int32_t(0x83497DCC);
 	if (!UseLiftedCode(145, 0x832A1CC8)) { __imp__sub_832A1CC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1CC8);
-	return n_sub_8292BB38(ctx, base, g_83497DCC);
+	return StdMap_DestroyGlobal_83497DCC(ctx, base, g_83497DCC);
 }
-PROMOTED_ENTRY(145, sub_832A1CC8, 0x832A1CC8) { ctx.r3.u64 = n_sub_832A1CC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1CC8, 0x832A1CC8) { ctx.r3.u64 = DestroyGlobalMap_83497DCC(ctx, base); }
 
 uint64_t Destroy_TXT_83497DD8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497DD8_G_ = int32_t(0x83497DD8);
@@ -2924,15 +2924,15 @@ uint64_t Destroy_TXT_83497E54_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1DD0, 0x832A1DD0) { ctx.r3.u64 = Destroy_TXT_83497E54_G_(ctx, base); }
 
-uint64_t n_sub_832A1DE0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_83497E6C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497E6C = int32_t(0x83497E6C);
 	if (!UseLiftedCode(145, 0x832A1DE0)) { __imp__sub_832A1DE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1DE0);
 	return SharedHandle_Release(ctx, base, g_83497E6C);
 }
-PROMOTED_ENTRY(145, sub_832A1DE0, 0x832A1DE0) { ctx.r3.u64 = n_sub_832A1DE0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1DE0, 0x832A1DE0) { ctx.r3.u64 = DestroyGlobalSharedHandle_83497E6C(ctx, base); }
 
-uint64_t n_sub_832A1E58(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_83497E74(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497E74 = int32_t(0x83497E74);
 	if (!UseLiftedCode(145, 0x832A1E58)) { __imp__sub_832A1E58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1E58);
@@ -2951,7 +2951,7 @@ uint64_t n_sub_832A1E58(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A1E58, 0x832A1E58) { ctx.r3.u64 = n_sub_832A1E58(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1E58, 0x832A1E58) { ctx.r3.u64 = ClearHandleTargetGlobal_83497E74(ctx, base); }
 
 uint64_t Destroy_TXT_83497E84_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497E84_G_ = int32_t(0x83497E84);
@@ -3033,7 +3033,7 @@ uint64_t Destroy_TXT_83497F28_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1FA8, 0x832A1FA8) { ctx.r3.u64 = Destroy_TXT_83497F28_G_(ctx, base); }
 
-uint64_t n_sub_832A1FB8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_83497F2C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497F2C = int32_t(0x83497F2C);
 	if (!UseLiftedCode(145, 0x832A1FB8)) { __imp__sub_832A1FB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A1FB8);
@@ -3052,7 +3052,7 @@ uint64_t n_sub_832A1FB8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A1FB8, 0x832A1FB8) { ctx.r3.u64 = n_sub_832A1FB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A1FB8, 0x832A1FB8) { ctx.r3.u64 = ClearHandleTargetGlobal_83497F2C(ctx, base); }
 
 uint64_t Destroy_TXT_83497F40_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497F40_G_ = int32_t(0x83497F40);
@@ -3431,7 +3431,7 @@ uint64_t Destroy_TXT_83498050_G_(CpuState& ctx, uint8_t* base) {
 PROMOTED_ENTRY(145, sub_832A22F8, 0x832A22F8) { ctx.r3.u64 = Destroy_TXT_83498050_G_(ctx, base); }
 
 // sub_832A2308  [104 bytes]
-uint64_t n_sub_832A2308(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7FAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A2308)) { __imp__sub_832A2308(ctx, base); return ctx.r3.u64; }
@@ -3472,9 +3472,9 @@ uint64_t n_sub_832A2308(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A2308, 0x832A2308) { ctx.r3.u64 = n_sub_832A2308(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2308, 0x832A2308) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7FAC(ctx, base); }
 
-uint64_t n_sub_832A2370(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7F90(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A2370)) { __imp__sub_832A2370(ctx, base); return ctx.r3.u64; }
@@ -3513,7 +3513,7 @@ uint64_t n_sub_832A2370(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A2370, 0x832A2370) { ctx.r3.u64 = n_sub_832A2370(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2370, 0x832A2370) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7F90(ctx, base); }
 
 uint64_t Destroy_TXT_8349808C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349808C_G_ = int32_t(0x8349808C);
@@ -3587,7 +3587,7 @@ uint64_t Destroy_TXT_8349810C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2458, 0x832A2458) { ctx.r3.u64 = Destroy_TXT_8349810C_G_(ctx, base); }
 
-uint64_t n_sub_832A2538(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_83498130(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498130 = int32_t(0x83498130);
 	if (!UseLiftedCode(145, 0x832A2538)) { __imp__sub_832A2538(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2538);
@@ -3606,7 +3606,7 @@ uint64_t n_sub_832A2538(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A2538, 0x832A2538) { ctx.r3.u64 = n_sub_832A2538(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2538, 0x832A2538) { ctx.r3.u64 = ClearHandleTargetGlobal_83498130(ctx, base); }
 
 uint64_t Destroy_TXT_83498140_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498140_G_ = int32_t(0x83498140);
@@ -3928,7 +3928,7 @@ uint64_t Destroy_TXT_834981F4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2868, 0x832A2868) { ctx.r3.u64 = Destroy_TXT_834981F4_G_(ctx, base); }
 
-uint64_t n_sub_832A2878(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7E08(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A2878)) { __imp__sub_832A2878(ctx, base); return ctx.r3.u64; }
@@ -3967,7 +3967,7 @@ uint64_t n_sub_832A2878(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A2878, 0x832A2878) { ctx.r3.u64 = n_sub_832A2878(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2878, 0x832A2878) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7E08(ctx, base); }
 
 uint64_t Destroy_TXT_834982A0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834982A0_G_ = int32_t(0x834982A0);
@@ -4017,37 +4017,37 @@ uint64_t Destroy_TXT_834982B4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2930, 0x832A2930) { ctx.r3.u64 = Destroy_TXT_834982B4_G_(ctx, base); }
 
-uint64_t n_sub_832A2940(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_834982B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834982B8 = int32_t(0x834982B8);
 	if (!UseLiftedCode(145, 0x832A2940)) { __imp__sub_832A2940(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2940);
-	return n_sub_82A1A908(ctx, base, g_834982B8);
+	return StdMap_DestroyGlobal(ctx, base, g_834982B8);
 }
-PROMOTED_ENTRY(145, sub_832A2940, 0x832A2940) { ctx.r3.u64 = n_sub_832A2940(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2940, 0x832A2940) { ctx.r3.u64 = DestroyGlobalMap_834982B8(ctx, base); }
 
-uint64_t n_sub_832A2950(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_834982C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834982C4 = int32_t(0x834982C4);
 	if (!UseLiftedCode(145, 0x832A2950)) { __imp__sub_832A2950(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2950);
-	return n_sub_82A1A908(ctx, base, g_834982C4);
+	return StdMap_DestroyGlobal(ctx, base, g_834982C4);
 }
-PROMOTED_ENTRY(145, sub_832A2950, 0x832A2950) { ctx.r3.u64 = n_sub_832A2950(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2950, 0x832A2950) { ctx.r3.u64 = DestroyGlobalMap_834982C4(ctx, base); }
 
-uint64_t n_sub_832A2960(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_834982D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834982D0 = int32_t(0x834982D0);
 	if (!UseLiftedCode(145, 0x832A2960)) { __imp__sub_832A2960(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2960);
-	return n_sub_82A1A908(ctx, base, g_834982D0);
+	return StdMap_DestroyGlobal(ctx, base, g_834982D0);
 }
-PROMOTED_ENTRY(145, sub_832A2960, 0x832A2960) { ctx.r3.u64 = n_sub_832A2960(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2960, 0x832A2960) { ctx.r3.u64 = DestroyGlobalMap_834982D0(ctx, base); }
 
-uint64_t n_sub_832A29F8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalPtrVector8_834C3880(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3880 = int32_t(0x834C3880);
 	if (!UseLiftedCode(145, 0x832A29F8)) { __imp__sub_832A29F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A29F8);
 	return PtrVector8_ClearAndFree(ctx, base, g_834C3880);
 }
-PROMOTED_ENTRY(145, sub_832A29F8, 0x832A29F8) { ctx.r3.u64 = n_sub_832A29F8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A29F8, 0x832A29F8) { ctx.r3.u64 = DestroyGlobalPtrVector8_834C3880(ctx, base); }
 
 uint64_t Destroy_TXT_8349833C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349833C_G_ = int32_t(0x8349833C);
@@ -4281,7 +4281,7 @@ uint64_t Destroy_TXT_834983F8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2CA8, 0x832A2CA8) { ctx.r3.u64 = Destroy_TXT_834983F8_G_(ctx, base); }
 
-uint64_t n_sub_832A2CB8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7BB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A2CB8)) { __imp__sub_832A2CB8(ctx, base); return ctx.r3.u64; }
@@ -4320,9 +4320,9 @@ uint64_t n_sub_832A2CB8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A2CB8, 0x832A2CB8) { ctx.r3.u64 = n_sub_832A2CB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2CB8, 0x832A2CB8) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7BB0(ctx, base); }
 
-uint64_t n_sub_832A2D20(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7B70(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A2D20)) { __imp__sub_832A2D20(ctx, base); return ctx.r3.u64; }
@@ -4361,7 +4361,7 @@ uint64_t n_sub_832A2D20(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A2D20, 0x832A2D20) { ctx.r3.u64 = n_sub_832A2D20(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2D20, 0x832A2D20) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7B70(ctx, base); }
 
 uint64_t Destroy_TXT_834984D0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834984D0_G_ = int32_t(0x834984D0);
@@ -4419,13 +4419,13 @@ uint64_t Destroy_TXT_834984E8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2DE8, 0x832A2DE8) { ctx.r3.u64 = Destroy_TXT_834984E8_G_(ctx, base); }
 
-uint64_t n_sub_832A2E88(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_8349853C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349853C = int32_t(0x8349853C);
 	if (!UseLiftedCode(145, 0x832A2E88)) { __imp__sub_832A2E88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2E88);
 	return SharedHandle_Release(ctx, base, g_8349853C);
 }
-PROMOTED_ENTRY(145, sub_832A2E88, 0x832A2E88) { ctx.r3.u64 = n_sub_832A2E88(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2E88, 0x832A2E88) { ctx.r3.u64 = DestroyGlobalSharedHandle_8349853C(ctx, base); }
 
 uint64_t Destroy_TXT_83498548_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498548_G_ = int32_t(0x83498548);
@@ -4459,13 +4459,13 @@ uint64_t Destroy_TXT_83498554_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2F40, 0x832A2F40) { ctx.r3.u64 = Destroy_TXT_83498554_G_(ctx, base); }
 
-uint64_t n_sub_832A2F50(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_83498558(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498558 = int32_t(0x83498558);
 	if (!UseLiftedCode(145, 0x832A2F50)) { __imp__sub_832A2F50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2F50);
-	return n_sub_8246D1F0(ctx, base, g_83498558);
+	return StdMap_DestroyGlobal_8246D1F0(ctx, base, g_83498558);
 }
-PROMOTED_ENTRY(145, sub_832A2F50, 0x832A2F50) { ctx.r3.u64 = n_sub_832A2F50(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2F50, 0x832A2F50) { ctx.r3.u64 = DestroyGlobalMap_83498558(ctx, base); }
 
 uint64_t Destroy_TXT_83498568_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498568_G_ = int32_t(0x83498568);
@@ -4515,13 +4515,13 @@ uint64_t Destroy_TXT_8349857C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2FB0, 0x832A2FB0) { ctx.r3.u64 = Destroy_TXT_8349857C_G_(ctx, base); }
 
-uint64_t n_sub_832A2FC0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_834C3874(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3874 = int32_t(0x834C3874);
 	if (!UseLiftedCode(145, 0x832A2FC0)) { __imp__sub_832A2FC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A2FC0);
 	return SharedHandle_Release(ctx, base, g_834C3874);
 }
-PROMOTED_ENTRY(145, sub_832A2FC0, 0x832A2FC0) { ctx.r3.u64 = n_sub_832A2FC0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A2FC0, 0x832A2FC0) { ctx.r3.u64 = DestroyGlobalSharedHandle_834C3874(ctx, base); }
 
 uint64_t Destroy_TXT_83498580_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498580_G_ = int32_t(0x83498580);
@@ -4795,37 +4795,37 @@ uint64_t Destroy_TXT_83498610_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A3228, 0x832A3228) { ctx.r3.u64 = Destroy_TXT_83498610_G_(ctx, base); }
 
-uint64_t n_sub_832A3238(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83498614(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498614 = int32_t(0x83498614);
 	if (!UseLiftedCode(145, 0x832A3238)) { __imp__sub_832A3238(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3238);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83498614);
 }
-PROMOTED_ENTRY(145, sub_832A3238, 0x832A3238) { ctx.r3.u64 = n_sub_832A3238(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3238, 0x832A3238) { ctx.r3.u64 = DestroyGlobalCCharString_83498614(ctx, base); }
 
-uint64_t n_sub_832A3250(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_83498618(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498618 = int32_t(0x83498618);
 	if (!UseLiftedCode(145, 0x832A3250)) { __imp__sub_832A3250(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3250);
-	return n_sub_8233DD70(ctx, base, g_83498618);
+	return StdMap_DestroyGlobal_8233DD70(ctx, base, g_83498618);
 }
-PROMOTED_ENTRY(145, sub_832A3250, 0x832A3250) { ctx.r3.u64 = n_sub_832A3250(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3250, 0x832A3250) { ctx.r3.u64 = DestroyGlobalMap_83498618(ctx, base); }
 
-uint64_t n_sub_832A3260(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalPtrVector8_834C3940(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3940 = int32_t(0x834C3940);
 	if (!UseLiftedCode(145, 0x832A3260)) { __imp__sub_832A3260(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3260);
 	return PtrVector8_ClearAndFree(ctx, base, g_834C3940);
 }
-PROMOTED_ENTRY(145, sub_832A3260, 0x832A3260) { ctx.r3.u64 = n_sub_832A3260(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3260, 0x832A3260) { ctx.r3.u64 = DestroyGlobalPtrVector8_834C3940(ctx, base); }
 
-uint64_t n_sub_832A3270(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalPtrVector8_834C392C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C392C = int32_t(0x834C392C);
 	if (!UseLiftedCode(145, 0x832A3270)) { __imp__sub_832A3270(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3270);
 	return PtrVector8_ClearAndFree(ctx, base, g_834C392C);
 }
-PROMOTED_ENTRY(145, sub_832A3270, 0x832A3270) { ctx.r3.u64 = n_sub_832A3270(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3270, 0x832A3270) { ctx.r3.u64 = DestroyGlobalPtrVector8_834C392C(ctx, base); }
 
 uint64_t Destroy_TXT_83498624_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498624_G_ = int32_t(0x83498624);
@@ -4899,13 +4899,13 @@ uint64_t Destroy_TXT_834986A8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A3300, 0x832A3300) { ctx.r3.u64 = Destroy_TXT_834986A8_G_(ctx, base); }
 
-uint64_t n_sub_832A3310(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_834F6AC4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F6AC4 = int32_t(0x834F6AC4);
 	if (!UseLiftedCode(145, 0x832A3310)) { __imp__sub_832A3310(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3310);
 	return SharedHandle_Release(ctx, base, g_834F6AC4);
 }
-PROMOTED_ENTRY(145, sub_832A3310, 0x832A3310) { ctx.r3.u64 = n_sub_832A3310(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3310, 0x832A3310) { ctx.r3.u64 = DestroyGlobalSharedHandle_834F6AC4(ctx, base); }
 
 uint64_t Destroy_TXT_834986AC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834986AC_G_ = int32_t(0x834986AC);
@@ -5011,21 +5011,21 @@ uint64_t Destroy_TXT_834986FC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A33E0, 0x832A33E0) { ctx.r3.u64 = Destroy_TXT_834986FC_G_(ctx, base); }
 
-uint64_t n_sub_832A33F0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83498700(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498700 = int32_t(0x83498700);
 	if (!UseLiftedCode(145, 0x832A33F0)) { __imp__sub_832A33F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A33F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83498700);
 }
-PROMOTED_ENTRY(145, sub_832A33F0, 0x832A33F0) { ctx.r3.u64 = n_sub_832A33F0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A33F0, 0x832A33F0) { ctx.r3.u64 = DestroyGlobalCCharString_83498700(ctx, base); }
 
-uint64_t n_sub_832A3400(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_83498704(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498704 = int32_t(0x83498704);
 	if (!UseLiftedCode(145, 0x832A3400)) { __imp__sub_832A3400(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A3400);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83498704);
 }
-PROMOTED_ENTRY(145, sub_832A3400, 0x832A3400) { ctx.r3.u64 = n_sub_832A3400(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3400, 0x832A3400) { ctx.r3.u64 = DestroyGlobalCCharString_83498704(ctx, base); }
 
 uint64_t Destroy_TXT_83498708_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498708_G_ = int32_t(0x83498708);
@@ -5907,7 +5907,7 @@ uint64_t Destroy_TXT_83498964_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A3AE0, 0x832A3AE0) { ctx.r3.u64 = Destroy_TXT_83498964_G_(ctx, base); }
 
-uint64_t n_sub_832A3AF0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7698(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A3AF0)) { __imp__sub_832A3AF0(ctx, base); return ctx.r3.u64; }
@@ -5946,9 +5946,9 @@ uint64_t n_sub_832A3AF0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A3AF0, 0x832A3AF0) { ctx.r3.u64 = n_sub_832A3AF0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3AF0, 0x832A3AF0) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7698(ctx, base); }
 
-uint64_t n_sub_832A3B58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_7658(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A3B58)) { __imp__sub_832A3B58(ctx, base); return ctx.r3.u64; }
@@ -5987,7 +5987,7 @@ uint64_t n_sub_832A3B58(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A3B58, 0x832A3B58) { ctx.r3.u64 = n_sub_832A3B58(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A3B58, 0x832A3B58) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_7658(ctx, base); }
 
 uint64_t Destroy_TXT_83498A3C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498A3C_G_ = int32_t(0x83498A3C);
@@ -6909,14 +6909,14 @@ uint64_t Destroy_TXT_83498F64_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4350, 0x832A4350) { ctx.r3.u64 = Destroy_TXT_83498F64_G_(ctx, base); }
 
-uint64_t n_sub_832A4360(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_83498F68(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498F68 = int32_t(0x83498F68);
 	if (!UseLiftedCode(145, 0x832A4360)) { __imp__sub_832A4360(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4360);
 	uint64_t object = g_83498F68;
-	return n_sub_825F2198(ctx, base);
+	return List_DestroyGlobal_83498F68(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4360, 0x832A4360) { ctx.r3.u64 = n_sub_832A4360(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4360, 0x832A4360) { ctx.r3.u64 = DestroyGlobalList_83498F68(ctx, base); }
 
 uint64_t Destroy_TXT_83498F74_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498F74_G_ = int32_t(0x83498F74);
@@ -7094,14 +7094,14 @@ uint64_t Destroy_TXT_83498FE4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A45A0, 0x832A45A0) { ctx.r3.u64 = Destroy_TXT_83498FE4_G_(ctx, base); }
 
-uint64_t n_sub_832A45B0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandleArray_83498FE8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498FE8 = int32_t(0x83498FE8);
 	if (!UseLiftedCode(145, 0x832A45B0)) { __imp__sub_832A45B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A45B0);
 	uint64_t object = g_83498FE8;
-	return n_sub_8260D568(ctx, base);
+	return SharedHandleArray_DestroyGlobal_83498FE8(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A45B0, 0x832A45B0) { ctx.r3.u64 = n_sub_832A45B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A45B0, 0x832A45B0) { ctx.r3.u64 = DestroyGlobalSharedHandleArray_83498FE8(ctx, base); }
 
 uint64_t Destroy_TXT_83498FF0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498FF0_G_ = int32_t(0x83498FF0);
@@ -7143,7 +7143,7 @@ uint64_t Destroy_TXT_83499000_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4600, 0x832A4600) { ctx.r3.u64 = Destroy_TXT_83499000_G_(ctx, base); }
 
-uint64_t n_sub_832A4610(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_83499004(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83499004 = int32_t(0x83499004);
 	if (!UseLiftedCode(145, 0x832A4610)) { __imp__sub_832A4610(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4610);
@@ -7162,33 +7162,33 @@ uint64_t n_sub_832A4610(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A4610, 0x832A4610) { ctx.r3.u64 = n_sub_832A4610(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4610, 0x832A4610) { ctx.r3.u64 = ClearHandleTargetGlobal_83499004(ctx, base); }
 
-uint64_t n_sub_832A46B0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349912C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349912C = int32_t(0x8349912C);
 	if (!UseLiftedCode(145, 0x832A46B0)) { __imp__sub_832A46B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A46B0);
 	uint64_t object = g_8349912C;
-	return n_sub_82629830(ctx, base);
+	return List_DestroyGlobal_8349912C(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A46B0, 0x832A46B0) { ctx.r3.u64 = n_sub_832A46B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A46B0, 0x832A46B0) { ctx.r3.u64 = DestroyGlobalList_8349912C(ctx, base); }
 
-uint64_t n_sub_832A4868(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349A09C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349A09C = int32_t(0x8349A09C);
 	if (!UseLiftedCode(145, 0x832A4868)) { __imp__sub_832A4868(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4868);
 	uint64_t object = g_8349A09C;
-	return n_sub_8263FA78(ctx, base);
+	return List_DestroyGlobal_8349A09C(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4868, 0x832A4868) { ctx.r3.u64 = n_sub_832A4868(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4868, 0x832A4868) { ctx.r3.u64 = DestroyGlobalList_8349A09C(ctx, base); }
 
-uint64_t n_sub_832A4878(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalPtrVector8_834C3860(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3860 = int32_t(0x834C3860);
 	if (!UseLiftedCode(145, 0x832A4878)) { __imp__sub_832A4878(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4878);
 	return PtrVector8_ClearAndFree(ctx, base, g_834C3860);
 }
-PROMOTED_ENTRY(145, sub_832A4878, 0x832A4878) { ctx.r3.u64 = n_sub_832A4878(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4878, 0x832A4878) { ctx.r3.u64 = DestroyGlobalPtrVector8_834C3860(ctx, base); }
 
 uint64_t Destroy_TXT_8349AA40_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AA40_G_ = int32_t(0x8349AA40);
@@ -7238,16 +7238,16 @@ uint64_t Destroy_TXT_8349AA54_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4A98, 0x832A4A98) { ctx.r3.u64 = Destroy_TXT_8349AA54_G_(ctx, base); }
 
-uint64_t n_sub_832A4AF8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandleVector_8349AD18(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AD18 = int32_t(0x8349AD18);
 	if (!UseLiftedCode(145, 0x832A4AF8)) { __imp__sub_832A4AF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4AF8);
 	uint64_t object = g_8349AD18;
-	return n_sub_82670278(ctx, base);
+	return SharedHandleVector_DestroyGlobal_8349AD18(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4AF8, 0x832A4AF8) { ctx.r3.u64 = n_sub_832A4AF8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4AF8, 0x832A4AF8) { ctx.r3.u64 = DestroyGlobalSharedHandleVector_8349AD18(ctx, base); }
 
-uint64_t n_sub_832A4B08(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_8349AD40(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AD40 = int32_t(0x8349AD40);
 	if (!UseLiftedCode(145, 0x832A4B08)) { __imp__sub_832A4B08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4B08);
@@ -7266,7 +7266,7 @@ uint64_t n_sub_832A4B08(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A4B08, 0x832A4B08) { ctx.r3.u64 = n_sub_832A4B08(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4B08, 0x832A4B08) { ctx.r3.u64 = ClearHandleTargetGlobal_8349AD40(ctx, base); }
 
 uint64_t Destroy_TXT_8349AD2C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AD2C_G_ = int32_t(0x8349AD2C);
@@ -7276,13 +7276,13 @@ uint64_t Destroy_TXT_8349AD2C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4BA8, 0x832A4BA8) { ctx.r3.u64 = Destroy_TXT_8349AD2C_G_(ctx, base); }
 
-uint64_t n_sub_832A4BB8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834F71D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F71D4 = int32_t(0x834F71D4);
 	if (!UseLiftedCode(145, 0x832A4BB8)) { __imp__sub_832A4BB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4BB8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834F71D4);
 }
-PROMOTED_ENTRY(145, sub_832A4BB8, 0x832A4BB8) { ctx.r3.u64 = n_sub_832A4BB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4BB8, 0x832A4BB8) { ctx.r3.u64 = DestroyGlobalCCharString_834F71D4(ctx, base); }
 
 uint64_t Destroy_TXT_8349AD5C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AD5C_G_ = int32_t(0x8349AD5C);
@@ -7348,34 +7348,34 @@ uint64_t Destroy_TXT_8349AD98_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4C38, 0x832A4C38) { ctx.r3.u64 = Destroy_TXT_8349AD98_G_(ctx, base); }
 
-uint64_t n_sub_832A4C48(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349AD9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AD9C = int32_t(0x8349AD9C);
 	if (!UseLiftedCode(145, 0x832A4C48)) { __imp__sub_832A4C48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4C48);
 	uint64_t object = g_8349AD9C;
-	return n_sub_8267E478(ctx, base);
+	return List_DestroyGlobal_8349AD9C(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4C48, 0x832A4C48) { ctx.r3.u64 = n_sub_832A4C48(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4C48, 0x832A4C48) { ctx.r3.u64 = DestroyGlobalList_8349AD9C(ctx, base); }
 
-uint64_t n_sub_832A4C58(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349ADA8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349ADA8 = int32_t(0x8349ADA8);
 	if (!UseLiftedCode(145, 0x832A4C58)) { __imp__sub_832A4C58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4C58);
 	uint64_t object = g_8349ADA8;
-	return n_sub_8267E788(ctx, base);
+	return List_DestroyGlobal_8349ADA8(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4C58, 0x832A4C58) { ctx.r3.u64 = n_sub_832A4C58(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4C58, 0x832A4C58) { ctx.r3.u64 = DestroyGlobalList_8349ADA8(ctx, base); }
 
-uint64_t n_sub_832A4C68(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_8349ADB4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349ADB4 = int32_t(0x8349ADB4);
 	if (!UseLiftedCode(145, 0x832A4C68)) { __imp__sub_832A4C68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4C68);
 	uint64_t object = g_8349ADB4;
-	return n_sub_82684190(ctx, base);
+	return List_DestroyGlobal_8349ADB4(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A4C68, 0x832A4C68) { ctx.r3.u64 = n_sub_832A4C68(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4C68, 0x832A4C68) { ctx.r3.u64 = DestroyGlobalList_8349ADB4(ctx, base); }
 
-uint64_t n_sub_832A4CC0(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_8349ADCC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349ADCC = int32_t(0x8349ADCC);
 	if (!UseLiftedCode(145, 0x832A4CC0)) { __imp__sub_832A4CC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4CC0);
@@ -7394,7 +7394,7 @@ uint64_t n_sub_832A4CC0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A4CC0, 0x832A4CC0) { ctx.r3.u64 = n_sub_832A4CC0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4CC0, 0x832A4CC0) { ctx.r3.u64 = ClearHandleTargetGlobal_8349ADCC(ctx, base); }
 
 uint64_t Destroy_TXT_8349ADDC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349ADDC_G_ = int32_t(0x8349ADDC);
@@ -7404,13 +7404,13 @@ uint64_t Destroy_TXT_8349ADDC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4DA8, 0x832A4DA8) { ctx.r3.u64 = Destroy_TXT_8349ADDC_G_(ctx, base); }
 
-uint64_t n_sub_832A4DB8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalVector_8349AE08(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AE08 = int32_t(0x8349AE08);
 	if (!UseLiftedCode(145, 0x832A4DB8)) { __imp__sub_832A4DB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A4DB8);
 	return Vector_DestroyAndFree(ctx, base, g_8349AE08);
 }
-PROMOTED_ENTRY(145, sub_832A4DB8, 0x832A4DB8) { ctx.r3.u64 = n_sub_832A4DB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A4DB8, 0x832A4DB8) { ctx.r3.u64 = DestroyGlobalVector_8349AE08(ctx, base); }
 
 uint64_t Destroy_TXT_8349AE18_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AE18_G_ = int32_t(0x8349AE18);
@@ -7652,13 +7652,13 @@ uint64_t Destroy_TXT_8349AEC0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A50D0, 0x832A50D0) { ctx.r3.u64 = Destroy_TXT_8349AEC0_G_(ctx, base); }
 
-uint64_t n_sub_832A50E0(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_8349AEC4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AEC4 = int32_t(0x8349AEC4);
 	if (!UseLiftedCode(145, 0x832A50E0)) { __imp__sub_832A50E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A50E0);
-	return n_sub_82308D08(ctx, base, g_8349AEC4);
+	return StdMap_DestroyGlobal_82308D08(ctx, base, g_8349AEC4);
 }
-PROMOTED_ENTRY(145, sub_832A50E0, 0x832A50E0) { ctx.r3.u64 = n_sub_832A50E0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A50E0, 0x832A50E0) { ctx.r3.u64 = DestroyGlobalMap_8349AEC4(ctx, base); }
 
 uint64_t Destroy_TXT_8349AED0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AED0_G_ = int32_t(0x8349AED0);
@@ -7684,15 +7684,15 @@ uint64_t Destroy_TXT_8349AED8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5110, 0x832A5110) { ctx.r3.u64 = Destroy_TXT_8349AED8_G_(ctx, base); }
 
-uint64_t n_sub_832A5120(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalMap_8349AEDC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349AEDC = int32_t(0x8349AEDC);
 	if (!UseLiftedCode(145, 0x832A5120)) { __imp__sub_832A5120(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5120);
-	return n_sub_8233DD70(ctx, base, g_8349AEDC);
+	return StdMap_DestroyGlobal_8233DD70(ctx, base, g_8349AEDC);
 }
-PROMOTED_ENTRY(145, sub_832A5120, 0x832A5120) { ctx.r3.u64 = n_sub_832A5120(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5120, 0x832A5120) { ctx.r3.u64 = DestroyGlobalMap_8349AEDC(ctx, base); }
 
-uint64_t n_sub_832A5130(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_5118(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A5130)) { __imp__sub_832A5130(ctx, base); return ctx.r3.u64; }
@@ -7731,17 +7731,17 @@ uint64_t n_sub_832A5130(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A5130, 0x832A5130) { ctx.r3.u64 = n_sub_832A5130(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5130, 0x832A5130) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_5118(ctx, base); }
 
-uint64_t n_sub_832A51A8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalCCharString_834C3990(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3990 = int32_t(0x834C3990);
 	if (!UseLiftedCode(145, 0x832A51A8)) { __imp__sub_832A51A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A51A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834C3990);
 }
-PROMOTED_ENTRY(145, sub_832A51A8, 0x832A51A8) { ctx.r3.u64 = n_sub_832A51A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A51A8, 0x832A51A8) { ctx.r3.u64 = DestroyGlobalCCharString_834C3990(ctx, base); }
 
-uint64_t n_sub_832A51B8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_50F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A51B8)) { __imp__sub_832A51B8(ctx, base); return ctx.r3.u64; }
@@ -7780,7 +7780,7 @@ uint64_t n_sub_832A51B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A51B8, 0x832A51B8) { ctx.r3.u64 = n_sub_832A51B8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A51B8, 0x832A51B8) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_50F0(ctx, base); }
 
 uint64_t Destroy_TXT_8349AF98_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AF98_G_ = int32_t(0x8349AF98);
@@ -7846,7 +7846,7 @@ uint64_t Destroy_TXT_8349B044_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5298, 0x832A5298) { ctx.r3.u64 = Destroy_TXT_8349B044_G_(ctx, base); }
 
-uint64_t n_sub_832A52A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalStringArray_834A0000_4FB8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A52A8)) { __imp__sub_832A52A8(ctx, base); return ctx.r3.u64; }
@@ -7885,9 +7885,9 @@ uint64_t n_sub_832A52A8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A52A8, 0x832A52A8) { ctx.r3.u64 = n_sub_832A52A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A52A8, 0x832A52A8) { ctx.r3.u64 = ReleaseGlobalStringArray_834A0000_4FB8(ctx, base); }
 
-uint64_t n_sub_832A5310(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A5310(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A5310)) { __imp__sub_832A5310(ctx, base); return ctx.r3.u64; }
@@ -7926,7 +7926,7 @@ uint64_t n_sub_832A5310(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A5310, 0x832A5310) { ctx.r3.u64 = n_sub_832A5310(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5310, 0x832A5310) { ctx.r3.u64 = ReleaseCCharStringArray_832A5310(ctx, base); }
 
 uint64_t Destroy_TXT_8349B088_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B088_G_ = int32_t(0x8349B088);
@@ -8232,29 +8232,29 @@ uint64_t Destroy_TXT_8349B124_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A55E8, 0x832A55E8) { ctx.r3.u64 = Destroy_TXT_8349B124_G_(ctx, base); }
 
-uint64_t n_sub_832A55F8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_8349B128(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B128 = int32_t(0x8349B128);
 	if (!UseLiftedCode(145, 0x832A55F8)) { __imp__sub_832A55F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A55F8);
 	return SharedHandle_Release(ctx, base, g_8349B128);
 }
-PROMOTED_ENTRY(145, sub_832A55F8, 0x832A55F8) { ctx.r3.u64 = n_sub_832A55F8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A55F8, 0x832A55F8) { ctx.r3.u64 = DestroyGlobalSharedHandle_8349B128(ctx, base); }
 
-uint64_t n_sub_832A5678(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_834C397C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C397C = int32_t(0x834C397C);
 	if (!UseLiftedCode(145, 0x832A5678)) { __imp__sub_832A5678(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5678);
 	return SharedHandle_Release(ctx, base, g_834C397C);
 }
-PROMOTED_ENTRY(145, sub_832A5678, 0x832A5678) { ctx.r3.u64 = n_sub_832A5678(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5678, 0x832A5678) { ctx.r3.u64 = DestroyGlobalSharedHandle_834C397C(ctx, base); }
 
-uint64_t n_sub_832A5688(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalSharedHandle_834C3984(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3984 = int32_t(0x834C3984);
 	if (!UseLiftedCode(145, 0x832A5688)) { __imp__sub_832A5688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5688);
 	return SharedHandle_Release(ctx, base, g_834C3984);
 }
-PROMOTED_ENTRY(145, sub_832A5688, 0x832A5688) { ctx.r3.u64 = n_sub_832A5688(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5688, 0x832A5688) { ctx.r3.u64 = DestroyGlobalSharedHandle_834C3984(ctx, base); }
 
 uint64_t Destroy_TXT_8349B130_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B130_G_ = int32_t(0x8349B130);
@@ -8416,61 +8416,61 @@ uint64_t Destroy_TXT_8349B17C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A57D0, 0x832A57D0) { ctx.r3.u64 = Destroy_TXT_8349B17C_G_(ctx, base); }
 
-uint64_t n_sub_832A57E0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B180(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B180 = int32_t(0x8349B180);
 	if (!UseLiftedCode(145, 0x832A57E0)) { __imp__sub_832A57E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A57E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B180);
 }
-PROMOTED_ENTRY(145, sub_832A57E0, 0x832A57E0) { ctx.r3.u64 = n_sub_832A57E0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A57E0, 0x832A57E0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B180(ctx, base); }
 
-uint64_t n_sub_832A57F0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B184(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B184 = int32_t(0x8349B184);
 	if (!UseLiftedCode(145, 0x832A57F0)) { __imp__sub_832A57F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A57F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B184);
 }
-PROMOTED_ENTRY(145, sub_832A57F0, 0x832A57F0) { ctx.r3.u64 = n_sub_832A57F0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A57F0, 0x832A57F0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B184(ctx, base); }
 
-uint64_t n_sub_832A5800(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B188(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B188 = int32_t(0x8349B188);
 	if (!UseLiftedCode(145, 0x832A5800)) { __imp__sub_832A5800(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5800);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B188);
 }
-PROMOTED_ENTRY(145, sub_832A5800, 0x832A5800) { ctx.r3.u64 = n_sub_832A5800(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5800, 0x832A5800) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B188(ctx, base); }
 
-uint64_t n_sub_832A5810(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B18C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B18C = int32_t(0x8349B18C);
 	if (!UseLiftedCode(145, 0x832A5810)) { __imp__sub_832A5810(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5810);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B18C);
 }
-PROMOTED_ENTRY(145, sub_832A5810, 0x832A5810) { ctx.r3.u64 = n_sub_832A5810(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5810, 0x832A5810) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B18C(ctx, base); }
 
-uint64_t n_sub_832A5820(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B190(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B190 = int32_t(0x8349B190);
 	if (!UseLiftedCode(145, 0x832A5820)) { __imp__sub_832A5820(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5820);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B190);
 }
-PROMOTED_ENTRY(145, sub_832A5820, 0x832A5820) { ctx.r3.u64 = n_sub_832A5820(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5820, 0x832A5820) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B190(ctx, base); }
 
-uint64_t n_sub_832A5830(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B194(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B194 = int32_t(0x8349B194);
 	if (!UseLiftedCode(145, 0x832A5830)) { __imp__sub_832A5830(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5830);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B194);
 }
-PROMOTED_ENTRY(145, sub_832A5830, 0x832A5830) { ctx.r3.u64 = n_sub_832A5830(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5830, 0x832A5830) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B194(ctx, base); }
 
-uint64_t n_sub_832A5840(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B198(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B198 = int32_t(0x8349B198);
 	if (!UseLiftedCode(145, 0x832A5840)) { __imp__sub_832A5840(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5840);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B198);
 }
-PROMOTED_ENTRY(145, sub_832A5840, 0x832A5840) { ctx.r3.u64 = n_sub_832A5840(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5840, 0x832A5840) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B198(ctx, base); }
 
 uint64_t Destroy_TXT_8349B1A4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1A4_G_ = int32_t(0x8349B1A4);
@@ -8480,13 +8480,13 @@ uint64_t Destroy_TXT_8349B1A4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5850, 0x832A5850) { ctx.r3.u64 = Destroy_TXT_8349B1A4_G_(ctx, base); }
 
-uint64_t n_sub_832A5860(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1A8 = int32_t(0x8349B1A8);
 	if (!UseLiftedCode(145, 0x832A5860)) { __imp__sub_832A5860(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5860);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1A8);
 }
-PROMOTED_ENTRY(145, sub_832A5860, 0x832A5860) { ctx.r3.u64 = n_sub_832A5860(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5860, 0x832A5860) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1A8(ctx, base); }
 
 uint64_t Destroy_TXT_8349B1AC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
@@ -8496,45 +8496,45 @@ uint64_t Destroy_TXT_8349B1AC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5870, 0x832A5870) { ctx.r3.u64 = Destroy_TXT_8349B1AC_G_(ctx, base); }
 
-uint64_t n_sub_832A5880(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1B0 = int32_t(0x8349B1B0);
 	if (!UseLiftedCode(145, 0x832A5880)) { __imp__sub_832A5880(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5880);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1B0);
 }
-PROMOTED_ENTRY(145, sub_832A5880, 0x832A5880) { ctx.r3.u64 = n_sub_832A5880(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5880, 0x832A5880) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1B0(ctx, base); }
 
-uint64_t n_sub_832A5890(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1B4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1B4 = int32_t(0x8349B1B4);
 	if (!UseLiftedCode(145, 0x832A5890)) { __imp__sub_832A5890(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5890);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1B4);
 }
-PROMOTED_ENTRY(145, sub_832A5890, 0x832A5890) { ctx.r3.u64 = n_sub_832A5890(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5890, 0x832A5890) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1B4(ctx, base); }
 
-uint64_t n_sub_832A58A0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1B8 = int32_t(0x8349B1B8);
 	if (!UseLiftedCode(145, 0x832A58A0)) { __imp__sub_832A58A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A58A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1B8);
 }
-PROMOTED_ENTRY(145, sub_832A58A0, 0x832A58A0) { ctx.r3.u64 = n_sub_832A58A0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A58A0, 0x832A58A0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1B8(ctx, base); }
 
-uint64_t n_sub_832A58B0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1BC = int32_t(0x8349B1BC);
 	if (!UseLiftedCode(145, 0x832A58B0)) { __imp__sub_832A58B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A58B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1BC);
 }
-PROMOTED_ENTRY(145, sub_832A58B0, 0x832A58B0) { ctx.r3.u64 = n_sub_832A58B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A58B0, 0x832A58B0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1BC(ctx, base); }
 
-uint64_t n_sub_832A58C0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1C0 = int32_t(0x8349B1C0);
 	if (!UseLiftedCode(145, 0x832A58C0)) { __imp__sub_832A58C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A58C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1C0);
 }
-PROMOTED_ENTRY(145, sub_832A58C0, 0x832A58C0) { ctx.r3.u64 = n_sub_832A58C0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A58C0, 0x832A58C0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1C0(ctx, base); }
 
 uint64_t Destroy_TXT_8349B1C8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
@@ -8552,45 +8552,45 @@ uint64_t Destroy_TXT_8349B1CC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A58E0, 0x832A58E0) { ctx.r3.u64 = Destroy_TXT_8349B1CC_G_(ctx, base); }
 
-uint64_t n_sub_832A58F0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1D0 = int32_t(0x8349B1D0);
 	if (!UseLiftedCode(145, 0x832A58F0)) { __imp__sub_832A58F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A58F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1D0);
 }
-PROMOTED_ENTRY(145, sub_832A58F0, 0x832A58F0) { ctx.r3.u64 = n_sub_832A58F0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A58F0, 0x832A58F0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1D0(ctx, base); }
 
-uint64_t n_sub_832A5900(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1D4 = int32_t(0x8349B1D4);
 	if (!UseLiftedCode(145, 0x832A5900)) { __imp__sub_832A5900(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5900);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1D4);
 }
-PROMOTED_ENTRY(145, sub_832A5900, 0x832A5900) { ctx.r3.u64 = n_sub_832A5900(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5900, 0x832A5900) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1D4(ctx, base); }
 
-uint64_t n_sub_832A5910(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1D8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1D8 = int32_t(0x8349B1D8);
 	if (!UseLiftedCode(145, 0x832A5910)) { __imp__sub_832A5910(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5910);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1D8);
 }
-PROMOTED_ENTRY(145, sub_832A5910, 0x832A5910) { ctx.r3.u64 = n_sub_832A5910(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5910, 0x832A5910) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1D8(ctx, base); }
 
-uint64_t n_sub_832A5920(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1DC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1DC = int32_t(0x8349B1DC);
 	if (!UseLiftedCode(145, 0x832A5920)) { __imp__sub_832A5920(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5920);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1DC);
 }
-PROMOTED_ENTRY(145, sub_832A5920, 0x832A5920) { ctx.r3.u64 = n_sub_832A5920(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5920, 0x832A5920) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1DC(ctx, base); }
 
-uint64_t n_sub_832A5930(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1E0 = int32_t(0x8349B1E0);
 	if (!UseLiftedCode(145, 0x832A5930)) { __imp__sub_832A5930(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5930);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1E0);
 }
-PROMOTED_ENTRY(145, sub_832A5930, 0x832A5930) { ctx.r3.u64 = n_sub_832A5930(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5930, 0x832A5930) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1E0(ctx, base); }
 
 uint64_t Destroy_TXT_8349B1E4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1E4_G_ = int32_t(0x8349B1E4);
@@ -8600,29 +8600,29 @@ uint64_t Destroy_TXT_8349B1E4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5940, 0x832A5940) { ctx.r3.u64 = Destroy_TXT_8349B1E4_G_(ctx, base); }
 
-uint64_t n_sub_832A5950(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1E8 = int32_t(0x8349B1E8);
 	if (!UseLiftedCode(145, 0x832A5950)) { __imp__sub_832A5950(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5950);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1E8);
 }
-PROMOTED_ENTRY(145, sub_832A5950, 0x832A5950) { ctx.r3.u64 = n_sub_832A5950(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5950, 0x832A5950) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1E8(ctx, base); }
 
-uint64_t n_sub_832A5960(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1EC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1EC = int32_t(0x8349B1EC);
 	if (!UseLiftedCode(145, 0x832A5960)) { __imp__sub_832A5960(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5960);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1EC);
 }
-PROMOTED_ENTRY(145, sub_832A5960, 0x832A5960) { ctx.r3.u64 = n_sub_832A5960(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5960, 0x832A5960) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1EC(ctx, base); }
 
-uint64_t n_sub_832A5970(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B1F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B1F0 = int32_t(0x8349B1F0);
 	if (!UseLiftedCode(145, 0x832A5970)) { __imp__sub_832A5970(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5970);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B1F0);
 }
-PROMOTED_ENTRY(145, sub_832A5970, 0x832A5970) { ctx.r3.u64 = n_sub_832A5970(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5970, 0x832A5970) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B1F0(ctx, base); }
 
 uint64_t Destroy_TXT_8349B1F4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1F4_G_ = int32_t(0x8349B1F4);
@@ -8648,21 +8648,21 @@ uint64_t Destroy_TXT_8349B1FC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A59A0, 0x832A59A0) { ctx.r3.u64 = Destroy_TXT_8349B1FC_G_(ctx, base); }
 
-uint64_t n_sub_832A59B0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B200(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B200 = int32_t(0x8349B200);
 	if (!UseLiftedCode(145, 0x832A59B0)) { __imp__sub_832A59B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A59B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B200);
 }
-PROMOTED_ENTRY(145, sub_832A59B0, 0x832A59B0) { ctx.r3.u64 = n_sub_832A59B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A59B0, 0x832A59B0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B200(ctx, base); }
 
-uint64_t n_sub_832A59C0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349B204(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B204 = int32_t(0x8349B204);
 	if (!UseLiftedCode(145, 0x832A59C0)) { __imp__sub_832A59C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A59C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349B204);
 }
-PROMOTED_ENTRY(145, sub_832A59C0, 0x832A59C0) { ctx.r3.u64 = n_sub_832A59C0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A59C0, 0x832A59C0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349B204(ctx, base); }
 
 uint64_t Destroy_TXT_8349B208_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B208_G_ = int32_t(0x8349B208);
@@ -8984,23 +8984,23 @@ uint64_t Destroy_TXT_8349B308_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5CB0, 0x832A5CB0) { ctx.r3.u64 = Destroy_TXT_8349B308_G_(ctx, base); }
 
-uint64_t n_sub_832A5CC0(CpuState& ctx, uint8_t* base) {
+uint64_t HandleList_DestroyGlobal_8349B314(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B314 = int32_t(0x8349B314);
 	if (!UseLiftedCode(145, 0x832A5CC0)) { __imp__sub_832A5CC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5CC0);
 	uint64_t object = g_8349B314;
-	return n_sub_8273E9A8(ctx, base);
+	return HandleList_Clear_8349B314(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A5CC0, 0x832A5CC0) { ctx.r3.u64 = n_sub_832A5CC0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5CC0, 0x832A5CC0) { ctx.r3.u64 = HandleList_DestroyGlobal_8349B314(ctx, base); }
 
-uint64_t n_sub_832A5CD0(CpuState& ctx, uint8_t* base) {
+uint64_t HandleList_DestroyGlobal_8349B320(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B320 = int32_t(0x8349B320);
 	if (!UseLiftedCode(145, 0x832A5CD0)) { __imp__sub_832A5CD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5CD0);
 	uint64_t object = g_8349B320;
-	return n_sub_8273EAE8(ctx, base);
+	return HandleList_Clear_8349B320(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A5CD0, 0x832A5CD0) { ctx.r3.u64 = n_sub_832A5CD0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5CD0, 0x832A5CD0) { ctx.r3.u64 = HandleList_DestroyGlobal_8349B320(ctx, base); }
 
 uint64_t Destroy_TXT_8349B370_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B370_G_ = int32_t(0x8349B370);
@@ -9306,7 +9306,7 @@ uint64_t Destroy_TXT_8349B404_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5F30, 0x832A5F30) { ctx.r3.u64 = Destroy_TXT_8349B404_G_(ctx, base); }
 
-uint64_t n_sub_832A5F40(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A5F40(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A5F40)) { __imp__sub_832A5F40(ctx, base); return ctx.r3.u64; }
@@ -9345,23 +9345,23 @@ uint64_t n_sub_832A5F40(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A5F40, 0x832A5F40) { ctx.r3.u64 = n_sub_832A5F40(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5F40, 0x832A5F40) { ctx.r3.u64 = ReleaseCCharStringArray_832A5F40(ctx, base); }
 
-uint64_t n_sub_832A5FF0(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_834C3968(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3968 = int32_t(0x834C3968);
 	if (!UseLiftedCode(145, 0x832A5FF0)) { __imp__sub_832A5FF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A5FF0);
 	return SharedHandle_Release(ctx, base, g_834C3968);
 }
-PROMOTED_ENTRY(145, sub_832A5FF0, 0x832A5FF0) { ctx.r3.u64 = n_sub_832A5FF0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A5FF0, 0x832A5FF0) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_834C3968(ctx, base); }
 
-uint64_t n_sub_832A6000(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_834C3970(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3970 = int32_t(0x834C3970);
 	if (!UseLiftedCode(145, 0x832A6000)) { __imp__sub_832A6000(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6000);
 	return SharedHandle_Release(ctx, base, g_834C3970);
 }
-PROMOTED_ENTRY(145, sub_832A6000, 0x832A6000) { ctx.r3.u64 = n_sub_832A6000(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6000, 0x832A6000) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_834C3970(ctx, base); }
 
 uint64_t Destroy_TXT_8349B4E4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B4E4_G_ = int32_t(0x8349B4E4);
@@ -9371,13 +9371,13 @@ uint64_t Destroy_TXT_8349B4E4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6010, 0x832A6010) { ctx.r3.u64 = Destroy_TXT_8349B4E4_G_(ctx, base); }
 
-uint64_t n_sub_832A6020(CpuState& ctx, uint8_t* base) {
+uint64_t IntrusiveList_ClearGlobal_8349B4E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B4E8 = int32_t(0x8349B4E8);
 	if (!UseLiftedCode(145, 0x832A6020)) { __imp__sub_832A6020(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6020);
-	return n_sub_824C6480(ctx, base, g_8349B4E8);
+	return IntrusiveList_Clear(ctx, base, g_8349B4E8);
 }
-PROMOTED_ENTRY(145, sub_832A6020, 0x832A6020) { ctx.r3.u64 = n_sub_832A6020(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6020, 0x832A6020) { ctx.r3.u64 = IntrusiveList_ClearGlobal_8349B4E8(ctx, base); }
 
 uint64_t Destroy_TXT_8349B500_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B500_G_ = int32_t(0x8349B500);
@@ -9451,46 +9451,46 @@ uint64_t Destroy_TXT_8349B534_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6198, 0x832A6198) { ctx.r3.u64 = Destroy_TXT_8349B534_G_(ctx, base); }
 
-uint64_t n_sub_832A61A8(CpuState& ctx, uint8_t* base) {
+uint64_t HandleList_DestroyGlobal_8349B538(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B538 = int32_t(0x8349B538);
 	if (!UseLiftedCode(145, 0x832A61A8)) { __imp__sub_832A61A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A61A8);
 	uint64_t object = g_8349B538;
-	return n_sub_827C57D8(ctx, base);
+	return HandleList_Clear_8349B538(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A61A8, 0x832A61A8) { ctx.r3.u64 = n_sub_832A61A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A61A8, 0x832A61A8) { ctx.r3.u64 = HandleList_DestroyGlobal_8349B538(ctx, base); }
 
-uint64_t n_sub_832A61B8(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349B544(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B544 = int32_t(0x8349B544);
 	if (!UseLiftedCode(145, 0x832A61B8)) { __imp__sub_832A61B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A61B8);
 	return SharedHandle_Release(ctx, base, g_8349B544);
 }
-PROMOTED_ENTRY(145, sub_832A61B8, 0x832A61B8) { ctx.r3.u64 = n_sub_832A61B8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A61B8, 0x832A61B8) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349B544(ctx, base); }
 
-uint64_t n_sub_832A61C8(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349B54C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B54C = int32_t(0x8349B54C);
 	if (!UseLiftedCode(145, 0x832A61C8)) { __imp__sub_832A61C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A61C8);
 	return SharedHandle_Release(ctx, base, g_8349B54C);
 }
-PROMOTED_ENTRY(145, sub_832A61C8, 0x832A61C8) { ctx.r3.u64 = n_sub_832A61C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A61C8, 0x832A61C8) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349B54C(ctx, base); }
 
-uint64_t n_sub_832A61D8(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349B554(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B554 = int32_t(0x8349B554);
 	if (!UseLiftedCode(145, 0x832A61D8)) { __imp__sub_832A61D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A61D8);
 	return SharedHandle_Release(ctx, base, g_8349B554);
 }
-PROMOTED_ENTRY(145, sub_832A61D8, 0x832A61D8) { ctx.r3.u64 = n_sub_832A61D8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A61D8, 0x832A61D8) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349B554(ctx, base); }
 
-uint64_t n_sub_832A61E8(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349B55C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349B55C = int32_t(0x8349B55C);
 	if (!UseLiftedCode(145, 0x832A61E8)) { __imp__sub_832A61E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A61E8);
 	return SharedHandle_Release(ctx, base, g_8349B55C);
 }
-PROMOTED_ENTRY(145, sub_832A61E8, 0x832A61E8) { ctx.r3.u64 = n_sub_832A61E8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A61E8, 0x832A61E8) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349B55C(ctx, base); }
 
 uint64_t Destroy_TXT_8349B564_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B564_G_ = int32_t(0x8349B564);
@@ -9500,7 +9500,7 @@ uint64_t Destroy_TXT_8349B564_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A61F8, 0x832A61F8) { ctx.r3.u64 = Destroy_TXT_8349B564_G_(ctx, base); }
 
-uint64_t n_sub_832A6208(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6208(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6208)) { __imp__sub_832A6208(ctx, base); return ctx.r3.u64; }
@@ -9539,7 +9539,7 @@ uint64_t n_sub_832A6208(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6208, 0x832A6208) { ctx.r3.u64 = n_sub_832A6208(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6208, 0x832A6208) { ctx.r3.u64 = ReleaseCCharStringArray_832A6208(ctx, base); }
 
 uint64_t Destroy_TXT_8349B608_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B608_G_ = int32_t(0x8349B608);
@@ -9701,382 +9701,382 @@ uint64_t Destroy_TXT_8349BB40_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6488, 0x832A6488) { ctx.r3.u64 = Destroy_TXT_8349BB40_G_(ctx, base); }
 
-uint64_t n_sub_832A6498(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB44(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB44 = int32_t(0x8349BB44);
 	if (!UseLiftedCode(145, 0x832A6498)) { __imp__sub_832A6498(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6498);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB44);
 }
-PROMOTED_ENTRY(145, sub_832A6498, 0x832A6498) { ctx.r3.u64 = n_sub_832A6498(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6498, 0x832A6498) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB44(ctx, base); }
 
-uint64_t n_sub_832A64A8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB48(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB48 = int32_t(0x8349BB48);
 	if (!UseLiftedCode(145, 0x832A64A8)) { __imp__sub_832A64A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64A8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB48);
 }
-PROMOTED_ENTRY(145, sub_832A64A8, 0x832A64A8) { ctx.r3.u64 = n_sub_832A64A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64A8, 0x832A64A8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB48(ctx, base); }
 
-uint64_t n_sub_832A64B8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB4C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB4C = int32_t(0x8349BB4C);
 	if (!UseLiftedCode(145, 0x832A64B8)) { __imp__sub_832A64B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64B8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB4C);
 }
-PROMOTED_ENTRY(145, sub_832A64B8, 0x832A64B8) { ctx.r3.u64 = n_sub_832A64B8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64B8, 0x832A64B8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB4C(ctx, base); }
 
-uint64_t n_sub_832A64C8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB50(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB50 = int32_t(0x8349BB50);
 	if (!UseLiftedCode(145, 0x832A64C8)) { __imp__sub_832A64C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64C8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB50);
 }
-PROMOTED_ENTRY(145, sub_832A64C8, 0x832A64C8) { ctx.r3.u64 = n_sub_832A64C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64C8, 0x832A64C8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB50(ctx, base); }
 
-uint64_t n_sub_832A64D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB54(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB54 = int32_t(0x8349BB54);
 	if (!UseLiftedCode(145, 0x832A64D8)) { __imp__sub_832A64D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64D8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB54);
 }
-PROMOTED_ENTRY(145, sub_832A64D8, 0x832A64D8) { ctx.r3.u64 = n_sub_832A64D8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64D8, 0x832A64D8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB54(ctx, base); }
 
-uint64_t n_sub_832A64E8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB58(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB58 = int32_t(0x8349BB58);
 	if (!UseLiftedCode(145, 0x832A64E8)) { __imp__sub_832A64E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64E8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB58);
 }
-PROMOTED_ENTRY(145, sub_832A64E8, 0x832A64E8) { ctx.r3.u64 = n_sub_832A64E8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64E8, 0x832A64E8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB58(ctx, base); }
 
-uint64_t n_sub_832A64F8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB5C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB5C = int32_t(0x8349BB5C);
 	if (!UseLiftedCode(145, 0x832A64F8)) { __imp__sub_832A64F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A64F8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB5C);
 }
-PROMOTED_ENTRY(145, sub_832A64F8, 0x832A64F8) { ctx.r3.u64 = n_sub_832A64F8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A64F8, 0x832A64F8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB5C(ctx, base); }
 
-uint64_t n_sub_832A6508(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB60(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB60 = int32_t(0x8349BB60);
 	if (!UseLiftedCode(145, 0x832A6508)) { __imp__sub_832A6508(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6508);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB60);
 }
-PROMOTED_ENTRY(145, sub_832A6508, 0x832A6508) { ctx.r3.u64 = n_sub_832A6508(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6508, 0x832A6508) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB60(ctx, base); }
 
-uint64_t n_sub_832A6518(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB64(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB64 = int32_t(0x8349BB64);
 	if (!UseLiftedCode(145, 0x832A6518)) { __imp__sub_832A6518(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6518);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB64);
 }
-PROMOTED_ENTRY(145, sub_832A6518, 0x832A6518) { ctx.r3.u64 = n_sub_832A6518(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6518, 0x832A6518) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB64(ctx, base); }
 
-uint64_t n_sub_832A6528(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB68(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB68 = int32_t(0x8349BB68);
 	if (!UseLiftedCode(145, 0x832A6528)) { __imp__sub_832A6528(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6528);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB68);
 }
-PROMOTED_ENTRY(145, sub_832A6528, 0x832A6528) { ctx.r3.u64 = n_sub_832A6528(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6528, 0x832A6528) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB68(ctx, base); }
 
-uint64_t n_sub_832A6538(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB6C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB6C = int32_t(0x8349BB6C);
 	if (!UseLiftedCode(145, 0x832A6538)) { __imp__sub_832A6538(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6538);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB6C);
 }
-PROMOTED_ENTRY(145, sub_832A6538, 0x832A6538) { ctx.r3.u64 = n_sub_832A6538(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6538, 0x832A6538) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB6C(ctx, base); }
 
-uint64_t n_sub_832A6548(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB70(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB70 = int32_t(0x8349BB70);
 	if (!UseLiftedCode(145, 0x832A6548)) { __imp__sub_832A6548(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6548);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB70);
 }
-PROMOTED_ENTRY(145, sub_832A6548, 0x832A6548) { ctx.r3.u64 = n_sub_832A6548(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6548, 0x832A6548) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB70(ctx, base); }
 
-uint64_t n_sub_832A6558(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB74(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB74 = int32_t(0x8349BB74);
 	if (!UseLiftedCode(145, 0x832A6558)) { __imp__sub_832A6558(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6558);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB74);
 }
-PROMOTED_ENTRY(145, sub_832A6558, 0x832A6558) { ctx.r3.u64 = n_sub_832A6558(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6558, 0x832A6558) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB74(ctx, base); }
 
-uint64_t n_sub_832A6568(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB78(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB78 = int32_t(0x8349BB78);
 	if (!UseLiftedCode(145, 0x832A6568)) { __imp__sub_832A6568(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6568);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB78);
 }
-PROMOTED_ENTRY(145, sub_832A6568, 0x832A6568) { ctx.r3.u64 = n_sub_832A6568(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6568, 0x832A6568) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB78(ctx, base); }
 
-uint64_t n_sub_832A6578(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB7C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB7C = int32_t(0x8349BB7C);
 	if (!UseLiftedCode(145, 0x832A6578)) { __imp__sub_832A6578(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6578);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB7C);
 }
-PROMOTED_ENTRY(145, sub_832A6578, 0x832A6578) { ctx.r3.u64 = n_sub_832A6578(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6578, 0x832A6578) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB7C(ctx, base); }
 
-uint64_t n_sub_832A6588(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB80(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB80 = int32_t(0x8349BB80);
 	if (!UseLiftedCode(145, 0x832A6588)) { __imp__sub_832A6588(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6588);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB80);
 }
-PROMOTED_ENTRY(145, sub_832A6588, 0x832A6588) { ctx.r3.u64 = n_sub_832A6588(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6588, 0x832A6588) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB80(ctx, base); }
 
-uint64_t n_sub_832A6598(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB84(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB84 = int32_t(0x8349BB84);
 	if (!UseLiftedCode(145, 0x832A6598)) { __imp__sub_832A6598(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6598);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB84);
 }
-PROMOTED_ENTRY(145, sub_832A6598, 0x832A6598) { ctx.r3.u64 = n_sub_832A6598(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6598, 0x832A6598) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB84(ctx, base); }
 
-uint64_t n_sub_832A65A8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB88 = int32_t(0x8349BB88);
 	if (!UseLiftedCode(145, 0x832A65A8)) { __imp__sub_832A65A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65A8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB88);
 }
-PROMOTED_ENTRY(145, sub_832A65A8, 0x832A65A8) { ctx.r3.u64 = n_sub_832A65A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65A8, 0x832A65A8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB88(ctx, base); }
 
-uint64_t n_sub_832A65B8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB8C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB8C = int32_t(0x8349BB8C);
 	if (!UseLiftedCode(145, 0x832A65B8)) { __imp__sub_832A65B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65B8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB8C);
 }
-PROMOTED_ENTRY(145, sub_832A65B8, 0x832A65B8) { ctx.r3.u64 = n_sub_832A65B8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65B8, 0x832A65B8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB8C(ctx, base); }
 
-uint64_t n_sub_832A65C8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB90(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB90 = int32_t(0x8349BB90);
 	if (!UseLiftedCode(145, 0x832A65C8)) { __imp__sub_832A65C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65C8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB90);
 }
-PROMOTED_ENTRY(145, sub_832A65C8, 0x832A65C8) { ctx.r3.u64 = n_sub_832A65C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65C8, 0x832A65C8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB90(ctx, base); }
 
-uint64_t n_sub_832A65D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB94(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB94 = int32_t(0x8349BB94);
 	if (!UseLiftedCode(145, 0x832A65D8)) { __imp__sub_832A65D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65D8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB94);
 }
-PROMOTED_ENTRY(145, sub_832A65D8, 0x832A65D8) { ctx.r3.u64 = n_sub_832A65D8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65D8, 0x832A65D8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB94(ctx, base); }
 
-uint64_t n_sub_832A65E8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB98(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB98 = int32_t(0x8349BB98);
 	if (!UseLiftedCode(145, 0x832A65E8)) { __imp__sub_832A65E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65E8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB98);
 }
-PROMOTED_ENTRY(145, sub_832A65E8, 0x832A65E8) { ctx.r3.u64 = n_sub_832A65E8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65E8, 0x832A65E8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB98(ctx, base); }
 
-uint64_t n_sub_832A65F8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BB9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BB9C = int32_t(0x8349BB9C);
 	if (!UseLiftedCode(145, 0x832A65F8)) { __imp__sub_832A65F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A65F8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BB9C);
 }
-PROMOTED_ENTRY(145, sub_832A65F8, 0x832A65F8) { ctx.r3.u64 = n_sub_832A65F8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A65F8, 0x832A65F8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BB9C(ctx, base); }
 
-uint64_t n_sub_832A6608(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBA0 = int32_t(0x8349BBA0);
 	if (!UseLiftedCode(145, 0x832A6608)) { __imp__sub_832A6608(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6608);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBA0);
 }
-PROMOTED_ENTRY(145, sub_832A6608, 0x832A6608) { ctx.r3.u64 = n_sub_832A6608(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6608, 0x832A6608) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBA0(ctx, base); }
 
-uint64_t n_sub_832A6618(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBA4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBA4 = int32_t(0x8349BBA4);
 	if (!UseLiftedCode(145, 0x832A6618)) { __imp__sub_832A6618(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6618);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBA4);
 }
-PROMOTED_ENTRY(145, sub_832A6618, 0x832A6618) { ctx.r3.u64 = n_sub_832A6618(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6618, 0x832A6618) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBA4(ctx, base); }
 
-uint64_t n_sub_832A6628(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBA8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBA8 = int32_t(0x8349BBA8);
 	if (!UseLiftedCode(145, 0x832A6628)) { __imp__sub_832A6628(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6628);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBA8);
 }
-PROMOTED_ENTRY(145, sub_832A6628, 0x832A6628) { ctx.r3.u64 = n_sub_832A6628(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6628, 0x832A6628) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBA8(ctx, base); }
 
-uint64_t n_sub_832A6638(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBAC = int32_t(0x8349BBAC);
 	if (!UseLiftedCode(145, 0x832A6638)) { __imp__sub_832A6638(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6638);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBAC);
 }
-PROMOTED_ENTRY(145, sub_832A6638, 0x832A6638) { ctx.r3.u64 = n_sub_832A6638(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6638, 0x832A6638) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBAC(ctx, base); }
 
-uint64_t n_sub_832A6648(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBB0 = int32_t(0x8349BBB0);
 	if (!UseLiftedCode(145, 0x832A6648)) { __imp__sub_832A6648(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6648);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBB0);
 }
-PROMOTED_ENTRY(145, sub_832A6648, 0x832A6648) { ctx.r3.u64 = n_sub_832A6648(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6648, 0x832A6648) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBB0(ctx, base); }
 
-uint64_t n_sub_832A6658(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBB4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBB4 = int32_t(0x8349BBB4);
 	if (!UseLiftedCode(145, 0x832A6658)) { __imp__sub_832A6658(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6658);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBB4);
 }
-PROMOTED_ENTRY(145, sub_832A6658, 0x832A6658) { ctx.r3.u64 = n_sub_832A6658(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6658, 0x832A6658) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBB4(ctx, base); }
 
-uint64_t n_sub_832A6668(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBB8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBB8 = int32_t(0x8349BBB8);
 	if (!UseLiftedCode(145, 0x832A6668)) { __imp__sub_832A6668(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6668);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBB8);
 }
-PROMOTED_ENTRY(145, sub_832A6668, 0x832A6668) { ctx.r3.u64 = n_sub_832A6668(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6668, 0x832A6668) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBB8(ctx, base); }
 
-uint64_t n_sub_832A6678(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBBC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBBC = int32_t(0x8349BBBC);
 	if (!UseLiftedCode(145, 0x832A6678)) { __imp__sub_832A6678(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6678);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBBC);
 }
-PROMOTED_ENTRY(145, sub_832A6678, 0x832A6678) { ctx.r3.u64 = n_sub_832A6678(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6678, 0x832A6678) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBBC(ctx, base); }
 
-uint64_t n_sub_832A6688(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBC0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBC0 = int32_t(0x8349BBC0);
 	if (!UseLiftedCode(145, 0x832A6688)) { __imp__sub_832A6688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6688);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBC0);
 }
-PROMOTED_ENTRY(145, sub_832A6688, 0x832A6688) { ctx.r3.u64 = n_sub_832A6688(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6688, 0x832A6688) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBC0(ctx, base); }
 
-uint64_t n_sub_832A6698(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBC4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBC4 = int32_t(0x8349BBC4);
 	if (!UseLiftedCode(145, 0x832A6698)) { __imp__sub_832A6698(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6698);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBC4);
 }
-PROMOTED_ENTRY(145, sub_832A6698, 0x832A6698) { ctx.r3.u64 = n_sub_832A6698(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6698, 0x832A6698) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBC4(ctx, base); }
 
-uint64_t n_sub_832A66A8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBC8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBC8 = int32_t(0x8349BBC8);
 	if (!UseLiftedCode(145, 0x832A66A8)) { __imp__sub_832A66A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66A8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBC8);
 }
-PROMOTED_ENTRY(145, sub_832A66A8, 0x832A66A8) { ctx.r3.u64 = n_sub_832A66A8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66A8, 0x832A66A8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBC8(ctx, base); }
 
-uint64_t n_sub_832A66B8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBCC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBCC = int32_t(0x8349BBCC);
 	if (!UseLiftedCode(145, 0x832A66B8)) { __imp__sub_832A66B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66B8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBCC);
 }
-PROMOTED_ENTRY(145, sub_832A66B8, 0x832A66B8) { ctx.r3.u64 = n_sub_832A66B8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66B8, 0x832A66B8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBCC(ctx, base); }
 
-uint64_t n_sub_832A66C8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBD0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBD0 = int32_t(0x8349BBD0);
 	if (!UseLiftedCode(145, 0x832A66C8)) { __imp__sub_832A66C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66C8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBD0);
 }
-PROMOTED_ENTRY(145, sub_832A66C8, 0x832A66C8) { ctx.r3.u64 = n_sub_832A66C8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66C8, 0x832A66C8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBD0(ctx, base); }
 
-uint64_t n_sub_832A66D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBD4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBD4 = int32_t(0x8349BBD4);
 	if (!UseLiftedCode(145, 0x832A66D8)) { __imp__sub_832A66D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66D8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBD4);
 }
-PROMOTED_ENTRY(145, sub_832A66D8, 0x832A66D8) { ctx.r3.u64 = n_sub_832A66D8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66D8, 0x832A66D8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBD4(ctx, base); }
 
-uint64_t n_sub_832A66E8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBD8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBD8 = int32_t(0x8349BBD8);
 	if (!UseLiftedCode(145, 0x832A66E8)) { __imp__sub_832A66E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66E8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBD8);
 }
-PROMOTED_ENTRY(145, sub_832A66E8, 0x832A66E8) { ctx.r3.u64 = n_sub_832A66E8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66E8, 0x832A66E8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBD8(ctx, base); }
 
-uint64_t n_sub_832A66F8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBDC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBDC = int32_t(0x8349BBDC);
 	if (!UseLiftedCode(145, 0x832A66F8)) { __imp__sub_832A66F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A66F8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBDC);
 }
-PROMOTED_ENTRY(145, sub_832A66F8, 0x832A66F8) { ctx.r3.u64 = n_sub_832A66F8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A66F8, 0x832A66F8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBDC(ctx, base); }
 
-uint64_t n_sub_832A6708(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBE0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBE0 = int32_t(0x8349BBE0);
 	if (!UseLiftedCode(145, 0x832A6708)) { __imp__sub_832A6708(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6708);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBE0);
 }
-PROMOTED_ENTRY(145, sub_832A6708, 0x832A6708) { ctx.r3.u64 = n_sub_832A6708(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6708, 0x832A6708) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBE0(ctx, base); }
 
-uint64_t n_sub_832A6718(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBE4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBE4 = int32_t(0x8349BBE4);
 	if (!UseLiftedCode(145, 0x832A6718)) { __imp__sub_832A6718(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6718);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBE4);
 }
-PROMOTED_ENTRY(145, sub_832A6718, 0x832A6718) { ctx.r3.u64 = n_sub_832A6718(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6718, 0x832A6718) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBE4(ctx, base); }
 
-uint64_t n_sub_832A6728(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBE8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBE8 = int32_t(0x8349BBE8);
 	if (!UseLiftedCode(145, 0x832A6728)) { __imp__sub_832A6728(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6728);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBE8);
 }
-PROMOTED_ENTRY(145, sub_832A6728, 0x832A6728) { ctx.r3.u64 = n_sub_832A6728(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6728, 0x832A6728) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBE8(ctx, base); }
 
-uint64_t n_sub_832A6738(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBEC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBEC = int32_t(0x8349BBEC);
 	if (!UseLiftedCode(145, 0x832A6738)) { __imp__sub_832A6738(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6738);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBEC);
 }
-PROMOTED_ENTRY(145, sub_832A6738, 0x832A6738) { ctx.r3.u64 = n_sub_832A6738(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6738, 0x832A6738) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBEC(ctx, base); }
 
-uint64_t n_sub_832A6748(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBF0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBF0 = int32_t(0x8349BBF0);
 	if (!UseLiftedCode(145, 0x832A6748)) { __imp__sub_832A6748(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6748);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBF0);
 }
-PROMOTED_ENTRY(145, sub_832A6748, 0x832A6748) { ctx.r3.u64 = n_sub_832A6748(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6748, 0x832A6748) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBF0(ctx, base); }
 
-uint64_t n_sub_832A6758(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBF4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBF4 = int32_t(0x8349BBF4);
 	if (!UseLiftedCode(145, 0x832A6758)) { __imp__sub_832A6758(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6758);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBF4);
 }
-PROMOTED_ENTRY(145, sub_832A6758, 0x832A6758) { ctx.r3.u64 = n_sub_832A6758(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6758, 0x832A6758) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBF4(ctx, base); }
 
-uint64_t n_sub_832A6768(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BBF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBF8 = int32_t(0x8349BBF8);
 	if (!UseLiftedCode(145, 0x832A6768)) { __imp__sub_832A6768(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6768);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BBF8);
 }
-PROMOTED_ENTRY(145, sub_832A6768, 0x832A6768) { ctx.r3.u64 = n_sub_832A6768(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6768, 0x832A6768) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BBF8(ctx, base); }
 
-uint64_t n_sub_832A6778(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349BBFC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BBFC = int32_t(0x8349BBFC);
 	if (!UseLiftedCode(145, 0x832A6778)) { __imp__sub_832A6778(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6778);
 	uint64_t object = g_8349BBFC;
-	return n_sub_827DF9A8(ctx, base);
+	return Container_8349BBFC_ClearAndFree(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A6778, 0x832A6778) { ctx.r3.u64 = n_sub_832A6778(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6778, 0x832A6778) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349BBFC(ctx, base); }
 
 uint64_t Destroy_TXT_8349BC18_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349BC18_G_ = int32_t(0x8349BC18);
@@ -10566,13 +10566,13 @@ uint64_t Destroy_TXT_8349BD64_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6BB0, 0x832A6BB0) { ctx.r3.u64 = Destroy_TXT_8349BD64_G_(ctx, base); }
 
-uint64_t n_sub_832A6BC8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349BD80(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349BD80 = int32_t(0x8349BD80);
 	if (!UseLiftedCode(145, 0x832A6BC8)) { __imp__sub_832A6BC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A6BC8);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349BD80);
 }
-PROMOTED_ENTRY(145, sub_832A6BC8, 0x832A6BC8) { ctx.r3.u64 = n_sub_832A6BC8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6BC8, 0x832A6BC8) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349BD80(ctx, base); }
 
 uint64_t Destroy_TXT_8349BD84_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349BD84_G_ = int32_t(0x8349BD84);
@@ -10814,7 +10814,7 @@ uint64_t Destroy_TXT_8349BE4C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6DA8, 0x832A6DA8) { ctx.r3.u64 = Destroy_TXT_8349BE4C_G_(ctx, base); }
 
-uint64_t n_sub_832A6DB8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6DB8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6DB8)) { __imp__sub_832A6DB8(ctx, base); return ctx.r3.u64; }
@@ -10853,9 +10853,9 @@ uint64_t n_sub_832A6DB8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6DB8, 0x832A6DB8) { ctx.r3.u64 = n_sub_832A6DB8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6DB8, 0x832A6DB8) { ctx.r3.u64 = ReleaseCCharStringArray_832A6DB8(ctx, base); }
 
-uint64_t n_sub_832A6E20(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6E20(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6E20)) { __imp__sub_832A6E20(ctx, base); return ctx.r3.u64; }
@@ -10894,9 +10894,9 @@ uint64_t n_sub_832A6E20(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6E20, 0x832A6E20) { ctx.r3.u64 = n_sub_832A6E20(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6E20, 0x832A6E20) { ctx.r3.u64 = ReleaseCCharStringArray_832A6E20(ctx, base); }
 
-uint64_t n_sub_832A6E88(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6E88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6E88)) { __imp__sub_832A6E88(ctx, base); return ctx.r3.u64; }
@@ -10935,9 +10935,9 @@ uint64_t n_sub_832A6E88(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6E88, 0x832A6E88) { ctx.r3.u64 = n_sub_832A6E88(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6E88, 0x832A6E88) { ctx.r3.u64 = ReleaseCCharStringArray_832A6E88(ctx, base); }
 
-uint64_t n_sub_832A6EF0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6EF0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6EF0)) { __imp__sub_832A6EF0(ctx, base); return ctx.r3.u64; }
@@ -10976,9 +10976,9 @@ uint64_t n_sub_832A6EF0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6EF0, 0x832A6EF0) { ctx.r3.u64 = n_sub_832A6EF0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6EF0, 0x832A6EF0) { ctx.r3.u64 = ReleaseCCharStringArray_832A6EF0(ctx, base); }
 
-uint64_t n_sub_832A6F58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6F58(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6F58)) { __imp__sub_832A6F58(ctx, base); return ctx.r3.u64; }
@@ -11017,9 +11017,9 @@ uint64_t n_sub_832A6F58(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6F58, 0x832A6F58) { ctx.r3.u64 = n_sub_832A6F58(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6F58, 0x832A6F58) { ctx.r3.u64 = ReleaseCCharStringArray_832A6F58(ctx, base); }
 
-uint64_t n_sub_832A6FC0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A6FC0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A6FC0)) { __imp__sub_832A6FC0(ctx, base); return ctx.r3.u64; }
@@ -11058,9 +11058,9 @@ uint64_t n_sub_832A6FC0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A6FC0, 0x832A6FC0) { ctx.r3.u64 = n_sub_832A6FC0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A6FC0, 0x832A6FC0) { ctx.r3.u64 = ReleaseCCharStringArray_832A6FC0(ctx, base); }
 
-uint64_t n_sub_832A7028(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A7028(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A7028)) { __imp__sub_832A7028(ctx, base); return ctx.r3.u64; }
@@ -11099,9 +11099,9 @@ uint64_t n_sub_832A7028(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A7028, 0x832A7028) { ctx.r3.u64 = n_sub_832A7028(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7028, 0x832A7028) { ctx.r3.u64 = ReleaseCCharStringArray_832A7028(ctx, base); }
 
-uint64_t n_sub_832A7090(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A7090(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A7090)) { __imp__sub_832A7090(ctx, base); return ctx.r3.u64; }
@@ -11140,7 +11140,7 @@ uint64_t n_sub_832A7090(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A7090, 0x832A7090) { ctx.r3.u64 = n_sub_832A7090(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7090, 0x832A7090) { ctx.r3.u64 = ReleaseCCharStringArray_832A7090(ctx, base); }
 
 uint64_t Destroy_TXT_8349C004_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349C004_G_ = int32_t(0x8349C004);
@@ -11454,13 +11454,13 @@ uint64_t Destroy_TXT_8349C128_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A75F0, 0x832A75F0) { ctx.r3.u64 = Destroy_TXT_8349C128_G_(ctx, base); }
 
-uint64_t n_sub_832A7600(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_834F6ABC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834F6ABC = int32_t(0x834F6ABC);
 	if (!UseLiftedCode(145, 0x832A7600)) { __imp__sub_832A7600(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A7600);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834F6ABC);
 }
-PROMOTED_ENTRY(145, sub_832A7600, 0x832A7600) { ctx.r3.u64 = n_sub_832A7600(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7600, 0x832A7600) { ctx.r3.u64 = CCharString_ReleaseGlobalA_834F6ABC(ctx, base); }
 
 uint64_t Destroy_TXT_8349C12C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349C12C_G_ = int32_t(0x8349C12C);
@@ -11518,33 +11518,33 @@ uint64_t Destroy_TXT_8349C144_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A7670, 0x832A7670) { ctx.r3.u64 = Destroy_TXT_8349C144_G_(ctx, base); }
 
-uint64_t n_sub_832A7680(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349C1DC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349C1DC = int32_t(0x8349C1DC);
 	if (!UseLiftedCode(145, 0x832A7680)) { __imp__sub_832A7680(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A7680);
 	uint64_t object = g_8349C1DC;
-	return n_sub_828A33B0(ctx, base);
+	return Container_8349C1DC_ClearAndFree(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A7680, 0x832A7680) { ctx.r3.u64 = n_sub_832A7680(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7680, 0x832A7680) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349C1DC(ctx, base); }
 
-uint64_t n_sub_832A7690(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349C1E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349C1E8 = int32_t(0x8349C1E8);
 	if (!UseLiftedCode(145, 0x832A7690)) { __imp__sub_832A7690(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A7690);
 	uint64_t object = g_8349C1E8;
-	return n_sub_828A3420(ctx, base);
+	return Container_8349C1E8_ClearAndFree(ctx, base);
 }
-PROMOTED_ENTRY(145, sub_832A7690, 0x832A7690) { ctx.r3.u64 = n_sub_832A7690(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7690, 0x832A7690) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349C1E8(ctx, base); }
 
-uint64_t n_sub_832A76A0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_834C38C8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C38C8 = int32_t(0x834C38C8);
 	if (!UseLiftedCode(145, 0x832A76A0)) { __imp__sub_832A76A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A76A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834C38C8);
 }
-PROMOTED_ENTRY(145, sub_832A76A0, 0x832A76A0) { ctx.r3.u64 = n_sub_832A76A0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A76A0, 0x832A76A0) { ctx.r3.u64 = CCharString_ReleaseGlobalA_834C38C8(ctx, base); }
 
-uint64_t n_sub_832A76B0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandleTarget(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349C1F4 = int32_t(0x8349C1F4);
 	if (!UseLiftedCode(145, 0x832A76B0)) { __imp__sub_832A76B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A76B0);
@@ -11563,7 +11563,7 @@ uint64_t n_sub_832A76B0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(145, sub_832A76B0, 0x832A76B0) { ctx.r3.u64 = n_sub_832A76B0(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A76B0, 0x832A76B0) { ctx.r3.u64 = ReleaseGlobalHandleTarget(ctx, base); }
 
 uint64_t Destroy_TXT_8349C258_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349C258_G_ = int32_t(0x8349C258);
@@ -12069,7 +12069,7 @@ uint64_t Destroy_TXT_8349C3F8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A7AE8, 0x832A7AE8) { ctx.r3.u64 = Destroy_TXT_8349C3F8_G_(ctx, base); }
 
-uint64_t n_sub_832A7AF8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A7AF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A7AF8)) { __imp__sub_832A7AF8(ctx, base); return ctx.r3.u64; }
@@ -12108,9 +12108,9 @@ uint64_t n_sub_832A7AF8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A7AF8, 0x832A7AF8) { ctx.r3.u64 = n_sub_832A7AF8(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7AF8, 0x832A7AF8) { ctx.r3.u64 = ReleaseCCharStringArray_832A7AF8(ctx, base); }
 
-uint64_t n_sub_832A7B60(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A7B60(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(145, 0x832A7B60)) { __imp__sub_832A7B60(ctx, base); return ctx.r3.u64; }
@@ -12149,7 +12149,7 @@ uint64_t n_sub_832A7B60(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(145, sub_832A7B60, 0x832A7B60) { ctx.r3.u64 = n_sub_832A7B60(ctx, base); }
+PROMOTED_ENTRY(145, sub_832A7B60, 0x832A7B60) { ctx.r3.u64 = ReleaseCCharStringArray_832A7B60(ctx, base); }
 
 uint64_t Destroy_TXT_8349C4D0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349C4D0_G_ = int32_t(0x8349C4D0);
@@ -13679,7 +13679,7 @@ uint64_t Destroy_TXT_8349CA14_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A87A8, 0x832A87A8) { ctx.r3.u64 = Destroy_TXT_8349CA14_G_(ctx, base); }
 
-uint64_t n_sub_832A87B8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_832A87B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(146, 0x832A87B8)) { __imp__sub_832A87B8(ctx, base); return ctx.r3.u64; }
@@ -13718,9 +13718,9 @@ uint64_t n_sub_832A87B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(146, sub_832A87B8, 0x832A87B8) { ctx.r3.u64 = n_sub_832A87B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A87B8, 0x832A87B8) { ctx.r3.u64 = ReleaseCCharStringArray_832A87B8(ctx, base); }
 
-uint64_t n_sub_832A8820(CpuState& ctx, uint8_t* base) {
+uint64_t CCharStringArray16_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(146, 0x832A8820)) { __imp__sub_832A8820(ctx, base); return ctx.r3.u64; }
@@ -13759,7 +13759,7 @@ uint64_t n_sub_832A8820(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(146, sub_832A8820, 0x832A8820) { ctx.r3.u64 = n_sub_832A8820(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A8820, 0x832A8820) { ctx.r3.u64 = CCharStringArray16_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349CAEC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349CAEC_G_ = int32_t(0x8349CAEC);
@@ -13881,7 +13881,7 @@ uint64_t Destroy_TXT_8349CB78_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A8968, 0x832A8968) { ctx.r3.u64 = Destroy_TXT_8349CB78_G_(ctx, base); }
 
-uint64_t n_sub_832A8978(CpuState& ctx, uint8_t* base) {
+uint64_t CCharStringArray5_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(146, 0x832A8978)) { __imp__sub_832A8978(ctx, base); return ctx.r3.u64; }
@@ -13920,7 +13920,7 @@ uint64_t n_sub_832A8978(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(146, sub_832A8978, 0x832A8978) { ctx.r3.u64 = n_sub_832A8978(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A8978, 0x832A8978) { ctx.r3.u64 = CCharStringArray5_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349CBE4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349CBE4_G_ = int32_t(0x8349CBE4);
@@ -14106,13 +14106,13 @@ uint64_t Destroy_TXT_8349CE34_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A8B40, 0x832A8B40) { ctx.r3.u64 = Destroy_TXT_8349CE34_G_(ctx, base); }
 
-uint64_t n_sub_832A8B50(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349CE8C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349CE8C = int32_t(0x8349CE8C);
 	if (!UseLiftedCode(146, 0x832A8B50)) { __imp__sub_832A8B50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A8B50);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349CE8C);
 }
-PROMOTED_ENTRY(146, sub_832A8B50, 0x832A8B50) { ctx.r3.u64 = n_sub_832A8B50(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A8B50, 0x832A8B50) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349CE8C(ctx, base); }
 
 uint64_t Destroy_TXT_8349CE90_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349CE90_G_ = int32_t(0x8349CE90);
@@ -14538,13 +14538,13 @@ uint64_t Destroy_TXT_8349D008_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A8EA0, 0x832A8EA0) { ctx.r3.u64 = Destroy_TXT_8349D008_G_(ctx, base); }
 
-uint64_t n_sub_832A8EB0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalB_8349D060(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349D060 = int32_t(0x8349D060);
 	if (!UseLiftedCode(146, 0x832A8EB0)) { __imp__sub_832A8EB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A8EB0);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_8349D060);
 }
-PROMOTED_ENTRY(146, sub_832A8EB0, 0x832A8EB0) { ctx.r3.u64 = n_sub_832A8EB0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A8EB0, 0x832A8EB0) { ctx.r3.u64 = CCharString_ReleaseGlobalB_8349D060(ctx, base); }
 
 uint64_t Destroy_TXT_8349D064_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349D064_G_ = int32_t(0x8349D064);
@@ -16002,13 +16002,13 @@ uint64_t Destroy_TXT_8349D8A4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9A68, 0x832A9A68) { ctx.r3.u64 = Destroy_TXT_8349D8A4_G_(ctx, base); }
 
-uint64_t n_sub_832A9A78(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_834C324C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C324C = int32_t(0x834C324C);
 	if (!UseLiftedCode(146, 0x832A9A78)) { __imp__sub_832A9A78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9A78);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834C324C);
 }
-PROMOTED_ENTRY(146, sub_832A9A78, 0x832A9A78) { ctx.r3.u64 = n_sub_832A9A78(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9A78, 0x832A9A78) { ctx.r3.u64 = CCharString_ReleaseGlobalA_834C324C(ctx, base); }
 
 uint64_t Destroy_TXT_8349D8A8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349D8A8_G_ = int32_t(0x8349D8A8);
@@ -16018,7 +16018,7 @@ uint64_t Destroy_TXT_8349D8A8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9A88, 0x832A9A88) { ctx.r3.u64 = Destroy_TXT_8349D8A8_G_(ctx, base); }
 
-uint64_t n_sub_832A9A98(CpuState& ctx, uint8_t* base) {
+uint64_t CCharStringArray63_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(146, 0x832A9A98)) { __imp__sub_832A9A98(ctx, base); return ctx.r3.u64; }
@@ -16057,33 +16057,33 @@ uint64_t n_sub_832A9A98(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(146, sub_832A9A98, 0x832A9A98) { ctx.r3.u64 = n_sub_832A9A98(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9A98, 0x832A9A98) { ctx.r3.u64 = CCharStringArray63_Destroy(ctx, base); }
 
-uint64_t n_sub_832A9B00(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandleVector_ClearGlobal_8349DC9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349DC9C = int32_t(0x8349DC9C);
 	if (!UseLiftedCode(146, 0x832A9B00)) { __imp__sub_832A9B00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9B00);
 	uint64_t object = g_8349DC9C;
-	return n_sub_8292F2D0(ctx, base);
+	return SharedHandleVector_8349DC9C_Clear(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9B00, 0x832A9B00) { ctx.r3.u64 = n_sub_832A9B00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9B00, 0x832A9B00) { ctx.r3.u64 = SharedHandleVector_ClearGlobal_8349DC9C(ctx, base); }
 
-uint64_t n_sub_832A9B10(CpuState& ctx, uint8_t* base) {
+uint64_t PtrVector8_ClearAndFreeGlobal_834ED270(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834ED270 = int32_t(0x834ED270);
 	if (!UseLiftedCode(146, 0x832A9B10)) { __imp__sub_832A9B10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9B10);
 	return PtrVector8_ClearAndFree(ctx, base, g_834ED270);
 }
-PROMOTED_ENTRY(146, sub_832A9B10, 0x832A9B10) { ctx.r3.u64 = n_sub_832A9B10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9B10, 0x832A9B10) { ctx.r3.u64 = PtrVector8_ClearAndFreeGlobal_834ED270(ctx, base); }
 
-uint64_t n_sub_832A9B38(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandleVector_ClearGlobal_8349DDC8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349DDC8 = int32_t(0x8349DDC8);
 	if (!UseLiftedCode(146, 0x832A9B38)) { __imp__sub_832A9B38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9B38);
 	uint64_t object = g_8349DDC8;
-	return n_sub_82939918(ctx, base);
+	return SharedHandleVector_8349DDC8_Clear(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9B38, 0x832A9B38) { ctx.r3.u64 = n_sub_832A9B38(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9B38, 0x832A9B38) { ctx.r3.u64 = SharedHandleVector_ClearGlobal_8349DDC8(ctx, base); }
 
 uint64_t Destroy_TXT_8349DEEC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349DEEC_G_ = int32_t(0x8349DEEC);
@@ -16093,7 +16093,7 @@ uint64_t Destroy_TXT_8349DEEC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9B60, 0x832A9B60) { ctx.r3.u64 = Destroy_TXT_8349DEEC_G_(ctx, base); }
 
-uint64_t n_sub_832A9B70(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349DEF0_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349DEF0 = int32_t(0x8349DEF0);
 	if (!UseLiftedCode(146, 0x832A9B70)) { __imp__sub_832A9B70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9B70);
@@ -16112,7 +16112,7 @@ uint64_t n_sub_832A9B70(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832A9B70, 0x832A9B70) { ctx.r3.u64 = n_sub_832A9B70(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9B70, 0x832A9B70) { ctx.r3.u64 = GlobalHandle_8349DEF0_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349DF00_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349DF00_G_ = int32_t(0x8349DF00);
@@ -16242,14 +16242,14 @@ uint64_t Destroy_TXT_8349DF54_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9CB8, 0x832A9CB8) { ctx.r3.u64 = Destroy_TXT_8349DF54_G_(ctx, base); }
 
-uint64_t n_sub_832A9CC8(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349E010(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E010 = int32_t(0x8349E010);
 	if (!UseLiftedCode(146, 0x832A9CC8)) { __imp__sub_832A9CC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9CC8);
 	uint64_t object = g_8349E010;
-	return n_sub_829C6C30(ctx, base);
+	return Container_8349E010_ClearAndFree(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9CC8, 0x832A9CC8) { ctx.r3.u64 = n_sub_832A9CC8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9CC8, 0x832A9CC8) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349E010(ctx, base); }
 
 uint64_t Destroy_TXT_8349E0B0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E0B0_G_ = int32_t(0x8349E0B0);
@@ -16315,13 +16315,13 @@ uint64_t Destroy_TXT_8349E0D0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9D48, 0x832A9D48) { ctx.r3.u64 = Destroy_TXT_8349E0D0_G_(ctx, base); }
 
-uint64_t n_sub_832A9D58(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349E0D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E0D4 = int32_t(0x8349E0D4);
 	if (!UseLiftedCode(146, 0x832A9D58)) { __imp__sub_832A9D58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9D58);
-	return n_sub_823566F8(ctx, base, g_8349E0D4);
+	return Container_ClearAndFree(ctx, base, g_8349E0D4);
 }
-PROMOTED_ENTRY(146, sub_832A9D58, 0x832A9D58) { ctx.r3.u64 = n_sub_832A9D58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9D58, 0x832A9D58) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349E0D4(ctx, base); }
 
 uint64_t Destroy_TXT_8349E0E0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E0E0_G_ = int32_t(0x8349E0E0);
@@ -16371,73 +16371,73 @@ uint64_t Destroy_TXT_8349E17C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9DC0, 0x832A9DC0) { ctx.r3.u64 = Destroy_TXT_8349E17C_G_(ctx, base); }
 
-uint64_t n_sub_832A9DD0(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearGlobal_8349E180(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E180 = int32_t(0x8349E180);
 	if (!UseLiftedCode(146, 0x832A9DD0)) { __imp__sub_832A9DD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9DD0);
 	uint64_t object = g_8349E180;
-	return n_sub_829FD8D8(ctx, base);
+	return Container_8349E180_Clear(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9DD0, 0x832A9DD0) { ctx.r3.u64 = n_sub_832A9DD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9DD0, 0x832A9DD0) { ctx.r3.u64 = Container_ClearGlobal_8349E180(ctx, base); }
 
-uint64_t n_sub_832A9DE0(CpuState& ctx, uint8_t* base) {
+uint64_t PtrVector8_ClearAndFreeGlobal_8349E190(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E190 = int32_t(0x8349E190);
 	if (!UseLiftedCode(146, 0x832A9DE0)) { __imp__sub_832A9DE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9DE0);
 	return PtrVector8_ClearAndFree(ctx, base, g_8349E190);
 }
-PROMOTED_ENTRY(146, sub_832A9DE0, 0x832A9DE0) { ctx.r3.u64 = n_sub_832A9DE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9DE0, 0x832A9DE0) { ctx.r3.u64 = PtrVector8_ClearAndFreeGlobal_8349E190(ctx, base); }
 
-uint64_t n_sub_832A9DF0(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearGlobal_8349E1A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E1A0 = int32_t(0x8349E1A0);
 	if (!UseLiftedCode(146, 0x832A9DF0)) { __imp__sub_832A9DF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9DF0);
 	uint64_t object = g_8349E1A0;
-	return n_sub_829FD9A0(ctx, base);
+	return Container_8349E1A0_Clear(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9DF0, 0x832A9DF0) { ctx.r3.u64 = n_sub_832A9DF0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9DF0, 0x832A9DF0) { ctx.r3.u64 = Container_ClearGlobal_8349E1A0(ctx, base); }
 
-uint64_t n_sub_832A9E00(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349E1E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E1E0 = int32_t(0x8349E1E0);
 	if (!UseLiftedCode(146, 0x832A9E00)) { __imp__sub_832A9E00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9E00);
 	return SharedHandle_Release(ctx, base, g_8349E1E0);
 }
-PROMOTED_ENTRY(146, sub_832A9E00, 0x832A9E00) { ctx.r3.u64 = n_sub_832A9E00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9E00, 0x832A9E00) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349E1E0(ctx, base); }
 
-uint64_t n_sub_832A9E10(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349E1E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E1E8 = int32_t(0x8349E1E8);
 	if (!UseLiftedCode(146, 0x832A9E10)) { __imp__sub_832A9E10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9E10);
 	return SharedHandle_Release(ctx, base, g_8349E1E8);
 }
-PROMOTED_ENTRY(146, sub_832A9E10, 0x832A9E10) { ctx.r3.u64 = n_sub_832A9E10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9E10, 0x832A9E10) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349E1E8(ctx, base); }
 
-uint64_t n_sub_832A9E20(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E1F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E1F0 = int32_t(0x8349E1F0);
 	if (!UseLiftedCode(146, 0x832A9E20)) { __imp__sub_832A9E20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9E20);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E1F0);
 }
-PROMOTED_ENTRY(146, sub_832A9E20, 0x832A9E20) { ctx.r3.u64 = n_sub_832A9E20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9E20, 0x832A9E20) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E1F0(ctx, base); }
 
-uint64_t n_sub_832A9E30(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349E1F4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E1F4 = int32_t(0x8349E1F4);
 	if (!UseLiftedCode(146, 0x832A9E30)) { __imp__sub_832A9E30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9E30);
 	uint64_t object = g_8349E1F4;
-	return n_sub_829FDA08(ctx, base);
+	return ClearGlobalList_8349E1F4(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9E30, 0x832A9E30) { ctx.r3.u64 = n_sub_832A9E30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9E30, 0x832A9E30) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349E1F4(ctx, base); }
 
-uint64_t n_sub_832A9E40(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_834C1780(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1780 = int32_t(0x834C1780);
 	if (!UseLiftedCode(146, 0x832A9E40)) { __imp__sub_832A9E40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9E40);
 	uint64_t object = g_834C1780;
-	return n_sub_829FDA78(ctx, base);
+	return ClearGlobalList_834C1780(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832A9E40, 0x832A9E40) { ctx.r3.u64 = n_sub_832A9E40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9E40, 0x832A9E40) { ctx.r3.u64 = Container_ClearAndFreeGlobal_834C1780(ctx, base); }
 
 uint64_t Destroy_TXT_8349E200_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E200_G_ = int32_t(0x8349E200);
@@ -16599,7 +16599,7 @@ uint64_t Destroy_TXT_8349E260_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832A9F80, 0x832A9F80) { ctx.r3.u64 = Destroy_TXT_8349E260_G_(ctx, base); }
 
-uint64_t n_sub_832A9F90(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1740_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1740 = int32_t(0x834C1740);
 	if (!UseLiftedCode(146, 0x832A9F90)) { __imp__sub_832A9F90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9F90);
@@ -16618,9 +16618,9 @@ uint64_t n_sub_832A9F90(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832A9F90, 0x832A9F90) { ctx.r3.u64 = n_sub_832A9F90(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9F90, 0x832A9F90) { ctx.r3.u64 = GlobalHandle_834C1740_Destroy(ctx, base); }
 
-uint64_t n_sub_832A9FE8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1750_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1750 = int32_t(0x834C1750);
 	if (!UseLiftedCode(146, 0x832A9FE8)) { __imp__sub_832A9FE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832A9FE8);
@@ -16639,9 +16639,9 @@ uint64_t n_sub_832A9FE8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832A9FE8, 0x832A9FE8) { ctx.r3.u64 = n_sub_832A9FE8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832A9FE8, 0x832A9FE8) { ctx.r3.u64 = GlobalHandle_834C1750_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA040(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1760_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1760 = int32_t(0x834C1760);
 	if (!UseLiftedCode(146, 0x832AA040)) { __imp__sub_832AA040(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA040);
@@ -16660,9 +16660,9 @@ uint64_t n_sub_832AA040(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA040, 0x832AA040) { ctx.r3.u64 = n_sub_832AA040(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA040, 0x832AA040) { ctx.r3.u64 = GlobalHandle_834C1760_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA098(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1770_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1770 = int32_t(0x834C1770);
 	if (!UseLiftedCode(146, 0x832AA098)) { __imp__sub_832AA098(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA098);
@@ -16681,7 +16681,7 @@ uint64_t n_sub_832AA098(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA098, 0x832AA098) { ctx.r3.u64 = n_sub_832AA098(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA098, 0x832AA098) { ctx.r3.u64 = GlobalHandle_834C1770_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349E2D0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E2D0_G_ = int32_t(0x8349E2D0);
@@ -16715,7 +16715,7 @@ uint64_t Destroy_TXT_8349E2DC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AA120, 0x832AA120) { ctx.r3.u64 = Destroy_TXT_8349E2DC_G_(ctx, base); }
 
-uint64_t n_sub_832AA130(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1F38_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1F38 = int32_t(0x834C1F38);
 	if (!UseLiftedCode(146, 0x832AA130)) { __imp__sub_832AA130(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA130);
@@ -16734,9 +16734,9 @@ uint64_t n_sub_832AA130(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA130, 0x832AA130) { ctx.r3.u64 = n_sub_832AA130(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA130, 0x832AA130) { ctx.r3.u64 = GlobalHandle_834C1F38_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA188(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1F48_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1F48 = int32_t(0x834C1F48);
 	if (!UseLiftedCode(146, 0x832AA188)) { __imp__sub_832AA188(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA188);
@@ -16755,9 +16755,9 @@ uint64_t n_sub_832AA188(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA188, 0x832AA188) { ctx.r3.u64 = n_sub_832AA188(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA188, 0x832AA188) { ctx.r3.u64 = GlobalHandle_834C1F48_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA1E0(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1F58_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1F58 = int32_t(0x834C1F58);
 	if (!UseLiftedCode(146, 0x832AA1E0)) { __imp__sub_832AA1E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA1E0);
@@ -16776,9 +16776,9 @@ uint64_t n_sub_832AA1E0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA1E0, 0x832AA1E0) { ctx.r3.u64 = n_sub_832AA1E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA1E0, 0x832AA1E0) { ctx.r3.u64 = GlobalHandle_834C1F58_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA238(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1F68_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1F68 = int32_t(0x834C1F68);
 	if (!UseLiftedCode(146, 0x832AA238)) { __imp__sub_832AA238(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA238);
@@ -16797,7 +16797,7 @@ uint64_t n_sub_832AA238(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA238, 0x832AA238) { ctx.r3.u64 = n_sub_832AA238(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA238, 0x832AA238) { ctx.r3.u64 = GlobalHandle_834C1F68_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349E2E0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E2E0_G_ = int32_t(0x8349E2E0);
@@ -17495,7 +17495,7 @@ uint64_t Destroy_TXT_8349E47C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AA918, 0x832AA918) { ctx.r3.u64 = Destroy_TXT_8349E47C_G_(ctx, base); }
 
-uint64_t n_sub_832AA928(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C37C0_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C37C0 = int32_t(0x834C37C0);
 	if (!UseLiftedCode(146, 0x832AA928)) { __imp__sub_832AA928(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA928);
@@ -17514,9 +17514,9 @@ uint64_t n_sub_832AA928(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA928, 0x832AA928) { ctx.r3.u64 = n_sub_832AA928(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA928, 0x832AA928) { ctx.r3.u64 = GlobalHandle_834C37C0_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA980(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C37D4_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C37D4 = int32_t(0x834C37D4);
 	if (!UseLiftedCode(146, 0x832AA980)) { __imp__sub_832AA980(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA980);
@@ -17535,9 +17535,9 @@ uint64_t n_sub_832AA980(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA980, 0x832AA980) { ctx.r3.u64 = n_sub_832AA980(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA980, 0x832AA980) { ctx.r3.u64 = GlobalHandle_834C37D4_Destroy(ctx, base); }
 
-uint64_t n_sub_832AA9D8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C37E8_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C37E8 = int32_t(0x834C37E8);
 	if (!UseLiftedCode(146, 0x832AA9D8)) { __imp__sub_832AA9D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AA9D8);
@@ -17556,7 +17556,7 @@ uint64_t n_sub_832AA9D8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AA9D8, 0x832AA9D8) { ctx.r3.u64 = n_sub_832AA9D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AA9D8, 0x832AA9D8) { ctx.r3.u64 = GlobalHandle_834C37E8_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349E4C0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E4C0_G_ = int32_t(0x8349E4C0);
@@ -18470,37 +18470,37 @@ uint64_t Destroy_TXT_8349E6C4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AB140, 0x832AB140) { ctx.r3.u64 = Destroy_TXT_8349E6C4_G_(ctx, base); }
 
-uint64_t n_sub_832AB150(CpuState& ctx, uint8_t* base) {
+uint64_t PropertyMap_ClearAndFreeGlobal_834C35B4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C35B4 = int32_t(0x834C35B4);
 	if (!UseLiftedCode(146, 0x832AB150)) { __imp__sub_832AB150(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB150);
-	return n_sub_826A4978(ctx, base, g_834C35B4);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834C35B4);
 }
-PROMOTED_ENTRY(146, sub_832AB150, 0x832AB150) { ctx.r3.u64 = n_sub_832AB150(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB150, 0x832AB150) { ctx.r3.u64 = PropertyMap_ClearAndFreeGlobal_834C35B4(ctx, base); }
 
-uint64_t n_sub_832AB160(CpuState& ctx, uint8_t* base) {
+uint64_t PropertyMap_ClearAndFreeGlobal_834C35A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C35A4 = int32_t(0x834C35A4);
 	if (!UseLiftedCode(146, 0x832AB160)) { __imp__sub_832AB160(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB160);
-	return n_sub_826A4978(ctx, base, g_834C35A4);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834C35A4);
 }
-PROMOTED_ENTRY(146, sub_832AB160, 0x832AB160) { ctx.r3.u64 = n_sub_832AB160(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB160, 0x832AB160) { ctx.r3.u64 = PropertyMap_ClearAndFreeGlobal_834C35A4(ctx, base); }
 
-uint64_t n_sub_832AB170(CpuState& ctx, uint8_t* base) {
+uint64_t PropertyMap_ClearAndFreeGlobal_834C3594(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3594 = int32_t(0x834C3594);
 	if (!UseLiftedCode(146, 0x832AB170)) { __imp__sub_832AB170(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB170);
-	return n_sub_826A4978(ctx, base, g_834C3594);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834C3594);
 }
-PROMOTED_ENTRY(146, sub_832AB170, 0x832AB170) { ctx.r3.u64 = n_sub_832AB170(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB170, 0x832AB170) { ctx.r3.u64 = PropertyMap_ClearAndFreeGlobal_834C3594(ctx, base); }
 
-uint64_t n_sub_832AB180(CpuState& ctx, uint8_t* base) {
+uint64_t PropertyMap_ClearAndFreeGlobal_834C3584(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C3584 = int32_t(0x834C3584);
 	if (!UseLiftedCode(146, 0x832AB180)) { __imp__sub_832AB180(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB180);
-	return n_sub_826A4978(ctx, base, g_834C3584);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834C3584);
 }
-PROMOTED_ENTRY(146, sub_832AB180, 0x832AB180) { ctx.r3.u64 = n_sub_832AB180(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB180, 0x832AB180) { ctx.r3.u64 = PropertyMap_ClearAndFreeGlobal_834C3584(ctx, base); }
 
 uint64_t Destroy_TXT_8349E6C8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349E6C8_G_ = int32_t(0x8349E6C8);
@@ -18574,15 +18574,15 @@ uint64_t Destroy_TXT_8349E6E8_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AB210, 0x832AB210) { ctx.r3.u64 = Destroy_TXT_8349E6E8_G_(ctx, base); }
 
-uint64_t n_sub_832AB220(CpuState& ctx, uint8_t* base) {
+uint64_t SharedHandle_ReleaseGlobal_8349E6EC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E6EC = int32_t(0x8349E6EC);
 	if (!UseLiftedCode(146, 0x832AB220)) { __imp__sub_832AB220(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB220);
 	return SharedHandle_Release(ctx, base, g_8349E6EC);
 }
-PROMOTED_ENTRY(146, sub_832AB220, 0x832AB220) { ctx.r3.u64 = n_sub_832AB220(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB220, 0x832AB220) { ctx.r3.u64 = SharedHandle_ReleaseGlobal_8349E6EC(ctx, base); }
 
-uint64_t n_sub_832AB2B8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349E700_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E700 = int32_t(0x8349E700);
 	if (!UseLiftedCode(146, 0x832AB2B8)) { __imp__sub_832AB2B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB2B8);
@@ -18601,146 +18601,146 @@ uint64_t n_sub_832AB2B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AB2B8, 0x832AB2B8) { ctx.r3.u64 = n_sub_832AB2B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB2B8, 0x832AB2B8) { ctx.r3.u64 = GlobalHandle_8349E700_Destroy(ctx, base); }
 
-uint64_t n_sub_832AB310(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E710(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E710 = int32_t(0x8349E710);
 	if (!UseLiftedCode(146, 0x832AB310)) { __imp__sub_832AB310(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB310);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E710);
 }
-PROMOTED_ENTRY(146, sub_832AB310, 0x832AB310) { ctx.r3.u64 = n_sub_832AB310(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB310, 0x832AB310) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E710(ctx, base); }
 
-uint64_t n_sub_832AB320(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E714(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E714 = int32_t(0x8349E714);
 	if (!UseLiftedCode(146, 0x832AB320)) { __imp__sub_832AB320(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB320);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E714);
 }
-PROMOTED_ENTRY(146, sub_832AB320, 0x832AB320) { ctx.r3.u64 = n_sub_832AB320(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB320, 0x832AB320) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E714(ctx, base); }
 
-uint64_t n_sub_832AB368(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349E71C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E71C = int32_t(0x8349E71C);
 	if (!UseLiftedCode(146, 0x832AB368)) { __imp__sub_832AB368(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB368);
-	return n_sub_823B0AA8(ctx, base, g_8349E71C);
+	return ReleaseContainer_823B0AA8(ctx, base, g_8349E71C);
 }
-PROMOTED_ENTRY(146, sub_832AB368, 0x832AB368) { ctx.r3.u64 = n_sub_832AB368(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB368, 0x832AB368) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349E71C(ctx, base); }
 
-uint64_t n_sub_832AB378(CpuState& ctx, uint8_t* base) {
+uint64_t Container_ClearAndFreeGlobal_8349E728(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E728 = int32_t(0x8349E728);
 	if (!UseLiftedCode(146, 0x832AB378)) { __imp__sub_832AB378(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB378);
-	return n_sub_823B0AA8(ctx, base, g_8349E728);
+	return ReleaseContainer_823B0AA8(ctx, base, g_8349E728);
 }
-PROMOTED_ENTRY(146, sub_832AB378, 0x832AB378) { ctx.r3.u64 = n_sub_832AB378(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB378, 0x832AB378) { ctx.r3.u64 = Container_ClearAndFreeGlobal_8349E728(ctx, base); }
 
-uint64_t n_sub_832AB388(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E734(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E734 = int32_t(0x8349E734);
 	if (!UseLiftedCode(146, 0x832AB388)) { __imp__sub_832AB388(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB388);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E734);
 }
-PROMOTED_ENTRY(146, sub_832AB388, 0x832AB388) { ctx.r3.u64 = n_sub_832AB388(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB388, 0x832AB388) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E734(ctx, base); }
 
-uint64_t n_sub_832AB398(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E738(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E738 = int32_t(0x8349E738);
 	if (!UseLiftedCode(146, 0x832AB398)) { __imp__sub_832AB398(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB398);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E738);
 }
-PROMOTED_ENTRY(146, sub_832AB398, 0x832AB398) { ctx.r3.u64 = n_sub_832AB398(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB398, 0x832AB398) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E738(ctx, base); }
 
-uint64_t n_sub_832AB3A8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E750(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E750 = int32_t(0x8349E750);
 	if (!UseLiftedCode(146, 0x832AB3A8)) { __imp__sub_832AB3A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB3A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E750);
 }
-PROMOTED_ENTRY(146, sub_832AB3A8, 0x832AB3A8) { ctx.r3.u64 = n_sub_832AB3A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB3A8, 0x832AB3A8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E750(ctx, base); }
 
-uint64_t n_sub_832AB3B8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349E754(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349E754 = int32_t(0x8349E754);
 	if (!UseLiftedCode(146, 0x832AB3B8)) { __imp__sub_832AB3B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB3B8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349E754);
 }
-PROMOTED_ENTRY(146, sub_832AB3B8, 0x832AB3B8) { ctx.r3.u64 = n_sub_832AB3B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB3B8, 0x832AB3B8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349E754(ctx, base); }
 
-uint64_t n_sub_832AB568(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F478(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F478 = int32_t(0x8349F478);
 	if (!UseLiftedCode(146, 0x832AB568)) { __imp__sub_832AB568(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB568);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F478);
 }
-PROMOTED_ENTRY(146, sub_832AB568, 0x832AB568) { ctx.r3.u64 = n_sub_832AB568(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB568, 0x832AB568) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F478(ctx, base); }
 
-uint64_t n_sub_832AB578(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F47C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F47C = int32_t(0x8349F47C);
 	if (!UseLiftedCode(146, 0x832AB578)) { __imp__sub_832AB578(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB578);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F47C);
 }
-PROMOTED_ENTRY(146, sub_832AB578, 0x832AB578) { ctx.r3.u64 = n_sub_832AB578(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB578, 0x832AB578) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F47C(ctx, base); }
 
-uint64_t n_sub_832AB588(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F480(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F480 = int32_t(0x8349F480);
 	if (!UseLiftedCode(146, 0x832AB588)) { __imp__sub_832AB588(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB588);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F480);
 }
-PROMOTED_ENTRY(146, sub_832AB588, 0x832AB588) { ctx.r3.u64 = n_sub_832AB588(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB588, 0x832AB588) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F480(ctx, base); }
 
-uint64_t n_sub_832AB598(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F484(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F484 = int32_t(0x8349F484);
 	if (!UseLiftedCode(146, 0x832AB598)) { __imp__sub_832AB598(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB598);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F484);
 }
-PROMOTED_ENTRY(146, sub_832AB598, 0x832AB598) { ctx.r3.u64 = n_sub_832AB598(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB598, 0x832AB598) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F484(ctx, base); }
 
-uint64_t n_sub_832AB5A8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F488(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F488 = int32_t(0x8349F488);
 	if (!UseLiftedCode(146, 0x832AB5A8)) { __imp__sub_832AB5A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F488);
 }
-PROMOTED_ENTRY(146, sub_832AB5A8, 0x832AB5A8) { ctx.r3.u64 = n_sub_832AB5A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5A8, 0x832AB5A8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F488(ctx, base); }
 
-uint64_t n_sub_832AB5B8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F48C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F48C = int32_t(0x8349F48C);
 	if (!UseLiftedCode(146, 0x832AB5B8)) { __imp__sub_832AB5B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5B8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F48C);
 }
-PROMOTED_ENTRY(146, sub_832AB5B8, 0x832AB5B8) { ctx.r3.u64 = n_sub_832AB5B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5B8, 0x832AB5B8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F48C(ctx, base); }
 
-uint64_t n_sub_832AB5C8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F490(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F490 = int32_t(0x8349F490);
 	if (!UseLiftedCode(146, 0x832AB5C8)) { __imp__sub_832AB5C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5C8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F490);
 }
-PROMOTED_ENTRY(146, sub_832AB5C8, 0x832AB5C8) { ctx.r3.u64 = n_sub_832AB5C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5C8, 0x832AB5C8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F490(ctx, base); }
 
-uint64_t n_sub_832AB5D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobalA_8349F494(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F494 = int32_t(0x8349F494);
 	if (!UseLiftedCode(146, 0x832AB5D8)) { __imp__sub_832AB5D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5D8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F494);
 }
-PROMOTED_ENTRY(146, sub_832AB5D8, 0x832AB5D8) { ctx.r3.u64 = n_sub_832AB5D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5D8, 0x832AB5D8) { ctx.r3.u64 = CCharString_ReleaseGlobalA_8349F494(ctx, base); }
 
-uint64_t n_sub_832AB5E8(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobal_8349F498(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F498 = int32_t(0x8349F498);
 	if (!UseLiftedCode(146, 0x832AB5E8)) { __imp__sub_832AB5E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5E8);
 	uint64_t object = g_8349F498;
-	return n_sub_82A49878(ctx, base);
+	return CleanupGlobalVector_8349F498(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AB5E8, 0x832AB5E8) { ctx.r3.u64 = n_sub_832AB5E8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5E8, 0x832AB5E8) { ctx.r3.u64 = CleanupGlobal_8349F498(ctx, base); }
 
-uint64_t n_sub_832AB5F8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F4A8_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F4A8 = int32_t(0x8349F4A8);
 	if (!UseLiftedCode(146, 0x832AB5F8)) { __imp__sub_832AB5F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB5F8);
@@ -18759,144 +18759,144 @@ uint64_t n_sub_832AB5F8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AB5F8, 0x832AB5F8) { ctx.r3.u64 = n_sub_832AB5F8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB5F8, 0x832AB5F8) { ctx.r3.u64 = GlobalHandle_8349F4A8_Destroy(ctx, base); }
 
-uint64_t n_sub_832AB650(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalVector_8349F4B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F4B8 = int32_t(0x8349F4B8);
 	if (!UseLiftedCode(146, 0x832AB650)) { __imp__sub_832AB650(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB650);
 	return Vector_DestroyAndFree(ctx, base, g_8349F4B8);
 }
-PROMOTED_ENTRY(146, sub_832AB650, 0x832AB650) { ctx.r3.u64 = n_sub_832AB650(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB650, 0x832AB650) { ctx.r3.u64 = CleanupGlobalVector_8349F4B8(ctx, base); }
 
-uint64_t n_sub_832AB9C0(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobal_8349F518(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F518 = int32_t(0x8349F518);
 	if (!UseLiftedCode(146, 0x832AB9C0)) { __imp__sub_832AB9C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB9C0);
 	uint64_t object = g_8349F518;
-	return n_sub_82A4A6F8(ctx, base);
+	return CleanupGlobalList_8349F518(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AB9C0, 0x832AB9C0) { ctx.r3.u64 = n_sub_832AB9C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB9C0, 0x832AB9C0) { ctx.r3.u64 = CleanupGlobal_8349F518(ctx, base); }
 
-uint64_t n_sub_832AB9D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandle_8349F520(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F520 = int32_t(0x8349F520);
 	if (!UseLiftedCode(146, 0x832AB9D0)) { __imp__sub_832AB9D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB9D0);
 	return SharedHandle_Release(ctx, base, g_8349F520);
 }
-PROMOTED_ENTRY(146, sub_832AB9D0, 0x832AB9D0) { ctx.r3.u64 = n_sub_832AB9D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB9D0, 0x832AB9D0) { ctx.r3.u64 = ReleaseGlobalHandle_8349F520(ctx, base); }
 
-uint64_t n_sub_832AB9E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandle_8349F528(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F528 = int32_t(0x8349F528);
 	if (!UseLiftedCode(146, 0x832AB9E0)) { __imp__sub_832AB9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB9E0);
 	return SharedHandle_Release(ctx, base, g_8349F528);
 }
-PROMOTED_ENTRY(146, sub_832AB9E0, 0x832AB9E0) { ctx.r3.u64 = n_sub_832AB9E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB9E0, 0x832AB9E0) { ctx.r3.u64 = ReleaseGlobalHandle_8349F528(ctx, base); }
 
-uint64_t n_sub_832AB9F0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandle_8349F530(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F530 = int32_t(0x8349F530);
 	if (!UseLiftedCode(146, 0x832AB9F0)) { __imp__sub_832AB9F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AB9F0);
 	return SharedHandle_Release(ctx, base, g_8349F530);
 }
-PROMOTED_ENTRY(146, sub_832AB9F0, 0x832AB9F0) { ctx.r3.u64 = n_sub_832AB9F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AB9F0, 0x832AB9F0) { ctx.r3.u64 = ReleaseGlobalHandle_8349F530(ctx, base); }
 
-uint64_t n_sub_832ABA00(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandle_8349F538(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F538 = int32_t(0x8349F538);
 	if (!UseLiftedCode(146, 0x832ABA00)) { __imp__sub_832ABA00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABA00);
 	return SharedHandle_Release(ctx, base, g_8349F538);
 }
-PROMOTED_ENTRY(146, sub_832ABA00, 0x832ABA00) { ctx.r3.u64 = n_sub_832ABA00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABA00, 0x832ABA00) { ctx.r3.u64 = ReleaseGlobalHandle_8349F538(ctx, base); }
 
-uint64_t n_sub_832ABA10(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalHandle_8349F540(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F540 = int32_t(0x8349F540);
 	if (!UseLiftedCode(146, 0x832ABA10)) { __imp__sub_832ABA10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABA10);
 	return SharedHandle_Release(ctx, base, g_8349F540);
 }
-PROMOTED_ENTRY(146, sub_832ABA10, 0x832ABA10) { ctx.r3.u64 = n_sub_832ABA10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABA10, 0x832ABA10) { ctx.r3.u64 = ReleaseGlobalHandle_8349F540(ctx, base); }
 
-uint64_t n_sub_832ABC48(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A868(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A868 = int32_t(0x8331A868);
 	if (!UseLiftedCode(146, 0x832ABC48)) { __imp__sub_832ABC48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC48);
-	return n_sub_821FBE60(ctx, base, g_8331A868);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A868);
 }
-PROMOTED_ENTRY(146, sub_832ABC48, 0x832ABC48) { ctx.r3.u64 = n_sub_832ABC48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC48, 0x832ABC48) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A868(ctx, base); }
 
-uint64_t n_sub_832ABC58(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A88C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A88C = int32_t(0x8331A88C);
 	if (!UseLiftedCode(146, 0x832ABC58)) { __imp__sub_832ABC58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC58);
-	return n_sub_821FBE60(ctx, base, g_8331A88C);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A88C);
 }
-PROMOTED_ENTRY(146, sub_832ABC58, 0x832ABC58) { ctx.r3.u64 = n_sub_832ABC58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC58, 0x832ABC58) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A88C(ctx, base); }
 
-uint64_t n_sub_832ABC68(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A8B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A8B0 = int32_t(0x8331A8B0);
 	if (!UseLiftedCode(146, 0x832ABC68)) { __imp__sub_832ABC68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC68);
-	return n_sub_821FBE60(ctx, base, g_8331A8B0);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A8B0);
 }
-PROMOTED_ENTRY(146, sub_832ABC68, 0x832ABC68) { ctx.r3.u64 = n_sub_832ABC68(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC68, 0x832ABC68) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A8B0(ctx, base); }
 
-uint64_t n_sub_832ABC78(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A8D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A8D4 = int32_t(0x8331A8D4);
 	if (!UseLiftedCode(146, 0x832ABC78)) { __imp__sub_832ABC78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC78);
-	return n_sub_821FBE60(ctx, base, g_8331A8D4);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A8D4);
 }
-PROMOTED_ENTRY(146, sub_832ABC78, 0x832ABC78) { ctx.r3.u64 = n_sub_832ABC78(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC78, 0x832ABC78) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A8D4(ctx, base); }
 
-uint64_t n_sub_832ABC88(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A8F8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A8F8 = int32_t(0x8331A8F8);
 	if (!UseLiftedCode(146, 0x832ABC88)) { __imp__sub_832ABC88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC88);
-	return n_sub_821FBE60(ctx, base, g_8331A8F8);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A8F8);
 }
-PROMOTED_ENTRY(146, sub_832ABC88, 0x832ABC88) { ctx.r3.u64 = n_sub_832ABC88(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC88, 0x832ABC88) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A8F8(ctx, base); }
 
-uint64_t n_sub_832ABC98(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A91C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A91C = int32_t(0x8331A91C);
 	if (!UseLiftedCode(146, 0x832ABC98)) { __imp__sub_832ABC98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABC98);
-	return n_sub_821FBE60(ctx, base, g_8331A91C);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A91C);
 }
-PROMOTED_ENTRY(146, sub_832ABC98, 0x832ABC98) { ctx.r3.u64 = n_sub_832ABC98(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABC98, 0x832ABC98) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A91C(ctx, base); }
 
-uint64_t n_sub_832ABCA8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalObject_8349F550(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F550 = int32_t(0x8349F550);
 	if (!UseLiftedCode(146, 0x832ABCA8)) { __imp__sub_832ABCA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABCA8);
-	return n_sub_82A46DF8(ctx, base, g_8349F550);
+	return DestroyGlobalObject(ctx, base, g_8349F550);
 }
-PROMOTED_ENTRY(146, sub_832ABCA8, 0x832ABCA8) { ctx.r3.u64 = n_sub_832ABCA8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABCA8, 0x832ABCA8) { ctx.r3.u64 = DestroyGlobalObject_8349F550(ctx, base); }
 
-uint64_t n_sub_832ABCB8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalObject_8349F5E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F5E0 = int32_t(0x8349F5E0);
 	if (!UseLiftedCode(146, 0x832ABCB8)) { __imp__sub_832ABCB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABCB8);
-	return n_sub_82A46DF8(ctx, base, g_8349F5E0);
+	return DestroyGlobalObject(ctx, base, g_8349F5E0);
 }
-PROMOTED_ENTRY(146, sub_832ABCB8, 0x832ABCB8) { ctx.r3.u64 = n_sub_832ABCB8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABCB8, 0x832ABCB8) { ctx.r3.u64 = DestroyGlobalObject_8349F5E0(ctx, base); }
 
-uint64_t n_sub_832ABF48(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F6D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F6D0 = int32_t(0x8349F6D0);
 	if (!UseLiftedCode(146, 0x832ABF48)) { __imp__sub_832ABF48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABF48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F6D0);
 }
-PROMOTED_ENTRY(146, sub_832ABF48, 0x832ABF48) { ctx.r3.u64 = n_sub_832ABF48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABF48, 0x832ABF48) { ctx.r3.u64 = ReleaseGlobalString_8349F6D0(ctx, base); }
 
-uint64_t n_sub_832ABF58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F6D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F6D4 = int32_t(0x8349F6D4);
 	if (!UseLiftedCode(146, 0x832ABF58)) { __imp__sub_832ABF58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABF58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F6D4);
 }
-PROMOTED_ENTRY(146, sub_832ABF58, 0x832ABF58) { ctx.r3.u64 = n_sub_832ABF58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABF58, 0x832ABF58) { ctx.r3.u64 = ReleaseGlobalString_8349F6D4(ctx, base); }
 
 uint64_t Destroy_TXT_8349F6D8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349F6D8_G_ = int32_t(0x8349F6D8);
@@ -18930,7 +18930,7 @@ uint64_t Destroy_TXT_8349F6F4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832ABF98, 0x832ABF98) { ctx.r3.u64 = Destroy_TXT_8349F6F4_G_(ctx, base); }
 
-uint64_t n_sub_832ABFA8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F740_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F740 = int32_t(0x8349F740);
 	if (!UseLiftedCode(146, 0x832ABFA8)) { __imp__sub_832ABFA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ABFA8);
@@ -18949,9 +18949,9 @@ uint64_t n_sub_832ABFA8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832ABFA8, 0x832ABFA8) { ctx.r3.u64 = n_sub_832ABFA8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ABFA8, 0x832ABFA8) { ctx.r3.u64 = GlobalHandle_8349F740_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC000(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F750_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F750 = int32_t(0x8349F750);
 	if (!UseLiftedCode(146, 0x832AC000)) { __imp__sub_832AC000(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC000);
@@ -18970,9 +18970,9 @@ uint64_t n_sub_832AC000(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC000, 0x832AC000) { ctx.r3.u64 = n_sub_832AC000(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC000, 0x832AC000) { ctx.r3.u64 = GlobalHandle_8349F750_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC058(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F760_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F760 = int32_t(0x8349F760);
 	if (!UseLiftedCode(146, 0x832AC058)) { __imp__sub_832AC058(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC058);
@@ -18991,9 +18991,9 @@ uint64_t n_sub_832AC058(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC058, 0x832AC058) { ctx.r3.u64 = n_sub_832AC058(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC058, 0x832AC058) { ctx.r3.u64 = GlobalHandle_8349F760_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC0B0(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F770_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F770 = int32_t(0x8349F770);
 	if (!UseLiftedCode(146, 0x832AC0B0)) { __imp__sub_832AC0B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC0B0);
@@ -19012,9 +19012,9 @@ uint64_t n_sub_832AC0B0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC0B0, 0x832AC0B0) { ctx.r3.u64 = n_sub_832AC0B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC0B0, 0x832AC0B0) { ctx.r3.u64 = GlobalHandle_8349F770_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC108(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F6F8_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F6F8 = int32_t(0x8349F6F8);
 	if (!UseLiftedCode(146, 0x832AC108)) { __imp__sub_832AC108(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC108);
@@ -19033,9 +19033,9 @@ uint64_t n_sub_832AC108(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC108, 0x832AC108) { ctx.r3.u64 = n_sub_832AC108(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC108, 0x832AC108) { ctx.r3.u64 = GlobalHandle_8349F6F8_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC160(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F780_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F780 = int32_t(0x8349F780);
 	if (!UseLiftedCode(146, 0x832AC160)) { __imp__sub_832AC160(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC160);
@@ -19054,9 +19054,9 @@ uint64_t n_sub_832AC160(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC160, 0x832AC160) { ctx.r3.u64 = n_sub_832AC160(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC160, 0x832AC160) { ctx.r3.u64 = GlobalHandle_8349F780_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC1B8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F790_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F790 = int32_t(0x8349F790);
 	if (!UseLiftedCode(146, 0x832AC1B8)) { __imp__sub_832AC1B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC1B8);
@@ -19075,66 +19075,66 @@ uint64_t n_sub_832AC1B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC1B8, 0x832AC1B8) { ctx.r3.u64 = n_sub_832AC1B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC1B8, 0x832AC1B8) { ctx.r3.u64 = GlobalHandle_8349F790_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC210(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F70C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F70C = int32_t(0x8349F70C);
 	if (!UseLiftedCode(146, 0x832AC210)) { __imp__sub_832AC210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC210);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F70C);
 }
-PROMOTED_ENTRY(146, sub_832AC210, 0x832AC210) { ctx.r3.u64 = n_sub_832AC210(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC210, 0x832AC210) { ctx.r3.u64 = ReleaseGlobalString_8349F70C(ctx, base); }
 
-uint64_t n_sub_832AC220(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F7A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7A0 = int32_t(0x8349F7A0);
 	if (!UseLiftedCode(146, 0x832AC220)) { __imp__sub_832AC220(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC220);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F7A0);
 }
-PROMOTED_ENTRY(146, sub_832AC220, 0x832AC220) { ctx.r3.u64 = n_sub_832AC220(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC220, 0x832AC220) { ctx.r3.u64 = ReleaseGlobalString_8349F7A0(ctx, base); }
 
-uint64_t n_sub_832AC230(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F7A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7A4 = int32_t(0x8349F7A4);
 	if (!UseLiftedCode(146, 0x832AC230)) { __imp__sub_832AC230(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC230);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F7A4);
 }
-PROMOTED_ENTRY(146, sub_832AC230, 0x832AC230) { ctx.r3.u64 = n_sub_832AC230(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC230, 0x832AC230) { ctx.r3.u64 = ReleaseGlobalString_8349F7A4(ctx, base); }
 
-uint64_t n_sub_832AC240(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F7A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7A8 = int32_t(0x8349F7A8);
 	if (!UseLiftedCode(146, 0x832AC240)) { __imp__sub_832AC240(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC240);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F7A8);
 }
-PROMOTED_ENTRY(146, sub_832AC240, 0x832AC240) { ctx.r3.u64 = n_sub_832AC240(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC240, 0x832AC240) { ctx.r3.u64 = ReleaseGlobalString_8349F7A8(ctx, base); }
 
-uint64_t n_sub_832AC250(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F7AC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7AC = int32_t(0x8349F7AC);
 	if (!UseLiftedCode(146, 0x832AC250)) { __imp__sub_832AC250(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC250);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F7AC);
 }
-PROMOTED_ENTRY(146, sub_832AC250, 0x832AC250) { ctx.r3.u64 = n_sub_832AC250(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC250, 0x832AC250) { ctx.r3.u64 = ReleaseGlobalString_8349F7AC(ctx, base); }
 
-uint64_t n_sub_832AC2E8(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobal_8349F7BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7BC = int32_t(0x8349F7BC);
 	if (!UseLiftedCode(146, 0x832AC2E8)) { __imp__sub_832AC2E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC2E8);
 	uint64_t object = g_8349F7BC;
-	return n_sub_82A51AC0(ctx, base);
+	return ClearGlobalList_8349F7BC(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AC2E8, 0x832AC2E8) { ctx.r3.u64 = n_sub_832AC2E8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC2E8, 0x832AC2E8) { ctx.r3.u64 = CleanupGlobal_8349F7BC(ctx, base); }
 
-uint64_t n_sub_832AC380(CpuState& ctx, uint8_t* base) {
+uint64_t C_820FA120_Cleanup_8331A988(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A988 = int32_t(0x8331A988);
 	if (!UseLiftedCode(146, 0x832AC380)) { __imp__sub_832AC380(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC380);
-	return n_sub_82A1DEE8(ctx, base, g_8331A988);
+	return C_820FA120_Destructor(ctx, base, g_8331A988);
 }
-PROMOTED_ENTRY(146, sub_832AC380, 0x832AC380) { ctx.r3.u64 = n_sub_832AC380(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC380, 0x832AC380) { ctx.r3.u64 = C_820FA120_Cleanup_8331A988(ctx, base); }
 
-uint64_t n_sub_832AC390(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F7D4_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F7D4 = int32_t(0x8349F7D4);
 	if (!UseLiftedCode(146, 0x832AC390)) { __imp__sub_832AC390(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC390);
@@ -19153,7 +19153,7 @@ uint64_t n_sub_832AC390(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC390, 0x832AC390) { ctx.r3.u64 = n_sub_832AC390(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC390, 0x832AC390) { ctx.r3.u64 = GlobalHandle_8349F7D4_Destroy(ctx, base); }
 
 uint64_t Destroy_TXT_8349F824_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349F824_G_ = int32_t(0x8349F824);
@@ -19163,23 +19163,23 @@ uint64_t Destroy_TXT_8349F824_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AC560, 0x832AC560) { ctx.r3.u64 = Destroy_TXT_8349F824_G_(ctx, base); }
 
-uint64_t n_sub_832AC570(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F828(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F828 = int32_t(0x8349F828);
 	if (!UseLiftedCode(146, 0x832AC570)) { __imp__sub_832AC570(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC570);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F828);
 }
-PROMOTED_ENTRY(146, sub_832AC570, 0x832AC570) { ctx.r3.u64 = n_sub_832AC570(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC570, 0x832AC570) { ctx.r3.u64 = ReleaseGlobalString_8349F828(ctx, base); }
 
-uint64_t n_sub_832AC580(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F82C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F82C = int32_t(0x8349F82C);
 	if (!UseLiftedCode(146, 0x832AC580)) { __imp__sub_832AC580(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC580);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F82C);
 }
-PROMOTED_ENTRY(146, sub_832AC580, 0x832AC580) { ctx.r3.u64 = n_sub_832AC580(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC580, 0x832AC580) { ctx.r3.u64 = ReleaseGlobalString_8349F82C(ctx, base); }
 
-uint64_t n_sub_832AC590(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_8349F830_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F830 = int32_t(0x8349F830);
 	if (!UseLiftedCode(146, 0x832AC590)) { __imp__sub_832AC590(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC590);
@@ -19198,41 +19198,41 @@ uint64_t n_sub_832AC590(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AC590, 0x832AC590) { ctx.r3.u64 = n_sub_832AC590(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC590, 0x832AC590) { ctx.r3.u64 = GlobalHandle_8349F830_Destroy(ctx, base); }
 
-uint64_t n_sub_832AC5E8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F840(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F840 = int32_t(0x8349F840);
 	if (!UseLiftedCode(146, 0x832AC5E8)) { __imp__sub_832AC5E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC5E8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F840);
 }
-PROMOTED_ENTRY(146, sub_832AC5E8, 0x832AC5E8) { ctx.r3.u64 = n_sub_832AC5E8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC5E8, 0x832AC5E8) { ctx.r3.u64 = ReleaseGlobalString_8349F840(ctx, base); }
 
-uint64_t n_sub_832AC5F8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F844(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F844 = int32_t(0x8349F844);
 	if (!UseLiftedCode(146, 0x832AC5F8)) { __imp__sub_832AC5F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC5F8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F844);
 }
-PROMOTED_ENTRY(146, sub_832AC5F8, 0x832AC5F8) { ctx.r3.u64 = n_sub_832AC5F8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC5F8, 0x832AC5F8) { ctx.r3.u64 = ReleaseGlobalString_8349F844(ctx, base); }
 
-uint64_t n_sub_832AC608(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobal_8349F848(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F848 = int32_t(0x8349F848);
 	if (!UseLiftedCode(146, 0x832AC608)) { __imp__sub_832AC608(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC608);
 	uint64_t object = g_8349F848;
-	return n_sub_82A581D0(ctx, base);
+	return ClearGlobalList_8349F848(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AC608, 0x832AC608) { ctx.r3.u64 = n_sub_832AC608(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC608, 0x832AC608) { ctx.r3.u64 = CleanupGlobal_8349F848(ctx, base); }
 
-uint64_t n_sub_832AC690(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobal_8349F860(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F860 = int32_t(0x8349F860);
 	if (!UseLiftedCode(146, 0x832AC690)) { __imp__sub_832AC690(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC690);
 	uint64_t object = g_8349F860;
-	return n_sub_82A58670(ctx, base);
+	return CleanupGlobalVector_8349F860(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AC690, 0x832AC690) { ctx.r3.u64 = n_sub_832AC690(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC690, 0x832AC690) { ctx.r3.u64 = CleanupGlobal_8349F860(ctx, base); }
 
 uint64_t Destroy_TXT_8349F870_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349F870_G_ = int32_t(0x8349F870);
@@ -19250,551 +19250,551 @@ uint64_t Destroy_TXT_8349F874_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AC6B0, 0x832AC6B0) { ctx.r3.u64 = Destroy_TXT_8349F874_G_(ctx, base); }
 
-uint64_t n_sub_832AC6C0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F878(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F878 = int32_t(0x8349F878);
 	if (!UseLiftedCode(146, 0x832AC6C0)) { __imp__sub_832AC6C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC6C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F878);
 }
-PROMOTED_ENTRY(146, sub_832AC6C0, 0x832AC6C0) { ctx.r3.u64 = n_sub_832AC6C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC6C0, 0x832AC6C0) { ctx.r3.u64 = ReleaseGlobalString_8349F878(ctx, base); }
 
-uint64_t n_sub_832AC6D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F87C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F87C = int32_t(0x8349F87C);
 	if (!UseLiftedCode(146, 0x832AC6D0)) { __imp__sub_832AC6D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC6D0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F87C);
 }
-PROMOTED_ENTRY(146, sub_832AC6D0, 0x832AC6D0) { ctx.r3.u64 = n_sub_832AC6D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC6D0, 0x832AC6D0) { ctx.r3.u64 = ReleaseGlobalString_8349F87C(ctx, base); }
 
-uint64_t n_sub_832AC6F8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F894(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F894 = int32_t(0x8349F894);
 	if (!UseLiftedCode(146, 0x832AC6F8)) { __imp__sub_832AC6F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC6F8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F894);
 }
-PROMOTED_ENTRY(146, sub_832AC6F8, 0x832AC6F8) { ctx.r3.u64 = n_sub_832AC6F8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC6F8, 0x832AC6F8) { ctx.r3.u64 = ReleaseGlobalString_8349F894(ctx, base); }
 
-uint64_t n_sub_832AC708(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_8349F898(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349F898 = int32_t(0x8349F898);
 	if (!UseLiftedCode(146, 0x832AC708)) { __imp__sub_832AC708(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC708);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_8349F898);
 }
-PROMOTED_ENTRY(146, sub_832AC708, 0x832AC708) { ctx.r3.u64 = n_sub_832AC708(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC708, 0x832AC708) { ctx.r3.u64 = ReleaseGlobalString_8349F898(ctx, base); }
 
-uint64_t n_sub_832AC860(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0B9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0B9C = int32_t(0x834A0B9C);
 	if (!UseLiftedCode(146, 0x832AC860)) { __imp__sub_832AC860(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC860);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0B9C);
 }
-PROMOTED_ENTRY(146, sub_832AC860, 0x832AC860) { ctx.r3.u64 = n_sub_832AC860(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC860, 0x832AC860) { ctx.r3.u64 = ReleaseGlobalString_834A0B9C(ctx, base); }
 
-uint64_t n_sub_832AC870(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0BA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0BA0 = int32_t(0x834A0BA0);
 	if (!UseLiftedCode(146, 0x832AC870)) { __imp__sub_832AC870(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC870);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0BA0);
 }
-PROMOTED_ENTRY(146, sub_832AC870, 0x832AC870) { ctx.r3.u64 = n_sub_832AC870(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC870, 0x832AC870) { ctx.r3.u64 = ReleaseGlobalString_834A0BA0(ctx, base); }
 
-uint64_t n_sub_832AC930(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C78(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C78 = int32_t(0x834A0C78);
 	if (!UseLiftedCode(146, 0x832AC930)) { __imp__sub_832AC930(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC930);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C78);
 }
-PROMOTED_ENTRY(146, sub_832AC930, 0x832AC930) { ctx.r3.u64 = n_sub_832AC930(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC930, 0x832AC930) { ctx.r3.u64 = ReleaseGlobalString_834A0C78(ctx, base); }
 
-uint64_t n_sub_832AC940(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C7C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C7C = int32_t(0x834A0C7C);
 	if (!UseLiftedCode(146, 0x832AC940)) { __imp__sub_832AC940(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC940);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C7C);
 }
-PROMOTED_ENTRY(146, sub_832AC940, 0x832AC940) { ctx.r3.u64 = n_sub_832AC940(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC940, 0x832AC940) { ctx.r3.u64 = ReleaseGlobalString_834A0C7C(ctx, base); }
 
-uint64_t n_sub_832AC950(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C80(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C80 = int32_t(0x834A0C80);
 	if (!UseLiftedCode(146, 0x832AC950)) { __imp__sub_832AC950(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC950);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C80);
 }
-PROMOTED_ENTRY(146, sub_832AC950, 0x832AC950) { ctx.r3.u64 = n_sub_832AC950(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC950, 0x832AC950) { ctx.r3.u64 = ReleaseGlobalString_834A0C80(ctx, base); }
 
-uint64_t n_sub_832AC960(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C84(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C84 = int32_t(0x834A0C84);
 	if (!UseLiftedCode(146, 0x832AC960)) { __imp__sub_832AC960(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC960);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C84);
 }
-PROMOTED_ENTRY(146, sub_832AC960, 0x832AC960) { ctx.r3.u64 = n_sub_832AC960(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC960, 0x832AC960) { ctx.r3.u64 = ReleaseGlobalString_834A0C84(ctx, base); }
 
-uint64_t n_sub_832AC970(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C88 = int32_t(0x834A0C88);
 	if (!UseLiftedCode(146, 0x832AC970)) { __imp__sub_832AC970(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC970);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C88);
 }
-PROMOTED_ENTRY(146, sub_832AC970, 0x832AC970) { ctx.r3.u64 = n_sub_832AC970(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC970, 0x832AC970) { ctx.r3.u64 = ReleaseGlobalString_834A0C88(ctx, base); }
 
-uint64_t n_sub_832AC980(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C8C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C8C = int32_t(0x834A0C8C);
 	if (!UseLiftedCode(146, 0x832AC980)) { __imp__sub_832AC980(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC980);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C8C);
 }
-PROMOTED_ENTRY(146, sub_832AC980, 0x832AC980) { ctx.r3.u64 = n_sub_832AC980(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC980, 0x832AC980) { ctx.r3.u64 = ReleaseGlobalString_834A0C8C(ctx, base); }
 
-uint64_t n_sub_832AC990(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C90(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C90 = int32_t(0x834A0C90);
 	if (!UseLiftedCode(146, 0x832AC990)) { __imp__sub_832AC990(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC990);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C90);
 }
-PROMOTED_ENTRY(146, sub_832AC990, 0x832AC990) { ctx.r3.u64 = n_sub_832AC990(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC990, 0x832AC990) { ctx.r3.u64 = ReleaseGlobalString_834A0C90(ctx, base); }
 
-uint64_t n_sub_832AC9A0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C94(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C94 = int32_t(0x834A0C94);
 	if (!UseLiftedCode(146, 0x832AC9A0)) { __imp__sub_832AC9A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C94);
 }
-PROMOTED_ENTRY(146, sub_832AC9A0, 0x832AC9A0) { ctx.r3.u64 = n_sub_832AC9A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9A0, 0x832AC9A0) { ctx.r3.u64 = ReleaseGlobalString_834A0C94(ctx, base); }
 
-uint64_t n_sub_832AC9B0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C98(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C98 = int32_t(0x834A0C98);
 	if (!UseLiftedCode(146, 0x832AC9B0)) { __imp__sub_832AC9B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C98);
 }
-PROMOTED_ENTRY(146, sub_832AC9B0, 0x832AC9B0) { ctx.r3.u64 = n_sub_832AC9B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9B0, 0x832AC9B0) { ctx.r3.u64 = ReleaseGlobalString_834A0C98(ctx, base); }
 
-uint64_t n_sub_832AC9C0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0C9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0C9C = int32_t(0x834A0C9C);
 	if (!UseLiftedCode(146, 0x832AC9C0)) { __imp__sub_832AC9C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0C9C);
 }
-PROMOTED_ENTRY(146, sub_832AC9C0, 0x832AC9C0) { ctx.r3.u64 = n_sub_832AC9C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9C0, 0x832AC9C0) { ctx.r3.u64 = ReleaseGlobalString_834A0C9C(ctx, base); }
 
-uint64_t n_sub_832AC9D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0CA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0CA0 = int32_t(0x834A0CA0);
 	if (!UseLiftedCode(146, 0x832AC9D0)) { __imp__sub_832AC9D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9D0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0CA0);
 }
-PROMOTED_ENTRY(146, sub_832AC9D0, 0x832AC9D0) { ctx.r3.u64 = n_sub_832AC9D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9D0, 0x832AC9D0) { ctx.r3.u64 = ReleaseGlobalString_834A0CA0(ctx, base); }
 
-uint64_t n_sub_832AC9E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0CA4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0CA4 = int32_t(0x834A0CA4);
 	if (!UseLiftedCode(146, 0x832AC9E0)) { __imp__sub_832AC9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0CA4);
 }
-PROMOTED_ENTRY(146, sub_832AC9E0, 0x832AC9E0) { ctx.r3.u64 = n_sub_832AC9E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9E0, 0x832AC9E0) { ctx.r3.u64 = ReleaseGlobalString_834A0CA4(ctx, base); }
 
-uint64_t n_sub_832AC9F0(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331A9E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A9E8 = int32_t(0x8331A9E8);
 	if (!UseLiftedCode(146, 0x832AC9F0)) { __imp__sub_832AC9F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AC9F0);
-	return n_sub_821FBE60(ctx, base, g_8331A9E8);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331A9E8);
 }
-PROMOTED_ENTRY(146, sub_832AC9F0, 0x832AC9F0) { ctx.r3.u64 = n_sub_832AC9F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AC9F0, 0x832AC9F0) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331A9E8(ctx, base); }
 
-uint64_t n_sub_832ACAC0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0D94(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0D94 = int32_t(0x834A0D94);
 	if (!UseLiftedCode(146, 0x832ACAC0)) { __imp__sub_832ACAC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACAC0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0D94);
 }
-PROMOTED_ENTRY(146, sub_832ACAC0, 0x832ACAC0) { ctx.r3.u64 = n_sub_832ACAC0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACAC0, 0x832ACAC0) { ctx.r3.u64 = ReleaseGlobalString_834A0D94(ctx, base); }
 
-uint64_t n_sub_832ACAD0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0D98(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0D98 = int32_t(0x834A0D98);
 	if (!UseLiftedCode(146, 0x832ACAD0)) { __imp__sub_832ACAD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACAD0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0D98);
 }
-PROMOTED_ENTRY(146, sub_832ACAD0, 0x832ACAD0) { ctx.r3.u64 = n_sub_832ACAD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACAD0, 0x832ACAD0) { ctx.r3.u64 = ReleaseGlobalString_834A0D98(ctx, base); }
 
-uint64_t n_sub_832ACAE0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0D9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0D9C = int32_t(0x834A0D9C);
 	if (!UseLiftedCode(146, 0x832ACAE0)) { __imp__sub_832ACAE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACAE0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0D9C);
 }
-PROMOTED_ENTRY(146, sub_832ACAE0, 0x832ACAE0) { ctx.r3.u64 = n_sub_832ACAE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACAE0, 0x832ACAE0) { ctx.r3.u64 = ReleaseGlobalString_834A0D9C(ctx, base); }
 
-uint64_t n_sub_832ACAF0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0DA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DA0 = int32_t(0x834A0DA0);
 	if (!UseLiftedCode(146, 0x832ACAF0)) { __imp__sub_832ACAF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACAF0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0DA0);
 }
-PROMOTED_ENTRY(146, sub_832ACAF0, 0x832ACAF0) { ctx.r3.u64 = n_sub_832ACAF0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACAF0, 0x832ACAF0) { ctx.r3.u64 = ReleaseGlobalString_834A0DA0(ctx, base); }
 
-uint64_t n_sub_832ACB00(CpuState& ctx, uint8_t* base) {
+uint64_t C_820F5E8C_Cleanup_8331AA18(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AA18 = int32_t(0x8331AA18);
 	if (!UseLiftedCode(146, 0x832ACB00)) { __imp__sub_832ACB00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACB00);
-	return n_sub_821FBE60(ctx, base, g_8331AA18);
+	return C_820F5E8C_Cleanup(ctx, base, g_8331AA18);
 }
-PROMOTED_ENTRY(146, sub_832ACB00, 0x832ACB00) { ctx.r3.u64 = n_sub_832ACB00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACB00, 0x832ACB00) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331AA18(ctx, base); }
 
-uint64_t n_sub_832ACBD0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0DAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DAC = int32_t(0x834A0DAC);
 	if (!UseLiftedCode(146, 0x832ACBD0)) { __imp__sub_832ACBD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACBD0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0DAC);
 }
-PROMOTED_ENTRY(146, sub_832ACBD0, 0x832ACBD0) { ctx.r3.u64 = n_sub_832ACBD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACBD0, 0x832ACBD0) { ctx.r3.u64 = ReleaseGlobalString_834A0DAC(ctx, base); }
 
-uint64_t n_sub_832ACBE0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0DB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DB0 = int32_t(0x834A0DB0);
 	if (!UseLiftedCode(146, 0x832ACBE0)) { __imp__sub_832ACBE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACBE0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0DB0);
 }
-PROMOTED_ENTRY(146, sub_832ACBE0, 0x832ACBE0) { ctx.r3.u64 = n_sub_832ACBE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACBE0, 0x832ACBE0) { ctx.r3.u64 = ReleaseGlobalString_834A0DB0(ctx, base); }
 
-uint64_t n_sub_832ACBF0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834C323C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C323C = int32_t(0x834C323C);
 	if (!UseLiftedCode(146, 0x832ACBF0)) { __imp__sub_832ACBF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACBF0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834C323C);
 }
-PROMOTED_ENTRY(146, sub_832ACBF0, 0x832ACBF0) { ctx.r3.u64 = n_sub_832ACBF0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACBF0, 0x832ACBF0) { ctx.r3.u64 = ReleaseGlobalString_834C323C(ctx, base); }
 
-uint64_t n_sub_832ACC00(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0DB4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DB4 = int32_t(0x834A0DB4);
 	if (!UseLiftedCode(146, 0x832ACC00)) { __imp__sub_832ACC00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACC00);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0DB4);
 }
-PROMOTED_ENTRY(146, sub_832ACC00, 0x832ACC00) { ctx.r3.u64 = n_sub_832ACC00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACC00, 0x832ACC00) { ctx.r3.u64 = ReleaseGlobalString_834A0DB4(ctx, base); }
 
-uint64_t n_sub_832ACC10(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalString_834A0DB8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DB8 = int32_t(0x834A0DB8);
 	if (!UseLiftedCode(146, 0x832ACC10)) { __imp__sub_832ACC10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ACC10);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0DB8);
 }
-PROMOTED_ENTRY(146, sub_832ACC10, 0x832ACC10) { ctx.r3.u64 = n_sub_832ACC10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ACC10, 0x832ACC10) { ctx.r3.u64 = ReleaseGlobalString_834A0DB8(ctx, base); }
 
-uint64_t n_sub_832AD058(CpuState& ctx, uint8_t* base) {
+uint64_t C_820FF240_Cleanup_8331AA54(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AA54 = int32_t(0x8331AA54);
 	if (!UseLiftedCode(146, 0x832AD058)) { __imp__sub_832AD058(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD058);
-	return n_sub_82BE5050(ctx, base, g_8331AA54);
+	return C_820FF240_Destructor(ctx, base, g_8331AA54);
 }
-PROMOTED_ENTRY(146, sub_832AD058, 0x832AD058) { ctx.r3.u64 = n_sub_832AD058(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD058, 0x832AD058) { ctx.r3.u64 = C_820FF240_Cleanup_8331AA54(ctx, base); }
 
-uint64_t n_sub_832AD0E0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E00(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E00 = int32_t(0x834A0E00);
 	if (!UseLiftedCode(146, 0x832AD0E0)) { __imp__sub_832AD0E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD0E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E00);
 }
-PROMOTED_ENTRY(146, sub_832AD0E0, 0x832AD0E0) { ctx.r3.u64 = n_sub_832AD0E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD0E0, 0x832AD0E0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E00(ctx, base); }
 
-uint64_t n_sub_832AD0F0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E04(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E04 = int32_t(0x834A0E04);
 	if (!UseLiftedCode(146, 0x832AD0F0)) { __imp__sub_832AD0F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD0F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E04);
 }
-PROMOTED_ENTRY(146, sub_832AD0F0, 0x832AD0F0) { ctx.r3.u64 = n_sub_832AD0F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD0F0, 0x832AD0F0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E04(ctx, base); }
 
-uint64_t n_sub_832AD100(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E08(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E08 = int32_t(0x834A0E08);
 	if (!UseLiftedCode(146, 0x832AD100)) { __imp__sub_832AD100(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD100);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E08);
 }
-PROMOTED_ENTRY(146, sub_832AD100, 0x832AD100) { ctx.r3.u64 = n_sub_832AD100(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD100, 0x832AD100) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E08(ctx, base); }
 
-uint64_t n_sub_832AD110(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E0C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E0C = int32_t(0x834A0E0C);
 	if (!UseLiftedCode(146, 0x832AD110)) { __imp__sub_832AD110(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD110);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E0C);
 }
-PROMOTED_ENTRY(146, sub_832AD110, 0x832AD110) { ctx.r3.u64 = n_sub_832AD110(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD110, 0x832AD110) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E0C(ctx, base); }
 
-uint64_t n_sub_832AD168(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E4C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E4C = int32_t(0x834A0E4C);
 	if (!UseLiftedCode(146, 0x832AD168)) { __imp__sub_832AD168(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD168);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E4C);
 }
-PROMOTED_ENTRY(146, sub_832AD168, 0x832AD168) { ctx.r3.u64 = n_sub_832AD168(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD168, 0x832AD168) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E4C(ctx, base); }
 
-uint64_t n_sub_832AD178(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0E50(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E50 = int32_t(0x834A0E50);
 	if (!UseLiftedCode(146, 0x832AD178)) { __imp__sub_832AD178(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD178);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0E50);
 }
-PROMOTED_ENTRY(146, sub_832AD178, 0x832AD178) { ctx.r3.u64 = n_sub_832AD178(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD178, 0x832AD178) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0E50(ctx, base); }
 
-uint64_t n_sub_832AD210(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0EF4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0EF4 = int32_t(0x834A0EF4);
 	if (!UseLiftedCode(146, 0x832AD210)) { __imp__sub_832AD210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD210);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0EF4);
 }
-PROMOTED_ENTRY(146, sub_832AD210, 0x832AD210) { ctx.r3.u64 = n_sub_832AD210(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD210, 0x832AD210) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0EF4(ctx, base); }
 
-uint64_t n_sub_832AD220(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0EF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0EF8 = int32_t(0x834A0EF8);
 	if (!UseLiftedCode(146, 0x832AD220)) { __imp__sub_832AD220(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD220);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0EF8);
 }
-PROMOTED_ENTRY(146, sub_832AD220, 0x832AD220) { ctx.r3.u64 = n_sub_832AD220(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD220, 0x832AD220) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0EF8(ctx, base); }
 
-uint64_t n_sub_832AD2A0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0F60(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0F60 = int32_t(0x834A0F60);
 	if (!UseLiftedCode(146, 0x832AD2A0)) { __imp__sub_832AD2A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD2A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0F60);
 }
-PROMOTED_ENTRY(146, sub_832AD2A0, 0x832AD2A0) { ctx.r3.u64 = n_sub_832AD2A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD2A0, 0x832AD2A0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0F60(ctx, base); }
 
-uint64_t n_sub_832AD2B0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0F64(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0F64 = int32_t(0x834A0F64);
 	if (!UseLiftedCode(146, 0x832AD2B0)) { __imp__sub_832AD2B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD2B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0F64);
 }
-PROMOTED_ENTRY(146, sub_832AD2B0, 0x832AD2B0) { ctx.r3.u64 = n_sub_832AD2B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD2B0, 0x832AD2B0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0F64(ctx, base); }
 
-uint64_t n_sub_832AD2D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0FE8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0FE8 = int32_t(0x834A0FE8);
 	if (!UseLiftedCode(146, 0x832AD2D8)) { __imp__sub_832AD2D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD2D8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0FE8);
 }
-PROMOTED_ENTRY(146, sub_832AD2D8, 0x832AD2D8) { ctx.r3.u64 = n_sub_832AD2D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD2D8, 0x832AD2D8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0FE8(ctx, base); }
 
-uint64_t n_sub_832AD2E8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A0FEC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0FEC = int32_t(0x834A0FEC);
 	if (!UseLiftedCode(146, 0x832AD2E8)) { __imp__sub_832AD2E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD2E8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A0FEC);
 }
-PROMOTED_ENTRY(146, sub_832AD2E8, 0x832AD2E8) { ctx.r3.u64 = n_sub_832AD2E8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD2E8, 0x832AD2E8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A0FEC(ctx, base); }
 
-uint64_t n_sub_832AD2F8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A3FF0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A3FF0 = int32_t(0x834A3FF0);
 	if (!UseLiftedCode(146, 0x832AD2F8)) { __imp__sub_832AD2F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD2F8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A3FF0);
 }
-PROMOTED_ENTRY(146, sub_832AD2F8, 0x832AD2F8) { ctx.r3.u64 = n_sub_832AD2F8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD2F8, 0x832AD2F8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A3FF0(ctx, base); }
 
-uint64_t n_sub_832AD308(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A3FF4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A3FF4 = int32_t(0x834A3FF4);
 	if (!UseLiftedCode(146, 0x832AD308)) { __imp__sub_832AD308(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD308);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A3FF4);
 }
-PROMOTED_ENTRY(146, sub_832AD308, 0x832AD308) { ctx.r3.u64 = n_sub_832AD308(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD308, 0x832AD308) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A3FF4(ctx, base); }
 
-uint64_t n_sub_832AD370(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4070(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4070 = int32_t(0x834A4070);
 	if (!UseLiftedCode(146, 0x832AD370)) { __imp__sub_832AD370(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD370);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4070);
 }
-PROMOTED_ENTRY(146, sub_832AD370, 0x832AD370) { ctx.r3.u64 = n_sub_832AD370(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD370, 0x832AD370) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4070(ctx, base); }
 
-uint64_t n_sub_832AD380(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4074(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4074 = int32_t(0x834A4074);
 	if (!UseLiftedCode(146, 0x832AD380)) { __imp__sub_832AD380(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD380);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4074);
 }
-PROMOTED_ENTRY(146, sub_832AD380, 0x832AD380) { ctx.r3.u64 = n_sub_832AD380(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD380, 0x832AD380) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4074(ctx, base); }
 
-uint64_t n_sub_832AD410(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4078(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4078 = int32_t(0x834A4078);
 	if (!UseLiftedCode(146, 0x832AD410)) { __imp__sub_832AD410(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD410);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4078);
 }
-PROMOTED_ENTRY(146, sub_832AD410, 0x832AD410) { ctx.r3.u64 = n_sub_832AD410(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD410, 0x832AD410) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4078(ctx, base); }
 
-uint64_t n_sub_832AD420(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A407C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A407C = int32_t(0x834A407C);
 	if (!UseLiftedCode(146, 0x832AD420)) { __imp__sub_832AD420(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD420);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A407C);
 }
-PROMOTED_ENTRY(146, sub_832AD420, 0x832AD420) { ctx.r3.u64 = n_sub_832AD420(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD420, 0x832AD420) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A407C(ctx, base); }
 
-uint64_t n_sub_832AD430(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4090(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4090 = int32_t(0x834A4090);
 	if (!UseLiftedCode(146, 0x832AD430)) { __imp__sub_832AD430(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD430);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4090);
 }
-PROMOTED_ENTRY(146, sub_832AD430, 0x832AD430) { ctx.r3.u64 = n_sub_832AD430(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD430, 0x832AD430) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4090(ctx, base); }
 
-uint64_t n_sub_832AD440(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4094(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4094 = int32_t(0x834A4094);
 	if (!UseLiftedCode(146, 0x832AD440)) { __imp__sub_832AD440(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD440);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4094);
 }
-PROMOTED_ENTRY(146, sub_832AD440, 0x832AD440) { ctx.r3.u64 = n_sub_832AD440(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD440, 0x832AD440) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4094(ctx, base); }
 
-uint64_t n_sub_832AD450(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4098(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4098 = int32_t(0x834A4098);
 	if (!UseLiftedCode(146, 0x832AD450)) { __imp__sub_832AD450(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD450);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4098);
 }
-PROMOTED_ENTRY(146, sub_832AD450, 0x832AD450) { ctx.r3.u64 = n_sub_832AD450(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD450, 0x832AD450) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4098(ctx, base); }
 
-uint64_t n_sub_832AD460(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A409C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A409C = int32_t(0x834A409C);
 	if (!UseLiftedCode(146, 0x832AD460)) { __imp__sub_832AD460(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD460);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A409C);
 }
-PROMOTED_ENTRY(146, sub_832AD460, 0x832AD460) { ctx.r3.u64 = n_sub_832AD460(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD460, 0x832AD460) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A409C(ctx, base); }
 
-uint64_t n_sub_832AD470(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40A0 = int32_t(0x834A40A0);
 	if (!UseLiftedCode(146, 0x832AD470)) { __imp__sub_832AD470(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD470);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40A0);
 }
-PROMOTED_ENTRY(146, sub_832AD470, 0x832AD470) { ctx.r3.u64 = n_sub_832AD470(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD470, 0x832AD470) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40A0(ctx, base); }
 
-uint64_t n_sub_832AD480(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40A4 = int32_t(0x834A40A4);
 	if (!UseLiftedCode(146, 0x832AD480)) { __imp__sub_832AD480(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD480);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40A4);
 }
-PROMOTED_ENTRY(146, sub_832AD480, 0x832AD480) { ctx.r3.u64 = n_sub_832AD480(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD480, 0x832AD480) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40A4(ctx, base); }
 
-uint64_t n_sub_832AD490(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40A8 = int32_t(0x834A40A8);
 	if (!UseLiftedCode(146, 0x832AD490)) { __imp__sub_832AD490(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD490);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40A8);
 }
-PROMOTED_ENTRY(146, sub_832AD490, 0x832AD490) { ctx.r3.u64 = n_sub_832AD490(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD490, 0x832AD490) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40A8(ctx, base); }
 
-uint64_t n_sub_832AD4A0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40AC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40AC = int32_t(0x834A40AC);
 	if (!UseLiftedCode(146, 0x832AD4A0)) { __imp__sub_832AD4A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40AC);
 }
-PROMOTED_ENTRY(146, sub_832AD4A0, 0x832AD4A0) { ctx.r3.u64 = n_sub_832AD4A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4A0, 0x832AD4A0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40AC(ctx, base); }
 
-uint64_t n_sub_832AD4B0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40B0 = int32_t(0x834A40B0);
 	if (!UseLiftedCode(146, 0x832AD4B0)) { __imp__sub_832AD4B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40B0);
 }
-PROMOTED_ENTRY(146, sub_832AD4B0, 0x832AD4B0) { ctx.r3.u64 = n_sub_832AD4B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4B0, 0x832AD4B0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40B0(ctx, base); }
 
-uint64_t n_sub_832AD4C0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40B4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40B4 = int32_t(0x834A40B4);
 	if (!UseLiftedCode(146, 0x832AD4C0)) { __imp__sub_832AD4C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40B4);
 }
-PROMOTED_ENTRY(146, sub_832AD4C0, 0x832AD4C0) { ctx.r3.u64 = n_sub_832AD4C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4C0, 0x832AD4C0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40B4(ctx, base); }
 
-uint64_t n_sub_832AD4D0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40B8 = int32_t(0x834A40B8);
 	if (!UseLiftedCode(146, 0x832AD4D0)) { __imp__sub_832AD4D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4D0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40B8);
 }
-PROMOTED_ENTRY(146, sub_832AD4D0, 0x832AD4D0) { ctx.r3.u64 = n_sub_832AD4D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4D0, 0x832AD4D0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40B8(ctx, base); }
 
-uint64_t n_sub_832AD4E0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40BC = int32_t(0x834A40BC);
 	if (!UseLiftedCode(146, 0x832AD4E0)) { __imp__sub_832AD4E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40BC);
 }
-PROMOTED_ENTRY(146, sub_832AD4E0, 0x832AD4E0) { ctx.r3.u64 = n_sub_832AD4E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4E0, 0x832AD4E0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40BC(ctx, base); }
 
-uint64_t n_sub_832AD4F0(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40C0 = int32_t(0x834A40C0);
 	if (!UseLiftedCode(146, 0x832AD4F0)) { __imp__sub_832AD4F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD4F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40C0);
 }
-PROMOTED_ENTRY(146, sub_832AD4F0, 0x832AD4F0) { ctx.r3.u64 = n_sub_832AD4F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD4F0, 0x832AD4F0) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40C0(ctx, base); }
 
-uint64_t n_sub_832AD500(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40C4 = int32_t(0x834A40C4);
 	if (!UseLiftedCode(146, 0x832AD500)) { __imp__sub_832AD500(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD500);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40C4);
 }
-PROMOTED_ENTRY(146, sub_832AD500, 0x832AD500) { ctx.r3.u64 = n_sub_832AD500(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD500, 0x832AD500) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40C4(ctx, base); }
 
-uint64_t n_sub_832AD510(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40C8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40C8 = int32_t(0x834A40C8);
 	if (!UseLiftedCode(146, 0x832AD510)) { __imp__sub_832AD510(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD510);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40C8);
 }
-PROMOTED_ENTRY(146, sub_832AD510, 0x832AD510) { ctx.r3.u64 = n_sub_832AD510(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD510, 0x832AD510) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40C8(ctx, base); }
 
-uint64_t n_sub_832AD520(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40CC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40CC = int32_t(0x834A40CC);
 	if (!UseLiftedCode(146, 0x832AD520)) { __imp__sub_832AD520(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD520);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40CC);
 }
-PROMOTED_ENTRY(146, sub_832AD520, 0x832AD520) { ctx.r3.u64 = n_sub_832AD520(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD520, 0x832AD520) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40CC(ctx, base); }
 
-uint64_t n_sub_832AD530(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40D0 = int32_t(0x834A40D0);
 	if (!UseLiftedCode(146, 0x832AD530)) { __imp__sub_832AD530(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD530);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40D0);
 }
-PROMOTED_ENTRY(146, sub_832AD530, 0x832AD530) { ctx.r3.u64 = n_sub_832AD530(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD530, 0x832AD530) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40D0(ctx, base); }
 
-uint64_t n_sub_832AD540(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A40D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A40D4 = int32_t(0x834A40D4);
 	if (!UseLiftedCode(146, 0x832AD540)) { __imp__sub_832AD540(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD540);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A40D4);
 }
-PROMOTED_ENTRY(146, sub_832AD540, 0x832AD540) { ctx.r3.u64 = n_sub_832AD540(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD540, 0x832AD540) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40D4(ctx, base); }
 
-uint64_t n_sub_832AD620(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A412C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A412C = int32_t(0x834A412C);
 	if (!UseLiftedCode(146, 0x832AD620)) { __imp__sub_832AD620(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD620);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A412C);
 }
-PROMOTED_ENTRY(146, sub_832AD620, 0x832AD620) { ctx.r3.u64 = n_sub_832AD620(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD620, 0x832AD620) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A412C(ctx, base); }
 
-uint64_t n_sub_832AD630(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4130(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4130 = int32_t(0x834A4130);
 	if (!UseLiftedCode(146, 0x832AD630)) { __imp__sub_832AD630(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD630);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4130);
 }
-PROMOTED_ENTRY(146, sub_832AD630, 0x832AD630) { ctx.r3.u64 = n_sub_832AD630(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD630, 0x832AD630) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4130(ctx, base); }
 
-uint64_t n_sub_832AD670(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834A415C_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A415C = int32_t(0x834A415C);
 	if (!UseLiftedCode(146, 0x832AD670)) { __imp__sub_832AD670(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD670);
@@ -19813,74 +19813,74 @@ uint64_t n_sub_832AD670(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AD670, 0x832AD670) { ctx.r3.u64 = n_sub_832AD670(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD670, 0x832AD670) { ctx.r3.u64 = GlobalHandle_834A415C_Destroy(ctx, base); }
 
-uint64_t n_sub_832AD6C8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A416C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A416C = int32_t(0x834A416C);
 	if (!UseLiftedCode(146, 0x832AD6C8)) { __imp__sub_832AD6C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD6C8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A416C);
 }
-PROMOTED_ENTRY(146, sub_832AD6C8, 0x832AD6C8) { ctx.r3.u64 = n_sub_832AD6C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD6C8, 0x832AD6C8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A416C(ctx, base); }
 
-uint64_t n_sub_832AD6D8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4170(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4170 = int32_t(0x834A4170);
 	if (!UseLiftedCode(146, 0x832AD6D8)) { __imp__sub_832AD6D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD6D8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4170);
 }
-PROMOTED_ENTRY(146, sub_832AD6D8, 0x832AD6D8) { ctx.r3.u64 = n_sub_832AD6D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD6D8, 0x832AD6D8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4170(ctx, base); }
 
-uint64_t n_sub_832AD718(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A419C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A419C = int32_t(0x834A419C);
 	if (!UseLiftedCode(146, 0x832AD718)) { __imp__sub_832AD718(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD718);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A419C);
 }
-PROMOTED_ENTRY(146, sub_832AD718, 0x832AD718) { ctx.r3.u64 = n_sub_832AD718(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD718, 0x832AD718) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A419C(ctx, base); }
 
-uint64_t n_sub_832AD728(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A41A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A41A0 = int32_t(0x834A41A0);
 	if (!UseLiftedCode(146, 0x832AD728)) { __imp__sub_832AD728(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD728);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A41A0);
 }
-PROMOTED_ENTRY(146, sub_832AD728, 0x832AD728) { ctx.r3.u64 = n_sub_832AD728(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD728, 0x832AD728) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A41A0(ctx, base); }
 
-uint64_t n_sub_832AD870(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalObject_8331AAC8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AAC8 = int32_t(0x8331AAC8);
 	if (!UseLiftedCode(146, 0x832AD870)) { __imp__sub_832AD870(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD870);
-	return n_sub_82B18A20(ctx, base, g_8331AAC8);
+	return GlobalObject_Destroy(ctx, base, g_8331AAC8);
 }
-PROMOTED_ENTRY(146, sub_832AD870, 0x832AD870) { ctx.r3.u64 = n_sub_832AD870(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD870, 0x832AD870) { ctx.r3.u64 = DestroyGlobalObject_8331AAC8(ctx, base); }
 
-uint64_t n_sub_832AD880(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4AE0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4AE0 = int32_t(0x834A4AE0);
 	if (!UseLiftedCode(146, 0x832AD880)) { __imp__sub_832AD880(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD880);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4AE0);
 }
-PROMOTED_ENTRY(146, sub_832AD880, 0x832AD880) { ctx.r3.u64 = n_sub_832AD880(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD880, 0x832AD880) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4AE0(ctx, base); }
 
-uint64_t n_sub_832AD890(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4AE4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4AE4 = int32_t(0x834A4AE4);
 	if (!UseLiftedCode(146, 0x832AD890)) { __imp__sub_832AD890(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD890);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4AE4);
 }
-PROMOTED_ENTRY(146, sub_832AD890, 0x832AD890) { ctx.r3.u64 = n_sub_832AD890(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD890, 0x832AD890) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4AE4(ctx, base); }
 
-uint64_t n_sub_832AD960(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalContainer_834A4B10(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4B10 = int32_t(0x834A4B10);
 	if (!UseLiftedCode(146, 0x832AD960)) { __imp__sub_832AD960(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD960);
 	uint64_t object = g_834A4B10;
-	return n_sub_82A84538(ctx, base);
+	return GlobalContainer_ClearAndFree(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AD960, 0x832AD960) { ctx.r3.u64 = n_sub_832AD960(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD960, 0x832AD960) { ctx.r3.u64 = DestroyGlobalContainer_834A4B10(ctx, base); }
 
-uint64_t n_sub_832AD9B8(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834C1730_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1730 = int32_t(0x834C1730);
 	if (!UseLiftedCode(146, 0x832AD9B8)) { __imp__sub_832AD9B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AD9B8);
@@ -19899,25 +19899,25 @@ uint64_t n_sub_832AD9B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AD9B8, 0x832AD9B8) { ctx.r3.u64 = n_sub_832AD9B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AD9B8, 0x832AD9B8) { ctx.r3.u64 = GlobalHandle_834C1730_Destroy(ctx, base); }
 
-uint64_t n_sub_832ADA10(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4B98(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4B98 = int32_t(0x834A4B98);
 	if (!UseLiftedCode(146, 0x832ADA10)) { __imp__sub_832ADA10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADA10);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4B98);
 }
-PROMOTED_ENTRY(146, sub_832ADA10, 0x832ADA10) { ctx.r3.u64 = n_sub_832ADA10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADA10, 0x832ADA10) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4B98(ctx, base); }
 
-uint64_t n_sub_832ADA20(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4B9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4B9C = int32_t(0x834A4B9C);
 	if (!UseLiftedCode(146, 0x832ADA20)) { __imp__sub_832ADA20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADA20);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4B9C);
 }
-PROMOTED_ENTRY(146, sub_832ADA20, 0x832ADA20) { ctx.r3.u64 = n_sub_832ADA20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADA20, 0x832ADA20) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4B9C(ctx, base); }
 
-uint64_t n_sub_832ADA30(CpuState& ctx, uint8_t* base) {
+uint64_t GlobalHandle_834A4BA0_Destroy(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4BA0 = int32_t(0x834A4BA0);
 	if (!UseLiftedCode(146, 0x832ADA30)) { __imp__sub_832ADA30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADA30);
@@ -19936,9 +19936,9 @@ uint64_t n_sub_832ADA30(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832ADA30, 0x832ADA30) { ctx.r3.u64 = n_sub_832ADA30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADA30, 0x832ADA30) { ctx.r3.u64 = GlobalHandle_834A4BA0_Destroy(ctx, base); }
 
-uint64_t n_sub_832ADA88(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A4BB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4BB0 = int32_t(0x834A4BB0);
 	if (!UseLiftedCode(146, 0x832ADA88)) { __imp__sub_832ADA88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADA88);
@@ -19957,9 +19957,9 @@ uint64_t n_sub_832ADA88(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832ADA88, 0x832ADA88) { ctx.r3.u64 = n_sub_832ADA88(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADA88, 0x832ADA88) { ctx.r3.u64 = ClearHandleTargetGlobal_834A4BB0(ctx, base); }
 
-uint64_t n_sub_832ADAE0(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A4BC0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4BC0 = int32_t(0x834A4BC0);
 	if (!UseLiftedCode(146, 0x832ADAE0)) { __imp__sub_832ADAE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADAE0);
@@ -19978,142 +19978,142 @@ uint64_t n_sub_832ADAE0(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832ADAE0, 0x832ADAE0) { ctx.r3.u64 = n_sub_832ADAE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADAE0, 0x832ADAE0) { ctx.r3.u64 = ClearHandleTargetGlobal_834A4BC0(ctx, base); }
 
-uint64_t n_sub_832ADB38(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4BD0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4BD0 = int32_t(0x834A4BD0);
 	if (!UseLiftedCode(146, 0x832ADB38)) { __imp__sub_832ADB38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADB38);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4BD0);
 }
-PROMOTED_ENTRY(146, sub_832ADB38, 0x832ADB38) { ctx.r3.u64 = n_sub_832ADB38(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADB38, 0x832ADB38) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4BD0(ctx, base); }
 
-uint64_t n_sub_832ADB48(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4BD4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4BD4 = int32_t(0x834A4BD4);
 	if (!UseLiftedCode(146, 0x832ADB48)) { __imp__sub_832ADB48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADB48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4BD4);
 }
-PROMOTED_ENTRY(146, sub_832ADB48, 0x832ADB48) { ctx.r3.u64 = n_sub_832ADB48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADB48, 0x832ADB48) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4BD4(ctx, base); }
 
-uint64_t n_sub_832ADCF8(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4C20(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4C20 = int32_t(0x834A4C20);
 	if (!UseLiftedCode(146, 0x832ADCF8)) { __imp__sub_832ADCF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADCF8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4C20);
 }
-PROMOTED_ENTRY(146, sub_832ADCF8, 0x832ADCF8) { ctx.r3.u64 = n_sub_832ADCF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADCF8, 0x832ADCF8) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4C20(ctx, base); }
 
-uint64_t n_sub_832ADD08(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4C24(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4C24 = int32_t(0x834A4C24);
 	if (!UseLiftedCode(146, 0x832ADD08)) { __imp__sub_832ADD08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADD08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4C24);
 }
-PROMOTED_ENTRY(146, sub_832ADD08, 0x832ADD08) { ctx.r3.u64 = n_sub_832ADD08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADD08, 0x832ADD08) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4C24(ctx, base); }
 
-uint64_t n_sub_832ADEB8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_834A4CF8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4CF8 = int32_t(0x834A4CF8);
 	if (!UseLiftedCode(146, 0x832ADEB8)) { __imp__sub_832ADEB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADEB8);
 	uint64_t object = g_834A4CF8;
-	return n_sub_82A8DD30(ctx, base);
+	return ClearGlobalList_834A4CF8(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832ADEB8, 0x832ADEB8) { ctx.r3.u64 = n_sub_832ADEB8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADEB8, 0x832ADEB8) { ctx.r3.u64 = DestroyGlobalList_834A4CF8(ctx, base); }
 
-uint64_t n_sub_832ADEC8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_834A4D04(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D04 = int32_t(0x834A4D04);
 	if (!UseLiftedCode(146, 0x832ADEC8)) { __imp__sub_832ADEC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADEC8);
 	uint64_t object = g_834A4D04;
-	return n_sub_82A8DEE0(ctx, base);
+	return LinkedList_Destroy_834A4D04(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832ADEC8, 0x832ADEC8) { ctx.r3.u64 = n_sub_832ADEC8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADEC8, 0x832ADEC8) { ctx.r3.u64 = DestroyGlobalList_834A4D04(ctx, base); }
 
-uint64_t n_sub_832ADED8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_834A4D10(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D10 = int32_t(0x834A4D10);
 	if (!UseLiftedCode(146, 0x832ADED8)) { __imp__sub_832ADED8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADED8);
 	uint64_t object = g_834A4D10;
-	return n_sub_82A8E090(ctx, base);
+	return LinkedList_Destroy_834A4D10(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832ADED8, 0x832ADED8) { ctx.r3.u64 = n_sub_832ADED8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADED8, 0x832ADED8) { ctx.r3.u64 = DestroyGlobalList_834A4D10(ctx, base); }
 
-uint64_t n_sub_832ADEE8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_834A4D1C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D1C = int32_t(0x834A4D1C);
 	if (!UseLiftedCode(146, 0x832ADEE8)) { __imp__sub_832ADEE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADEE8);
 	uint64_t object = g_834A4D1C;
-	return n_sub_82A8E240(ctx, base);
+	return LinkedList_Destroy_834A4D1C(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832ADEE8, 0x832ADEE8) { ctx.r3.u64 = n_sub_832ADEE8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADEE8, 0x832ADEE8) { ctx.r3.u64 = DestroyGlobalList_834A4D1C(ctx, base); }
 
-uint64_t n_sub_832ADEF8(CpuState& ctx, uint8_t* base) {
+uint64_t DestroyGlobalList_834A4D28(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D28 = int32_t(0x834A4D28);
 	if (!UseLiftedCode(146, 0x832ADEF8)) { __imp__sub_832ADEF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADEF8);
 	uint64_t object = g_834A4D28;
-	return n_sub_82A8E3F0(ctx, base);
+	return LinkedList_Destroy_834A4D28(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832ADEF8, 0x832ADEF8) { ctx.r3.u64 = n_sub_832ADEF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADEF8, 0x832ADEF8) { ctx.r3.u64 = DestroyGlobalList_834A4D28(ctx, base); }
 
-uint64_t n_sub_832ADF08(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4D34(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D34 = int32_t(0x834A4D34);
 	if (!UseLiftedCode(146, 0x832ADF08)) { __imp__sub_832ADF08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4D34);
 }
-PROMOTED_ENTRY(146, sub_832ADF08, 0x832ADF08) { ctx.r3.u64 = n_sub_832ADF08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF08, 0x832ADF08) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4D34(ctx, base); }
 
-uint64_t n_sub_832ADF18(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4D38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4D38 = int32_t(0x834A4D38);
 	if (!UseLiftedCode(146, 0x832ADF18)) { __imp__sub_832ADF18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4D38);
 }
-PROMOTED_ENTRY(146, sub_832ADF18, 0x832ADF18) { ctx.r3.u64 = n_sub_832ADF18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF18, 0x832ADF18) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4D38(ctx, base); }
 
-uint64_t n_sub_832ADF30(CpuState& ctx, uint8_t* base) {
+uint64_t CCharString_ReleaseGlobal_834A4E30(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4E30 = int32_t(0x834A4E30);
 	if (!UseLiftedCode(146, 0x832ADF30)) { __imp__sub_832ADF30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF30);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4E30);
 }
-PROMOTED_ENTRY(146, sub_832ADF30, 0x832ADF30) { ctx.r3.u64 = n_sub_832ADF30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF30, 0x832ADF30) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4E30(ctx, base); }
 
-uint64_t n_sub_832ADF40(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A4E34(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4E34 = int32_t(0x834A4E34);
 	if (!UseLiftedCode(146, 0x832ADF40)) { __imp__sub_832ADF40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF40);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4E34);
 }
-PROMOTED_ENTRY(146, sub_832ADF40, 0x832ADF40) { ctx.r3.u64 = n_sub_832ADF40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF40, 0x832ADF40) { ctx.r3.u64 = ReleaseGlobalCCharString_834A4E34(ctx, base); }
 
-uint64_t n_sub_832ADF50(CpuState& ctx, uint8_t* base) {
+uint64_t ClearGlobalHandleArray_834A4E38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4E38 = int32_t(0x834A4E38);
 	if (!UseLiftedCode(146, 0x832ADF50)) { __imp__sub_832ADF50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF50);
 	return HandleArray_Clear(ctx, base, g_834A4E38);
 }
-PROMOTED_ENTRY(146, sub_832ADF50, 0x832ADF50) { ctx.r3.u64 = n_sub_832ADF50(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF50, 0x832ADF50) { ctx.r3.u64 = ClearGlobalHandleArray_834A4E38(ctx, base); }
 
-uint64_t n_sub_832ADF70(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5240(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5240 = int32_t(0x834A5240);
 	if (!UseLiftedCode(146, 0x832ADF70)) { __imp__sub_832ADF70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF70);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5240);
 }
-PROMOTED_ENTRY(146, sub_832ADF70, 0x832ADF70) { ctx.r3.u64 = n_sub_832ADF70(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF70, 0x832ADF70) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5240(ctx, base); }
 
-uint64_t n_sub_832ADF80(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5244(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5244 = int32_t(0x834A5244);
 	if (!UseLiftedCode(146, 0x832ADF80)) { __imp__sub_832ADF80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF80);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5244);
 }
-PROMOTED_ENTRY(146, sub_832ADF80, 0x832ADF80) { ctx.r3.u64 = n_sub_832ADF80(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF80, 0x832ADF80) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5244(ctx, base); }
 
-uint64_t n_sub_832ADF90(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A5248(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5248 = int32_t(0x834A5248);
 	if (!UseLiftedCode(146, 0x832ADF90)) { __imp__sub_832ADF90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADF90);
@@ -20132,300 +20132,300 @@ uint64_t n_sub_832ADF90(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832ADF90, 0x832ADF90) { ctx.r3.u64 = n_sub_832ADF90(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADF90, 0x832ADF90) { ctx.r3.u64 = ClearHandleTargetGlobal_834A5248(ctx, base); }
 
-uint64_t n_sub_832ADFE8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5258(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5258 = int32_t(0x834A5258);
 	if (!UseLiftedCode(146, 0x832ADFE8)) { __imp__sub_832ADFE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADFE8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5258);
 }
-PROMOTED_ENTRY(146, sub_832ADFE8, 0x832ADFE8) { ctx.r3.u64 = n_sub_832ADFE8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADFE8, 0x832ADFE8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5258(ctx, base); }
 
-uint64_t n_sub_832ADFF8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A525C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A525C = int32_t(0x834A525C);
 	if (!UseLiftedCode(146, 0x832ADFF8)) { __imp__sub_832ADFF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832ADFF8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A525C);
 }
-PROMOTED_ENTRY(146, sub_832ADFF8, 0x832ADFF8) { ctx.r3.u64 = n_sub_832ADFF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832ADFF8, 0x832ADFF8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A525C(ctx, base); }
 
-uint64_t n_sub_832AE008(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5260(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5260 = int32_t(0x834A5260);
 	if (!UseLiftedCode(146, 0x832AE008)) { __imp__sub_832AE008(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE008);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5260);
 }
-PROMOTED_ENTRY(146, sub_832AE008, 0x832AE008) { ctx.r3.u64 = n_sub_832AE008(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE008, 0x832AE008) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5260(ctx, base); }
 
-uint64_t n_sub_832AE018(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5264(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5264 = int32_t(0x834A5264);
 	if (!UseLiftedCode(146, 0x832AE018)) { __imp__sub_832AE018(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE018);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5264);
 }
-PROMOTED_ENTRY(146, sub_832AE018, 0x832AE018) { ctx.r3.u64 = n_sub_832AE018(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE018, 0x832AE018) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5264(ctx, base); }
 
-uint64_t n_sub_832AE0B0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52E0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52E0 = int32_t(0x834A52E0);
 	if (!UseLiftedCode(146, 0x832AE0B0)) { __imp__sub_832AE0B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE0B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52E0);
 }
-PROMOTED_ENTRY(146, sub_832AE0B0, 0x832AE0B0) { ctx.r3.u64 = n_sub_832AE0B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE0B0, 0x832AE0B0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52E0(ctx, base); }
 
-uint64_t n_sub_832AE0C0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52E4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52E4 = int32_t(0x834A52E4);
 	if (!UseLiftedCode(146, 0x832AE0C0)) { __imp__sub_832AE0C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE0C0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52E4);
 }
-PROMOTED_ENTRY(146, sub_832AE0C0, 0x832AE0C0) { ctx.r3.u64 = n_sub_832AE0C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE0C0, 0x832AE0C0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52E4(ctx, base); }
 
-uint64_t n_sub_832AE0D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52E8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52E8 = int32_t(0x834A52E8);
 	if (!UseLiftedCode(146, 0x832AE0D0)) { __imp__sub_832AE0D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE0D0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52E8);
 }
-PROMOTED_ENTRY(146, sub_832AE0D0, 0x832AE0D0) { ctx.r3.u64 = n_sub_832AE0D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE0D0, 0x832AE0D0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52E8(ctx, base); }
 
-uint64_t n_sub_832AE0E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52EC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52EC = int32_t(0x834A52EC);
 	if (!UseLiftedCode(146, 0x832AE0E0)) { __imp__sub_832AE0E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE0E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52EC);
 }
-PROMOTED_ENTRY(146, sub_832AE0E0, 0x832AE0E0) { ctx.r3.u64 = n_sub_832AE0E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE0E0, 0x832AE0E0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52EC(ctx, base); }
 
-uint64_t n_sub_832AE0F0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52F0 = int32_t(0x834A52F0);
 	if (!UseLiftedCode(146, 0x832AE0F0)) { __imp__sub_832AE0F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE0F0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52F0);
 }
-PROMOTED_ENTRY(146, sub_832AE0F0, 0x832AE0F0) { ctx.r3.u64 = n_sub_832AE0F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE0F0, 0x832AE0F0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52F0(ctx, base); }
 
-uint64_t n_sub_832AE100(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A52F4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A52F4 = int32_t(0x834A52F4);
 	if (!UseLiftedCode(146, 0x832AE100)) { __imp__sub_832AE100(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE100);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A52F4);
 }
-PROMOTED_ENTRY(146, sub_832AE100, 0x832AE100) { ctx.r3.u64 = n_sub_832AE100(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE100, 0x832AE100) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52F4(ctx, base); }
 
-uint64_t n_sub_832AE318(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalRefCountedPtr_834A5344(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5344 = int32_t(0x834A5344);
 	if (!UseLiftedCode(146, 0x832AE318)) { __imp__sub_832AE318(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE318);
 	return RefCountedPtr_ReleaseAtomic(ctx, base, g_834A5344);
 }
-PROMOTED_ENTRY(146, sub_832AE318, 0x832AE318) { ctx.r3.u64 = n_sub_832AE318(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE318, 0x832AE318) { ctx.r3.u64 = ReleaseGlobalRefCountedPtr_834A5344(ctx, base); }
 
-uint64_t n_sub_832AE328(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalRefCountedPtr_834A5348(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5348 = int32_t(0x834A5348);
 	if (!UseLiftedCode(146, 0x832AE328)) { __imp__sub_832AE328(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE328);
 	return RefCountedPtr_ReleaseAtomic(ctx, base, g_834A5348);
 }
-PROMOTED_ENTRY(146, sub_832AE328, 0x832AE328) { ctx.r3.u64 = n_sub_832AE328(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE328, 0x832AE328) { ctx.r3.u64 = ReleaseGlobalRefCountedPtr_834A5348(ctx, base); }
 
-uint64_t n_sub_832AE338(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A534C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A534C = int32_t(0x834A534C);
 	if (!UseLiftedCode(146, 0x832AE338)) { __imp__sub_832AE338(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE338);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A534C);
 }
-PROMOTED_ENTRY(146, sub_832AE338, 0x832AE338) { ctx.r3.u64 = n_sub_832AE338(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE338, 0x832AE338) { ctx.r3.u64 = ReleaseGlobalCCharString_834A534C(ctx, base); }
 
-uint64_t n_sub_832AE348(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5350(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5350 = int32_t(0x834A5350);
 	if (!UseLiftedCode(146, 0x832AE348)) { __imp__sub_832AE348(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE348);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5350);
 }
-PROMOTED_ENTRY(146, sub_832AE348, 0x832AE348) { ctx.r3.u64 = n_sub_832AE348(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE348, 0x832AE348) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5350(ctx, base); }
 
-uint64_t n_sub_832AE358(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5354(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5354 = int32_t(0x834A5354);
 	if (!UseLiftedCode(146, 0x832AE358)) { __imp__sub_832AE358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE358);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5354);
 }
-PROMOTED_ENTRY(146, sub_832AE358, 0x832AE358) { ctx.r3.u64 = n_sub_832AE358(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE358, 0x832AE358) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5354(ctx, base); }
 
-uint64_t n_sub_832AE368(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5358(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5358 = int32_t(0x834A5358);
 	if (!UseLiftedCode(146, 0x832AE368)) { __imp__sub_832AE368(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE368);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5358);
 }
-PROMOTED_ENTRY(146, sub_832AE368, 0x832AE368) { ctx.r3.u64 = n_sub_832AE368(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE368, 0x832AE368) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5358(ctx, base); }
 
-uint64_t n_sub_832AE378(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A535C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A535C = int32_t(0x834A535C);
 	if (!UseLiftedCode(146, 0x832AE378)) { __imp__sub_832AE378(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE378);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A535C);
 }
-PROMOTED_ENTRY(146, sub_832AE378, 0x832AE378) { ctx.r3.u64 = n_sub_832AE378(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE378, 0x832AE378) { ctx.r3.u64 = ReleaseGlobalCCharString_834A535C(ctx, base); }
 
-uint64_t n_sub_832AE388(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5360(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5360 = int32_t(0x834A5360);
 	if (!UseLiftedCode(146, 0x832AE388)) { __imp__sub_832AE388(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE388);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5360);
 }
-PROMOTED_ENTRY(146, sub_832AE388, 0x832AE388) { ctx.r3.u64 = n_sub_832AE388(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE388, 0x832AE388) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5360(ctx, base); }
 
-uint64_t n_sub_832AE398(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleContainer_834A5364(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5364 = int32_t(0x834A5364);
 	if (!UseLiftedCode(146, 0x832AE398)) { __imp__sub_832AE398(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE398);
 	uint64_t object = g_834A5364;
-	return n_sub_82AA36F8(ctx, base);
+	return ClearGlobalHandleContainer_834A5364(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AE398, 0x832AE398) { ctx.r3.u64 = n_sub_832AE398(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE398, 0x832AE398) { ctx.r3.u64 = CleanupGlobalHandleContainer_834A5364(ctx, base); }
 
-uint64_t n_sub_832AE3A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalRefCountedPtr_834A5374(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5374 = int32_t(0x834A5374);
 	if (!UseLiftedCode(146, 0x832AE3A8)) { __imp__sub_832AE3A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE3A8);
 	return RefCountedPtr_ReleaseAtomic(ctx, base, g_834A5374);
 }
-PROMOTED_ENTRY(146, sub_832AE3A8, 0x832AE3A8) { ctx.r3.u64 = n_sub_832AE3A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE3A8, 0x832AE3A8) { ctx.r3.u64 = ReleaseGlobalRefCountedPtr_834A5374(ctx, base); }
 
-uint64_t n_sub_832AE3B8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalRefCountedPtr_834A5378(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5378 = int32_t(0x834A5378);
 	if (!UseLiftedCode(146, 0x832AE3B8)) { __imp__sub_832AE3B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE3B8);
 	return RefCountedPtr_ReleaseAtomic(ctx, base, g_834A5378);
 }
-PROMOTED_ENTRY(146, sub_832AE3B8, 0x832AE3B8) { ctx.r3.u64 = n_sub_832AE3B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE3B8, 0x832AE3B8) { ctx.r3.u64 = ReleaseGlobalRefCountedPtr_834A5378(ctx, base); }
 
-uint64_t n_sub_832AE3D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53A0 = int32_t(0x834A53A0);
 	if (!UseLiftedCode(146, 0x832AE3D0)) { __imp__sub_832AE3D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE3D0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53A0);
 }
-PROMOTED_ENTRY(146, sub_832AE3D0, 0x832AE3D0) { ctx.r3.u64 = n_sub_832AE3D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE3D0, 0x832AE3D0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53A0(ctx, base); }
 
-uint64_t n_sub_832AE3E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53A4 = int32_t(0x834A53A4);
 	if (!UseLiftedCode(146, 0x832AE3E0)) { __imp__sub_832AE3E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE3E0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53A4);
 }
-PROMOTED_ENTRY(146, sub_832AE3E0, 0x832AE3E0) { ctx.r3.u64 = n_sub_832AE3E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE3E0, 0x832AE3E0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53A4(ctx, base); }
 
-uint64_t n_sub_832AE408(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53BC = int32_t(0x834A53BC);
 	if (!UseLiftedCode(146, 0x832AE408)) { __imp__sub_832AE408(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE408);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53BC);
 }
-PROMOTED_ENTRY(146, sub_832AE408, 0x832AE408) { ctx.r3.u64 = n_sub_832AE408(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE408, 0x832AE408) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53BC(ctx, base); }
 
-uint64_t n_sub_832AE418(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53C0 = int32_t(0x834A53C0);
 	if (!UseLiftedCode(146, 0x832AE418)) { __imp__sub_832AE418(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE418);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53C0);
 }
-PROMOTED_ENTRY(146, sub_832AE418, 0x832AE418) { ctx.r3.u64 = n_sub_832AE418(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE418, 0x832AE418) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53C0(ctx, base); }
 
-uint64_t n_sub_832AE428(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53C4 = int32_t(0x834A53C4);
 	if (!UseLiftedCode(146, 0x832AE428)) { __imp__sub_832AE428(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE428);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53C4);
 }
-PROMOTED_ENTRY(146, sub_832AE428, 0x832AE428) { ctx.r3.u64 = n_sub_832AE428(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE428, 0x832AE428) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53C4(ctx, base); }
 
-uint64_t n_sub_832AE438(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A53C8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A53C8 = int32_t(0x834A53C8);
 	if (!UseLiftedCode(146, 0x832AE438)) { __imp__sub_832AE438(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE438);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53C8);
 }
-PROMOTED_ENTRY(146, sub_832AE438, 0x832AE438) { ctx.r3.u64 = n_sub_832AE438(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE438, 0x832AE438) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53C8(ctx, base); }
 
-uint64_t n_sub_832AE688(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalList_834A542C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A542C = int32_t(0x834A542C);
 	if (!UseLiftedCode(146, 0x832AE688)) { __imp__sub_832AE688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE688);
 	uint64_t object = g_834A542C;
-	return n_sub_82AA7B20(ctx, base);
+	return LinkedList_Destroy_834A542C(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AE688, 0x832AE688) { ctx.r3.u64 = n_sub_832AE688(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE688, 0x832AE688) { ctx.r3.u64 = CleanupGlobalList_834A542C(ctx, base); }
 
-uint64_t n_sub_832AE698(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834C31F0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C31F0 = int32_t(0x834C31F0);
 	if (!UseLiftedCode(146, 0x832AE698)) { __imp__sub_832AE698(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE698);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834C31F0);
 }
-PROMOTED_ENTRY(146, sub_832AE698, 0x832AE698) { ctx.r3.u64 = n_sub_832AE698(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE698, 0x832AE698) { ctx.r3.u64 = ReleaseGlobalCCharString_834C31F0(ctx, base); }
 
-uint64_t n_sub_832AE6A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5438(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5438 = int32_t(0x834A5438);
 	if (!UseLiftedCode(146, 0x832AE6A8)) { __imp__sub_832AE6A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5438);
 }
-PROMOTED_ENTRY(146, sub_832AE6A8, 0x832AE6A8) { ctx.r3.u64 = n_sub_832AE6A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6A8, 0x832AE6A8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5438(ctx, base); }
 
-uint64_t n_sub_832AE6B8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A543C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A543C = int32_t(0x834A543C);
 	if (!UseLiftedCode(146, 0x832AE6B8)) { __imp__sub_832AE6B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6B8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A543C);
 }
-PROMOTED_ENTRY(146, sub_832AE6B8, 0x832AE6B8) { ctx.r3.u64 = n_sub_832AE6B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6B8, 0x832AE6B8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A543C(ctx, base); }
 
-uint64_t n_sub_832AE6C8(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalList_834A5440(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5440 = int32_t(0x834A5440);
 	if (!UseLiftedCode(146, 0x832AE6C8)) { __imp__sub_832AE6C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6C8);
 	uint64_t object = g_834A5440;
-	return n_sub_82AA8C38(ctx, base);
+	return LinkedList_Destroy_834A5440(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AE6C8, 0x832AE6C8) { ctx.r3.u64 = n_sub_832AE6C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6C8, 0x832AE6C8) { ctx.r3.u64 = CleanupGlobalList_834A5440(ctx, base); }
 
-uint64_t n_sub_832AE6D8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A544C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A544C = int32_t(0x834A544C);
 	if (!UseLiftedCode(146, 0x832AE6D8)) { __imp__sub_832AE6D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6D8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A544C);
 }
-PROMOTED_ENTRY(146, sub_832AE6D8, 0x832AE6D8) { ctx.r3.u64 = n_sub_832AE6D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6D8, 0x832AE6D8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A544C(ctx, base); }
 
-uint64_t n_sub_832AE6E8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5450(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5450 = int32_t(0x834A5450);
 	if (!UseLiftedCode(146, 0x832AE6E8)) { __imp__sub_832AE6E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6E8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5450);
 }
-PROMOTED_ENTRY(146, sub_832AE6E8, 0x832AE6E8) { ctx.r3.u64 = n_sub_832AE6E8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6E8, 0x832AE6E8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5450(ctx, base); }
 
-uint64_t n_sub_832AE6F8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5454(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5454 = int32_t(0x834A5454);
 	if (!UseLiftedCode(146, 0x832AE6F8)) { __imp__sub_832AE6F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE6F8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5454);
 }
-PROMOTED_ENTRY(146, sub_832AE6F8, 0x832AE6F8) { ctx.r3.u64 = n_sub_832AE6F8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE6F8, 0x832AE6F8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5454(ctx, base); }
 
-uint64_t n_sub_832AE708(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5458(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5458 = int32_t(0x834A5458);
 	if (!UseLiftedCode(146, 0x832AE708)) { __imp__sub_832AE708(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE708);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5458);
 }
-PROMOTED_ENTRY(146, sub_832AE708, 0x832AE708) { ctx.r3.u64 = n_sub_832AE708(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE708, 0x832AE708) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5458(ctx, base); }
 
-uint64_t n_sub_832AE718(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A545C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A545C = int32_t(0x834A545C);
 	if (!UseLiftedCode(146, 0x832AE718)) { __imp__sub_832AE718(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE718);
@@ -20444,9 +20444,9 @@ uint64_t n_sub_832AE718(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AE718, 0x832AE718) { ctx.r3.u64 = n_sub_832AE718(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE718, 0x832AE718) { ctx.r3.u64 = ClearHandleTargetGlobal_834A545C(ctx, base); }
 
-uint64_t n_sub_832AE770(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A546C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A546C = int32_t(0x834A546C);
 	if (!UseLiftedCode(146, 0x832AE770)) { __imp__sub_832AE770(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE770);
@@ -20465,9 +20465,9 @@ uint64_t n_sub_832AE770(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AE770, 0x832AE770) { ctx.r3.u64 = n_sub_832AE770(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE770, 0x832AE770) { ctx.r3.u64 = ClearHandleTargetGlobal_834A546C(ctx, base); }
 
-uint64_t n_sub_832AE7C8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834C1F28(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C1F28 = int32_t(0x834C1F28);
 	if (!UseLiftedCode(146, 0x832AE7C8)) { __imp__sub_832AE7C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE7C8);
@@ -20486,34 +20486,34 @@ uint64_t n_sub_832AE7C8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AE7C8, 0x832AE7C8) { ctx.r3.u64 = n_sub_832AE7C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE7C8, 0x832AE7C8) { ctx.r3.u64 = ClearHandleTargetGlobal_834C1F28(ctx, base); }
 
-uint64_t n_sub_832AE820(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalObject_834C16B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C16B8 = int32_t(0x834C16B8);
 	if (!UseLiftedCode(146, 0x832AE820)) { __imp__sub_832AE820(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE820);
 	uint64_t object = g_834C16B8;
-	return n_sub_82AAC270(ctx, base);
+	return DestroyGlobalObject_834C16B8(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AE820, 0x832AE820) { ctx.r3.u64 = n_sub_832AE820(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE820, 0x832AE820) { ctx.r3.u64 = CleanupGlobalObject_834C16B8(ctx, base); }
 
-uint64_t n_sub_832AE830(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A547C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A547C = int32_t(0x834A547C);
 	if (!UseLiftedCode(146, 0x832AE830)) { __imp__sub_832AE830(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE830);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A547C);
 }
-PROMOTED_ENTRY(146, sub_832AE830, 0x832AE830) { ctx.r3.u64 = n_sub_832AE830(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE830, 0x832AE830) { ctx.r3.u64 = ReleaseGlobalCCharString_834A547C(ctx, base); }
 
-uint64_t n_sub_832AE840(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5480(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5480 = int32_t(0x834A5480);
 	if (!UseLiftedCode(146, 0x832AE840)) { __imp__sub_832AE840(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE840);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5480);
 }
-PROMOTED_ENTRY(146, sub_832AE840, 0x832AE840) { ctx.r3.u64 = n_sub_832AE840(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE840, 0x832AE840) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5480(ctx, base); }
 
-uint64_t n_sub_832AE850(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834C16A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834C16A4 = int32_t(0x834C16A4);
 	if (!UseLiftedCode(146, 0x832AE850)) { __imp__sub_832AE850(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE850);
@@ -20532,25 +20532,25 @@ uint64_t n_sub_832AE850(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AE850, 0x832AE850) { ctx.r3.u64 = n_sub_832AE850(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE850, 0x832AE850) { ctx.r3.u64 = ClearHandleTargetGlobal_834C16A4(ctx, base); }
 
-uint64_t n_sub_832AE8A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5484(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5484 = int32_t(0x834A5484);
 	if (!UseLiftedCode(146, 0x832AE8A8)) { __imp__sub_832AE8A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE8A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5484);
 }
-PROMOTED_ENTRY(146, sub_832AE8A8, 0x832AE8A8) { ctx.r3.u64 = n_sub_832AE8A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE8A8, 0x832AE8A8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5484(ctx, base); }
 
-uint64_t n_sub_832AE8B8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5488(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5488 = int32_t(0x834A5488);
 	if (!UseLiftedCode(146, 0x832AE8B8)) { __imp__sub_832AE8B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE8B8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5488);
 }
-PROMOTED_ENTRY(146, sub_832AE8B8, 0x832AE8B8) { ctx.r3.u64 = n_sub_832AE8B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE8B8, 0x832AE8B8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5488(ctx, base); }
 
-uint64_t n_sub_832AE8C8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A548C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A548C = int32_t(0x834A548C);
 	if (!UseLiftedCode(146, 0x832AE8C8)) { __imp__sub_832AE8C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE8C8);
@@ -20569,514 +20569,514 @@ uint64_t n_sub_832AE8C8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AE8C8, 0x832AE8C8) { ctx.r3.u64 = n_sub_832AE8C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE8C8, 0x832AE8C8) { ctx.r3.u64 = ClearHandleTargetGlobal_834A548C(ctx, base); }
 
-uint64_t n_sub_832AE920(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalList_834A54A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A54A0 = int32_t(0x834A54A0);
 	if (!UseLiftedCode(146, 0x832AE920)) { __imp__sub_832AE920(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE920);
 	uint64_t object = g_834A54A0;
-	return n_sub_82AB0B80(ctx, base);
+	return LinkedList_Destroy_834A54A0(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AE920, 0x832AE920) { ctx.r3.u64 = n_sub_832AE920(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE920, 0x832AE920) { ctx.r3.u64 = CleanupGlobalList_834A54A0(ctx, base); }
 
-uint64_t n_sub_832AE930(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5510(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5510 = int32_t(0x834A5510);
 	if (!UseLiftedCode(146, 0x832AE930)) { __imp__sub_832AE930(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE930);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5510);
 }
-PROMOTED_ENTRY(146, sub_832AE930, 0x832AE930) { ctx.r3.u64 = n_sub_832AE930(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE930, 0x832AE930) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5510(ctx, base); }
 
-uint64_t n_sub_832AE940(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5514(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5514 = int32_t(0x834A5514);
 	if (!UseLiftedCode(146, 0x832AE940)) { __imp__sub_832AE940(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE940);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5514);
 }
-PROMOTED_ENTRY(146, sub_832AE940, 0x832AE940) { ctx.r3.u64 = n_sub_832AE940(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE940, 0x832AE940) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5514(ctx, base); }
 
-uint64_t n_sub_832AE9A0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A551C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A551C = int32_t(0x834A551C);
 	if (!UseLiftedCode(146, 0x832AE9A0)) { __imp__sub_832AE9A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9A0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A551C);
 }
-PROMOTED_ENTRY(146, sub_832AE9A0, 0x832AE9A0) { ctx.r3.u64 = n_sub_832AE9A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9A0, 0x832AE9A0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A551C(ctx, base); }
 
-uint64_t n_sub_832AE9B0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5520(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5520 = int32_t(0x834A5520);
 	if (!UseLiftedCode(146, 0x832AE9B0)) { __imp__sub_832AE9B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9B0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5520);
 }
-PROMOTED_ENTRY(146, sub_832AE9B0, 0x832AE9B0) { ctx.r3.u64 = n_sub_832AE9B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9B0, 0x832AE9B0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5520(ctx, base); }
 
-uint64_t n_sub_832AE9C0(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A5524(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5524 = int32_t(0x834A5524);
 	if (!UseLiftedCode(146, 0x832AE9C0)) { __imp__sub_832AE9C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9C0);
-	return n_sub_82B131D8(ctx, base, g_834A5524);
+	return ClearHandleArray(ctx, base, g_834A5524);
 }
-PROMOTED_ENTRY(146, sub_832AE9C0, 0x832AE9C0) { ctx.r3.u64 = n_sub_832AE9C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9C0, 0x832AE9C0) { ctx.r3.u64 = CleanupGlobalHandleArray_834A5524(ctx, base); }
 
-uint64_t n_sub_832AE9D0(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A5538(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5538 = int32_t(0x834A5538);
 	if (!UseLiftedCode(146, 0x832AE9D0)) { __imp__sub_832AE9D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9D0);
-	return n_sub_82B131D8(ctx, base, g_834A5538);
+	return ClearHandleArray(ctx, base, g_834A5538);
 }
-PROMOTED_ENTRY(146, sub_832AE9D0, 0x832AE9D0) { ctx.r3.u64 = n_sub_832AE9D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9D0, 0x832AE9D0) { ctx.r3.u64 = CleanupGlobalHandleArray_834A5538(ctx, base); }
 
-uint64_t n_sub_832AE9E0(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A554C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A554C = int32_t(0x834A554C);
 	if (!UseLiftedCode(146, 0x832AE9E0)) { __imp__sub_832AE9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9E0);
-	return n_sub_82B131D8(ctx, base, g_834A554C);
+	return ClearHandleArray(ctx, base, g_834A554C);
 }
-PROMOTED_ENTRY(146, sub_832AE9E0, 0x832AE9E0) { ctx.r3.u64 = n_sub_832AE9E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9E0, 0x832AE9E0) { ctx.r3.u64 = CleanupGlobalHandleArray_834A554C(ctx, base); }
 
-uint64_t n_sub_832AE9F0(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A5560(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5560 = int32_t(0x834A5560);
 	if (!UseLiftedCode(146, 0x832AE9F0)) { __imp__sub_832AE9F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AE9F0);
-	return n_sub_82B131D8(ctx, base, g_834A5560);
+	return ClearHandleArray(ctx, base, g_834A5560);
 }
-PROMOTED_ENTRY(146, sub_832AE9F0, 0x832AE9F0) { ctx.r3.u64 = n_sub_832AE9F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AE9F0, 0x832AE9F0) { ctx.r3.u64 = CleanupGlobalHandleArray_834A5560(ctx, base); }
 
-uint64_t n_sub_832AEA00(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A5574(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5574 = int32_t(0x834A5574);
 	if (!UseLiftedCode(146, 0x832AEA00)) { __imp__sub_832AEA00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA00);
-	return n_sub_82B131D8(ctx, base, g_834A5574);
+	return ClearHandleArray(ctx, base, g_834A5574);
 }
-PROMOTED_ENTRY(146, sub_832AEA00, 0x832AEA00) { ctx.r3.u64 = n_sub_832AEA00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA00, 0x832AEA00) { ctx.r3.u64 = CleanupGlobalHandleArray_834A5574(ctx, base); }
 
-uint64_t n_sub_832AEA10(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A5588(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5588 = int32_t(0x834A5588);
 	if (!UseLiftedCode(146, 0x832AEA10)) { __imp__sub_832AEA10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA10);
-	return n_sub_82B131D8(ctx, base, g_834A5588);
+	return ClearHandleArray(ctx, base, g_834A5588);
 }
-PROMOTED_ENTRY(146, sub_832AEA10, 0x832AEA10) { ctx.r3.u64 = n_sub_832AEA10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA10, 0x832AEA10) { ctx.r3.u64 = CleanupGlobalHandleArray_834A5588(ctx, base); }
 
-uint64_t n_sub_832AEA20(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A559C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A559C = int32_t(0x834A559C);
 	if (!UseLiftedCode(146, 0x832AEA20)) { __imp__sub_832AEA20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA20);
-	return n_sub_82B131D8(ctx, base, g_834A559C);
+	return ClearHandleArray(ctx, base, g_834A559C);
 }
-PROMOTED_ENTRY(146, sub_832AEA20, 0x832AEA20) { ctx.r3.u64 = n_sub_832AEA20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA20, 0x832AEA20) { ctx.r3.u64 = CleanupGlobalHandleArray_834A559C(ctx, base); }
 
-uint64_t n_sub_832AEA30(CpuState& ctx, uint8_t* base) {
+uint64_t CleanupGlobalHandleArray_834A55B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55B0 = int32_t(0x834A55B0);
 	if (!UseLiftedCode(146, 0x832AEA30)) { __imp__sub_832AEA30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA30);
-	return n_sub_82B131D8(ctx, base, g_834A55B0);
+	return ClearHandleArray(ctx, base, g_834A55B0);
 }
-PROMOTED_ENTRY(146, sub_832AEA30, 0x832AEA30) { ctx.r3.u64 = n_sub_832AEA30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA30, 0x832AEA30) { ctx.r3.u64 = CleanupGlobalHandleArray_834A55B0(ctx, base); }
 
-uint64_t n_sub_832AEA40(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55C4 = int32_t(0x834A55C4);
 	if (!UseLiftedCode(146, 0x832AEA40)) { __imp__sub_832AEA40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA40);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55C4);
 }
-PROMOTED_ENTRY(146, sub_832AEA40, 0x832AEA40) { ctx.r3.u64 = n_sub_832AEA40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA40, 0x832AEA40) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55C4(ctx, base); }
 
-uint64_t n_sub_832AEA50(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55C8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55C8 = int32_t(0x834A55C8);
 	if (!UseLiftedCode(146, 0x832AEA50)) { __imp__sub_832AEA50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA50);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55C8);
 }
-PROMOTED_ENTRY(146, sub_832AEA50, 0x832AEA50) { ctx.r3.u64 = n_sub_832AEA50(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA50, 0x832AEA50) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55C8(ctx, base); }
 
-uint64_t n_sub_832AEA60(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55CC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55CC = int32_t(0x834A55CC);
 	if (!UseLiftedCode(146, 0x832AEA60)) { __imp__sub_832AEA60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA60);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55CC);
 }
-PROMOTED_ENTRY(146, sub_832AEA60, 0x832AEA60) { ctx.r3.u64 = n_sub_832AEA60(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA60, 0x832AEA60) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55CC(ctx, base); }
 
-uint64_t n_sub_832AEA70(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55D0 = int32_t(0x834A55D0);
 	if (!UseLiftedCode(146, 0x832AEA70)) { __imp__sub_832AEA70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA70);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55D0);
 }
-PROMOTED_ENTRY(146, sub_832AEA70, 0x832AEA70) { ctx.r3.u64 = n_sub_832AEA70(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA70, 0x832AEA70) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55D0(ctx, base); }
 
-uint64_t n_sub_832AEA80(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55D4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55D4 = int32_t(0x834A55D4);
 	if (!UseLiftedCode(146, 0x832AEA80)) { __imp__sub_832AEA80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA80);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55D4);
 }
-PROMOTED_ENTRY(146, sub_832AEA80, 0x832AEA80) { ctx.r3.u64 = n_sub_832AEA80(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA80, 0x832AEA80) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55D4(ctx, base); }
 
-uint64_t n_sub_832AEA90(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A55D8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A55D8 = int32_t(0x834A55D8);
 	if (!UseLiftedCode(146, 0x832AEA90)) { __imp__sub_832AEA90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEA90);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A55D8);
 }
-PROMOTED_ENTRY(146, sub_832AEA90, 0x832AEA90) { ctx.r3.u64 = n_sub_832AEA90(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEA90, 0x832AEA90) { ctx.r3.u64 = ReleaseGlobalCCharString_834A55D8(ctx, base); }
 
-uint64_t n_sub_832AEAA0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5620(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5620 = int32_t(0x834A5620);
 	if (!UseLiftedCode(146, 0x832AEAA0)) { __imp__sub_832AEAA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEAA0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5620);
 }
-PROMOTED_ENTRY(146, sub_832AEAA0, 0x832AEAA0) { ctx.r3.u64 = n_sub_832AEAA0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEAA0, 0x832AEAA0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5620(ctx, base); }
 
-uint64_t n_sub_832AEAB0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5624(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5624 = int32_t(0x834A5624);
 	if (!UseLiftedCode(146, 0x832AEAB0)) { __imp__sub_832AEAB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEAB0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5624);
 }
-PROMOTED_ENTRY(146, sub_832AEAB0, 0x832AEAB0) { ctx.r3.u64 = n_sub_832AEAB0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEAB0, 0x832AEAB0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5624(ctx, base); }
 
-uint64_t n_sub_832AEAC0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5628(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5628 = int32_t(0x834A5628);
 	if (!UseLiftedCode(146, 0x832AEAC0)) { __imp__sub_832AEAC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEAC0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5628);
 }
-PROMOTED_ENTRY(146, sub_832AEAC0, 0x832AEAC0) { ctx.r3.u64 = n_sub_832AEAC0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEAC0, 0x832AEAC0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5628(ctx, base); }
 
-uint64_t n_sub_832AEAD0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A562C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A562C = int32_t(0x834A562C);
 	if (!UseLiftedCode(146, 0x832AEAD0)) { __imp__sub_832AEAD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEAD0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A562C);
 }
-PROMOTED_ENTRY(146, sub_832AEAD0, 0x832AEAD0) { ctx.r3.u64 = n_sub_832AEAD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEAD0, 0x832AEAD0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A562C(ctx, base); }
 
-uint64_t n_sub_832AEAF8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5700(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5700 = int32_t(0x834A5700);
 	if (!UseLiftedCode(146, 0x832AEAF8)) { __imp__sub_832AEAF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEAF8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5700);
 }
-PROMOTED_ENTRY(146, sub_832AEAF8, 0x832AEAF8) { ctx.r3.u64 = n_sub_832AEAF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEAF8, 0x832AEAF8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5700(ctx, base); }
 
-uint64_t n_sub_832AEB08(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5704(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5704 = int32_t(0x834A5704);
 	if (!UseLiftedCode(146, 0x832AEB08)) { __imp__sub_832AEB08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5704);
 }
-PROMOTED_ENTRY(146, sub_832AEB08, 0x832AEB08) { ctx.r3.u64 = n_sub_832AEB08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB08, 0x832AEB08) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5704(ctx, base); }
 
-uint64_t n_sub_832AEB18(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5708(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5708 = int32_t(0x834A5708);
 	if (!UseLiftedCode(146, 0x832AEB18)) { __imp__sub_832AEB18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5708);
 }
-PROMOTED_ENTRY(146, sub_832AEB18, 0x832AEB18) { ctx.r3.u64 = n_sub_832AEB18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB18, 0x832AEB18) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5708(ctx, base); }
 
-uint64_t n_sub_832AEB28(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A570C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A570C = int32_t(0x834A570C);
 	if (!UseLiftedCode(146, 0x832AEB28)) { __imp__sub_832AEB28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB28);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A570C);
 }
-PROMOTED_ENTRY(146, sub_832AEB28, 0x832AEB28) { ctx.r3.u64 = n_sub_832AEB28(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB28, 0x832AEB28) { ctx.r3.u64 = ReleaseGlobalCCharString_834A570C(ctx, base); }
 
-uint64_t n_sub_832AEB38(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5710(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5710 = int32_t(0x834A5710);
 	if (!UseLiftedCode(146, 0x832AEB38)) { __imp__sub_832AEB38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB38);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5710);
 }
-PROMOTED_ENTRY(146, sub_832AEB38, 0x832AEB38) { ctx.r3.u64 = n_sub_832AEB38(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB38, 0x832AEB38) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5710(ctx, base); }
 
-uint64_t n_sub_832AEB48(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5714(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5714 = int32_t(0x834A5714);
 	if (!UseLiftedCode(146, 0x832AEB48)) { __imp__sub_832AEB48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5714);
 }
-PROMOTED_ENTRY(146, sub_832AEB48, 0x832AEB48) { ctx.r3.u64 = n_sub_832AEB48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB48, 0x832AEB48) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5714(ctx, base); }
 
-uint64_t n_sub_832AEB58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5718(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5718 = int32_t(0x834A5718);
 	if (!UseLiftedCode(146, 0x832AEB58)) { __imp__sub_832AEB58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5718);
 }
-PROMOTED_ENTRY(146, sub_832AEB58, 0x832AEB58) { ctx.r3.u64 = n_sub_832AEB58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB58, 0x832AEB58) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5718(ctx, base); }
 
-uint64_t n_sub_832AEB68(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A571C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A571C = int32_t(0x834A571C);
 	if (!UseLiftedCode(146, 0x832AEB68)) { __imp__sub_832AEB68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB68);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A571C);
 }
-PROMOTED_ENTRY(146, sub_832AEB68, 0x832AEB68) { ctx.r3.u64 = n_sub_832AEB68(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB68, 0x832AEB68) { ctx.r3.u64 = ReleaseGlobalCCharString_834A571C(ctx, base); }
 
-uint64_t n_sub_832AEB78(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5720(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5720 = int32_t(0x834A5720);
 	if (!UseLiftedCode(146, 0x832AEB78)) { __imp__sub_832AEB78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB78);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5720);
 }
-PROMOTED_ENTRY(146, sub_832AEB78, 0x832AEB78) { ctx.r3.u64 = n_sub_832AEB78(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB78, 0x832AEB78) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5720(ctx, base); }
 
-uint64_t n_sub_832AEB88(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5724(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5724 = int32_t(0x834A5724);
 	if (!UseLiftedCode(146, 0x832AEB88)) { __imp__sub_832AEB88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB88);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5724);
 }
-PROMOTED_ENTRY(146, sub_832AEB88, 0x832AEB88) { ctx.r3.u64 = n_sub_832AEB88(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB88, 0x832AEB88) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5724(ctx, base); }
 
-uint64_t n_sub_832AEB98(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5728(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5728 = int32_t(0x834A5728);
 	if (!UseLiftedCode(146, 0x832AEB98)) { __imp__sub_832AEB98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEB98);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5728);
 }
-PROMOTED_ENTRY(146, sub_832AEB98, 0x832AEB98) { ctx.r3.u64 = n_sub_832AEB98(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEB98, 0x832AEB98) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5728(ctx, base); }
 
-uint64_t n_sub_832AEBA8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A572C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A572C = int32_t(0x834A572C);
 	if (!UseLiftedCode(146, 0x832AEBA8)) { __imp__sub_832AEBA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBA8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A572C);
 }
-PROMOTED_ENTRY(146, sub_832AEBA8, 0x832AEBA8) { ctx.r3.u64 = n_sub_832AEBA8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBA8, 0x832AEBA8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A572C(ctx, base); }
 
-uint64_t n_sub_832AEBB8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5730(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5730 = int32_t(0x834A5730);
 	if (!UseLiftedCode(146, 0x832AEBB8)) { __imp__sub_832AEBB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBB8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5730);
 }
-PROMOTED_ENTRY(146, sub_832AEBB8, 0x832AEBB8) { ctx.r3.u64 = n_sub_832AEBB8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBB8, 0x832AEBB8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5730(ctx, base); }
 
-uint64_t n_sub_832AEBC8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5734(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5734 = int32_t(0x834A5734);
 	if (!UseLiftedCode(146, 0x832AEBC8)) { __imp__sub_832AEBC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBC8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5734);
 }
-PROMOTED_ENTRY(146, sub_832AEBC8, 0x832AEBC8) { ctx.r3.u64 = n_sub_832AEBC8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBC8, 0x832AEBC8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5734(ctx, base); }
 
-uint64_t n_sub_832AEBD8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5738(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5738 = int32_t(0x834A5738);
 	if (!UseLiftedCode(146, 0x832AEBD8)) { __imp__sub_832AEBD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBD8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5738);
 }
-PROMOTED_ENTRY(146, sub_832AEBD8, 0x832AEBD8) { ctx.r3.u64 = n_sub_832AEBD8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBD8, 0x832AEBD8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5738(ctx, base); }
 
-uint64_t n_sub_832AEBE8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A573C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A573C = int32_t(0x834A573C);
 	if (!UseLiftedCode(146, 0x832AEBE8)) { __imp__sub_832AEBE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBE8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A573C);
 }
-PROMOTED_ENTRY(146, sub_832AEBE8, 0x832AEBE8) { ctx.r3.u64 = n_sub_832AEBE8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBE8, 0x832AEBE8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A573C(ctx, base); }
 
-uint64_t n_sub_832AEBF8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5780(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5780 = int32_t(0x834A5780);
 	if (!UseLiftedCode(146, 0x832AEBF8)) { __imp__sub_832AEBF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEBF8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5780);
 }
-PROMOTED_ENTRY(146, sub_832AEBF8, 0x832AEBF8) { ctx.r3.u64 = n_sub_832AEBF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEBF8, 0x832AEBF8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5780(ctx, base); }
 
-uint64_t n_sub_832AEC08(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5784(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5784 = int32_t(0x834A5784);
 	if (!UseLiftedCode(146, 0x832AEC08)) { __imp__sub_832AEC08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5784);
 }
-PROMOTED_ENTRY(146, sub_832AEC08, 0x832AEC08) { ctx.r3.u64 = n_sub_832AEC08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC08, 0x832AEC08) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5784(ctx, base); }
 
-uint64_t n_sub_832AEC18(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5788(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5788 = int32_t(0x834A5788);
 	if (!UseLiftedCode(146, 0x832AEC18)) { __imp__sub_832AEC18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5788);
 }
-PROMOTED_ENTRY(146, sub_832AEC18, 0x832AEC18) { ctx.r3.u64 = n_sub_832AEC18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC18, 0x832AEC18) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5788(ctx, base); }
 
-uint64_t n_sub_832AEC28(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A578C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A578C = int32_t(0x834A578C);
 	if (!UseLiftedCode(146, 0x832AEC28)) { __imp__sub_832AEC28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC28);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A578C);
 }
-PROMOTED_ENTRY(146, sub_832AEC28, 0x832AEC28) { ctx.r3.u64 = n_sub_832AEC28(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC28, 0x832AEC28) { ctx.r3.u64 = ReleaseGlobalCCharString_834A578C(ctx, base); }
 
-uint64_t n_sub_832AEC38(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5790(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5790 = int32_t(0x834A5790);
 	if (!UseLiftedCode(146, 0x832AEC38)) { __imp__sub_832AEC38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC38);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5790);
 }
-PROMOTED_ENTRY(146, sub_832AEC38, 0x832AEC38) { ctx.r3.u64 = n_sub_832AEC38(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC38, 0x832AEC38) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5790(ctx, base); }
 
-uint64_t n_sub_832AEC48(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5794(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5794 = int32_t(0x834A5794);
 	if (!UseLiftedCode(146, 0x832AEC48)) { __imp__sub_832AEC48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5794);
 }
-PROMOTED_ENTRY(146, sub_832AEC48, 0x832AEC48) { ctx.r3.u64 = n_sub_832AEC48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC48, 0x832AEC48) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5794(ctx, base); }
 
-uint64_t n_sub_832AEC58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5798(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5798 = int32_t(0x834A5798);
 	if (!UseLiftedCode(146, 0x832AEC58)) { __imp__sub_832AEC58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5798);
 }
-PROMOTED_ENTRY(146, sub_832AEC58, 0x832AEC58) { ctx.r3.u64 = n_sub_832AEC58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC58, 0x832AEC58) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5798(ctx, base); }
 
-uint64_t n_sub_832AEC68(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A579C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A579C = int32_t(0x834A579C);
 	if (!UseLiftedCode(146, 0x832AEC68)) { __imp__sub_832AEC68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC68);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A579C);
 }
-PROMOTED_ENTRY(146, sub_832AEC68, 0x832AEC68) { ctx.r3.u64 = n_sub_832AEC68(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC68, 0x832AEC68) { ctx.r3.u64 = ReleaseGlobalCCharString_834A579C(ctx, base); }
 
-uint64_t n_sub_832AEC78(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57A0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57A0 = int32_t(0x834A57A0);
 	if (!UseLiftedCode(146, 0x832AEC78)) { __imp__sub_832AEC78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC78);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57A0);
 }
-PROMOTED_ENTRY(146, sub_832AEC78, 0x832AEC78) { ctx.r3.u64 = n_sub_832AEC78(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC78, 0x832AEC78) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57A0(ctx, base); }
 
-uint64_t n_sub_832AEC88(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57A4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57A4 = int32_t(0x834A57A4);
 	if (!UseLiftedCode(146, 0x832AEC88)) { __imp__sub_832AEC88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC88);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57A4);
 }
-PROMOTED_ENTRY(146, sub_832AEC88, 0x832AEC88) { ctx.r3.u64 = n_sub_832AEC88(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC88, 0x832AEC88) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57A4(ctx, base); }
 
-uint64_t n_sub_832AEC98(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57A8 = int32_t(0x834A57A8);
 	if (!UseLiftedCode(146, 0x832AEC98)) { __imp__sub_832AEC98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEC98);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57A8);
 }
-PROMOTED_ENTRY(146, sub_832AEC98, 0x832AEC98) { ctx.r3.u64 = n_sub_832AEC98(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEC98, 0x832AEC98) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57A8(ctx, base); }
 
-uint64_t n_sub_832AECA8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57AC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57AC = int32_t(0x834A57AC);
 	if (!UseLiftedCode(146, 0x832AECA8)) { __imp__sub_832AECA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECA8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57AC);
 }
-PROMOTED_ENTRY(146, sub_832AECA8, 0x832AECA8) { ctx.r3.u64 = n_sub_832AECA8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECA8, 0x832AECA8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57AC(ctx, base); }
 
-uint64_t n_sub_832AECB8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57B0 = int32_t(0x834A57B0);
 	if (!UseLiftedCode(146, 0x832AECB8)) { __imp__sub_832AECB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECB8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57B0);
 }
-PROMOTED_ENTRY(146, sub_832AECB8, 0x832AECB8) { ctx.r3.u64 = n_sub_832AECB8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECB8, 0x832AECB8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57B0(ctx, base); }
 
-uint64_t n_sub_832AECC8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57B4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57B4 = int32_t(0x834A57B4);
 	if (!UseLiftedCode(146, 0x832AECC8)) { __imp__sub_832AECC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECC8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57B4);
 }
-PROMOTED_ENTRY(146, sub_832AECC8, 0x832AECC8) { ctx.r3.u64 = n_sub_832AECC8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECC8, 0x832AECC8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57B4(ctx, base); }
 
-uint64_t n_sub_832AECD8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57B8 = int32_t(0x834A57B8);
 	if (!UseLiftedCode(146, 0x832AECD8)) { __imp__sub_832AECD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECD8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57B8);
 }
-PROMOTED_ENTRY(146, sub_832AECD8, 0x832AECD8) { ctx.r3.u64 = n_sub_832AECD8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECD8, 0x832AECD8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57B8(ctx, base); }
 
-uint64_t n_sub_832AECE8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57BC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57BC = int32_t(0x834A57BC);
 	if (!UseLiftedCode(146, 0x832AECE8)) { __imp__sub_832AECE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECE8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57BC);
 }
-PROMOTED_ENTRY(146, sub_832AECE8, 0x832AECE8) { ctx.r3.u64 = n_sub_832AECE8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECE8, 0x832AECE8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57BC(ctx, base); }
 
-uint64_t n_sub_832AECF8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57C0 = int32_t(0x834A57C0);
 	if (!UseLiftedCode(146, 0x832AECF8)) { __imp__sub_832AECF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AECF8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57C0);
 }
-PROMOTED_ENTRY(146, sub_832AECF8, 0x832AECF8) { ctx.r3.u64 = n_sub_832AECF8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AECF8, 0x832AECF8) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57C0(ctx, base); }
 
-uint64_t n_sub_832AED08(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A57C4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A57C4 = int32_t(0x834A57C4);
 	if (!UseLiftedCode(146, 0x832AED08)) { __imp__sub_832AED08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A57C4);
 }
-PROMOTED_ENTRY(146, sub_832AED08, 0x832AED08) { ctx.r3.u64 = n_sub_832AED08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED08, 0x832AED08) { ctx.r3.u64 = ReleaseGlobalCCharString_834A57C4(ctx, base); }
 
-uint64_t n_sub_832AED18(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A0C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A0C = int32_t(0x834A5A0C);
 	if (!UseLiftedCode(146, 0x832AED18)) { __imp__sub_832AED18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A0C);
 }
-PROMOTED_ENTRY(146, sub_832AED18, 0x832AED18) { ctx.r3.u64 = n_sub_832AED18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED18, 0x832AED18) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A0C(ctx, base); }
 
-uint64_t n_sub_832AED28(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A10(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A10 = int32_t(0x834A5A10);
 	if (!UseLiftedCode(146, 0x832AED28)) { __imp__sub_832AED28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED28);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A10);
 }
-PROMOTED_ENTRY(146, sub_832AED28, 0x832AED28) { ctx.r3.u64 = n_sub_832AED28(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED28, 0x832AED28) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A10(ctx, base); }
 
-uint64_t n_sub_832AED38(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A14(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A14 = int32_t(0x834A5A14);
 	if (!UseLiftedCode(146, 0x832AED38)) { __imp__sub_832AED38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED38);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A14);
 }
-PROMOTED_ENTRY(146, sub_832AED38, 0x832AED38) { ctx.r3.u64 = n_sub_832AED38(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED38, 0x832AED38) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A14(ctx, base); }
 
-uint64_t n_sub_832AED48(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A18(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A18 = int32_t(0x834A5A18);
 	if (!UseLiftedCode(146, 0x832AED48)) { __imp__sub_832AED48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED48);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A18);
 }
-PROMOTED_ENTRY(146, sub_832AED48, 0x832AED48) { ctx.r3.u64 = n_sub_832AED48(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED48, 0x832AED48) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A18(ctx, base); }
 
-uint64_t n_sub_832AED58(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A1C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A1C = int32_t(0x834A5A1C);
 	if (!UseLiftedCode(146, 0x832AED58)) { __imp__sub_832AED58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED58);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A1C);
 }
-PROMOTED_ENTRY(146, sub_832AED58, 0x832AED58) { ctx.r3.u64 = n_sub_832AED58(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED58, 0x832AED58) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A1C(ctx, base); }
 
-uint64_t n_sub_832AED68(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A20(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A20 = int32_t(0x834A5A20);
 	if (!UseLiftedCode(146, 0x832AED68)) { __imp__sub_832AED68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED68);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A20);
 }
-PROMOTED_ENTRY(146, sub_832AED68, 0x832AED68) { ctx.r3.u64 = n_sub_832AED68(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED68, 0x832AED68) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A20(ctx, base); }
 
-uint64_t n_sub_832AED78(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834A5A24(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A24 = int32_t(0x834A5A24);
 	if (!UseLiftedCode(146, 0x832AED78)) { __imp__sub_832AED78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AED78);
@@ -21095,428 +21095,428 @@ uint64_t n_sub_832AED78(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AED78, 0x832AED78) { ctx.r3.u64 = n_sub_832AED78(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AED78, 0x832AED78) { ctx.r3.u64 = ClearHandleTargetGlobal_834A5A24(ctx, base); }
 
-uint64_t n_sub_832AEDD0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A34(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A34 = int32_t(0x834A5A34);
 	if (!UseLiftedCode(146, 0x832AEDD0)) { __imp__sub_832AEDD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEDD0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A34);
 }
-PROMOTED_ENTRY(146, sub_832AEDD0, 0x832AEDD0) { ctx.r3.u64 = n_sub_832AEDD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEDD0, 0x832AEDD0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A34(ctx, base); }
 
-uint64_t n_sub_832AEDE0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A38 = int32_t(0x834A5A38);
 	if (!UseLiftedCode(146, 0x832AEDE0)) { __imp__sub_832AEDE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEDE0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A38);
 }
-PROMOTED_ENTRY(146, sub_832AEDE0, 0x832AEDE0) { ctx.r3.u64 = n_sub_832AEDE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEDE0, 0x832AEDE0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A38(ctx, base); }
 
-uint64_t n_sub_832AEDF0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A3C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A3C = int32_t(0x834A5A3C);
 	if (!UseLiftedCode(146, 0x832AEDF0)) { __imp__sub_832AEDF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEDF0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A3C);
 }
-PROMOTED_ENTRY(146, sub_832AEDF0, 0x832AEDF0) { ctx.r3.u64 = n_sub_832AEDF0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEDF0, 0x832AEDF0) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A3C(ctx, base); }
 
-uint64_t n_sub_832AEE00(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A40(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A40 = int32_t(0x834A5A40);
 	if (!UseLiftedCode(146, 0x832AEE00)) { __imp__sub_832AEE00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE00);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A40);
 }
-PROMOTED_ENTRY(146, sub_832AEE00, 0x832AEE00) { ctx.r3.u64 = n_sub_832AEE00(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE00, 0x832AEE00) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A40(ctx, base); }
 
-uint64_t n_sub_832AEE10(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A44(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A44 = int32_t(0x834A5A44);
 	if (!UseLiftedCode(146, 0x832AEE10)) { __imp__sub_832AEE10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE10);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A44);
 }
-PROMOTED_ENTRY(146, sub_832AEE10, 0x832AEE10) { ctx.r3.u64 = n_sub_832AEE10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE10, 0x832AEE10) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A44(ctx, base); }
 
-uint64_t n_sub_832AEE20(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A48(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A48 = int32_t(0x834A5A48);
 	if (!UseLiftedCode(146, 0x832AEE20)) { __imp__sub_832AEE20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE20);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A48);
 }
-PROMOTED_ENTRY(146, sub_832AEE20, 0x832AEE20) { ctx.r3.u64 = n_sub_832AEE20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE20, 0x832AEE20) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A48(ctx, base); }
 
-uint64_t n_sub_832AEE30(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A4C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A4C = int32_t(0x834A5A4C);
 	if (!UseLiftedCode(146, 0x832AEE30)) { __imp__sub_832AEE30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE30);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A4C);
 }
-PROMOTED_ENTRY(146, sub_832AEE30, 0x832AEE30) { ctx.r3.u64 = n_sub_832AEE30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE30, 0x832AEE30) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A4C(ctx, base); }
 
-uint64_t n_sub_832AEE40(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A50(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A50 = int32_t(0x834A5A50);
 	if (!UseLiftedCode(146, 0x832AEE40)) { __imp__sub_832AEE40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE40);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A50);
 }
-PROMOTED_ENTRY(146, sub_832AEE40, 0x832AEE40) { ctx.r3.u64 = n_sub_832AEE40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE40, 0x832AEE40) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A50(ctx, base); }
 
-uint64_t n_sub_832AEE50(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A54(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A54 = int32_t(0x834A5A54);
 	if (!UseLiftedCode(146, 0x832AEE50)) { __imp__sub_832AEE50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE50);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A54);
 }
-PROMOTED_ENTRY(146, sub_832AEE50, 0x832AEE50) { ctx.r3.u64 = n_sub_832AEE50(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE50, 0x832AEE50) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A54(ctx, base); }
 
-uint64_t n_sub_832AEE60(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A58(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A58 = int32_t(0x834A5A58);
 	if (!UseLiftedCode(146, 0x832AEE60)) { __imp__sub_832AEE60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE60);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A58);
 }
-PROMOTED_ENTRY(146, sub_832AEE60, 0x832AEE60) { ctx.r3.u64 = n_sub_832AEE60(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE60, 0x832AEE60) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A58(ctx, base); }
 
-uint64_t n_sub_832AEE70(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A5C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A5C = int32_t(0x834A5A5C);
 	if (!UseLiftedCode(146, 0x832AEE70)) { __imp__sub_832AEE70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE70);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A5C);
 }
-PROMOTED_ENTRY(146, sub_832AEE70, 0x832AEE70) { ctx.r3.u64 = n_sub_832AEE70(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE70, 0x832AEE70) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A5C(ctx, base); }
 
-uint64_t n_sub_832AEE80(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A60(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A60 = int32_t(0x834A5A60);
 	if (!UseLiftedCode(146, 0x832AEE80)) { __imp__sub_832AEE80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE80);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A60);
 }
-PROMOTED_ENTRY(146, sub_832AEE80, 0x832AEE80) { ctx.r3.u64 = n_sub_832AEE80(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE80, 0x832AEE80) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A60(ctx, base); }
 
-uint64_t n_sub_832AEE90(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobalCCharString_834A5A64(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A64 = int32_t(0x834A5A64);
 	if (!UseLiftedCode(146, 0x832AEE90)) { __imp__sub_832AEE90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEE90);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A64);
 }
-PROMOTED_ENTRY(146, sub_832AEE90, 0x832AEE90) { ctx.r3.u64 = n_sub_832AEE90(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEE90, 0x832AEE90) { ctx.r3.u64 = ReleaseGlobalCCharString_834A5A64(ctx, base); }
 
-uint64_t n_sub_832AEEA0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5A68(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A68 = int32_t(0x834A5A68);
 	if (!UseLiftedCode(146, 0x832AEEA0)) { __imp__sub_832AEEA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEEA0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A68);
 }
-PROMOTED_ENTRY(146, sub_832AEEA0, 0x832AEEA0) { ctx.r3.u64 = n_sub_832AEEA0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEEA0, 0x832AEEA0) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5A68(ctx, base); }
 
-uint64_t n_sub_832AEEB0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5A6C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A6C = int32_t(0x834A5A6C);
 	if (!UseLiftedCode(146, 0x832AEEB0)) { __imp__sub_832AEEB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEEB0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A6C);
 }
-PROMOTED_ENTRY(146, sub_832AEEB0, 0x832AEEB0) { ctx.r3.u64 = n_sub_832AEEB0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEEB0, 0x832AEEB0) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5A6C(ctx, base); }
 
-uint64_t n_sub_832AEEC0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5A70(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A70 = int32_t(0x834A5A70);
 	if (!UseLiftedCode(146, 0x832AEEC0)) { __imp__sub_832AEEC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEEC0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A70);
 }
-PROMOTED_ENTRY(146, sub_832AEEC0, 0x832AEEC0) { ctx.r3.u64 = n_sub_832AEEC0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEEC0, 0x832AEEC0) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5A70(ctx, base); }
 
-uint64_t n_sub_832AEED0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5A90(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A90 = int32_t(0x834A5A90);
 	if (!UseLiftedCode(146, 0x832AEED0)) { __imp__sub_832AEED0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEED0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A90);
 }
-PROMOTED_ENTRY(146, sub_832AEED0, 0x832AEED0) { ctx.r3.u64 = n_sub_832AEED0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEED0, 0x832AEED0) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5A90(ctx, base); }
 
-uint64_t n_sub_832AEEE0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5A94(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5A94 = int32_t(0x834A5A94);
 	if (!UseLiftedCode(146, 0x832AEEE0)) { __imp__sub_832AEEE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEEE0);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5A94);
 }
-PROMOTED_ENTRY(146, sub_832AEEE0, 0x832AEEE0) { ctx.r3.u64 = n_sub_832AEEE0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEEE0, 0x832AEEE0) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5A94(ctx, base); }
 
-uint64_t n_sub_832AEF08(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5AAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5AAC = int32_t(0x834A5AAC);
 	if (!UseLiftedCode(146, 0x832AEF08)) { __imp__sub_832AEF08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5AAC);
 }
-PROMOTED_ENTRY(146, sub_832AEF08, 0x832AEF08) { ctx.r3.u64 = n_sub_832AEF08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF08, 0x832AEF08) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5AAC(ctx, base); }
 
-uint64_t n_sub_832AEF18(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5AB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5AB0 = int32_t(0x834A5AB0);
 	if (!UseLiftedCode(146, 0x832AEF18)) { __imp__sub_832AEF18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5AB0);
 }
-PROMOTED_ENTRY(146, sub_832AEF18, 0x832AEF18) { ctx.r3.u64 = n_sub_832AEF18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF18, 0x832AEF18) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5AB0(ctx, base); }
 
-uint64_t n_sub_832AEF28(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseSharedHandleGlobal_834A5B24(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B24 = int32_t(0x834A5B24);
 	if (!UseLiftedCode(146, 0x832AEF28)) { __imp__sub_832AEF28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF28);
 	return SharedHandle_Release(ctx, base, g_834A5B24);
 }
-PROMOTED_ENTRY(146, sub_832AEF28, 0x832AEF28) { ctx.r3.u64 = n_sub_832AEF28(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF28, 0x832AEF28) { ctx.r3.u64 = ReleaseSharedHandleGlobal_834A5B24(ctx, base); }
 
-uint64_t n_sub_832AEF40(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5B50(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B50 = int32_t(0x834A5B50);
 	if (!UseLiftedCode(146, 0x832AEF40)) { __imp__sub_832AEF40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF40);
-	return n_sub_8233DD70(ctx, base, g_834A5B50);
+	return StdMap_DestroyGlobal_8233DD70(ctx, base, g_834A5B50);
 }
-PROMOTED_ENTRY(146, sub_832AEF40, 0x832AEF40) { ctx.r3.u64 = n_sub_832AEF40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF40, 0x832AEF40) { ctx.r3.u64 = ReleaseContainerGlobal_834A5B50(ctx, base); }
 
-uint64_t n_sub_832AEF50(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5B5C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B5C = int32_t(0x834A5B5C);
 	if (!UseLiftedCode(146, 0x832AEF50)) { __imp__sub_832AEF50(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF50);
-	return n_sub_8233DD70(ctx, base, g_834A5B5C);
+	return StdMap_DestroyGlobal_8233DD70(ctx, base, g_834A5B5C);
 }
-PROMOTED_ENTRY(146, sub_832AEF50, 0x832AEF50) { ctx.r3.u64 = n_sub_832AEF50(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF50, 0x832AEF50) { ctx.r3.u64 = ReleaseContainerGlobal_834A5B5C(ctx, base); }
 
-uint64_t n_sub_832AEF60(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5B68(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B68 = int32_t(0x834A5B68);
 	if (!UseLiftedCode(146, 0x832AEF60)) { __imp__sub_832AEF60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF60);
 	return CCharString_ReleaseAndDecGlobalCountB(ctx, base, g_834A5B68);
 }
-PROMOTED_ENTRY(146, sub_832AEF60, 0x832AEF60) { ctx.r3.u64 = n_sub_832AEF60(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF60, 0x832AEF60) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5B68(ctx, base); }
 
-uint64_t n_sub_832AEF70(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5B6C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B6C = int32_t(0x834A5B6C);
 	if (!UseLiftedCode(146, 0x832AEF70)) { __imp__sub_832AEF70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF70);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5B6C);
 }
-PROMOTED_ENTRY(146, sub_832AEF70, 0x832AEF70) { ctx.r3.u64 = n_sub_832AEF70(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF70, 0x832AEF70) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5B6C(ctx, base); }
 
-uint64_t n_sub_832AEF80(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5B70(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B70 = int32_t(0x834A5B70);
 	if (!UseLiftedCode(146, 0x832AEF80)) { __imp__sub_832AEF80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF80);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5B70);
 }
-PROMOTED_ENTRY(146, sub_832AEF80, 0x832AEF80) { ctx.r3.u64 = n_sub_832AEF80(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF80, 0x832AEF80) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5B70(ctx, base); }
 
-uint64_t n_sub_832AEF90(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5B74(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B74 = int32_t(0x834A5B74);
 	if (!UseLiftedCode(146, 0x832AEF90)) { __imp__sub_832AEF90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AEF90);
 	uint64_t object = g_834A5B74;
-	return n_sub_82B3CBC8(ctx, base);
+	return ReleaseContainer_834A5B74(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AEF90, 0x832AEF90) { ctx.r3.u64 = n_sub_832AEF90(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AEF90, 0x832AEF90) { ctx.r3.u64 = ReleaseContainerGlobal_834A5B74(ctx, base); }
 
-uint64_t n_sub_832AF010(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5B8C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5B8C = int32_t(0x834A5B8C);
 	if (!UseLiftedCode(146, 0x832AF010)) { __imp__sub_832AF010(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF010);
 	uint64_t object = g_834A5B8C;
-	return n_sub_82B5BE58(ctx, base);
+	return ReleaseContainer_834A5B8C(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF010, 0x832AF010) { ctx.r3.u64 = n_sub_832AF010(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF010, 0x832AF010) { ctx.r3.u64 = ReleaseContainerGlobal_834A5B8C(ctx, base); }
 
-uint64_t n_sub_832AF020(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C10(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C10 = int32_t(0x834A5C10);
 	if (!UseLiftedCode(146, 0x832AF020)) { __imp__sub_832AF020(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF020);
-	return n_sub_823B0AA8(ctx, base, g_834A5C10);
+	return ReleaseContainer_823B0AA8(ctx, base, g_834A5C10);
 }
-PROMOTED_ENTRY(146, sub_832AF020, 0x832AF020) { ctx.r3.u64 = n_sub_832AF020(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF020, 0x832AF020) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C10(ctx, base); }
 
-uint64_t n_sub_832AF038(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C38 = int32_t(0x834A5C38);
 	if (!UseLiftedCode(146, 0x832AF038)) { __imp__sub_832AF038(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF038);
 	uint64_t object = g_834A5C38;
-	return n_sub_82B5D780(ctx, base);
+	return ReleaseContainer_834A5C38(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF038, 0x832AF038) { ctx.r3.u64 = n_sub_832AF038(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF038, 0x832AF038) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C38(ctx, base); }
 
-uint64_t n_sub_832AF048(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C44(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C44 = int32_t(0x834A5C44);
 	if (!UseLiftedCode(146, 0x832AF048)) { __imp__sub_832AF048(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF048);
 	uint64_t object = g_834A5C44;
-	return n_sub_82B5DEC8(ctx, base);
+	return ReleaseContainer_834A5C44(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF048, 0x832AF048) { ctx.r3.u64 = n_sub_832AF048(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF048, 0x832AF048) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C44(ctx, base); }
 
-uint64_t n_sub_832AF058(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseObjectGlobal_8331AF38(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AF38 = int32_t(0x8331AF38);
 	if (!UseLiftedCode(146, 0x832AF058)) { __imp__sub_832AF058(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF058);
-	return n_sub_82A1DEE8(ctx, base, g_8331AF38);
+	return C_820FA120_Destructor(ctx, base, g_8331AF38);
 }
-PROMOTED_ENTRY(146, sub_832AF058, 0x832AF058) { ctx.r3.u64 = n_sub_832AF058(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF058, 0x832AF058) { ctx.r3.u64 = ReleaseObjectGlobal_8331AF38(ctx, base); }
 
-uint64_t n_sub_832AF068(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C50(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C50 = int32_t(0x834A5C50);
 	if (!UseLiftedCode(146, 0x832AF068)) { __imp__sub_832AF068(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF068);
 	uint64_t object = g_834A5C50;
-	return n_sub_82B5E178(ctx, base);
+	return ReleaseContainer_834A5C50(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF068, 0x832AF068) { ctx.r3.u64 = n_sub_832AF068(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF068, 0x832AF068) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C50(ctx, base); }
 
-uint64_t n_sub_832AF078(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834A5C5C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C5C = int32_t(0x834A5C5C);
 	if (!UseLiftedCode(146, 0x832AF078)) { __imp__sub_832AF078(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF078);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A5C5C);
 }
-PROMOTED_ENTRY(146, sub_832AF078, 0x832AF078) { ctx.r3.u64 = n_sub_832AF078(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF078, 0x832AF078) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5C5C(ctx, base); }
 
-uint64_t n_sub_832AF1A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseAtomicGlobal_834A5C64(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C64 = int32_t(0x834A5C64);
 	if (!UseLiftedCode(146, 0x832AF1A8)) { __imp__sub_832AF1A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF1A8);
 	uint64_t object = g_834A5C64;
-	return n_sub_82B65078(ctx, base);
+	return ReleaseAtomicGlobal_834A5C64_82B65078(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF1A8, 0x832AF1A8) { ctx.r3.u64 = n_sub_832AF1A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF1A8, 0x832AF1A8) { ctx.r3.u64 = ReleaseAtomicGlobal_834A5C64(ctx, base); }
 
-uint64_t n_sub_832AF1C0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseObjectGlobal_8331AF84(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AF84 = int32_t(0x8331AF84);
 	if (!UseLiftedCode(146, 0x832AF1C0)) { __imp__sub_832AF1C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF1C0);
-	return n_sub_82BE5050(ctx, base, g_8331AF84);
+	return C_820FF240_Destructor(ctx, base, g_8331AF84);
 }
-PROMOTED_ENTRY(146, sub_832AF1C0, 0x832AF1C0) { ctx.r3.u64 = n_sub_832AF1C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF1C0, 0x832AF1C0) { ctx.r3.u64 = ReleaseObjectGlobal_8331AF84(ctx, base); }
 
-uint64_t n_sub_832AF1D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C88 = int32_t(0x834A5C88);
 	if (!UseLiftedCode(146, 0x832AF1D0)) { __imp__sub_832AF1D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF1D0);
-	return n_sub_823FB0E8(ctx, base, g_834A5C88);
+	return ReleaseContainer_823FB0E8(ctx, base, g_834A5C88);
 }
-PROMOTED_ENTRY(146, sub_832AF1D0, 0x832AF1D0) { ctx.r3.u64 = n_sub_832AF1D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF1D0, 0x832AF1D0) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C88(ctx, base); }
 
-uint64_t n_sub_832AF1E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5C94(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C94 = int32_t(0x834A5C94);
 	if (!UseLiftedCode(146, 0x832AF1E0)) { __imp__sub_832AF1E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF1E0);
-	return n_sub_823FB0E8(ctx, base, g_834A5C94);
+	return ReleaseContainer_823FB0E8(ctx, base, g_834A5C94);
 }
-PROMOTED_ENTRY(146, sub_832AF1E0, 0x832AF1E0) { ctx.r3.u64 = n_sub_832AF1E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF1E0, 0x832AF1E0) { ctx.r3.u64 = ReleaseContainerGlobal_834A5C94(ctx, base); }
 
-uint64_t n_sub_832AF1F0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5CA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5CA0 = int32_t(0x834A5CA0);
 	if (!UseLiftedCode(146, 0x832AF1F0)) { __imp__sub_832AF1F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF1F0);
-	return n_sub_823FB0E8(ctx, base, g_834A5CA0);
+	return ReleaseContainer_823FB0E8(ctx, base, g_834A5CA0);
 }
-PROMOTED_ENTRY(146, sub_832AF1F0, 0x832AF1F0) { ctx.r3.u64 = n_sub_832AF1F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF1F0, 0x832AF1F0) { ctx.r3.u64 = ReleaseContainerGlobal_834A5CA0(ctx, base); }
 
-uint64_t n_sub_832AF200(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5CAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5CAC = int32_t(0x834A5CAC);
 	if (!UseLiftedCode(146, 0x832AF200)) { __imp__sub_832AF200(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF200);
-	return n_sub_823FB0E8(ctx, base, g_834A5CAC);
+	return ReleaseContainer_823FB0E8(ctx, base, g_834A5CAC);
 }
-PROMOTED_ENTRY(146, sub_832AF200, 0x832AF200) { ctx.r3.u64 = n_sub_832AF200(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF200, 0x832AF200) { ctx.r3.u64 = ReleaseContainerGlobal_834A5CAC(ctx, base); }
 
-uint64_t n_sub_832AF280(CpuState& ctx, uint8_t* base) {
+uint64_t ReleasePropertyMapGlobal_834A5D30(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5D30 = int32_t(0x834A5D30);
 	if (!UseLiftedCode(146, 0x832AF280)) { __imp__sub_832AF280(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF280);
-	return n_sub_826A4978(ctx, base, g_834A5D30);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834A5D30);
 }
-PROMOTED_ENTRY(146, sub_832AF280, 0x832AF280) { ctx.r3.u64 = n_sub_832AF280(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF280, 0x832AF280) { ctx.r3.u64 = ReleasePropertyMapGlobal_834A5D30(ctx, base); }
 
-uint64_t n_sub_832AF290(CpuState& ctx, uint8_t* base) {
+uint64_t ReleasePropertyMapGlobal_834A5D3C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5D3C = int32_t(0x834A5D3C);
 	if (!UseLiftedCode(146, 0x832AF290)) { __imp__sub_832AF290(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF290);
-	return n_sub_826A4978(ctx, base, g_834A5D3C);
+	return ReleasePropertyMap_826A4978(ctx, base, g_834A5D3C);
 }
-PROMOTED_ENTRY(146, sub_832AF290, 0x832AF290) { ctx.r3.u64 = n_sub_832AF290(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF290, 0x832AF290) { ctx.r3.u64 = ReleasePropertyMapGlobal_834A5D3C(ctx, base); }
 
-uint64_t n_sub_832AF2A0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A5D48(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5D48 = int32_t(0x834A5D48);
 	if (!UseLiftedCode(146, 0x832AF2A0)) { __imp__sub_832AF2A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF2A0);
 	uint64_t object = g_834A5D48;
-	return n_sub_82B6A018(ctx, base);
+	return ReleaseContainer_834A5D48(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF2A0, 0x832AF2A0) { ctx.r3.u64 = n_sub_832AF2A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF2A0, 0x832AF2A0) { ctx.r3.u64 = ReleaseContainerGlobal_834A5D48(ctx, base); }
 
-uint64_t n_sub_832AF4C8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseRefCountedPtrGlobal_834A6018(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A6018 = int32_t(0x834A6018);
 	if (!UseLiftedCode(146, 0x832AF4C8)) { __imp__sub_832AF4C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF4C8);
 	return RefCountedPtr_ReleaseAtomic(ctx, base, g_834A6018);
 }
-PROMOTED_ENTRY(146, sub_832AF4C8, 0x832AF4C8) { ctx.r3.u64 = n_sub_832AF4C8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF4C8, 0x832AF4C8) { ctx.r3.u64 = ReleaseRefCountedPtrGlobal_834A6018(ctx, base); }
 
-uint64_t n_sub_832AF4D8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A601C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A601C = int32_t(0x834A601C);
 	if (!UseLiftedCode(146, 0x832AF4D8)) { __imp__sub_832AF4D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF4D8);
 	uint64_t object = g_834A601C;
-	return n_sub_82B6BEB0(ctx, base);
+	return ReleaseContainer_834A601C(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF4D8, 0x832AF4D8) { ctx.r3.u64 = n_sub_832AF4D8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF4D8, 0x832AF4D8) { ctx.r3.u64 = ReleaseContainerGlobal_834A601C(ctx, base); }
 
-uint64_t n_sub_832AF4F0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834A6044(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A6044 = int32_t(0x834A6044);
 	if (!UseLiftedCode(146, 0x832AF4F0)) { __imp__sub_832AF4F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF4F0);
 	uint64_t object = g_834A6044;
-	return n_sub_82B6D7C8(ctx, base);
+	return ReleaseContainer_834A6044(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF4F0, 0x832AF4F0) { ctx.r3.u64 = n_sub_832AF4F0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF4F0, 0x832AF4F0) { ctx.r3.u64 = ReleaseContainerGlobal_834A6044(ctx, base); }
 
-uint64_t n_sub_832AF500(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834B2080(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834B2080 = int32_t(0x834B2080);
 	if (!UseLiftedCode(146, 0x832AF500)) { __imp__sub_832AF500(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF500);
-	return n_sub_8246D1F0(ctx, base, g_834B2080);
+	return StdMap_DestroyGlobal_8246D1F0(ctx, base, g_834B2080);
 }
-PROMOTED_ENTRY(146, sub_832AF500, 0x832AF500) { ctx.r3.u64 = n_sub_832AF500(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF500, 0x832AF500) { ctx.r3.u64 = ReleaseContainerGlobal_834B2080(ctx, base); }
 
-uint64_t n_sub_832AF510(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834BDB88(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDB88 = int32_t(0x834BDB88);
 	if (!UseLiftedCode(146, 0x832AF510)) { __imp__sub_832AF510(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF510);
 	uint64_t object = g_834BDB88;
-	return n_sub_82B7E5F8(ctx, base);
+	return ReleaseContainer_834BDB88(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF510, 0x832AF510) { ctx.r3.u64 = n_sub_832AF510(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF510, 0x832AF510) { ctx.r3.u64 = ReleaseContainerGlobal_834BDB88(ctx, base); }
 
-uint64_t n_sub_832AF520(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834BDB98(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDB98 = int32_t(0x834BDB98);
 	if (!UseLiftedCode(146, 0x832AF520)) { __imp__sub_832AF520(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF520);
-	return n_sub_823FB150(ctx, base, g_834BDB98);
+	return ReleaseContainer_823FB150(ctx, base, g_834BDB98);
 }
-PROMOTED_ENTRY(146, sub_832AF520, 0x832AF520) { ctx.r3.u64 = n_sub_832AF520(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF520, 0x832AF520) { ctx.r3.u64 = ReleaseContainerGlobal_834BDB98(ctx, base); }
 
-uint64_t n_sub_832AF530(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834BDBA4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBA4 = int32_t(0x834BDBA4);
 	if (!UseLiftedCode(146, 0x832AF530)) { __imp__sub_832AF530(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF530);
-	return n_sub_823FB150(ctx, base, g_834BDBA4);
+	return ReleaseContainer_823FB150(ctx, base, g_834BDBA4);
 }
-PROMOTED_ENTRY(146, sub_832AF530, 0x832AF530) { ctx.r3.u64 = n_sub_832AF530(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF530, 0x832AF530) { ctx.r3.u64 = ReleaseContainerGlobal_834BDBA4(ctx, base); }
 
-uint64_t n_sub_832AF540(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseContainerGlobal_834BDBB0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBB0 = int32_t(0x834BDBB0);
 	if (!UseLiftedCode(146, 0x832AF540)) { __imp__sub_832AF540(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF540);
 	uint64_t object = g_834BDBB0;
-	return n_sub_82B7E7A8(ctx, base);
+	return ReleaseContainer_834BDBB0(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF540, 0x832AF540) { ctx.r3.u64 = n_sub_832AF540(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF540, 0x832AF540) { ctx.r3.u64 = ReleaseContainerGlobal_834BDBB0(ctx, base); }
 
-uint64_t n_sub_832AF550(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDBC0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBC0 = int32_t(0x834BDBC0);
 	if (!UseLiftedCode(146, 0x832AF550)) { __imp__sub_832AF550(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF550);
@@ -21535,17 +21535,17 @@ uint64_t n_sub_832AF550(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF550, 0x832AF550) { ctx.r3.u64 = n_sub_832AF550(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF550, 0x832AF550) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDBC0(ctx, base); }
 
-uint64_t n_sub_832AF5A8(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_834BDBD0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBD0 = int32_t(0x834BDBD0);
 	if (!UseLiftedCode(146, 0x832AF5A8)) { __imp__sub_832AF5A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF5A8);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834BDBD0);
 }
-PROMOTED_ENTRY(146, sub_832AF5A8, 0x832AF5A8) { ctx.r3.u64 = n_sub_832AF5A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF5A8, 0x832AF5A8) { ctx.r3.u64 = ReleaseCCharStringGlobal_834BDBD0(ctx, base); }
 
-uint64_t n_sub_832AF5B8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDBD4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBD4 = int32_t(0x834BDBD4);
 	if (!UseLiftedCode(146, 0x832AF5B8)) { __imp__sub_832AF5B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF5B8);
@@ -21564,9 +21564,9 @@ uint64_t n_sub_832AF5B8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF5B8, 0x832AF5B8) { ctx.r3.u64 = n_sub_832AF5B8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF5B8, 0x832AF5B8) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDBD4(ctx, base); }
 
-uint64_t n_sub_832AF650(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDBE4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBE4 = int32_t(0x834BDBE4);
 	if (!UseLiftedCode(146, 0x832AF650)) { __imp__sub_832AF650(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF650);
@@ -21585,9 +21585,9 @@ uint64_t n_sub_832AF650(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF650, 0x832AF650) { ctx.r3.u64 = n_sub_832AF650(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF650, 0x832AF650) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDBE4(ctx, base); }
 
-uint64_t n_sub_832AF6A8(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDBF4(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDBF4 = int32_t(0x834BDBF4);
 	if (!UseLiftedCode(146, 0x832AF6A8)) { __imp__sub_832AF6A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF6A8);
@@ -21606,9 +21606,9 @@ uint64_t n_sub_832AF6A8(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF6A8, 0x832AF6A8) { ctx.r3.u64 = n_sub_832AF6A8(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF6A8, 0x832AF6A8) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDBF4(ctx, base); }
 
-uint64_t n_sub_832AF700(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDC04(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDC04 = int32_t(0x834BDC04);
 	if (!UseLiftedCode(146, 0x832AF700)) { __imp__sub_832AF700(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF700);
@@ -21627,9 +21627,9 @@ uint64_t n_sub_832AF700(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF700, 0x832AF700) { ctx.r3.u64 = n_sub_832AF700(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF700, 0x832AF700) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDC04(ctx, base); }
 
-uint64_t n_sub_832AF758(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BDC14(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BDC14 = int32_t(0x834BDC14);
 	if (!UseLiftedCode(146, 0x832AF758)) { __imp__sub_832AF758(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF758);
@@ -21648,7 +21648,7 @@ uint64_t n_sub_832AF758(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AF758, 0x832AF758) { ctx.r3.u64 = n_sub_832AF758(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF758, 0x832AF758) { ctx.r3.u64 = ClearHandleTargetGlobal_834BDC14(ctx, base); }
 
 uint64_t Destroy_TXT_834BDC24_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834BDC24_G_ = int32_t(0x834BDC24);
@@ -21666,7 +21666,7 @@ uint64_t Destroy_TXT_834BDCF0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AF818, 0x832AF818) { ctx.r3.u64 = Destroy_TXT_834BDCF0_G_(ctx, base); }
 
-uint64_t n_sub_832AF828(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringArray_834C0000(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
 	if (!UseLiftedCode(146, 0x832AF828)) { __imp__sub_832AF828(ctx, base); return ctx.r3.u64; }
@@ -21705,7 +21705,7 @@ uint64_t n_sub_832AF828(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(146, sub_832AF828, 0x832AF828) { ctx.r3.u64 = n_sub_832AF828(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF828, 0x832AF828) { ctx.r3.u64 = ReleaseCCharStringArray_834C0000(ctx, base); }
 
 uint64_t Destroy_TXT_834BE130_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834BE130_G_ = int32_t(0x834BE130);
@@ -21811,75 +21811,75 @@ uint64_t Destroy_TXT_834BE160_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AF990, 0x832AF990) { ctx.r3.u64 = Destroy_TXT_834BE160_G_(ctx, base); }
 
-uint64_t n_sub_832AF9A0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseOwnedPointersGlobal_834BE164(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE164 = int32_t(0x834BE164);
 	if (!UseLiftedCode(146, 0x832AF9A0)) { __imp__sub_832AF9A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF9A0);
-	return n_sub_82B8C170(ctx, base, g_834BE164);
+	return ReleaseOwnedPointers_82B8C170(ctx, base, g_834BE164);
 }
-PROMOTED_ENTRY(146, sub_832AF9A0, 0x832AF9A0) { ctx.r3.u64 = n_sub_832AF9A0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF9A0, 0x832AF9A0) { ctx.r3.u64 = ReleaseOwnedPointersGlobal_834BE164(ctx, base); }
 
-uint64_t n_sub_832AF9B0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseOwnedPointersGlobal_834BE188(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE188 = int32_t(0x834BE188);
 	if (!UseLiftedCode(146, 0x832AF9B0)) { __imp__sub_832AF9B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF9B0);
-	return n_sub_82B8C170(ctx, base, g_834BE188);
+	return ReleaseOwnedPointers_82B8C170(ctx, base, g_834BE188);
 }
-PROMOTED_ENTRY(146, sub_832AF9B0, 0x832AF9B0) { ctx.r3.u64 = n_sub_832AF9B0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF9B0, 0x832AF9B0) { ctx.r3.u64 = ReleaseOwnedPointersGlobal_834BE188(ctx, base); }
 
-uint64_t n_sub_832AF9C0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseOwnedPointersGlobal_834BE1AC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE1AC = int32_t(0x834BE1AC);
 	if (!UseLiftedCode(146, 0x832AF9C0)) { __imp__sub_832AF9C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF9C0);
-	return n_sub_82B8C170(ctx, base, g_834BE1AC);
+	return ReleaseOwnedPointers_82B8C170(ctx, base, g_834BE1AC);
 }
-PROMOTED_ENTRY(146, sub_832AF9C0, 0x832AF9C0) { ctx.r3.u64 = n_sub_832AF9C0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF9C0, 0x832AF9C0) { ctx.r3.u64 = ReleaseOwnedPointersGlobal_834BE1AC(ctx, base); }
 
-uint64_t n_sub_832AF9D0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseOwnedPointersGlobal_834BE1D0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE1D0 = int32_t(0x834BE1D0);
 	if (!UseLiftedCode(146, 0x832AF9D0)) { __imp__sub_832AF9D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF9D0);
-	return n_sub_82B8C170(ctx, base, g_834BE1D0);
+	return ReleaseOwnedPointers_82B8C170(ctx, base, g_834BE1D0);
 }
-PROMOTED_ENTRY(146, sub_832AF9D0, 0x832AF9D0) { ctx.r3.u64 = n_sub_832AF9D0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF9D0, 0x832AF9D0) { ctx.r3.u64 = ReleaseOwnedPointersGlobal_834BE1D0(ctx, base); }
 
-uint64_t n_sub_832AF9E0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobal_834BEA60(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BEA60 = int32_t(0x834BEA60);
 	if (!UseLiftedCode(146, 0x832AF9E0)) { __imp__sub_832AF9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AF9E0);
 	uint64_t object = g_834BEA60;
-	return n_sub_82BA8D90(ctx, base);
+	return ReleaseGlobal_834BEA60_82BA8D90(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AF9E0, 0x832AF9E0) { ctx.r3.u64 = n_sub_832AF9E0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AF9E0, 0x832AF9E0) { ctx.r3.u64 = ReleaseGlobal_834BEA60(ctx, base); }
 
-uint64_t n_sub_832AFA10(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseAtomicGlobal_834BE5A8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE5A8 = int32_t(0x834BE5A8);
 	if (!UseLiftedCode(146, 0x832AFA10)) { __imp__sub_832AFA10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFA10);
 	uint64_t object = g_834BE5A8;
-	return n_sub_82BE4090(ctx, base);
+	return ReleaseAtomicGlobal_834BE5A8_82BE4090(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AFA10, 0x832AFA10) { ctx.r3.u64 = n_sub_832AFA10(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFA10, 0x832AFA10) { ctx.r3.u64 = ReleaseAtomicGlobal_834BE5A8(ctx, base); }
 
-uint64_t n_sub_832AFA20(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseAtomicGlobal_834BE5B0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE5B0 = int32_t(0x834BE5B0);
 	if (!UseLiftedCode(146, 0x832AFA20)) { __imp__sub_832AFA20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFA20);
 	uint64_t object = g_834BE5B0;
-	return n_sub_82BE41A8(ctx, base);
+	return ReleaseAtomicGlobal_834BE5B0_82BE41A8(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AFA20, 0x832AFA20) { ctx.r3.u64 = n_sub_832AFA20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFA20, 0x832AFA20) { ctx.r3.u64 = ReleaseAtomicGlobal_834BE5B0(ctx, base); }
 
-uint64_t n_sub_832AFA30(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseAtomicGlobal_834BE5B8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE5B8 = int32_t(0x834BE5B8);
 	if (!UseLiftedCode(146, 0x832AFA30)) { __imp__sub_832AFA30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFA30);
 	uint64_t object = g_834BE5B8;
-	return n_sub_82BE42C0(ctx, base);
+	return ReleaseAtomicGlobal_834BE5B8_82BE42C0(ctx, base);
 }
-PROMOTED_ENTRY(146, sub_832AFA30, 0x832AFA30) { ctx.r3.u64 = n_sub_832AFA30(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFA30, 0x832AFA30) { ctx.r3.u64 = ReleaseAtomicGlobal_834BE5B8(ctx, base); }
 
-uint64_t n_sub_832AFA40(CpuState& ctx, uint8_t* base) {
+uint64_t ClearHandleTargetGlobal_834BE5C0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834BE5C0 = int32_t(0x834BE5C0);
 	if (!UseLiftedCode(146, 0x832AFA40)) { __imp__sub_832AFA40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFA40);
@@ -21898,47 +21898,47 @@ uint64_t n_sub_832AFA40(CpuState& ctx, uint8_t* base) {
 	ctx.r1.u64 = stack;
 	return held;
 }
-PROMOTED_ENTRY(146, sub_832AFA40, 0x832AFA40) { ctx.r3.u64 = n_sub_832AFA40(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFA40, 0x832AFA40) { ctx.r3.u64 = ClearHandleTargetGlobal_834BE5C0(ctx, base); }
 
-uint64_t n_sub_832AFC08(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_833349EC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_833349EC = int32_t(0x833349EC);
 	if (!UseLiftedCode(146, 0x832AFC08)) { __imp__sub_832AFC08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFC08);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_833349EC);
 }
-PROMOTED_ENTRY(146, sub_832AFC08, 0x832AFC08) { ctx.r3.u64 = n_sub_832AFC08(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFC08, 0x832AFC08) { ctx.r3.u64 = ReleaseCCharStringGlobal_833349EC(ctx, base); }
 
-uint64_t n_sub_832AFC18(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_833349FC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_833349FC = int32_t(0x833349FC);
 	if (!UseLiftedCode(146, 0x832AFC18)) { __imp__sub_832AFC18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFC18);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_833349FC);
 }
-PROMOTED_ENTRY(146, sub_832AFC18, 0x832AFC18) { ctx.r3.u64 = n_sub_832AFC18(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFC18, 0x832AFC18) { ctx.r3.u64 = ReleaseCCharStringGlobal_833349FC(ctx, base); }
 
-uint64_t n_sub_832AFC28(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseCCharStringGlobal_83334A00(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83334A00 = int32_t(0x83334A00);
 	if (!UseLiftedCode(146, 0x832AFC28)) { __imp__sub_832AFC28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFC28);
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_83334A00);
 }
-PROMOTED_ENTRY(146, sub_832AFC28, 0x832AFC28) { ctx.r3.u64 = n_sub_832AFC28(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFC28, 0x832AFC28) { ctx.r3.u64 = ReleaseCCharStringGlobal_83334A00(ctx, base); }
 
-uint64_t n_sub_832AFCD0(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobal_83334A18(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83334A18 = int32_t(0x83334A18);
 	if (!UseLiftedCode(146, 0x832AFCD0)) { __imp__sub_832AFCD0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFCD0);
-	return n_sub_82C03BF0(ctx, base, g_83334A18);
+	return CallFlourishChargeTimeTwice(ctx, base, g_83334A18);
 }
-PROMOTED_ENTRY(146, sub_832AFCD0, 0x832AFCD0) { ctx.r3.u64 = n_sub_832AFCD0(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFCD0, 0x832AFCD0) { ctx.r3.u64 = ReleaseGlobal_83334A18(ctx, base); }
 
-uint64_t n_sub_832AFD20(CpuState& ctx, uint8_t* base) {
+uint64_t ReleaseGlobal_83334AA0(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83334AA0 = int32_t(0x83334AA0);
 	if (!UseLiftedCode(146, 0x832AFD20)) { __imp__sub_832AFD20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832AFD20);
-	return n_sub_82C03BF0(ctx, base, g_83334AA0);
+	return CallFlourishChargeTimeTwice(ctx, base, g_83334AA0);
 }
-PROMOTED_ENTRY(146, sub_832AFD20, 0x832AFD20) { ctx.r3.u64 = n_sub_832AFD20(ctx, base); }
+PROMOTED_ENTRY(146, sub_832AFD20, 0x832AFD20) { ctx.r3.u64 = ReleaseGlobal_83334AA0(ctx, base); }
 
 uint64_t Destroy_TXT_83334AF8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83334AF8_G_ = int32_t(0x83334AF8);

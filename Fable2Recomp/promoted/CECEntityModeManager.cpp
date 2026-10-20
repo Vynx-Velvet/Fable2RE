@@ -1,9 +1,9 @@
 // CECEntityModeManager (vtable 0x82003B58): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -98,7 +98,7 @@ uint64_t CECEntityModeManager_HasMode(CpuState& ctx, uint8_t* base, uint32_t ent
 }
 PROMOTED_ENTRY(5, sub_821FF4E0, 0x821FF4E0) { ctx.r3.u64 = CECEntityModeManager_HasMode(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82218498(CpuState& ctx, uint8_t* base, uint64_t managerAddr) {
+uint64_t CECEntityModeManager_UpdateAnimations(CpuState& ctx, uint8_t* base, uint64_t managerAddr) {
 	if (!UseLiftedCode(6, 0x82218498)) { ctx.r3.u64 = managerAddr; __imp__sub_82218498(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82218498);
 	uint32_t stack = ctx.r1.u64;
@@ -115,6 +115,8 @@ uint64_t n_sub_82218498(CpuState& ctx, uint8_t* base, uint64_t managerAddr) {
 	for (uint64_t id = 0; (int32_t)id != 10; ++id) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r7.u64 = r7Value;
+		ctx.r9.u64 = r9Value;
 		result = AnimationComponent_FindAnimation(ctx, base, foundIter, managerAddr, id);
 		r7Value = ctx.r7.u64;
 		uint32_t iterList = LOAD32(foundIter);
@@ -174,7 +176,7 @@ uint64_t n_sub_82218498(CpuState& ctx, uint8_t* base, uint64_t managerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(6, sub_82218498, 0x82218498) { ctx.r3.u64 = n_sub_82218498(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(6, sub_82218498, 0x82218498) { ctx.r3.u64 = CECEntityModeManager_UpdateAnimations(ctx, base, ctx.r3.u64); }
 
 uint64_t CECEntityModeManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820A7538_B_ = int32_t(0x820A7538);
@@ -186,7 +188,7 @@ uint64_t CECEntityModeManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(22, sub_823EEB80, 0x823EEB80) { ctx.r3.u64 = CECEntityModeManager_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t owner) {
+uint64_t CECEntityModeManager_CECEntityModeManager(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t owner) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(22, 0x823F0E18)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = owner; __imp__sub_823F0E18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F0E18);
@@ -255,9 +257,9 @@ uint64_t n_sub_823F0E18(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r1.u64 = stack;
 	return entityModeManagerAddr;
 }
-PROMOTED_ENTRY(22, sub_823F0E18, 0x823F0E18) { ctx.r3.u64 = n_sub_823F0E18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(22, sub_823F0E18, 0x823F0E18) { ctx.r3.u64 = CECEntityModeManager_CECEntityModeManager(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint64_t CECEntityModeManager_Update(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	if (!UseLiftedCode(22, 0x823F1B68)) { ctx.r3.u64 = entityModeManagerAddr; __imp__sub_823F1B68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F1B68);
@@ -311,13 +313,13 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 				ctx.r1.u64 = stack;
 				ctx.r8.u64 = r8Value;
 				ctx.xer.ca = flags.ca;
-				n_sub_823F2018(ctx, base, entityModeManagerAddr, entry, entryField8);
+				CECEntityModeManager_AddModeFromElement(ctx, base, entityModeManagerAddr, entry, entryField8);
 			} else {
 				uint64_t entryWord4 = LOAD32((uint32_t)entry + 4);
 				ctx.r1.u64 = stack;
 				ctx.r8.u64 = r8Value;
 				ctx.xer.ca = flags.ca;
-				n_sub_823F20A8(ctx, base, entityModeManagerAddr, entryWord4, entryField8);
+				CECEntityModeManager_AddMode(ctx, base, entityModeManagerAddr, entryWord4, entryField8);
 			}
 			r8Value = ctx.r8.u64;
 			flags.ca = ctx.xer.ca;
@@ -325,6 +327,7 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			entryOffset += 16;
 		}
 		ctx.r1.u64 = stack;
+		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		uint64_t released = SharedHandle_Release(ctx, base, handleAddr);
 		STORE32((uint32_t)handleAddr, 0);
@@ -337,7 +340,7 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	uint32_t linked = entityModeManager->m_4;
 	uint32_t candidateEntity = 0;
 	bool haveCandidate = false;
-	// bit 27 of the word at +44; the same register later carries the search step and goes to n_sub_823F3298 in r8
+	// bit 27 of the word at +44; the same register later carries the search step and goes to CECEntityModeManager_RebuildModes in r8
 	uint32_t r8Arg = (LOAD32(linked + 44) >> 27) & 1;
 	if (r8Arg != 0) {
 		uint32_t indexed = LOAD32(linked + 140);
@@ -389,19 +392,21 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	if ((result & 0xFF) != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
 		ctx.r8.u64 = r8Arg;
 		ctx.cr0.lt = cr0.lt;
 		ctx.cr0.gt = cr0.gt;
 		ctx.cr0.eq = cr0.eq;
 		ctx.cr0.so = cr0.so;
 		ctx.xer.ca = flags.ca;
-		n_sub_823F3298(ctx, base, entityModeManagerAddr);
+		CECEntityModeManager_RebuildModes(ctx, base, entityModeManagerAddr);
 
 		uint64_t stringAddr = entityModeManagerAddr + 52;   // the string at +0x34
 		uint64_t literalAddr = g_82000C98;
 		result = CCharString_NotEqualsEmptyOrLiteral(ctx, base, stringAddr, literalAddr);
 		if ((result & 0xFF) != 0) {
-			uint64_t updated = n_sub_823F1F88(ctx, base, entityModeManagerAddr, stringAddr);
+			uint64_t updated = CECEntityModeManager_CreateModeFromName(ctx, base, entityModeManagerAddr, stringAddr);
 			entityModeManager->m_41 = 0;
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -414,7 +419,7 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			r4Value = ctx.r4.u64;
 			if ((result & 0xFF) == 0) {
 				uint32_t mode = entityModeManager->m_3C;
-				result = n_sub_823F1EB0(ctx, base, entityModeManagerAddr, mode);
+				result = CECEntityModeManager_AddModeById(ctx, base, entityModeManagerAddr, mode);
 				r4Value = ctx.r4.u64;
 			}
 		}
@@ -426,9 +431,9 @@ uint64_t n_sub_823F1B68(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r4.u64 = r4Value;   // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F1B68, 0x823F1B68) { ctx.r3.u64 = n_sub_823F1B68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F1B68, 0x823F1B68) { ctx.r3.u64 = CECEntityModeManager_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeId) {
+uint64_t CECEntityModeManager_AddModeById(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeId) {
 	constexpr int32_t g_83497870 = int32_t(0x83497870);
 	if (!UseLiftedCode(22, 0x823F1EB0)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeId; __imp__sub_823F1EB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F1EB0);
@@ -482,7 +487,7 @@ uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			} else {
 				STORE32(iter + 4, 0u);
 			}
-			n_sub_823F2448(ctx, base, entityModeManagerAddr, iter);
+			CECEntityModeManager_AddModeHandle(ctx, base, entityModeManagerAddr, iter);
 			result = SharedHandle_Release(ctx, base, iter);
 			r4Value = ctx.r4.u64;
 			r5Value = ctx.r5.u64;
@@ -495,9 +500,9 @@ uint64_t n_sub_823F1EB0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r5.u64 = r5Value;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F1EB0, 0x823F1EB0) { ctx.r3.u64 = n_sub_823F1EB0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(22, sub_823F1EB0, 0x823F1EB0) { ctx.r3.u64 = CECEntityModeManager_AddModeById(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_823F1F88(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeNameAddr) {
+uint64_t CECEntityModeManager_CreateModeFromName(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeNameAddr) {
 	if (!UseLiftedCode(22, 0x823F1F88)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeNameAddr; __imp__sub_823F1F88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F1F88);
 	uint32_t stack = ctx.r1.u64;
@@ -522,19 +527,19 @@ uint64_t n_sub_823F1F88(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		STORE32(handleAddr + 4, 0);
 	}
 
-	n_sub_823F2338(ctx, base, entityModeManagerAddr, handleAddr);
+	CECEntityModeManager_AddModeHandleIfAbsent(ctx, base, entityModeManagerAddr, handleAddr);
 	uint64_t releaseResult = SharedHandle_Release(ctx, base, handleAddr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return releaseResult;
 }
-PROMOTED_ENTRY(22, sub_823F1F88, 0x823F1F88) { ctx.r3.u64 = n_sub_823F1F88(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(22, sub_823F1F88, 0x823F1F88) { ctx.r3.u64 = CECEntityModeManager_CreateModeFromName(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Builds a 24-byte object with n_sub_82805DC0 (a null pointer when the allocation fails), wraps it in a
 // shared handle on the stack, passes elementData to its virtual slot +16, hands the handle to
-// n_sub_823F2338 and releases it. Returns what SharedHandle_Release returns.
-uint64_t n_sub_823F2018(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t element, uint64_t elementData) {
+// CECEntityModeManager_AddModeHandleIfAbsent and releases it. Returns what SharedHandle_Release returns.
+uint64_t CECEntityModeManager_AddModeFromElement(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t element, uint64_t elementData) {
 	if (!UseLiftedCode(22, 0x823F2018)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = element; ctx.r5.u64 = elementData; __imp__sub_823F2018(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F2018);
 	CECEntityModeManager* entityModeManager = GameObject<CECEntityModeManager>(base, entityModeManagerAddr);
@@ -572,20 +577,20 @@ uint64_t n_sub_823F2018(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r10.u64 = slot16Fn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	n_sub_823F2338(ctx, base, entityModeManagerAddr, handle);
+	CECEntityModeManager_AddModeHandleIfAbsent(ctx, base, entityModeManagerAddr, handle);
 	uint64_t result = SharedHandle_Release(ctx, base, handle);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F2018, 0x823F2018) { ctx.r3.u64 = n_sub_823F2018(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(22, sub_823F2018, 0x823F2018) { ctx.r3.u64 = CECEntityModeManager_AddModeFromElement(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // Looks modeId up in the map at 0x83497870 (n_sub_823F4AA0 writes a {map, node} iterator to stack + 80).
 // When the id is in the map and the manager does not have that mode yet, the function pointer stored
 // in the node (+16) creates the mode object from m_4; the object is wrapped in a shared handle (reusing
-// stack + 80), given modeData through its virtual slot +16, handed to n_sub_823F2448 and released.
-uint64_t n_sub_823F20A8(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeId, uint64_t modeData) {
+// stack + 80), given modeData through its virtual slot +16, handed to CECEntityModeManager_AddModeHandle and released.
+uint64_t CECEntityModeManager_AddMode(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeId, uint64_t modeData) {
 	constexpr int32_t g_83497870 = int32_t(0x83497870);
 	if (!UseLiftedCode(22, 0x823F20A8)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeId; ctx.r5.u64 = modeData; __imp__sub_823F20A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F20A8);
@@ -644,9 +649,10 @@ uint64_t n_sub_823F20A8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 			callTarget.u64 = (uint64_t)slot16Fn;
 			ctx.r3.u64 = mode;
 			ctx.r4.u64 = modeData;
+			ctx.r10.u64 = slot16Fn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-			n_sub_823F2448(ctx, base, entityModeManagerAddr, iteratorAddr);
+			CECEntityModeManager_AddModeHandle(ctx, base, entityModeManagerAddr, iteratorAddr);
 			result = SharedHandle_Release(ctx, base, iteratorAddr);
 			r4Out = ctx.r4.u64;
 			r5Out = ctx.r5.u64;
@@ -659,11 +665,11 @@ uint64_t n_sub_823F20A8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r5.u64 = r5Out;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F20A8, 0x823F20A8) { ctx.r3.u64 = n_sub_823F20A8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(22, sub_823F20A8, 0x823F20A8) { ctx.r3.u64 = CECEntityModeManager_AddMode(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // If the shared handle at modeHandleAddr holds an object, asks the object for its mode id (virtual slot
-// +4) and, when the manager does not have that mode yet, hands the handle to n_sub_823F2448.
-uint32_t n_sub_823F2338(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeHandleAddr) {
+// +4) and, when the manager does not have that mode yet, hands the handle to CECEntityModeManager_AddModeHandle.
+uint32_t CECEntityModeManager_AddModeHandleIfAbsent(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeHandleAddr) {
 	if (!UseLiftedCode(22, 0x823F2338)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeHandleAddr; __imp__sub_823F2338(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823F2338);
 	uint32_t stack = ctx.r1.u64;
@@ -691,7 +697,7 @@ uint32_t n_sub_823F2338(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		r9Out = result & 0xFF;
 		if (r9Out == 0) {
 			ctx.r9.u64 = 0;	// state the callee may pass on
-			result = n_sub_823F2448(ctx, base, entityModeManagerAddr, modeHandleAddr);
+			result = CECEntityModeManager_AddModeHandle(ctx, base, entityModeManagerAddr, modeHandleAddr);
 			r4Out = ctx.r4.u64;
 			r9Out = ctx.r9.u64;
 		}
@@ -703,13 +709,13 @@ uint32_t n_sub_823F2338(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r9.u64 = r9Out;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F2338, 0x823F2338) { ctx.r3.u64 = n_sub_823F2338(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(22, sub_823F2338, 0x823F2338) { ctx.r3.u64 = CECEntityModeManager_AddModeHandleIfAbsent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // For each key 0..9, looks the key up in the mode list at +20 (AnimationComponent_FindAnimation writes a
 // {list, node} iterator to stack + 80); when the key is present, the mode object stored in the node (+8)
 // is disabled and enabled again. Returns the result of the last call made: AnimationControl_Enable when
 // key 9 is present, AnimationComponent_FindAnimation otherwise.
-uint64_t n_sub_823F23B0(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint64_t CECEntityModeManager_ReenableAllModes(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	if (!UseLiftedCode(22, 0x823F23B0)) { ctx.r3.u64 = entityModeManagerAddr; __imp__sub_823F23B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F23B0);
 	uint32_t stack = ctx.r1.u64;
@@ -722,6 +728,7 @@ uint64_t n_sub_823F23B0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	uint64_t key = 0;
 	do {
 		ctx.r1.u64 = stack;
+		ctx.r9.u64 = r9Carry;
 		result = AnimationComponent_FindAnimation(ctx, base, (uint64_t)stack + 80, entityModeManagerAddr, key);
 
 		uint32_t iteratorList = LOAD32(stack + 80);
@@ -753,21 +760,21 @@ uint64_t n_sub_823F23B0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r9.u64 = r9Carry;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F23B0, 0x823F23B0) { ctx.r3.u64 = n_sub_823F23B0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F23B0, 0x823F23B0) { ctx.r3.u64 = CECEntityModeManager_ReenableAllModes(ctx, base, ctx.r3.u64); }
 
 // Adds the mode held by the shared handle at modeHandleAddr to the manager. Skipped only when the m_4
 // table has a value under key 91, byte +65 of the manager is clear, CECNetwork_ShouldReplicateEntity
 // refuses that value and byte +107 of it is clear (the function then returns the refusal).
 // The mode's key (virtual slot +8) is looked up in the mode list at +20; an existing entry is disabled.
-// The handle is appended to the list, n_sub_823F37C0 and n_sub_823F3A10 run, and then, depending on
-// virtual slot +40, either the modes are refreshed (n_sub_823F23B0) and the value under key 58, when
+// The handle is appended to the list, CECEntityModeManager_SelectFirstAvailableMode and CECEntityModeManager_UpdateReplicatedModeName run, and then, depending on
+// virtual slot +40, either the modes are refreshed (CECEntityModeManager_ReenableAllModes) and the value under key 58, when
 // the table has one, is released, or the new mode is enabled. Returns what virtual slot +56 returns.
 //
 // The m_4 table: a presence bit per key (+40 for key 58, +44 for key 91); when the byte array at +140
 // exists it gives each key's record index, otherwise the 8-byte {key, value} records from +72 to +76,
 // sorted by key, are searched (lower bound); a key not found there reads the value word of the record
 // the end pointer (+76) points at.
-uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeHandleAddr) {
+uint32_t CECEntityModeManager_AddModeHandle(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr, uint64_t modeHandleAddr) {
 	if (!UseLiftedCode(22, 0x823F2448)) { ctx.r3.u64 = entityModeManagerAddr; ctx.r4.u64 = modeHandleAddr; __imp__sub_823F2448(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823F2448);
 	uint32_t stack = ctx.r1.u64;
@@ -883,8 +890,8 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		STORE32(stack + 80, list);
 		STORE32(stack + 84, endNode);
 		List_InsertNodeCopyRefCountedPair(ctx, base, list, LOAD64(stack + 80), modeHandleAddr);
-		n_sub_823F37C0(ctx, base, entityModeManagerAddr);
-		n_sub_823F3A10(ctx, base, entityModeManagerAddr);
+		CECEntityModeManager_SelectFirstAvailableMode(ctx, base, entityModeManagerAddr);
+		CECEntityModeManager_UpdateReplicatedModeName(ctx, base, entityModeManagerAddr);
 
 		modeObject = LOAD32((uint32_t)modeHandleAddr);
 		uint32_t vtable = LOAD32(modeObject);
@@ -898,7 +905,7 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 		if (slot40Flag != 0) {
 			ctx.r8.u64 = slot40Flag;	// state the callee may pass on
-			n_sub_823F23B0(ctx, base, entityModeManagerAddr);
+			CECEntityModeManager_ReenableAllModes(ctx, base, entityModeManagerAddr);
 			r6Carry = ctx.r6.u64;
 			r7Carry = ctx.r7.u64;
 			r8Carry = ctx.r8.u64;
@@ -951,6 +958,9 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 				hasValue58 = true;
 			}
 			if (hasValue58) {
+				ctx.r6.u64 = r6Carry;
+				ctx.r7.u64 = r7Carry;
+				ctx.r8.u64 = r8Carry;
 				ctx.xer.ca = flags.ca;
 				AnimationComponent_ReleaseAnimationControl(ctx, base, value58);
 				r6Carry = ctx.r6.u64;
@@ -989,14 +999,14 @@ uint32_t n_sub_823F2448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r4.u64 = r4Out;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F2448, 0x823F2448) { ctx.r3.u64 = n_sub_823F2448(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(22, sub_823F2448, 0x823F2448) { ctx.r3.u64 = CECEntityModeManager_AddModeHandle(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Until the mode list at +20 is empty (count m_1C), passes the id of its first mode (virtual slot +4) to
 // AnimationComponent_RemoveAnimation; then releases the shared handle at +32 and clears its pointer word
 // m_20, returning what SharedHandle_Release returns. Skipped when the m_4 table has a value under key 91
-// (lookup described at n_sub_823F2448), byte +65 of the manager is clear, CECNetwork_ShouldReplicateEntity
+// (lookup described at CECEntityModeManager_AddModeHandle), byte +65 of the manager is clear, CECNetwork_ShouldReplicateEntity
 // refuses that value and byte +107 of it is clear; the function then returns the refusal.
-uint64_t n_sub_823F30D8(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint64_t CECEntityModeManager_RemoveAllModesImpl(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	if (!UseLiftedCode(22, 0x823F30D8)) { ctx.r3.u64 = entityModeManagerAddr; __imp__sub_823F30D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F30D8);
 	uint32_t stack = ctx.r1.u64;
@@ -1113,6 +1123,9 @@ uint64_t n_sub_823F30D8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		}
 
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6Carry;
+		ctx.r7.u64 = r7Carry;
+		ctx.r8.u64 = r8Carry;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -1140,15 +1153,15 @@ uint64_t n_sub_823F30D8(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.cr0.so = compare0.so;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F30D8, 0x823F30D8) { ctx.r3.u64 = n_sub_823F30D8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F30D8, 0x823F30D8) { ctx.r3.u64 = CECEntityModeManager_RemoveAllModesImpl(ctx, base, ctx.r3.u64); }
 
-// Rebuilds the manager's modes: calls n_sub_823F30D8 (mode teardown), then builds a mode from the string
-// at +48 (n_sub_823F1F88) when CCharString_NotEqualsEmptyOrLiteral reports it differs from the literal at
-// 0x82000C98, or else the mode with id m_38 (n_sub_823F1EB0) when that id is not 0, and returns the last
-// result. Skipped when the m_4 table has a value under key 91 (lookup described at n_sub_823F2448), byte
+// Rebuilds the manager's modes: calls CECEntityModeManager_RemoveAllModesImpl (mode teardown), then builds a mode from the string
+// at +48 (CECEntityModeManager_CreateModeFromName) when CCharString_NotEqualsEmptyOrLiteral reports it differs from the literal at
+// 0x82000C98, or else the mode with id m_38 (CECEntityModeManager_AddModeById) when that id is not 0, and returns the last
+// result. Skipped when the m_4 table has a value under key 91 (lookup described at CECEntityModeManager_AddModeHandle), byte
 // +65 of the manager is clear and CECNetwork_ShouldReplicateEntity refuses that value; the function then
 // returns the refusal.
-uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint64_t CECEntityModeManager_RebuildModes(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	if (!UseLiftedCode(22, 0x823F3298)) { ctx.r3.u64 = entityModeManagerAddr; __imp__sub_823F3298(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F3298);
@@ -1221,12 +1234,14 @@ uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 
 	if (rebuild) {
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6Carry;
+		ctx.r7.u64 = r7Carry;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
 		ctx.cr0.so = compare0.so;
 		ctx.xer.ca = flags.ca;
-		n_sub_823F30D8(ctx, base, entityModeManagerAddr);
+		CECEntityModeManager_RemoveAllModesImpl(ctx, base, entityModeManagerAddr);
 		r6Carry = ctx.r6.u64;
 		r7Carry = ctx.r7.u64;
 		compare0.lt = ctx.cr0.lt;
@@ -1238,7 +1253,7 @@ uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		result = CCharString_NotEqualsEmptyOrLiteral(ctx, base, modeNameAddr, g_82000C98);
 		r8Carry = ctx.r8.u64;
 		if (((uint32_t)result & 0xFF) != 0) {
-			result = n_sub_823F1F88(ctx, base, entityModeManagerAddr, modeNameAddr);
+			result = CECEntityModeManager_CreateModeFromName(ctx, base, entityModeManagerAddr, modeNameAddr);
 			r6Carry = ctx.r6.u64;
 			r7Carry = ctx.r7.u64;
 			r8Carry = ctx.r8.u64;
@@ -1249,7 +1264,7 @@ uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 		} else {
 			uint32_t modeId = entityModeManager->m_38;
 			if (modeId != 0) {
-				result = n_sub_823F1EB0(ctx, base, entityModeManagerAddr, modeId);
+				result = CECEntityModeManager_AddModeById(ctx, base, entityModeManagerAddr, modeId);
 				r6Carry = ctx.r6.u64;
 				r7Carry = ctx.r7.u64;
 				r8Carry = ctx.r8.u64;
@@ -1272,18 +1287,18 @@ uint64_t n_sub_823F3298(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.cr0.so = compare0.so;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F3298, 0x823F3298) { ctx.r3.u64 = n_sub_823F3298(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F3298, 0x823F3298) { ctx.r3.u64 = CECEntityModeManager_RebuildModes(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823F3448(CpuState& ctx, uint8_t* base, uint64_t entityModeManager) {
+uint64_t CECEntityModeManager_RemoveAllModes(CpuState& ctx, uint8_t* base, uint64_t entityModeManager) {
 	if (!UseLiftedCode(22, 0x823F3448)) { ctx.r3.u64 = entityModeManager; __imp__sub_823F3448(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823F3448);
-	return n_sub_823F30D8(ctx, base, entityModeManager);
+	return CECEntityModeManager_RemoveAllModesImpl(ctx, base, entityModeManager);
 }
-PROMOTED_ENTRY(22, sub_823F3448, 0x823F3448) { ctx.r3.u64 = n_sub_823F3448(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F3448, 0x823F3448) { ctx.r3.u64 = CECEntityModeManager_RemoveAllModes(ctx, base, ctx.r3.u64); }
 
 // Looks up the ids below in order and assigns the value of the first entry found to the shared
 // pointer at +0x20. Returns what SharedPtr_Assign returns, or the last lookup's result if none is found.
-uint32_t n_sub_823F37C0(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint32_t CECEntityModeManager_SelectFirstAvailableMode(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	if (!UseLiftedCode(22, 0x823F37C0)) { ctx.r3.u64 = entityModeManagerAddr; __imp__sub_823F37C0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823F37C0);
 	uint32_t stack = ctx.r1.u64;
@@ -1338,13 +1353,13 @@ uint32_t n_sub_823F37C0(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F37C0, 0x823F37C0) { ctx.r3.u64 = n_sub_823F37C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F37C0, 0x823F37C0) { ctx.r3.u64 = CECEntityModeManager_SelectFirstAvailableMode(ctx, base, ctx.r3.u64); }
 
 // If bit 27 of the entity's word at +44 is set, looks up key 91 in the entity's 8-byte {key, value}
 // entries and passes the value to CECNetwork_ShouldReplicateEntity. If its result's low byte is nonzero and
 // m_20 is not null, the string at m_20 + 8 is compared with the string at +0x44; when they differ, a record built
 // from the string is passed to sub_823F6BD8 and the string at +0x44 is replaced.
-uint64_t n_sub_823F3A10(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
+uint64_t CECEntityModeManager_UpdateReplicatedModeName(CpuState& ctx, uint8_t* base, uint64_t entityModeManagerAddr) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A2BB8 = int32_t(0x820A2BB8);
 	constexpr int32_t g_820A4C1C = int32_t(0x820A4C1C);
@@ -1497,4 +1512,4 @@ uint64_t n_sub_823F3A10(CpuState& ctx, uint8_t* base, uint64_t entityModeManager
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(22, sub_823F3A10, 0x823F3A10) { ctx.r3.u64 = n_sub_823F3A10(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(22, sub_823F3A10, 0x823F3A10) { ctx.r3.u64 = CECEntityModeManager_UpdateReplicatedModeName(ctx, base, ctx.r3.u64); }

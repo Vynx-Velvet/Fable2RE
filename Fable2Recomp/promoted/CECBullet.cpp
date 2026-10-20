@@ -1,9 +1,9 @@
 // CECBullet (vtable 0x820ECD70): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -29,7 +29,7 @@ uint64_t CECBullet_GetClassName(CpuState& ctx, uint8_t* base, uint64_t className
 }
 PROMOTED_ENTRY(67, sub_82961838, 0x82961838) { ctx.r3.u64 = CECBullet_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint32_t deleteFlags) {
+uint64_t CECBullet_Destructor(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint32_t deleteFlags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(67, 0x82961898)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82961898(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82961898);
@@ -43,7 +43,7 @@ uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint3
 	if ((uint32_t)targetEntity != 0) {
 		uint32_t subHandle = LOAD32(handleAddr + 8);
 		ctx.r1.u64 = stack;
-		n_sub_82965840(ctx, base, targetEntity, subHandle);
+		CECBullet_ReleaseTargetRange(ctx, base, targetEntity, subHandle);
 		HandleTarget_Free(ctx, base, LOAD32(handleAddr + 4));
 		targetEntity = ctx.r4.u64;
 	}
@@ -78,9 +78,9 @@ uint64_t n_sub_82961898(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint3
 	ctx.r1.u64 = stack;
 	return bulletAddr;
 }
-PROMOTED_ENTRY(67, sub_82961898, 0x82961898) { ctx.r3.u64 = n_sub_82961898(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(67, sub_82961898, 0x82961898) { ctx.r3.u64 = CECBullet_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82961948(CpuState& ctx, uint8_t* base, uint32_t bulletAddr, uint64_t gameDbObject) {
+uint64_t CECBullet_SetSpeed(CpuState& ctx, uint8_t* base, uint32_t bulletAddr, uint64_t gameDbObject) {
 	constexpr int32_t str_TXT_820BC8FC_B_ = int32_t(0x820BC8FC);
 	if (!UseLiftedCode(67, 0x82961948)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = gameDbObject; __imp__sub_82961948(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82961948);
@@ -99,9 +99,9 @@ uint64_t n_sub_82961948(CpuState& ctx, uint8_t* base, uint32_t bulletAddr, uint6
 	ctx.r1.u64 = stack;
 	return floatByName;
 }
-PROMOTED_ENTRY(67, sub_82961948, 0x82961948) { ctx.r3.u64 = n_sub_82961948(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(67, sub_82961948, 0x82961948) { ctx.r3.u64 = CECBullet_SetSpeed(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
+uint64_t CECBullet_InitTrail(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t g_8349E230 = int32_t(0x8349E230);
 	if (!UseLiftedCode(67, 0x829619A0)) { ctx.r3.u64 = bulletAddr; __imp__sub_829619A0(ctx, base); return ctx.r3.u64; }
@@ -170,6 +170,10 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 		uint32_t trailEntity = LOAD32(entryValue + 16);
 		if (trailEntity != 0) {
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = r6;
+			ctx.r7.u64 = r7;
+			ctx.r8.u64 = r8;
+			ctx.r9.u64 = r9;
 			ShieldSwords_CleanupBlockTrail(ctx, base, trailEntity);
 			r6 = ctx.r6.u64;
 			r7 = ctx.r7.u64;
@@ -194,7 +198,8 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 		if (trailEntity != 0) {
 			SET_V8(ctx.v1, VLOAD((stack + 112) & ~0xFu));
 			SET_V8(ctx.v2, VLOAD((uint32_t)g_8349E230 & ~0xFu));
-			n_sub_8322BD20(ctx, base, trailEntity);
+			ctx.r9.u64 = static_cast<uint64_t>(static_cast<int64_t>(g_8349E230));
+			ParticleEmitter_SetTransform(ctx, base, trailEntity);
 		}
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 96,
@@ -215,14 +220,18 @@ uint64_t n_sub_829619A0(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 
 	uint32_t finalOwner = bullet->m_4;
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, finalOwner, bulletAddr);
+	ctx.r6.u64 = r6;
+	ctx.r7.u64 = r7;
+	ctx.r8.u64 = r8;
+	ctx.r9.u64 = r9;
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, finalOwner, bulletAddr);
 	stack = PopStackFrame(stack, 224);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_829619A0, 0x829619A0) { ctx.r3.u64 = n_sub_829619A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(67, sub_829619A0, 0x829619A0) { ctx.r3.u64 = CECBullet_InitTrail(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82961B80(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
+uint64_t CECBullet_Update(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 	if (!UseLiftedCode(67, 0x82961B80)) { ctx.r3.u64 = bulletAddr; __imp__sub_82961B80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82961B80);
 	uint32_t stack = ctx.r1.u64;
@@ -239,11 +248,11 @@ uint64_t n_sub_82961B80(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 
 	if (LOAD8(0x83496BB8u) != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82962358(ctx, base, (uint32_t)bulletAddr);
+		CECBullet_UpdateTrail(ctx, base, (uint32_t)bulletAddr);
 	}
 
 	ctx.r1.u64 = stack;
-	result = n_sub_82965540(ctx, base, bulletAddr);
+	result = CECBullet_UpdateLifetime(ctx, base, bulletAddr);
 	if (uint32_t((uint32_t)result & 0xFF) == 0) {
 		uint32_t entityId = bullet->m_4;
 		uint64_t destroyResult = Entity_DestroyImpl(ctx, base, entityId);
@@ -260,9 +269,9 @@ uint64_t n_sub_82961B80(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82961B80, 0x82961B80) { ctx.r3.u64 = n_sub_82961B80(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(67, sub_82961B80, 0x82961B80) { ctx.r3.u64 = CECBullet_Update(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t targetEntityId, uint64_t nameString) {
+uint32_t CECBullet_AddTarget(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t targetEntityId, uint64_t nameString) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(67, 0x82962170)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = targetEntityId; ctx.r5.u64 = nameString; __imp__sub_82962170(ctx, base); return ctx.r3.u32; }
@@ -370,7 +379,7 @@ uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 			STORE32(stack + 88, 0);
 			uint64_t pos = LOAD64(stack + 88);
 			ctx.r5.u64 = 1;
-			n_sub_829658F8(ctx, base, vectorObj, pos, stack + 96);
+			CECBullet_InsertTarget(ctx, base, vectorObj, pos, stack + 96);
 		}
 
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 104);
@@ -386,9 +395,9 @@ uint32_t n_sub_82962170(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82962170, 0x82962170) { ctx.r3.u64 = n_sub_82962170(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(67, sub_82962170, 0x82962170) { ctx.r3.u64 = CECBullet_AddTarget(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
+uint32_t CECBullet_UpdateTrail(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 	if (!UseLiftedCode(67, 0x82962358)) { ctx.r3.u64 = bulletAddr; __imp__sub_82962358(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82962358);
 	uint32_t stack = ctx.r1.u64;
@@ -507,9 +516,9 @@ uint32_t n_sub_82962358(CpuState& ctx, uint8_t* base, uint32_t bulletAddr) {
 	ctx.xer.ca = finalCa;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82962358, 0x82962358) { ctx.r3.u64 = n_sub_82962358(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(67, sub_82962358, 0x82962358) { ctx.r3.u64 = CECBullet_UpdateTrail(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t impactType) {
+uint32_t CECBullet_OnHit(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint64_t impactType) {
 	constexpr int32_t g_82099334 = int32_t(0x82099334);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(67, 0x82962A70)) { ctx.r3.u64 = bulletAddr; ctx.r4.u64 = impactType; __imp__sub_82962A70(ctx, base); return ctx.r3.u32; }
@@ -596,6 +605,7 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 		ctx.fpscr.disableFlushMode();
 		double fadeOut = double(LOAD_F32(uint32_t(g_82099334) + 384));
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = local5;
 		ctx.r8.u64 = local27;
 		ctx.v127 = v1Reg;
 		ctx.xer.ca = flags.ca;
@@ -650,6 +660,7 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 			flags.ca = ctx.xer.ca;
 			flag47 = false;
 		} else {
+			ctx.r8.u64 = arg2Byte;
 			result = EntityHandle_Get_825575C8(ctx, base, entityHandle);
 			v1Reg = ctx.v1;
 			flags.ca = ctx.xer.ca;
@@ -668,6 +679,8 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 			uint32_t c = LOAD32(b + 88);
 			uint32_t d = LOAD32(c + 4);
 			uint32_t e = LOAD32(d + 16);
+			ctx.r8.u64 = d;
+			ctx.r9.u64 = c;
 			uint32_t entity = EntityHandle_Get_825575C8(ctx, base, entityHandle);
 			v1Reg = ctx.v1;
 			flags.ca = ctx.xer.ca;
@@ -684,9 +697,9 @@ uint32_t n_sub_82962A70(CpuState& ctx, uint8_t* base, uint64_t bulletAddr, uint6
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82962A70, 0x82962A70) { ctx.r3.u64 = n_sub_82962A70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(67, sub_82962A70, 0x82962A70) { ctx.r3.u64 = CECBullet_OnHit(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t targetPosition) {
+uint64_t CECBullet_FindClosestBone(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t targetPosition) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(67, 0x82965358)) { ctx.r4.u64 = arg1; ctx.r5.u64 = targetPosition; __imp__sub_82965358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82965358);
@@ -786,6 +799,8 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ta
 				uint64_t stackTemp = (uint64_t)stack + 96;
 
 				ctx.r1.u64 = stack;
+				ctx.r7.u64 = reg7;
+				ctx.r8.u64 = reg8;
 				ctx.v11 = vecResult;
 				ctx.v12 = vecDiff;
 				ctx.v13 = vecLoaded;
@@ -859,9 +874,9 @@ uint64_t n_sub_82965358(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t ta
 	ctx.xer.ca = flags.ca;
 	return (uint64_t)noValue;
 }
-PROMOTED_ENTRY(67, sub_82965358, 0x82965358) { ctx.r3.u64 = n_sub_82965358(ctx, base, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(67, sub_82965358, 0x82965358) { ctx.r3.u64 = CECBullet_FindClosestBone(ctx, base, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82965540(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
+uint64_t CECBullet_UpdateLifetime(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 	constexpr int32_t g_8209FFD8 = int32_t(0x8209FFD8);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
 	if (!UseLiftedCode(67, 0x82965540)) { ctx.r3.u64 = bulletAddr; __imp__sub_82965540(ctx, base); return ctx.r3.u64; }
@@ -895,6 +910,7 @@ uint64_t n_sub_82965540(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 				EntityHandle_Release(ctx, base, handleAddr);
 			} else {
 				ctx.r1.u64 = stack;
+				ctx.r9.u64 = handleState;
 				const uint32_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 				targetStillActive = (LOAD8(target + 0x90) & 0x40) != 0;
 			}
@@ -963,10 +979,10 @@ uint64_t n_sub_82965540(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 				ctx.fpscr.disableFlushMode();
 				ctx.r1.u64 = stack;
 				if (!(cappedLife > limit)) {
-					n_sub_82547250(ctx, base, targetType, 0);
+					CECGraphicAppearance_SetState(ctx, base, targetType, 0);
 				} else {
 					ctx.fpscr.disableFlushMode();
-					n_sub_82547EC8(ctx, base, targetType, cappedLife);
+					CECGraphicAppearance_SetAlpha(ctx, base, targetType, cappedLife);
 				}
 			}
 		}
@@ -978,4 +994,4 @@ uint64_t n_sub_82965540(CpuState& ctx, uint8_t* base, uint64_t bulletAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82965540, 0x82965540) { ctx.r3.u64 = n_sub_82965540(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(67, sub_82965540, 0x82965540) { ctx.r3.u64 = CECBullet_UpdateLifetime(ctx, base, ctx.r3.u64); }

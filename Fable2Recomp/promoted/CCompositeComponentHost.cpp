@@ -1,9 +1,9 @@
 // CCompositeComponentHost (vtable 0x82006A60): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -153,7 +153,7 @@ uint64_t CCompositeComponentHost_GetTransform(CpuState& ctx, uint8_t* base, uint
 }
 PROMOTED_ENTRY(7, sub_82232B40, 0x82232B40) { ctx.r3.u64 = CCompositeComponentHost_GetTransform(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8226E918(CpuState& ctx, uint8_t* base, uint32_t compositeComponentHostAddr, uint32_t matrixAddr, double divisor) {
+uint64_t CCompositeComponentHost_SetTransformFromMatrix(CpuState& ctx, uint8_t* base, uint32_t compositeComponentHostAddr, uint32_t matrixAddr, double divisor) {
 	if (!UseLiftedCode(9, 0x8226E918)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = matrixAddr; ctx.f1.f64 = divisor; __imp__sub_8226E918(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8226E918);
 	uint32_t stack = ctx.r1.u64;
@@ -180,14 +180,14 @@ uint64_t n_sub_8226E918(CpuState& ctx, uint8_t* base, uint32_t compositeComponen
 	VSTORE(translationCopyAddr & ~0xFu, V8(translation));
 	STORE64(quatCopyAddr + 8, LOAD64(quatAddr + 8));
 
-	uint64_t result = n_sub_821DC3A8(ctx, base, translationCopyAddr, quatCopyAddr, mainComponentField2C, reciprocal);
+	uint64_t result = CCompositeComponent_SetTransform_821DC3A8(ctx, base, translationCopyAddr, quatCopyAddr, mainComponentField2C, reciprocal);
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_8226E918, 0x8226E918) { ctx.r3.u64 = n_sub_8226E918(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(9, sub_8226E918, 0x8226E918) { ctx.r3.u64 = CCompositeComponentHost_SetTransformFromMatrix(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.f1.f64); }
 
-uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t componentToRemove) {
+uint64_t CCompositeComponentHost_RemoveComponent(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t componentToRemove) {
 	if (!UseLiftedCode(10, 0x8228AD70)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = componentToRemove; __imp__sub_8228AD70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8228AD70);
 	uint32_t stack = ctx.r1.u64;
@@ -196,7 +196,7 @@ uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_821A1C60(ctx, base, compositeComponentHostAddr, componentToRemove);
+	CCompositeComponentHost_RemoveComponentFromList(ctx, base, compositeComponentHostAddr, componentToRemove);
 
 	// Pointer chain from the global at 0x83496920 through fields +0x0C, +0x58, +0x04 and +0x18; that object's
 	// virtual slot 0x58 is called (r4/r5 keep what the previous call left).
@@ -229,9 +229,9 @@ uint64_t n_sub_8228AD70(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(10, sub_8228AD70, 0x8228AD70) { ctx.r3.u64 = n_sub_8228AD70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(10, sub_8228AD70, 0x8228AD70) { ctx.r3.u64 = CCompositeComponentHost_RemoveComponent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828A7F30(CpuState& ctx, uint8_t* base, uint64_t outVector, uint64_t compositeComponentHostAddr) {
+uint64_t CCompositeComponentHost_GetPosition_828A7F30(CpuState& ctx, uint8_t* base, uint64_t outVector, uint64_t compositeComponentHostAddr) {
 	if (!UseLiftedCode(61, 0x828A7F30)) { ctx.r3.u64 = outVector; ctx.r4.u64 = compositeComponentHostAddr; __imp__sub_828A7F30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A7F30);
 	PPCRegister scratch{};
@@ -280,7 +280,7 @@ uint64_t n_sub_828A7F30(CpuState& ctx, uint8_t* base, uint64_t outVector, uint64
 	ctx.r4.u64 = mainComponentAddr;  // callers read r4 after the call
 	return outVector;
 }
-PROMOTED_ENTRY(61, sub_828A7F30, 0x828A7F30) { ctx.r3.u64 = n_sub_828A7F30(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_828A7F30, 0x828A7F30) { ctx.r3.u64 = CCompositeComponentHost_GetPosition_828A7F30(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_828A7FD8(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr) {
 	if (!UseLiftedCode(61, 0x828A7FD8)) { ctx.r3.u64 = compositeComponentHostAddr; __imp__sub_828A7FD8(ctx, base); return ctx.r3.u64; }
@@ -312,7 +312,7 @@ uint64_t n_sub_828A7FF8(CpuState& ctx, uint8_t* base, uint64_t componentHost) {
 }
 PROMOTED_ENTRY(61, sub_828A7FF8, 0x828A7FF8) { ctx.r3.u64 = n_sub_828A7FF8(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828A8018(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr) {
+uint64_t CCompositeComponentHost_RemoveAllComponents(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr) {
 	if (!UseLiftedCode(61, 0x828A8018)) { ctx.r3.u64 = compositeComponentHostAddr; __imp__sub_828A8018(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8018);
 	uint32_t stack = ctx.r1.u64;
@@ -410,15 +410,19 @@ uint64_t n_sub_828A8018(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = reg4;
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
-	uint64_t result = n_sub_82670098(ctx, base, compositeComponentHostAddr);
+	uint64_t result = CCompositeComponentHost_ReleaseComponentHandles(ctx, base, compositeComponentHostAddr);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A8018, 0x828A8018) { ctx.r3.u64 = n_sub_828A8018(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_828A8018, 0x828A8018) { ctx.r3.u64 = CCompositeComponentHost_RemoveAllComponents(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828A8100(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t visitor) {
+uint64_t CCompositeComponentHost_VisitComponents(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t visitor) {
 	if (!UseLiftedCode(61, 0x828A8100)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = visitor; __imp__sub_828A8100(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8100);
 	uint32_t stack = ctx.r1.u64;
@@ -512,15 +516,18 @@ uint64_t n_sub_828A8100(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = n_sub_8266FF90(ctx, base, compositeComponentHostAddr, visitor);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A8100, 0x828A8100) { ctx.r3.u64 = n_sub_828A8100(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_828A8100, 0x828A8100) { ctx.r3.u64 = CCompositeComponentHost_VisitComponents(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828A81F0(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
+uint64_t CCompositeComponentHost_AddComponent(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t arg2) {
 	if (!UseLiftedCode(61, 0x828A81F0)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = arg2; __imp__sub_828A81F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A81F0);
 	uint32_t stack = ctx.r1.u64;
@@ -583,15 +590,19 @@ uint64_t n_sub_828A81F0(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r5.u64 = reg5;
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
-	uint64_t result = n_sub_8266FBB0(ctx, base, compositeComponentHostAddr, arg2);
+	uint64_t result = Vector_PushBack_8266FBB0(ctx, base, compositeComponentHostAddr, arg2);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A81F0, 0x828A81F0) { ctx.r3.u64 = n_sub_828A81F0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_828A81F0, 0x828A81F0) { ctx.r3.u64 = CCompositeComponentHost_AddComponent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828A8298(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr) {
+uint64_t CCompositeComponentHost_RemoveAllComponents_828A8298(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr) {
 	if (!UseLiftedCode(61, 0x828A8298)) { ctx.r3.u64 = compositeComponentHostAddr; __imp__sub_828A8298(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8298);
 	uint32_t stack = ctx.r1.u64;
@@ -652,15 +663,19 @@ uint64_t n_sub_828A8298(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r5.u64 = reg5;
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
-	uint64_t result = n_sub_8266FC80(ctx, base, compositeComponentHostAddr);
+	uint64_t result = Vector_Clear(ctx, base, compositeComponentHostAddr);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A8298, 0x828A8298) { ctx.r3.u64 = n_sub_828A8298(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_828A8298, 0x828A8298) { ctx.r3.u64 = CCompositeComponentHost_RemoveAllComponents_828A8298(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
+uint64_t CCompositeComponentHost_RemoveComponent_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
 	if (!UseLiftedCode(61, 0x828A8330)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = component; __imp__sub_828A8330(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A8330);
 	uint32_t stack = ctx.r1.u64;
@@ -688,7 +703,7 @@ uint64_t n_sub_828A8330(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(61, sub_828A8330, 0x828A8330) { ctx.r3.u64 = n_sub_828A8330(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_828A8330, 0x828A8330) { ctx.r3.u64 = CCompositeComponentHost_RemoveComponent_828A8330(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_828A8398(CpuState& ctx, uint8_t* base, uint64_t compositeComponentHostAddr, uint64_t component) {
 	if (!UseLiftedCode(61, 0x828A8398)) { ctx.r3.u64 = compositeComponentHostAddr; ctx.r4.u64 = component; __imp__sub_828A8398(ctx, base); return ctx.r3.u64; }

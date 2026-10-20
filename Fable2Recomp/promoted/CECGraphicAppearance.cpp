@@ -1,9 +1,9 @@
 // CECGraphicAppearance (vtable 0x82003A18): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t newValue) {
+uint64_t CECGraphicAppearance_SetSaturationMask(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t newValue) {
 	constexpr int32_t g_820BE2D4 = int32_t(0x820BE2D4);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -47,20 +47,20 @@ uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 			EntityHandleList_PushBackEntity(ctx, base, entityList, entity);
 		}
 
-		// A temporary at stack+80: its first word is one value while n_sub_82202E90 runs and another afterwards.
+		// A temporary at stack+80: its first word is one value while Entity_NotifyEvent runs and another afterwards.
 		uint32_t tempAddr = stack + 80;
 		uint32_t entity = graphicAppearance->m_4;
 		uint64_t firstWordDuringCall = g_820BE2D4;
 		STORE32(tempAddr, (uint32_t)firstWordDuringCall);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		n_sub_82202E90(ctx, base, entity, tempAddr);
+		Entity_NotifyEvent(ctx, base, entity, tempAddr);
 
 		int32_t firstWordAfterBase = g_820F0000;
 		int64_t firstWordAfterCall = (int64_t)firstWordAfterBase - 1124;
 		STORE32(tempAddr, (uint32_t)firstWordAfterCall);
 		// state the callee may pass on
-		result = n_sub_82547FC0(ctx, base, graphicAppearanceAddr);
+		result = CECGraphicAppearance_NotifyEntity(ctx, base, graphicAppearanceAddr);
 		resultR4 = ctx.r4.u64;
 		resultR10 = ctx.r10.u64;
 	}
@@ -72,10 +72,10 @@ uint64_t n_sub_822B7EA8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.r10.u64 = resultR10;
 	return result;
 }
-PROMOTED_ENTRY(12, sub_822B7EA8, 0x822B7EA8) { ctx.r3.u64 = n_sub_822B7EA8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(12, sub_822B7EA8, 0x822B7EA8) { ctx.r3.u64 = CECGraphicAppearance_SetSaturationMask(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_822D91A8  [848 bytes]
-uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
+uint64_t CECGraphicAppearance_InitializeAppearance(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
 	constexpr int32_t g_822E0000 = int32_t(0x822E0000);
 	if (!UseLiftedCode(13, 0x822D91A8)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_822D91A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822D91A8);
@@ -146,6 +146,9 @@ uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 				// state the callee may pass on
 				ctx.r0.u64 = caseTarget;
 				ctx.r1.u64 = stack;
+				ctx.r6.u64 = searchEnd;
+				ctx.r7.u64 = lastLess;
+				ctx.r8.u64 = stepBytes;
 				ctx.xer.ca = flags.ca;
 				uint64_t resolved = n_sub_821D81C0(ctx, base, result, 1);
 				if (uint32_t(resolved) != 0 && (LOAD8(uint32_t(resolved) + 144) & 64) != 0) {
@@ -210,7 +213,7 @@ uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 				ctx.r0.u64 = caseTarget;
 				ctx.r1.u64 = stack;
 				ctx.xer.ca = flags.ca;
-				n_sub_828ABBA0(ctx, base, uint64_t(entryAddr));
+				CECOwnedEntity_GetOwner(ctx, base, uint64_t(entryAddr));
 				uint64_t handle = uint64_t(entryAddr) + 12;
 				uint32_t handleRef = LOAD32(entryAddr + 16);
 				uint32_t object = 0;
@@ -244,7 +247,7 @@ uint64_t n_sub_822D91A8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(13, sub_822D91A8, 0x822D91A8) { ctx.r3.u64 = n_sub_822D91A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(13, sub_822D91A8, 0x822D91A8) { ctx.r3.u64 = CECGraphicAppearance_InitializeAppearance(ctx, base, ctx.r3.u64); }
 
 // sub_82546958  [60 bytes]
 uint64_t CECGraphicAppearance_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
@@ -257,7 +260,7 @@ uint64_t CECGraphicAppearance_GetClassName(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(33, sub_82546958, 0x82546958) { ctx.r3.u64 = CECGraphicAppearance_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82546D50(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t gameDbTable) {
+uint64_t CECGraphicAppearance_LoadAppearanceSettings(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t gameDbTable) {
 	constexpr int32_t str_TXT_820BDF04_B_ = int32_t(0x820BDF04);
 	constexpr int32_t str_TXT_820BDF14_B_ = int32_t(0x820BDF14);
 	constexpr int32_t str_TXT_820BDF28_B_ = int32_t(0x820BDF28);
@@ -333,10 +336,10 @@ uint64_t n_sub_82546D50(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82546D50, 0x82546D50) { ctx.r3.u64 = n_sub_82546D50(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(33, sub_82546D50, 0x82546D50) { ctx.r3.u64 = CECGraphicAppearance_LoadAppearanceSettings(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82546EE0  [296 bytes]
-uint64_t n_sub_82546EE0(CpuState& ctx, uint8_t* base, uint64_t pAppearance, uint64_t pStream, uint32_t version) {
+uint64_t CECGraphicAppearance_SerializeAppearance(CpuState& ctx, uint8_t* base, uint64_t pAppearance, uint64_t pStream, uint32_t version) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820B0B48_B_ = int32_t(0x820B0B48);
 	constexpr int32_t str_TXT_820BDFD8_B_ = int32_t(0x820BDFD8);
@@ -366,7 +369,7 @@ uint64_t n_sub_82546EE0(CpuState& ctx, uint8_t* base, uint64_t pAppearance, uint
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
 
 		CCharString_ConstructFromCStr(ctx, base, nameString, str_TXT_820BDFD8_B_, -1);
-		n_sub_82A17140(ctx, base, nameString, pStream, pAppearance + 80);
+		TintColour_Serialize(ctx, base, nameString, pStream, pAppearance + 80);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
 
 		CCharString_ConstructFromCStr(ctx, base, nameString, str_TXT_820BDFE4_B_, -1);
@@ -392,9 +395,9 @@ uint64_t n_sub_82546EE0(CpuState& ctx, uint8_t* base, uint64_t pAppearance, uint
 	ctx.r4.u64 = resultR4;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82546EE0, 0x82546EE0) { ctx.r3.u64 = n_sub_82546EE0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
+PROMOTED_ENTRY(33, sub_82546EE0, 0x82546EE0) { ctx.r3.u64 = CECGraphicAppearance_SerializeAppearance(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82547008(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
+uint64_t CECGraphicAppearance_Destroy(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(33, 0x82547008)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_82547008(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82547008);
@@ -403,7 +406,7 @@ uint64_t n_sub_82547008(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	stack = PushStackFrame(base, stack, 144);
 
 	// Walk the list at +0xD8 (its head node is in m_DC) with a checked iterator, the pair (list, node) kept at
-	// stack+80: BreakablePieceList_RemoveById gets the global piece list and node + 16, then n_sub_8254A998
+	// stack+80: BreakablePieceList_RemoveById gets the global piece list and node + 16, then CheckedListIterator_Next
 	// takes the iterator and returns the address of the next one.
 	const uint64_t listAddr = graphicAppearanceAddr + 216;
 	uint32_t iterList = uint32_t(listAddr);
@@ -435,7 +438,7 @@ uint64_t n_sub_82547008(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		ctx.r1.u64 = stack;
 		BreakablePieceList_RemoveById(ctx, base, pieceList, uint64_t(iterNode) + 16);
 
-		uint32_t nextIteratorAddr = n_sub_8254A998(ctx, base, stack + 88, listAddr, iterator);
+		uint32_t nextIteratorAddr = CheckedListIterator_Next(ctx, base, stack + 88, listAddr, iterator);
 		iterator = LOAD64(nextIteratorAddr);
 		STORE64(stack + 80, iterator);
 		iterNode = LOAD32(stack + 84);
@@ -453,14 +456,14 @@ uint64_t n_sub_82547008(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82547008, 0x82547008) { ctx.r3.u64 = n_sub_82547008(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_82547008, 0x82547008) { ctx.r3.u64 = CECGraphicAppearance_Destroy(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_825470D8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
+uint64_t CECGraphicAppearance_Initialize(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
 	if (!UseLiftedCode(33, 0x825470D8)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_825470D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825470D8);
-	return n_sub_822D91A8(ctx, base, graphicAppearanceAddr);
+	return CECGraphicAppearance_InitializeAppearance(ctx, base, graphicAppearanceAddr);
 }
-PROMOTED_ENTRY(33, sub_825470D8, 0x825470D8) { ctx.r3.u64 = n_sub_825470D8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(33, sub_825470D8, 0x825470D8) { ctx.r3.u64 = CECGraphicAppearance_Initialize(ctx, base, ctx.r3.u64); }
 
 uint64_t DrawDistanceParams_LoadFromTable(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t drawDistanceTable) {
 	constexpr int32_t str_TXT_820BE00C_B_ = int32_t(0x820BE00C);
@@ -563,7 +566,7 @@ uint64_t DrawDistanceParams_LoadFromTable(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(33, sub_825470E0, 0x825470E0) { ctx.r3.u64 = DrawDistanceParams_LoadFromTable(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t newState) {
+uint64_t CECGraphicAppearance_SetState(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, uint64_t newState) {
 	constexpr int32_t g_820C0000 = int32_t(0x820C0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -611,13 +614,14 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	STORE32(stack + 80, (uint32_t)tempVtable);
 	STORE8(stack + 84, (uint8_t)stateByte);
 	ctx.r1.u64 = stack;
-	n_sub_82202E90(ctx, base, targetEntity, tempObjectAddr);
+	ctx.r9.u64 = tempVtable;
+	Entity_NotifyEvent(ctx, base, targetEntity, tempObjectAddr);
 
 	// Back to the base vtable 0x820EFB9C once the object is done with.
 	const uint32_t currentState = graphicAppearance->m_C5;
 	const uint64_t baseVtable = (int64_t)g_820F0000 - 1124;
 	STORE32(stack + 80, (uint32_t)baseVtable);
-	// state n_sub_82547FC0 (and the push-back below) may read; after the push-back r6-r8 are what it left
+	// state CECGraphicAppearance_NotifyEntity (and the push-back below) may read; after the push-back r6-r8 are what it left
 	ctx.r6.u64 = currentState;
 	ctx.r7.u64 = baseVtable;
 	ctx.r8.s64 = g_820F0000;
@@ -631,15 +635,15 @@ uint64_t n_sub_82547250(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 		EntityHandleList_PushBackEntity(ctx, base, entityList, entity);
 	}
 	// r4 and r10 for our callers are what this call leaves in them
-	const uint64_t result = n_sub_82547FC0(ctx, base, graphicAppearanceAddr);
+	const uint64_t result = CECGraphicAppearance_NotifyEntity(ctx, base, graphicAppearanceAddr);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82547250, 0x82547250) { ctx.r3.u64 = n_sub_82547250(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(33, sub_82547250, 0x82547250) { ctx.r3.u64 = CECGraphicAppearance_SetState(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82547320(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr, uint64_t arg2, uint64_t arg3) {
+uint32_t CECGraphicAppearance_ForEachEntryUntil(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(33, 0x82547320)) { ctx.r3.u64 = graphicAppearanceAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82547320(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82547320);
 	uint32_t stack = ctx.r1.u64;
@@ -692,9 +696,9 @@ uint32_t n_sub_82547320(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 	ctx.r9.u64 = r9Value;
 	return 0;
 }
-PROMOTED_ENTRY(33, sub_82547320, 0x82547320) { ctx.r3.u64 = n_sub_82547320(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(33, sub_82547320, 0x82547320) { ctx.r3.u64 = CECGraphicAppearance_ForEachEntryUntil(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_825473C0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr) {
+uint64_t CECGraphicAppearance_GetEntrySum(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr) {
 	if (!UseLiftedCode(33, 0x825473C0)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_825473C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825473C0);
 	uint32_t stack = ctx.r1.u64;
@@ -736,7 +740,7 @@ uint64_t n_sub_825473C0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_825473C0, 0x825473C0) { ctx.r3.u64 = n_sub_825473C0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(33, sub_825473C0, 0x825473C0) { ctx.r3.u64 = CECGraphicAppearance_GetEntrySum(ctx, base, ctx.r3.u32); }
 
 uint64_t CECGraphicAppearance_ForEach(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr) {
 	if (!UseLiftedCode(33, 0x82547590)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_82547590(ctx, base); return ctx.r3.u64; }
@@ -798,7 +802,7 @@ uint64_t CECGraphicAppearance_ForEach(CpuState& ctx, uint8_t* base, uint64_t gra
 }
 PROMOTED_ENTRY(33, sub_82547590, 0x82547590) { ctx.r3.u64 = CECGraphicAppearance_ForEach(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82547EC8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, double targetAlpha) {
+uint64_t CECGraphicAppearance_SetAlpha(CpuState& ctx, uint8_t* base, uint64_t graphicAppearanceAddr, double targetAlpha) {
 	constexpr int32_t g_820BE2BC = int32_t(0x820BE2BC);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -808,7 +812,7 @@ uint64_t n_sub_82547EC8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	CECGraphicAppearance* graphicAppearance = GameObject<CECGraphicAppearance>(base, graphicAppearanceAddr);
 	stack = PushStackFrame(base, stack, 128);
 
-	// m_70 is the alpha (n_sub_82546EE0 serializes it under that name).
+	// m_70 is the alpha (CECGraphicAppearance_SerializeAppearance serializes it under that name).
 	const double currentAlpha = double(graphicAppearance->m_70);
 	if (targetAlpha == currentAlpha) {
 		stack = PopStackFrame(stack, 128);
@@ -870,7 +874,7 @@ uint64_t n_sub_82547EC8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.r10.u64 = tempVtable;
 	ctx.f1.f64 = f1Value;
 	ctx.f13.f64 = scaledAlpha;
-	n_sub_82202E90(ctx, base, targetEntity, tempObjectAddr);
+	Entity_NotifyEvent(ctx, base, targetEntity, tempObjectAddr);
 
 	// Back to the base vtable 0x820EFB9C once the object is done with.
 	const uint64_t baseVtable = (int64_t)g_820F0000 - 1124;
@@ -878,15 +882,15 @@ uint64_t n_sub_82547EC8(CpuState& ctx, uint8_t* base, uint64_t graphicAppearance
 	ctx.r8.u64 = baseVtable;
 	ctx.r9.s64 = g_820F0000;
 	// f1 and f13 for our callers are what this call leaves in them
-	const uint64_t result = n_sub_82547FC0(ctx, base, graphicAppearanceAddr);
+	const uint64_t result = CECGraphicAppearance_NotifyEntity(ctx, base, graphicAppearanceAddr);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82547EC8, 0x82547EC8) { ctx.r3.u64 = n_sub_82547EC8(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(33, sub_82547EC8, 0x82547EC8) { ctx.r3.u64 = CECGraphicAppearance_SetAlpha(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
-uint64_t n_sub_82547FC0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr) {
+uint64_t CECGraphicAppearance_NotifyEntity(CpuState& ctx, uint8_t* base, uint32_t graphicAppearanceAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(33, 0x82547FC0)) { ctx.r3.u64 = graphicAppearanceAddr; __imp__sub_82547FC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82547FC0);
@@ -976,6 +980,10 @@ uint64_t n_sub_82547FC0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 
 			ctx.cr0 = cr0;
 			const uint64_t uniqueId = Entity_GetUniqueId(ctx, base, entity);
+			ctx.f10.f64 = tint1;
+			ctx.f11.f64 = tint0;
+			ctx.f12.f64 = tint2;
+			ctx.f13.f64 = TXT_820BDFF4_L_;
 			result = n_sub_8254AB88(ctx, base, messageTarget, uint64_t(stack) + 112, uniqueId);
 			r8Value = ctx.r8.u64;
 			cr0 = ctx.cr0;
@@ -1006,13 +1014,13 @@ uint64_t n_sub_82547FC0(CpuState& ctx, uint8_t* base, uint32_t graphicAppearance
 	ctx.xer.ca = xer.ca;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_82547FC0, 0x82547FC0) { ctx.r3.u64 = n_sub_82547FC0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(33, sub_82547FC0, 0x82547FC0) { ctx.r3.u64 = CECGraphicAppearance_NotifyEntity(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_825486C0(CpuState& ctx, uint8_t* base, uint64_t appearance, uint32_t holder) {
+uint64_t CECGraphicAppearance_CopyFromEntityComponent(CpuState& ctx, uint8_t* base, uint64_t appearance, uint32_t holder) {
 	if (!UseLiftedCode(33, 0x825486C0)) { ctx.r3.u64 = appearance; ctx.r4.u64 = holder; __imp__sub_825486C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825486C0);
 	uint32_t stack = ctx.r1.u64;
-	// r6-r8 and XER[CA] reach n_sub_82547250 through the register state: the incoming values, or what
+	// r6-r8 and XER[CA] reach CECGraphicAppearance_SetState through the register state: the incoming values, or what
 	// the binary search below leaves in them.
 	uint64_t r6Value = ctx.r6.u64;
 	uint64_t r7Value = ctx.r7.u64;
@@ -1073,17 +1081,19 @@ uint64_t n_sub_825486C0(CpuState& ctx, uint8_t* base, uint64_t appearance, uint3
 	CECGraphicAppearance* source = GameObject<CECGraphicAppearance>(base, sourceAddr);
 	const uint8_t sourceState = source->m_C5;
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = r6Value;
+	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = r8Value;
 	ctx.xer.ca = xer.ca;
-	n_sub_82547250(ctx, base, appearance, sourceState);
+	CECGraphicAppearance_SetState(ctx, base, appearance, sourceState);
 	ctx.fpscr.disableFlushMode();
 	const double sourceAlpha = double(float(double(source->m_74) * double(source->m_70)));
-	n_sub_82547EC8(ctx, base, appearance, sourceAlpha);
-	n_sub_82548598(ctx, base, appearance, uint64_t(sourceAddr) + 96);
-	const uint64_t result = n_sub_822B7EA8(ctx, base, appearance, source->m_C4);
+	CECGraphicAppearance_SetAlpha(ctx, base, appearance, sourceAlpha);
+	CECGraphicAppearance_SetTintBlock(ctx, base, appearance, uint64_t(sourceAddr) + 96);
+	const uint64_t result = CECGraphicAppearance_SetSaturationMask(ctx, base, appearance, source->m_C4);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(33, sub_825486C0, 0x825486C0) { ctx.r3.u64 = n_sub_825486C0(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(33, sub_825486C0, 0x825486C0) { ctx.r3.u64 = CECGraphicAppearance_CopyFromEntityComponent(ctx, base, ctx.r3.u64, ctx.r4.u32); }

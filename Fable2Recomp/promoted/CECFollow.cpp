@@ -1,9 +1,9 @@
 // CECFollow (vtable 0x820048A0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82263408(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint64_t CECFollow_StopFollowing(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (!UseLiftedCode(9, 0x82263408)) { ctx.r3.u64 = followAddr; __imp__sub_82263408(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82263408);
 	uint32_t stack = ctx.r1.u64;
@@ -20,7 +20,7 @@ uint64_t n_sub_82263408(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (TXT_820B3774_L_->m_15 != 0) {
 		TXT_820B3774_L_->m_15 = 0;
 		ctx.r1.u64 = stack;
-		n_sub_82456428(ctx, base, followAddr);
+		CECFollow_RemoveFollowModifier(ctx, base, followAddr);
 	}
 	ctx.r1.u64 = stack;
 	uint64_t result = CECFollow_Clear(ctx, base, followAddr);
@@ -28,7 +28,7 @@ uint64_t n_sub_82263408(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82263408, 0x82263408) { ctx.r3.u64 = n_sub_82263408(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(9, sub_82263408, 0x82263408) { ctx.r3.u64 = CECFollow_StopFollowing(ctx, base, ctx.r3.u64); }
 
 // Walks the entity-handle list at +0x24 and erases every node whose handle (at node+8: tag, then block) has
 // no block, or whose block's target word is zero (that handle is released first); nodes whose target is
@@ -110,7 +110,7 @@ PROMOTED_ENTRY(25, sub_82455ED0, 0x82455ED0) { ctx.r3.u64 = CECFollow_GetClassNa
 
 // Destructor body: releases the members, puts the base vtable back and frees the object itself when bit 0 of
 // freeFlags is set.
-uint64_t n_sub_82455F78(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t freeFlags) {
+uint64_t CECFollow_Destructor(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t freeFlags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(25, 0x82455F78)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = freeFlags; __imp__sub_82455F78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82455F78);
@@ -139,9 +139,9 @@ uint64_t n_sub_82455F78(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	ctx.r1.u64 = stack;
 	return followAddr;
 }
-PROMOTED_ENTRY(25, sub_82455F78, 0x82455F78) { ctx.r3.u64 = n_sub_82455F78(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_82455F78, 0x82455F78) { ctx.r3.u64 = CECFollow_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82455FF0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t dbRecord) {
+uint64_t CECFollow_LoadFromDB(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t dbRecord) {
 	constexpr int32_t str_TXT_820B3704_B_ = int32_t(0x820B3704);
 	if (!UseLiftedCode(25, 0x82455FF0)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = dbRecord; __imp__sub_82455FF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82455FF0);
@@ -149,7 +149,7 @@ uint64_t n_sub_82455FF0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	CECFollow* TXT_820B3774_L_ = GameObject<CECFollow>(base, followAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, TXT_820B3774_L_->m_4, followAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, TXT_820B3774_L_->m_4, followAddr);
 	if ((uint32_t)dbRecord != 0) {
 		result = GameDB_ReadBoolField_82303F38(ctx, base, dbRecord, str_TXT_820B3704_B_);
 		TXT_820B3774_L_->m_14 = (uint8_t)result;
@@ -158,14 +158,14 @@ uint64_t n_sub_82455FF0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82455FF0, 0x82455FF0) { ctx.r3.u64 = n_sub_82455FF0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_82455FF0, 0x82455FF0) { ctx.r3.u64 = CECFollow_LoadFromDB(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // When mode is 1, serializes the named follow settings through the stream (the 32-bit values at +0x0C and
 // +0x30, the float at +0x18, the bytes at +0x10, +0x11, +0x12 and +0x14), then the follow target's 8-byte id
-// through n_sub_8244DAE0: with saving set the id is taken from the entity held by the handle at +0x1C (zero
+// through UID_Serialize: with saving set the id is taken from the entity held by the handle at +0x1C (zero
 // unless that entity is flagged, see below); otherwise a new zeroed block is put in the shared handle at
 // +0x34 for the call to fill in, and m_13 is set.
-uint64_t n_sub_82456050(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t stream, uint32_t mode, uint64_t saving) {
+uint64_t CECFollow_Serialize(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t stream, uint32_t mode, uint64_t saving) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
 	constexpr int32_t str_TXT_820B3704_B_ = int32_t(0x820B3704);
@@ -258,7 +258,7 @@ uint64_t n_sub_82456050(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 			STORE64(stack + 88, LOAD64(entity + 20));
 		}
 		CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B3764_B_, -1);
-		n_sub_8244DAE0(ctx, base, stack + 88, stack + 80, stream);
+		UID_Serialize(ctx, base, stack + 88, stack + 80, stream);
 		const uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -276,20 +276,20 @@ uint64_t n_sub_82456050(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	SharedHandle_Assign(ctx, base, followAddr + 52, idBlock);
 
 	CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B3764_B_, -1);
-	n_sub_8244DAE0(ctx, base, TXT_820B3774_L_->m_34, stack + 80, stream);
+	UID_Serialize(ctx, base, TXT_820B3774_L_->m_34, stack + 80, stream);
 	const uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	TXT_820B3774_L_->m_13 = 1;
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82456050, 0x82456050) { ctx.r3.u64 = n_sub_82456050(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
+PROMOTED_ENTRY(25, sub_82456050, 0x82456050) { ctx.r3.u64 = CECFollow_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
 
-// When the shared handle at +0x34 holds an id block, looks the 8-byte id up (n_sub_82264448) and points the
+// When the shared handle at +0x34 holds an id block, looks the 8-byte id up (EntityManager_LookupEntity) and points the
 // entity handle at +0x1C at the result. If that handle then holds an entity (an empty one is released) whose
-// byte at +144 has bit 0x40 set, calls n_sub_82457468 and sets m_15 unless m_11 is set. Finally releases and
+// byte at +144 has bit 0x40 set, calls CECFollow_ApplyTargetFollowModifier and sets m_15 unless m_11 is set. Finally releases and
 // clears the shared handle.
-uint64_t n_sub_82456310(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint64_t CECFollow_ResolveFollowTarget(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(25, 0x82456310)) { ctx.r3.u64 = followAddr; __imp__sub_82456310(ctx, base); return ctx.r3.u64; }
@@ -315,7 +315,7 @@ uint64_t n_sub_82456310(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	// state the callee may pass on
 	ctx.r8.u64 = lookupSlot;
 	ctx.r10.u64 = rootChild;
-	const uint64_t target = n_sub_82264448(ctx, base, lookupObject, idBlock);
+	const uint64_t target = EntityManager_LookupEntity(ctx, base, lookupObject, idBlock);
 
 	// A temporary entity handle at stack+80 (tag, then block) is pointed at the target and copied into +0x1C.
 	constexpr int64_t handleTag = (int64_t)g_820F0000 + 5732;
@@ -348,7 +348,7 @@ uint64_t n_sub_82456310(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	}
 	if (entityFlag != 0) {
 		ctx.r10.u64 = entityFlag;  // state the callee may pass on
-		n_sub_82457468(ctx, base, followAddr);
+		CECFollow_ApplyTargetFollowModifier(ctx, base, followAddr);
 		if (TXT_820B3774_L_->m_11 == 0) {
 			TXT_820B3774_L_->m_15 = 1;
 		}
@@ -360,16 +360,16 @@ uint64_t n_sub_82456310(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82456310, 0x82456310) { ctx.r3.u64 = n_sub_82456310(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82456310, 0x82456310) { ctx.r3.u64 = CECFollow_ResolveFollowTarget(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82456420(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint64_t CECFollow_Init(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (!UseLiftedCode(25, 0x82456420)) { ctx.r3.u64 = followAddr; __imp__sub_82456420(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82456420);
 	return n_sub_82456800(ctx, base, followAddr);
 }
-PROMOTED_ENTRY(25, sub_82456420, 0x82456420) { ctx.r3.u64 = n_sub_82456420(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82456420, 0x82456420) { ctx.r3.u64 = CECFollow_Init(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82456428(CpuState& ctx, uint8_t* base, uint32_t followAddr) {
+uint64_t CECFollow_RemoveFollowModifier(CpuState& ctx, uint8_t* base, uint32_t followAddr) {
 	constexpr int32_t g_82000AF4 = int32_t(0x82000AF4);
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t str_TXT_820B3774_B_ = int32_t(0x820B3774);
@@ -398,7 +398,7 @@ uint64_t n_sub_82456428(CpuState& ctx, uint8_t* base, uint32_t followAddr) {
 
 	uint32_t statsHolder = LOAD32(LOAD32(gameGlobal + 26788) + 32);
 	ctx.r6.u64 = statsHolder;  // state the callee may pass on
-	n_sub_821BD998(ctx, base, LOAD32(statsHolder + 28), TXT_820B3774_L_->m_4, label);
+	InteractionManager_RemoveText(ctx, base, LOAD32(statsHolder + 28), TXT_820B3774_L_->m_4, label);
 
 	CCharString_ConstructFromCStr(ctx, base, tempString, str_TXT_820B3774_B_, -1);
 	ctx.r3.u64 = LOAD32(LOAD32(LOAD32(gameGlobal + 26788) + 32) + 28);  // state the callee may pass on
@@ -423,9 +423,9 @@ uint64_t n_sub_82456428(CpuState& ctx, uint8_t* base, uint32_t followAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82456428, 0x82456428) { ctx.r3.u64 = n_sub_82456428(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(25, sub_82456428, 0x82456428) { ctx.r3.u64 = CECFollow_RemoveFollowModifier(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82456E18(CpuState& ctx, uint8_t* base, uint32_t followAddr, uint32_t enabled) {
+uint64_t CECFollow_SetLevelFollowing(CpuState& ctx, uint8_t* base, uint32_t followAddr, uint32_t enabled) {
 	if (!UseLiftedCode(25, 0x82456E18)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = enabled; __imp__sub_82456E18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82456E18);
 	uint32_t stack = ctx.r1.u64;
@@ -448,7 +448,8 @@ uint64_t n_sub_82456E18(CpuState& ctx, uint8_t* base, uint32_t followAddr, uint3
 		TXT_820B3774_L_->m_10 = (uint8_t)enabled;
 		uint32_t isDisabled = ((enabled & 0xFF) == 0) ? 1 : 0;
 		ctx.r6.u64 = reg6;  // state the callee may pass on
-		result = n_sub_82391838(ctx, base, TXT_820B3774_L_->m_4, isDisabled);
+		ctx.r7.u64 = reg7;
+		result = GameEntity_SetDisabled(ctx, base, TXT_820B3774_L_->m_4, isDisabled);
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
 		reg8 = ctx.r8.u64;
@@ -461,9 +462,9 @@ uint64_t n_sub_82456E18(CpuState& ctx, uint8_t* base, uint32_t followAddr, uint3
 	ctx.r8.u64 = reg8;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82456E18, 0x82456E18) { ctx.r3.u64 = n_sub_82456E18(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(25, sub_82456E18, 0x82456E18) { ctx.r3.u64 = CECFollow_SetLevelFollowing(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82457468(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint64_t CECFollow_ApplyTargetFollowModifier(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (!UseLiftedCode(25, 0x82457468)) { ctx.r3.u64 = followAddr; __imp__sub_82457468(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82457468);
 	uint32_t stack = ctx.r1.u64;
@@ -559,7 +560,9 @@ uint64_t n_sub_82457468(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	}
 
 	ctx.r6.u64 = reg6;  // state the callee may pass on
+	ctx.r7.u64 = reg7;
 	ctx.r8.u64 = reg8;
+	ctx.r9.u64 = reg9;
 	ctx.xer.ca = xer.ca;
 	result = n_sub_82457368(ctx, base, entryValue, TXT_820B3774_L_->m_4);
 	xer.ca = ctx.xer.ca;
@@ -569,9 +572,9 @@ uint64_t n_sub_82457468(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.xer.ca = xer.ca;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82457468, 0x82457468) { ctx.r3.u64 = n_sub_82457468(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82457468, 0x82457468) { ctx.r3.u64 = CECFollow_ApplyTargetFollowModifier(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82457628(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint32_t CECFollow_RemoveFromTargetFollowerList(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	if (!UseLiftedCode(25, 0x82457628)) { ctx.r3.u64 = followAddr; __imp__sub_82457628(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82457628);
 	uint32_t stack = ctx.r1.u64;
@@ -711,9 +714,9 @@ uint32_t n_sub_82457628(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.xer.ca = xer.ca;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(25, sub_82457628, 0x82457628) { ctx.r3.u64 = n_sub_82457628(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82457628, 0x82457628) { ctx.r3.u64 = CECFollow_RemoveFromTargetFollowerList(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
+uint64_t CECFollow_UpdateFollowerCountLabel(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	constexpr int32_t str_TXT_820B3994_B_ = int32_t(0x820B3994);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -775,7 +778,10 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 
 	uint32_t managerChild = LOAD32(manager + 12);
 	ctx.r6.u64 = (uint64_t)stack + 96;  // state the callee may pass on
+	ctx.r7.u64 = (uint64_t)stack + 128;
 	ctx.r8.u64 = managerChild;
+	ctx.r10.u64 = (uint64_t)stack + 128;
+	ctx.f13.f64 = shiftedZ;
 	ctx.v7 = mergeMask;
 	ctx.v13 = shiftedZVector;
 	n_sub_821F5B90(ctx, base, (uint64_t)stack + 112, LOAD32(managerChild + 96), (int64_t)g_83490000 + 30564);
@@ -833,6 +839,20 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 
 	// The label as a wide string at stack+96.
 	ctx.r5.u64 = (uint64_t)stack + 144;  // state the callee may pass on
+	ctx.r6.u64 = (uint64_t)stack + 96;
+	ctx.f1.f64 = value2;
+	ctx.f2.f64 = scaled1;
+	ctx.f3.f64 = value3;
+	ctx.f4.f64 = value0;
+	ctx.f5.f64 = value2;
+	ctx.f6.u64 = byte2;
+	ctx.f7.u64 = byte0;
+	ctx.f8.f64 = value3;
+	ctx.f9.f64 = value1;
+	ctx.f10.f64 = scaled0;
+	ctx.f11.f64 = scaled2;
+	ctx.f12.f64 = scaled3;
+	ctx.f13.f64 = value0;
 	ctx.v10 = lane0;
 	ctx.v11 = scaledBytes;
 	ctx.v12 = lane3;
@@ -844,7 +864,7 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.v1 = ownerVector;  // state the callee may pass on
 	C_820A6754_Constructor(ctx, base, (uint64_t)stack + 160, 0x10004, stack + 112, (uint64_t)stack + 96, stack + 144, zOffset);
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, (uint64_t)stack + 96);
-	n_sub_821DDE30(ctx, base, (uint64_t)stack + 160, innerValue, 1);
+	EffectManager_AddEffect(ctx, base, (uint64_t)stack + 160, innerValue, 1);
 
 	// Release what the object at stack+160 holds (+36, +32) and reset its vtable; then the other temporaries.
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, (uint64_t)stack + 196);
@@ -857,9 +877,9 @@ uint64_t n_sub_82458698(CpuState& ctx, uint8_t* base, uint64_t followAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82458698, 0x82458698) { ctx.r3.u64 = n_sub_82458698(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82458698, 0x82458698) { ctx.r3.u64 = CECFollow_UpdateFollowerCountLabel(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t target, uint64_t flag, double deltaTime) {
+uint64_t CECFollow_ProcessTargetPosition(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint64_t target, uint64_t flag, double deltaTime) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(25, 0x824596B0)) { ctx.r3.u64 = followAddr; ctx.r4.u64 = target; ctx.r5.u64 = flag; ctx.f1.f64 = deltaTime; __imp__sub_824596B0(ctx, base); return ctx.r3.u64; }
@@ -1038,6 +1058,8 @@ uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 			if (holder != 0) {
 				uint32_t handler = LOAD32(LOAD32(holder + 4) + 100);
 				ctx.r6.u64 = r6;  // state the callee may pass on
+				ctx.r7.u64 = r7;
+				ctx.r8.u64 = r8;
 				ctx.v1 = targetVector;
 				ctx.cr0 = cr0;
 				ctx.xer.ca = xer.ca;
@@ -1072,4 +1094,4 @@ uint64_t n_sub_824596B0(CpuState& ctx, uint8_t* base, uint64_t followAddr, uint6
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824596B0, 0x824596B0) { ctx.r3.u64 = n_sub_824596B0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(25, sub_824596B0, 0x824596B0) { ctx.r3.u64 = CECFollow_ProcessTargetPosition(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }

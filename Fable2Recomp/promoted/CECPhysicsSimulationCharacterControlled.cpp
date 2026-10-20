@@ -1,9 +1,9 @@
 // CECPhysicsSimulationCharacterControlled (vtable 0x820071C0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -43,7 +43,7 @@ uint64_t n_sub_821E3D60(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	SET_V8(srcVec, VLOAD((uint32_t)vectorSrcPtr & ~0xF));
 
 	uint32_t secondaryObject = character->m_4;
-	double value = n_sub_82207928(ctx, base, secondaryObject);
+	double value = Game_GetDeltaTime(ctx, base, secondaryObject);
 
 	int32_t f32Base = g_820A0000;
 	int32_t f64Base = g_83320000;
@@ -147,7 +147,7 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		carriedR3 = physicsSimulationCharacterControlled->m_4;
 		// state the callee may pass on
 		ctx.f1.f64 = carriedF1;
-		carriedF1 = n_sub_82207928(ctx, base, carriedR3);
+		carriedF1 = Game_GetDeltaTime(ctx, base, carriedR3);
 		carriedR9 = ctx.r9.u64;
 		carriedF13 = ctx.f13.f64;
 
@@ -217,6 +217,7 @@ uint32_t n_sub_82201E58(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 					}
 				} else {
 					// The handle's target is gone: release the handle.
+					ctx.f1.f64 = carriedF1;
 					ctx.v13 = carriedV13;
 					carriedR3 = EntityHandle_Release(ctx, base, handleAddr);
 					carriedR4 = ctx.r4.u64;
@@ -323,6 +324,11 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		// state the callee may pass on
 		ctx.r3.u64 = objD;
 		ctx.r4.u64 = vectorPtr;
+		ctx.r6.u64 = method64;
+		ctx.r7.u64 = objDVtable;
+		ctx.r8.u64 = objC;
+		ctx.r9.u64 = objB;
+		ctx.r10.u64 = objA;
 		ctx.f1.f64 = carriedF1;
 		ctx.f13.f64 = carriedF13;
 		ctx.v13 = carriedV13;
@@ -334,7 +340,7 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		carriedV13 = ctx.v13;
 
 		carriedR5 = physicsSimulationCharacterControlled->m_4;
-		carriedF1 = n_sub_82207928(ctx, base, uint32_t(carriedR5));
+		carriedF1 = Game_GetDeltaTime(ctx, base, uint32_t(carriedR5));
 		carriedF13 = ctx.f13.f64;
 		uint32_t carriedR4 = uint32_t(g_83320000);
 		const uint32_t initialHead = LOAD32(listOwner + 4);
@@ -355,6 +361,7 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 				uint64_t carriedR9 = LOAD32(handleRecord);
 				if ((uint32_t)carriedR9 == 0) {
 					// The handle's target is gone: release the handle.
+					ctx.f1.f64 = carriedF1;
 					carriedR3 = EntityHandle_Release(ctx, base, handleAddr);
 					carriedR4 = ctx.r4.u32;
 					carriedR5 = ctx.r5.u64;
@@ -368,6 +375,7 @@ uint32_t n_sub_82202B80(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 					if (record != 0) {
 						target = LOAD32(record);
 						if (target == 0) {
+							ctx.f1.f64 = carriedF1;
 							EntityHandle_Release(ctx, base, handleAddr);
 							carriedR9 = ctx.r9.u64;
 							carriedF13 = ctx.f13.f64;
@@ -495,7 +503,7 @@ uint32_t n_sub_8222E7D0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 PROMOTED_ENTRY(6, sub_8222E7D0, 0x8222E7D0) { ctx.r3.u64 = n_sub_8222E7D0(ctx, base, ctx.r3.u64); }
 
 // sub_8229E5F8  [216 bytes]
-uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t targetAddr) {
+uint64_t CECPhysicsSimulationCharacterControlled_SetTargetEntity(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t targetAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(11, 0x8229E5F8)) { ctx.r3.u64 = physicsSimulationCharacterControlledAddr; ctx.r4.u64 = targetAddr; __imp__sub_8229E5F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8229E5F8);
@@ -539,11 +547,13 @@ uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	// Iterators are (list, element pointer) pairs.
 	uint64_t endIterator = LOAD64(stack + 88);
 	uint64_t beginIterator = LOAD64(stack + 96);
-	uint32_t foundIterAddr = n_sub_822C0268(ctx, base, stack + 112, beginIterator, endIterator, entityHandle);
+	ctx.r7.u64 = rangeBegin;
+	ctx.r9.u64 = rangeEnd;
+	uint32_t foundIterAddr = EntityHandleList_Find_822C0268(ctx, base, stack + 112, beginIterator, endIterator, entityHandle);
 
 	uint64_t initialEndIterator = LOAD64(stack + 104);
 	uint64_t foundIterator = LOAD64(foundIterAddr);
-	n_sub_8268A050(ctx, base, stack + 104, characterList, foundIterator, initialEndIterator);
+	EntityHandleList_Erase_8268A050(ctx, base, stack + 104, characterList, foundIterator, initialEndIterator);
 
 	STORE32(entityHandle, (uint32_t)entityHandleVtable);
 	uint64_t result = EntityHandle_Release(ctx, base, entityHandle);
@@ -552,10 +562,10 @@ uint64_t n_sub_8229E5F8(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_8229E5F8, 0x8229E5F8) { ctx.r3.u64 = n_sub_8229E5F8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(11, sub_8229E5F8, 0x8229E5F8) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_SetTargetEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_8229E6D0 = Lua_PhysicsCharacter_SetAsAbleToPushCharacters (Lua PhysicsCharacter.SetAsAbleToPushCharacters)  [128 bytes]
-uint64_t n_sub_8229E6D0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t canPushCharacters) {
+uint64_t Lua_PhysicsCharacter_SetAsAbleToPushCharacters(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t canPushCharacters) {
 	if (!UseLiftedCode(11, 0x8229E6D0)) { ctx.r3.u64 = physicsSimulationCharacterControlledAddr; ctx.r4.u64 = canPushCharacters; __imp__sub_8229E6D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8229E6D0);
 	uint32_t stack = ctx.r1.u64;
@@ -568,12 +578,12 @@ uint64_t n_sub_8229E6D0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	if (canPush != 0) {
 		if (character->m_AA == 0) {
 			ctx.r1.u64 = stack;
-			result = n_sub_8229E750(ctx, base, physicsSimulationCharacterControlledAddr, physicsSimulationCharacterControlledAddr + 240, physicsSimulationCharacterControlledAddr + 84);
+			result = PhysicsCharacter_AddToPushList(ctx, base, physicsSimulationCharacterControlledAddr, physicsSimulationCharacterControlledAddr + 240, physicsSimulationCharacterControlledAddr + 84);
 			r4Out = ctx.r4.u64;
 		}
 	} else if (character->m_AA != 0) {
 		ctx.r1.u64 = stack;
-		result = n_sub_8229E5F8(ctx, base, physicsSimulationCharacterControlledAddr, physicsSimulationCharacterControlledAddr + 240);
+		result = CECPhysicsSimulationCharacterControlled_SetTargetEntity(ctx, base, physicsSimulationCharacterControlledAddr, physicsSimulationCharacterControlledAddr + 240);
 		r4Out = ctx.r4.u64;
 	}
 	character->m_AA = canPush;
@@ -583,7 +593,7 @@ uint64_t n_sub_8229E6D0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r4.u64 = r4Out;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_8229E6D0, 0x8229E6D0) { ctx.r3.u64 = n_sub_8229E6D0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(11, sub_8229E6D0, 0x8229E6D0) { ctx.r3.u64 = Lua_PhysicsCharacter_SetAsAbleToPushCharacters(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CECPhysicsSimulationCharacterControlled_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8908_B_ = int32_t(0x820C8908);
@@ -597,7 +607,7 @@ PROMOTED_ENTRY(67, sub_82958CD0, 0x82958CD0) { ctx.r3.u64 = CECPhysicsSimulation
 
 // Stores the requested max height into the controlled-physics object (+56) of the object returned by virtual
 // slot 92, when that object passes the physics-component check.
-uint64_t n_sub_82959178(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, double maxHeight) {
+uint64_t CECPhysicsSimulationCharacterControlled_SetMaxHeight(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, double maxHeight) {
 	if (!UseLiftedCode(67, 0x82959178)) { ctx.r3.u64 = physicsSimulationCharacterControlledAddr; ctx.f1.f64 = maxHeight; __imp__sub_82959178(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82959178);
 	CECPhysicsSimulationCharacterControlled* physicsSimulationCharacterControlled = GameObject<CECPhysicsSimulationCharacterControlled>(base, physicsSimulationCharacterControlledAddr);
@@ -627,11 +637,11 @@ uint64_t n_sub_82959178(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82959178, 0x82959178) { ctx.r3.u64 = n_sub_82959178(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(67, sub_82959178, 0x82959178) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_SetMaxHeight(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // Applies the requested friction to the controlled-physics object (+56) of the object returned by virtual
 // slot 92, when that object passes the physics-component check.
-uint64_t n_sub_829591E0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, double friction) {
+uint64_t CECPhysicsSimulationCharacterControlled_SetFriction(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, double friction) {
 	if (!UseLiftedCode(67, 0x829591E0)) { ctx.r3.u64 = physicsSimulationCharacterControlledAddr; ctx.f1.f64 = friction; __imp__sub_829591E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829591E0);
 	CECPhysicsSimulationCharacterControlled* physicsSimulationCharacterControlled = GameObject<CECPhysicsSimulationCharacterControlled>(base, physicsSimulationCharacterControlledAddr);
@@ -662,11 +672,11 @@ uint64_t n_sub_829591E0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_829591E0, 0x829591E0) { ctx.r3.u64 = n_sub_829591E0(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(67, sub_829591E0, 0x829591E0) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_SetFriction(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // Reads the character height and 2D radius from the game data (defaults 1.8 and 0.4), builds a C_82006BC8
 // object from them, gives it a body component and keeps it at +32 before the remaining setup.
-uint64_t n_sub_82959408(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t gameDbDefinition, uint64_t arg3, double floatArg1) {
+uint64_t CECPhysicsSimulationCharacterControlled_InitializeFromDefinition(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationCharacterControlledAddr, uint64_t gameDbDefinition, uint64_t arg3, double floatArg1) {
 	constexpr int32_t g_82006818 = int32_t(0x82006818);
 	constexpr int32_t g_820B0000 = int32_t(0x820B0000);  // base for 0x820A81F4 below, not a string pointer
 	constexpr int32_t str_TXT_820CA624_B_ = int32_t(0x820CA624);
@@ -707,7 +717,7 @@ uint64_t n_sub_82959408(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	}
 
 	// stack + 84 is reused: it receives the value read for the physics file field
-	n_sub_8281BB38(ctx, base, stack + 84, gameDbDefinition, str_TXT_820CA624_B_);
+	GameDB_GetPropertyByName(ctx, base, stack + 84, gameDbDefinition, str_TXT_820CA624_B_);
 
 	uint64_t bodyComponentAlloc = operator_new(ctx, base, 120);
 	// r5..r8 handed to AddDefinition: what operator_new left in them, or the constants the original computed while building the component
@@ -762,7 +772,7 @@ uint64_t n_sub_82959408(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 
 	SharedHandle_Assign_824F0958(ctx, base, physicsSimulationCharacterControlledAddr + 32, physicsObject);
 
-	n_sub_824C4D28(ctx, base, physicsSimulationCharacterControlledAddr, gameDbDefinition, arg3, ctx.r6.u64, ctx.f1.f64);
+	CECPhysicsSimulationCharacterControlled_LoadInteractionSettings(ctx, base, physicsSimulationCharacterControlledAddr, gameDbDefinition, arg3, ctx.r6.u64, ctx.f1.f64);
 
 	uint64_t sharedObjectAlloc = operator_new(ctx, base, 8);
 	uint64_t sharedObject = 0;
@@ -776,26 +786,26 @@ uint64_t n_sub_82959408(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	n_sub_821DA6D8(ctx, base, physicsObject, physicsSimulationCharacterControlled->m_130, 13);
 	physicsSimulationCharacterControlled->m_B0 = 13u;
 
-	uint64_t result = n_sub_829592C0(ctx, base, physicsSimulationCharacterControlledAddr);
+	uint64_t result = CECPhysicsSimulationCharacterControlled_ApplyPhysicsSettings(ctx, base, physicsSimulationCharacterControlledAddr);
 
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82959408, 0x82959408) { ctx.r3.u64 = n_sub_82959408(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(67, sub_82959408, 0x82959408) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_InitializeFromDefinition(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
 
-uint64_t n_sub_829595E0(CpuState& ctx, uint8_t* base, uint64_t character) {
+uint64_t CECPhysicsSimulationCharacterControlled_Update(CpuState& ctx, uint8_t* base, uint64_t character) {
 	if (!UseLiftedCode(67, 0x829595E0)) { ctx.r3.u64 = character; __imp__sub_829595E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829595E0);
-	return n_sub_824C4F60(ctx, base, character);
+	return PhysicsSimulationCharacter_Update(ctx, base, character);
 }
-PROMOTED_ENTRY(67, sub_829595E0, 0x829595E0) { ctx.r3.u64 = n_sub_829595E0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(67, sub_829595E0, 0x829595E0) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_829595E8(CpuState& ctx, uint8_t* base, uint64_t character) {
+uint64_t CECPhysicsSimulationCharacterControlled_Initialize(CpuState& ctx, uint8_t* base, uint64_t character) {
 	if (!UseLiftedCode(67, 0x829595E8)) { ctx.r3.u64 = character; __imp__sub_829595E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x829595E8);
 	GameStackFrame stackFrame(ctx, base, 96);
-	n_sub_824C5290(ctx, base, character);
-	return n_sub_829592C0(ctx, base, character);
+	PhysicsSimulationCharacter_Initialize(ctx, base, character);
+	return CECPhysicsSimulationCharacterControlled_ApplyPhysicsSettings(ctx, base, character);
 }
-PROMOTED_ENTRY(67, sub_829595E8, 0x829595E8) { ctx.r3.u64 = n_sub_829595E8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(67, sub_829595E8, 0x829595E8) { ctx.r3.u64 = CECPhysicsSimulationCharacterControlled_Initialize(ctx, base, ctx.r3.u64); }

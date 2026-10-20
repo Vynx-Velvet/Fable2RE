@@ -1,9 +1,9 @@
 // CECWorldMapInfo (vtable 0x82002F08): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -23,17 +23,17 @@ uint64_t CECWorldMapInfo_GetClassName(CpuState& ctx, uint8_t* base, uint64_t cla
 PROMOTED_ENTRY(60, sub_8288D708, 0x8288D708) { ctx.r3.u64 = CECWorldMapInfo_GetClassName(ctx, base, ctx.r3.u64); }
 
 // sub_828907F0  [4 bytes]
-uint64_t n_sub_828907F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint64_t CECWorldMapInfo_Update(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	if (!UseLiftedCode(60, 0x828907F0)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_828907F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828907F0);
-	return n_sub_82890A80(ctx, base, worldMapInfoAddr);
+	return CECWorldMapInfo_UpdateInternal(ctx, base, worldMapInfoAddr);
 }
-PROMOTED_ENTRY(60, sub_828907F0, 0x828907F0) { ctx.r3.u64 = n_sub_828907F0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828907F0, 0x828907F0) { ctx.r3.u64 = CECWorldMapInfo_Update(ctx, base, ctx.r3.u64); }
 
 // Unless the word at +156 is set: for each record of the region-info list whose string field is not empty,
 // collects the keys of its sub-region entries into a temporary list and hands that list to the entry of the
 // map at +148 keyed by the record's key.
-uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uint64_t incomingR8) {
+uint64_t CECWorldMapInfo_BuildSubRegionMap(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uint64_t incomingR8) {
 	constexpr int32_t str_TXT_820C0000_B_ = int32_t(0x820C0000);
 	constexpr int32_t str_TXT_820DFCD8_B_ = int32_t(0x820DFCD8);
 	constexpr int32_t str_TXT_820DFCE8_B_ = int32_t(0x820DFCE8);
@@ -62,10 +62,10 @@ uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 		ctx.r1.u64 = stack;
 		ctx.r8.u64 = incomingR8;  // state the callee may pass on
 		uint64_t regionInfoHash = String_HashFnv1(ctx, base, uint64_t(str_TXT_820DFCD8_B_), 0xFFFFFFFF811C9DC5ull);
-		result = n_sub_829FB108(ctx, base, objectDb, regionInfoHash);
+		result = HashMap_FindByHash(ctx, base, objectDb, regionInfoHash);
 		r4ForCallers = result;
 		if ((uint32_t)result != 0) {
-			n_sub_829FBC40(ctx, base, stack + 120, result, ctx.r8.u64);
+			GameDB_GetArrayField(ctx, base, stack + 120, result, ctx.r8.u64);
 			uint64_t r4Value = ctx.r4.u64;
 			uint32_t i = LOAD32(stack + 128);
 			uint32_t endIdx = LOAD32(stack + 124);
@@ -91,17 +91,17 @@ uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 					uint64_t record = HashMapU32_FindValue(ctx, base, db, r4Value);
 					r8Value = ctx.r8.u64;
 					if ((uint32_t)record != 0) {
-						uint64_t fieldString = n_sub_82345978(ctx, base, record, stringFieldName);
+						uint64_t fieldString = GameDB_GetStringField(ctx, base, record, stringFieldName);
 						CCharString_ConstructFromCStr(ctx, base, stack + 80, fieldString, -1);
 						uint32_t stringData = LOAD32(stack + 80);
 						if (stringData != 0 && (int32_t)LOAD32(stringData + 4) != 0) {
 							ctx.r3.u64 = thisAddr;  // state the callee may pass on
-							uint32_t regionKey = n_sub_828924A8(ctx, base, stack + 80);
+							uint32_t regionKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 80);
 							STORE32(stack + 92, regionKey);
 							RbTree_InitEmptyNode12(ctx, base, stack + 104);
 							uint64_t TXT_820DFCE8_L_ = GameDB_ReadU32Field(ctx, base, record, subRegionsFieldName);
 							if ((uint32_t)TXT_820DFCE8_L_ != 0) {
-								n_sub_829FBC40(ctx, base, stack + 120, TXT_820DFCE8_L_, ctx.r8.u64);
+								GameDB_GetArrayField(ctx, base, stack + 120, TXT_820DFCE8_L_, ctx.r8.u64);
 								uint32_t subR4 = ctx.r4.u32;
 								uint64_t subR6 = ctx.r6.u64;
 								uint32_t j = LOAD32(stack + 128);
@@ -119,7 +119,7 @@ uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 										ctx.r6.u64 = subR6;  // state the callee may pass on
 										CCharString_ConstructFromCStr(ctx, base, stack + 84, subRegionCStr, -1);
 										ctx.r3.u64 = thisAddr;  // state the callee may pass on
-										uint32_t subRegionKey = n_sub_828924A8(ctx, base, stack + 84);
+										uint32_t subRegionKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 84);
 										STORE32(stack + 88, subRegionKey);
 										STORE32(stack + 100, LOAD32(stack + 108));
 										List_InsertAfter12(ctx, base, stack + 104, LOAD64(stack + 96), stack + 88);
@@ -153,8 +153,8 @@ uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 								HandleTarget_Free(ctx, base, subBase);
 								STORE32(stack + 120, 0);
 							}
-							uint64_t listHead = n_sub_8266CFD8(ctx, base, worldMapInfo + 148, stack + 92);
-							n_sub_823434E8(ctx, base, listHead, stack + 104);
+							uint64_t listHead = HashMap_FindOrCreateList(ctx, base, worldMapInfo + 148, stack + 92);
+							List_Assign(ctx, base, listHead, stack + 104);
 							List_ClearFreeNodes(ctx, base, stack + 104);
 							HandleTarget_Free(ctx, base, LOAD32(stack + 108));
 							STORE32(stack + 108, 0);
@@ -196,31 +196,31 @@ uint64_t n_sub_828907F8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 	ctx.r4.u64 = r4ForCallers;  // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(60, sub_828907F8, 0x828907F8) { ctx.r3.u64 = n_sub_828907F8(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(60, sub_828907F8, 0x828907F8) { ctx.r3.u64 = CECWorldMapInfo_BuildSubRegionMap(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82890A80(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint64_t CECWorldMapInfo_UpdateInternal(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	if (!UseLiftedCode(60, 0x82890A80)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82890A80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82890A80);
 	GameStackFrame stackFrame(ctx, base, 96);
-	n_sub_82890ED8(ctx, base, worldMapInfoAddr);
-	n_sub_82890AF8(ctx, base, worldMapInfoAddr);
-	n_sub_828914E8(ctx, base, worldMapInfoAddr);
-	n_sub_82891118(ctx, base, worldMapInfoAddr);
-	n_sub_82891898(ctx, base, worldMapInfoAddr);
-	n_sub_828919F0(ctx, base, worldMapInfoAddr);
-	n_sub_82891B48(ctx, base, worldMapInfoAddr);
-	n_sub_82891E10(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateRegionValueSums(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateRegionOwnedObjects(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_RefreshBuildingNameMap48(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_RefreshBuildingNameMap36(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateType40Count(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateType95Count(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateAcceptedType192Count(ctx, base, worldMapInfoAddr);
+	CECWorldMapInfo_UpdateGargoyleTotals(ctx, base, worldMapInfoAddr);
 	n_sub_82892040(ctx, base, worldMapInfoAddr);
-	return n_sub_82892198(ctx, base, worldMapInfoAddr);
+	return CECWorldMapInfo_UpdateSilverKeyTotals(ctx, base, worldMapInfoAddr);
 }
-PROMOTED_ENTRY(60, sub_82890A80, 0x82890A80) { ctx.r3.u64 = n_sub_82890A80(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82890A80, 0x82890A80) { ctx.r3.u64 = CECWorldMapInfo_UpdateInternal(ctx, base, ctx.r3.u64); }
 
-// When the string copied from the object chain below is not empty: for each object n_sub_82792138 returns,
+// When the string copied from the object chain below is not empty: for each object ObjectQuery_Execute returns,
 // reads the value for key 67 and the entity handle for key 66 from the object's sorted 8-byte key/value
 // table; when that entity exists and has bit 0x40 set in its byte at +144, the hash of the string made from
 // the key-67 value goes into a temporary list. The entry of the map at +24 keyed by the copied string's key
 // is cleared and then given that list.
-uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
+uint32_t CECWorldMapInfo_UpdateRegionOwnedObjects(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(60, 0x82890AF8)) { ctx.r3.u64 = worldMapInfo; __imp__sub_82890AF8(ctx, base); return ctx.r3.u32; }
@@ -246,7 +246,7 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	uint32_t charData = LOAD32(stack + 80);
 	if (charData != 0 && LOAD32(charData + 4) != 0) {
 		ctx.r3.u64 = (uint32_t)worldMapInfo;  // state the callee may pass on
-		uint32_t listKey = n_sub_828924A8(ctx, base, stack + 80);
+		uint32_t listKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 80);
 		STORE32(stack + 84, listKey);
 
 		RbTree_InitEmptyNode12(ctx, base, stack + 144);
@@ -262,10 +262,12 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 		uint32_t field88Item = LOAD32(managerField88 + 4);
 		uint32_t queryTarget = LOAD32(field88Item + 12);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, queryTarget, stack + 88, 1u, stack + 128, managerField88);
+		ctx.r7.u64 = field88Item;
+		ctx.r9.u64 = manager2;
+		ObjectQuery_Execute(ctx, base, queryTarget, stack + 88, 1u, stack + 128, managerField88);
 		flags.ca = ctx.xer.ca;
 
-		// r5..r9 as the register file holds them; handed on to EntityHandle_GetEntity and n_sub_82892770
+		// r5..r9 as the register file holds them; handed on to EntityHandle_GetEntity and HashMap_FindOrCreateList_82892770
 		uint64_t reg5 = ctx.r5.u64;
 		uint64_t reg6 = ctx.r6.u64;
 		uint64_t reg7 = ctx.r7.u64;
@@ -395,6 +397,11 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 					}
 					if (haveEntityHandle) {
 						// state the callee may pass on
+						ctx.r5.u64 = reg5;
+						ctx.r6.u64 = reg6;
+						ctx.r7.u64 = reg7;
+						ctx.r8.u64 = reg8;
+						ctx.r9.u64 = reg9;
 						ctx.xer.ca = flags.ca;
 						uint32_t entity = EntityHandle_GetEntity(ctx, base, entityHandle);
 						reg5 = ctx.r5.u64;
@@ -403,7 +410,7 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 						reg8 = ctx.r8.u64;
 						flags.ca = ctx.xer.ca;
 						if (entity != 0 && (LOAD8(entity + 144) & 64) != 0) {
-							uint32_t buildingNameString = n_sub_8274D188(ctx, base, stack + 88, valueFor67);
+							uint32_t buildingNameString = GetBuildingNameString(ctx, base, stack + 88, valueFor67);
 							StringHash_FromCharString(ctx, base, stack + 92, buildingNameString, ctx.r8.u64);
 							CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 							uint32_t listTail = LOAD32(stack + 148);
@@ -424,11 +431,13 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 
 		uint64_t mapAddr = worldMapInfo + 24;
 		// state the callee may pass on
+		ctx.r5.u64 = reg5;
+		ctx.r6.u64 = reg6;
 		ctx.xer.ca = flags.ca;
-		uint32_t keyedList = n_sub_82892770(ctx, base, mapAddr, stack + 84);
+		uint32_t keyedList = HashMap_FindOrCreateList_82892770(ctx, base, mapAddr, stack + 84);
 		List_ClearFreeNodes(ctx, base, keyedList);
-		uint64_t keyedListAgain = n_sub_82892770(ctx, base, mapAddr, stack + 84);
-		n_sub_824FDF98(ctx, base, keyedListAgain, stack + 144);
+		uint64_t keyedListAgain = HashMap_FindOrCreateList_82892770(ctx, base, mapAddr, stack + 84);
+		List_Assign_824FDF98(ctx, base, keyedListAgain, stack + 144);
 		if (arrayBegin != 0) {
 			HandleTarget_Free(ctx, base, arrayBegin);
 		}
@@ -464,12 +473,12 @@ uint32_t n_sub_82890AF8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	ctx.r1.u64 = stack;
 	return releaseResult;
 }
-PROMOTED_ENTRY(60, sub_82890AF8, 0x82890AF8) { ctx.r3.u64 = n_sub_82890AF8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82890AF8, 0x82890AF8) { ctx.r3.u64 = CECWorldMapInfo_UpdateRegionOwnedObjects(ctx, base, ctx.r3.u64); }
 
 // When the string copied from the object chain below is not empty: sums n_sub_82852A68 over the value for
-// key 170 of each object n_sub_82792138 returns (objects whose bit 10 at +56 is set), and stores the sum in
+// key 170 of each object ObjectQuery_Execute returns (objects whose bit 10 at +56 is set), and stores the sum in
 // the slot of the map at +12 keyed by the copied string's key.
-uint32_t n_sub_82890ED8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateRegionValueSums(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(60, 0x82890ED8)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82890ED8(ctx, base); return ctx.r3.u32; }
@@ -495,7 +504,7 @@ uint32_t n_sub_82890ED8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	uint32_t stringData = LOAD32(stack + 80);
 	if (stringData != 0 && (int32_t)LOAD32(stringData + 4) != 0) {
 		ctx.r3.u64 = (uint32_t)worldMapInfoAddr;  // state the callee may pass on
-		uint32_t stringKey = n_sub_828924A8(ctx, base, stack + 80);
+		uint32_t stringKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 80);
 
 		uint32_t managerHolder = LOAD32(globalBase + 26912);
 		STORE32(stack + 96, stringKey);
@@ -509,7 +518,9 @@ uint32_t n_sub_82890ED8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		uint32_t field88Item = LOAD32(managerField88 + 4);
 		uint32_t queryTarget = LOAD32(field88Item + 12);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, queryTarget, stack + 88, 3, stack + 112, managerField88);
+		ctx.r7.u64 = field88Item;
+		ctx.r9.u64 = manager2;
+		ObjectQuery_Execute(ctx, base, queryTarget, stack + 88, 3, stack + 112, managerField88);
 		flags.ca = ctx.xer.ca;
 
 		// r6..r8 as the register file holds them; handed on to n_sub_82852A68
@@ -592,6 +603,10 @@ uint32_t n_sub_82890ED8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 				if (haveValue) {
 					uint32_t field4 = worldMapInfo->m_4;
 					// state the callee may pass on
+					ctx.r6.u64 = reg6;
+					ctx.r7.u64 = reg7;
+					ctx.r8.u64 = reg8;
+					ctx.r9.u64 = reg9;
 					ctx.xer.ca = flags.ca;
 					uint32_t added = n_sub_82852A68(ctx, base, value, field4);
 					reg6 = ctx.r6.u32;
@@ -640,9 +655,9 @@ uint32_t n_sub_82890ED8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return releaseResult;
 }
-PROMOTED_ENTRY(60, sub_82890ED8, 0x82890ED8) { ctx.r3.u64 = n_sub_82890ED8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82890ED8, 0x82890ED8) { ctx.r3.u64 = CECWorldMapInfo_UpdateRegionValueSums(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_RefreshBuildingNameMap36(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x82891118)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82891118(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82891118);
@@ -664,11 +679,11 @@ uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		CCharString_CopyConstruct(ctx, base, stack + 88, uint64_t(target) + 172);
 
 		ctx.r3.u64 = uint32_t(worldMapInfoAddr);  // state the callee may pass on
-		uint32_t nameKey = n_sub_828924A8(ctx, base, stack + 88);
+		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 88);
 		STORE32(stack + 80, nameKey);
 
 		uint64_t infoMapAddr = worldMapInfoAddr + 36;
-		List_ClearFreeNodes(ctx, base, n_sub_82892770(ctx, base, infoMapAddr, stack + 80));
+		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
 
 		RbTree_InitEmptyNode12(ctx, base, stack + 128);
 		// r6, r8 and xer.ca as the lifted code tracks them from here; the callees below receive them
@@ -723,7 +738,7 @@ uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 					uint32_t holder = LOAD32(LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12) + 88) + 4);
 					// state the callee may pass on
 					ctx.xer.ca = flags.ca;
-					uint32_t linked = n_sub_82264448(ctx, base, LOAD32(holder), item);
+					uint32_t linked = EntityManager_LookupEntity(ctx, base, LOAD32(holder), item);
 					r6Value = ctx.r6.u64;
 					uint64_t r8Value = ctx.r8.u64;
 					if (linked != 0 && (LOAD8(linked + 144) & 64) != 0 && ((LOAD32(linked + 44) >> 3) & 1) != 0) {
@@ -767,7 +782,7 @@ uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 
 						// state the callee may pass on
 						ctx.xer.ca = flags.ca;
-						n_sub_8274D188(ctx, base, stack + 84, value);
+						GetBuildingNameString(ctx, base, stack + 84, value);
 						StringHash_FromCharString(ctx, base, stack + 96, stack + 84, ctx.r8.u64);
 						// insert the hash at the end of the list at stack + 128
 						uint32_t tempListEnd = LOAD32(stack + 132);
@@ -788,9 +803,9 @@ uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 
 		// state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		List_ClearFreeNodes(ctx, base, n_sub_82892770(ctx, base, infoMapAddr, stack + 80));
-		uint64_t infoEntry = n_sub_82892770(ctx, base, infoMapAddr, stack + 80);
-		n_sub_824FDF98(ctx, base, infoEntry, stack + 128);
+		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
+		uint64_t infoEntry = HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80);
+		List_Assign_824FDF98(ctx, base, infoEntry, stack + 128);
 		List_ClearFreeNodes(ctx, base, stack + 128);
 		HandleTarget_Free(ctx, base, LOAD32(stack + 132));
 		STORE32(stack + 132, 0);
@@ -800,9 +815,9 @@ uint32_t n_sub_82891118(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82891118, 0x82891118) { ctx.r3.u64 = n_sub_82891118(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82891118, 0x82891118) { ctx.r3.u64 = CECWorldMapInfo_RefreshBuildingNameMap36(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_RefreshBuildingNameMap48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x828914E8)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_828914E8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828914E8);
@@ -823,11 +838,11 @@ uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		CCharString_CopyConstruct(ctx, base, stack + 88, uint64_t(target) + 172);
 
 		ctx.r3.u64 = uint32_t(worldMapInfoAddr);  // state the callee may pass on
-		uint32_t nameKey = n_sub_828924A8(ctx, base, stack + 88);
+		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 88);
 		STORE32(stack + 80, nameKey);
 
 		uint64_t infoMapAddr = worldMapInfoAddr + 48;
-		List_ClearFreeNodes(ctx, base, n_sub_82892770(ctx, base, infoMapAddr, stack + 80));
+		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
 
 		RbTree_InitEmptyNode12(ctx, base, stack + 128);
 		// r6, r8 and xer.ca as the lifted code tracks them from here; the callees below receive them
@@ -884,7 +899,7 @@ uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 						uint32_t holder = LOAD32(LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12) + 88) + 4);
 						// state the callee may pass on
 						ctx.xer.ca = flags.ca;
-						uint32_t linked = n_sub_82264448(ctx, base, LOAD32(holder), item);
+						uint32_t linked = EntityManager_LookupEntity(ctx, base, LOAD32(holder), item);
 						r6Value = ctx.r6.u64;
 						uint64_t r8Value = ctx.r8.u64;
 						if (linked != 0 && (LOAD8(linked + 144) & 64) != 0 && ((LOAD32(linked + 44) >> 3) & 1) != 0) {
@@ -928,7 +943,7 @@ uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 
 							// state the callee may pass on
 							ctx.xer.ca = flags.ca;
-							n_sub_8274D188(ctx, base, stack + 84, value);
+							GetBuildingNameString(ctx, base, stack + 84, value);
 							StringHash_FromCharString(ctx, base, stack + 96, stack + 84, ctx.r8.u64);
 							// insert the hash at the end of the list at stack + 128
 							uint32_t tempListEnd = LOAD32(stack + 132);
@@ -951,9 +966,9 @@ uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 
 		// state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		List_ClearFreeNodes(ctx, base, n_sub_82892770(ctx, base, infoMapAddr, stack + 80));
-		uint64_t infoEntry = n_sub_82892770(ctx, base, infoMapAddr, stack + 80);
-		n_sub_824FDF98(ctx, base, infoEntry, stack + 128);
+		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
+		uint64_t infoEntry = HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80);
+		List_Assign_824FDF98(ctx, base, infoEntry, stack + 128);
 		List_ClearFreeNodes(ctx, base, stack + 128);
 		HandleTarget_Free(ctx, base, LOAD32(stack + 132));
 		STORE32(stack + 132, 0);
@@ -963,9 +978,9 @@ uint32_t n_sub_828914E8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return worldMapInfoAddr;
 }
-PROMOTED_ENTRY(60, sub_828914E8, 0x828914E8) { ctx.r3.u64 = n_sub_828914E8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828914E8, 0x828914E8) { ctx.r3.u64 = CECWorldMapInfo_RefreshBuildingNameMap48(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82891898(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateType40Count(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x82891898)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82891898(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82891898);
@@ -981,10 +996,10 @@ uint32_t n_sub_82891898(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = worldMapInfoAddr;  // state the callee may pass on
-		uint32_t nameKey = n_sub_828924A8(ctx, base, targetNameAddr);
-		uint32_t mapValue = n_sub_828923B8(ctx, base, worldMapInfoAddr, targetNameAddr);
+		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, targetNameAddr);
+		uint32_t mapValue = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, targetNameAddr);
 
-		// n_sub_82792138 fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
+		// ObjectQuery_Execute fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
 		// stack + 88 holds the 40 it is given.
 		uint32_t registryNow = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 		STORE32(stack + 100, 0);
@@ -995,7 +1010,8 @@ uint32_t n_sub_82891898(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		uint32_t holder = LOAD32(registryNow + 88);
 		uint32_t collector = LOAD32(LOAD32(holder + 4) + 12);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, collector, stack + 88, 4, stack + 96, registryNow);
+		ctx.r7.u64 = holder;
+		ObjectQuery_Execute(ctx, base, collector, stack + 88, 4, stack + 96, registryNow);
 
 		uint64_t mapAddr = worldMapInfoAddr + 60;
 		uint32_t collectedBegin = LOAD32(stack + 100);
@@ -1014,15 +1030,17 @@ uint32_t n_sub_82891898(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		if (LOAD32(stack + 92) == mapEnd) {
 			STORE32(stack + 112, mapValue);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 116);
+			ctx.r4.u64 = mapAddr;
+			ctx.r5.u64 = stack + 80;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
 			uint64_t newEntry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-			n_sub_8288E408(ctx, base, newEntry, stack + 112);
-			n_sub_8292BB38(ctx, base, stack + 116);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
 			r5Value = ctx.r5.u64;
 		}
 		ctx.r5.u64 = r5Value;  // state the callee may pass on
 		uint64_t entry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-		result = n_sub_8288D810(ctx, base, entry, nameKey, collectedCount);
+		result = WorldMapInfo_Entry_SetCount(ctx, base, entry, nameKey, collectedCount);
 		if (collectedBegin != 0) {
 			result = HandleTarget_Free(ctx, base, collectedBegin);
 		}
@@ -1031,9 +1049,9 @@ uint32_t n_sub_82891898(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82891898, 0x82891898) { ctx.r3.u64 = n_sub_82891898(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82891898, 0x82891898) { ctx.r3.u64 = CECWorldMapInfo_UpdateType40Count(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_828919F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateType95Count(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x828919F0)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_828919F0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828919F0);
@@ -1049,10 +1067,10 @@ uint32_t n_sub_828919F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = worldMapInfoAddr;  // state the callee may pass on
-		uint32_t nameKey = n_sub_828924A8(ctx, base, targetNameAddr);
-		uint32_t mapValue = n_sub_828923B8(ctx, base, worldMapInfoAddr, targetNameAddr);
+		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, targetNameAddr);
+		uint32_t mapValue = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, targetNameAddr);
 
-		// n_sub_82792138 fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
+		// ObjectQuery_Execute fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
 		// stack + 88 holds the 95 it is given.
 		uint32_t registryNow = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 		STORE32(stack + 100, 0);
@@ -1063,7 +1081,8 @@ uint32_t n_sub_828919F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		uint32_t holder = LOAD32(registryNow + 88);
 		uint32_t collector = LOAD32(LOAD32(holder + 4) + 12);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, collector, stack + 88, 3, stack + 96, registryNow);
+		ctx.r7.u64 = holder;
+		ObjectQuery_Execute(ctx, base, collector, stack + 88, 3, stack + 96, registryNow);
 
 		uint64_t mapAddr = worldMapInfoAddr + 84;
 		uint32_t collectedBegin = LOAD32(stack + 100);
@@ -1082,15 +1101,17 @@ uint32_t n_sub_828919F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		if (LOAD32(stack + 92) == mapEnd) {
 			STORE32(stack + 112, mapValue);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 116);
+			ctx.r4.u64 = mapAddr;
+			ctx.r5.u64 = stack + 80;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
 			uint64_t newEntry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-			n_sub_8288E408(ctx, base, newEntry, stack + 112);
-			n_sub_8292BB38(ctx, base, stack + 116);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
 			r5Value = ctx.r5.u64;
 		}
 		ctx.r5.u64 = r5Value;  // state the callee may pass on
 		uint64_t entry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-		result = n_sub_8288D810(ctx, base, entry, nameKey, collectedCount);
+		result = WorldMapInfo_Entry_SetCount(ctx, base, entry, nameKey, collectedCount);
 		if (collectedBegin != 0) {
 			result = HandleTarget_Free(ctx, base, collectedBegin);
 		}
@@ -1099,9 +1120,9 @@ uint32_t n_sub_828919F0(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_828919F0, 0x828919F0) { ctx.r3.u64 = n_sub_828919F0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828919F0, 0x828919F0) { ctx.r3.u64 = CECWorldMapInfo_UpdateType95Count(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateAcceptedType192Count(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x82891B48)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82891B48(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82891B48);
@@ -1118,10 +1139,10 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = worldMapInfoAddr;  // state the callee may pass on
-		uint32_t nameKey = n_sub_828924A8(ctx, base, targetNameAddr);
-		uint32_t mapValue = n_sub_828923B8(ctx, base, worldMapInfoAddr, targetNameAddr);
+		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, targetNameAddr);
+		uint32_t mapValue = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, targetNameAddr);
 
-		// n_sub_82792138 fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
+		// ObjectQuery_Execute fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
 		// stack + 88 holds the 192 it is given.
 		uint32_t registryNow = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 		STORE32(stack + 100, 0);
@@ -1132,7 +1153,9 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		uint32_t holder = LOAD32(registryNow + 88);
 		uint32_t holderInner = LOAD32(holder + 4);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, LOAD32(holderInner + 12), stack + 88, 4, stack + 96, holder);
+		ctx.r7.u64 = holderInner;
+		ctx.r9.u64 = registryNow;
+		ObjectQuery_Execute(ctx, base, LOAD32(holderInner + 12), stack + 88, 4, stack + 96, holder);
 
 		// r5, r6, r8 and xer.ca as the lifted code tracks them from here; the callees below receive them
 		uint64_t r8Value = ctx.r8.u64;
@@ -1143,7 +1166,7 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		flags.ca = int32_t(collectedBytes) < 0 && (collectedBytes & 3) != 0;
 		uint32_t collectedCount = uint32_t(int32_t(collectedBytes) >> 2);
 
-		// Count the collected objects (flag 0x40 at +144, bit 0 at +60) whose entry 192 n_sub_82707EB8
+		// Count the collected objects (flag 0x40 at +144, bit 0 at +60) whose entry 192 Object_HasNonEmptyGameDBField
 		// accepts; the entry comes from the object's sorted (type, value) table at +72, through the
 		// cached index at +140 when there is one, otherwise by a lower_bound search.
 		uint32_t acceptedCount = 0;
@@ -1191,9 +1214,10 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 						}
 					}
 					// state the callee may pass on
+					ctx.r5.u64 = r5Value;
 					ctx.r8.u64 = r8Value;
 					ctx.xer.ca = flags.ca;
-					uint32_t accepted = n_sub_82707EB8(ctx, base, value);
+					uint32_t accepted = Object_HasNonEmptyGameDBField(ctx, base, value);
 					r5Value = ctx.r5.u64;
 					r6Value = ctx.r6.u64;
 					r8Value = ctx.r8.u64;
@@ -1221,16 +1245,21 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 		if (LOAD32(stack + 100) == mapEnd) {
 			STORE32(stack + 112, mapValue);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 116);
+			ctx.r4.u64 = mapAddr;
+			ctx.r5.u64 = r5Value;
+			ctx.r6.u64 = r6Value;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
 			uint64_t newEntry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-			n_sub_8288E408(ctx, base, newEntry, stack + 112);
-			n_sub_8292BB38(ctx, base, stack + 116);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
 			r5Value = ctx.r5.u64;
 			r6Value = ctx.r6.u64;
 		}
 		// state the callee may pass on
+		ctx.r5.u64 = r5Value;
+		ctx.r6.u64 = r6Value;
 		uint64_t entry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-		worldMapInfoAddr = n_sub_8288D810(ctx, base, entry, nameKey, acceptedCount);
+		worldMapInfoAddr = WorldMapInfo_Entry_SetCount(ctx, base, entry, nameKey, acceptedCount);
 		if (collectedBegin != 0) {
 			worldMapInfoAddr = HandleTarget_Free(ctx, base, collectedBegin);
 		}
@@ -1239,9 +1268,9 @@ uint32_t n_sub_82891B48(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	ctx.r1.u64 = stack;
 	return worldMapInfoAddr;
 }
-PROMOTED_ENTRY(60, sub_82891B48, 0x82891B48) { ctx.r3.u64 = n_sub_82891B48(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82891B48, 0x82891B48) { ctx.r3.u64 = CECWorldMapInfo_UpdateAcceptedType192Count(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82891E10(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateGargoyleTotals(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t str_TXT_820C647C_B_ = int32_t(0x820C647C);
 	constexpr int32_t str_TXT_820DFCD8_B_ = int32_t(0x820DFCD8);
 	constexpr int32_t str_TXT_820DFCF4_B_ = int32_t(0x820DFCF4);
@@ -1266,17 +1295,17 @@ uint32_t n_sub_82891E10(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		// state the callees may pass on
 		ctx.r1.u64 = stack;
-		n_sub_828924A8(ctx, base, nameString);
+		CECWorldMapInfo_HashRegionName(ctx, base, nameString);
 
-		uint32_t regionHash = n_sub_828923B8(ctx, base, worldMapInfoAddr, nameString);
+		uint32_t regionHash = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, nameString);
 		STORE32(stack + 92, regionHash);
 
 		// Search the str_TXT_820DFCD8_B_ table for the record whose name hashes to regionHash.
 		uint32_t gargoyleCount = 0;
 		uint64_t regionInfoBaseHash = String_HashFnv1(ctx, base, str_TXT_820DFCD8_B_, 0xFFFFFFFF811C9DC5ULL);
-		uint64_t regionTable = n_sub_829FB108(ctx, base, LOAD32(g_83490000 + 27600), regionInfoBaseHash);
+		uint64_t regionTable = HashMap_FindByHash(ctx, base, LOAD32(g_83490000 + 27600), regionInfoBaseHash);
 		if ((uint32_t)regionTable != 0) {
-			n_sub_829FBC40(ctx, base, stack + 80, regionTable, ctx.r8.u64);
+			GameDB_GetArrayField(ctx, base, stack + 80, regionTable, ctx.r8.u64);
 			uint32_t i = LOAD32(stack + 88);
 			uint32_t end = LOAD32(stack + 84);
 			uint32_t entries = LOAD32(stack + 80);
@@ -1290,12 +1319,12 @@ uint32_t n_sub_82891E10(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 				uint32_t recordMap = LOAD32(g_83490000 + 27600);
 				uint64_t record = HashMapU32_FindValue(ctx, base, recordMap, LOAD32(entryObject));
 				if ((uint32_t)record != 0) {
-					uint64_t name = n_sub_82345978(ctx, base, record, str_TXT_820C647C_B_);
+					uint64_t name = GameDB_GetStringField(ctx, base, record, str_TXT_820C647C_B_);
 					CCharString_ConstructFromCStr(ctx, base, stack + 80, name, -1);
 					uint32_t strData = LOAD32(stack + 80);
 					if (strData != 0 && LOAD32(strData + 4) != 0) {
 						// state the callee may pass on
-						if ((uint32_t)n_sub_828924A8(ctx, base, stack + 80) == regionHash) {
+						if ((uint32_t)CECWorldMapInfo_HashRegionName(ctx, base, stack + 80) == regionHash) {
 							gargoyleCount = GameDB_GetIntByName(ctx, base, record, str_TXT_820DFCF4_B_);
 							CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 							break;
@@ -1321,22 +1350,25 @@ uint32_t n_sub_82891E10(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 			// the find ended at the header: no node for the key yet
 			STORE32(stack + 96, regionHash);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 100);
+			ctx.r4.u64 = regionMap;
+			ctx.r5.u64 = regionHashKeyPtr;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 100);
 			uint64_t newEntry = n_sub_82892960(ctx, base, regionMap, stack + 92);
-			n_sub_8288E408(ctx, base, newEntry, stack + 96);
-			n_sub_8292BB38(ctx, base, stack + 100);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 96);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 100);
 			regionHashKeyPtr = ctx.r5.u64;
 		}
 		// state the callee may pass on
+		ctx.r5.u64 = regionHashKeyPtr;
 		uint64_t entry = n_sub_82892960(ctx, base, regionMap, stack + 92);
-		result = n_sub_8288D810(ctx, base, entry, regionHash, gargoyleCount);
+		result = WorldMapInfo_Entry_SetCount(ctx, base, entry, regionHash, gargoyleCount);
 	}
 
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(60, sub_82891E10, 0x82891E10) { ctx.r3.u64 = n_sub_82891E10(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82891E10, 0x82891E10) { ctx.r3.u64 = CECWorldMapInfo_UpdateGargoyleTotals(ctx, base, ctx.r3.u64); }
 
 uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -1357,10 +1389,10 @@ uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		uint32_t nameHash = n_sub_828924A8(ctx, base, nameString);
-		uint32_t mapKey = n_sub_828923B8(ctx, base, worldMapInfo, nameString);
+		uint32_t nameHash = CECWorldMapInfo_HashRegionName(ctx, base, nameString);
+		uint32_t mapKey = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfo, nameString);
 
-		// n_sub_82792138 fills the array of 4-byte elements at stack + 96 (begin at +100, end at +104).
+		// ObjectQuery_Execute fills the array of 4-byte elements at stack + 96 (begin at +100, end at +104).
 		uint32_t managerAgain = LOAD32(LOAD32(globalBase + 26912) + 12);
 		STORE32(stack + 100, 0);
 		STORE32(stack + 104, 0);
@@ -1370,7 +1402,8 @@ uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 		uint32_t sourceOwner = LOAD32(managerAgain + 88);
 		uint32_t sourceList = LOAD32(LOAD32(sourceOwner + 4) + 12);
 		// state the callee may pass on
-		n_sub_82792138(ctx, base, sourceList, stack + 88, 3, stack + 96, managerAgain);
+		ctx.r7.u64 = sourceOwner;
+		ObjectQuery_Execute(ctx, base, sourceList, stack + 88, 3, stack + 96, managerAgain);
 
 		// Tree map at +124 (header node at +128), keyed by mapKey (stored at stack + 80).
 		uint64_t entryMap = worldMapInfo + 124;
@@ -1391,15 +1424,18 @@ uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 			// the find ended at the header: no node for the key yet
 			STORE32(stack + 112, mapKey);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 116);
+			ctx.r4.u64 = entryMap;
+			ctx.r5.u64 = mapKeyPtr;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
 			uint64_t newEntry = n_sub_82892960(ctx, base, entryMap, stack + 80);
-			n_sub_8288E408(ctx, base, newEntry, stack + 112);
-			n_sub_8292BB38(ctx, base, stack + 116);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
 			mapKeyPtr = ctx.r5.u64;
 		}
 		// state the callee may pass on
+		ctx.r5.u64 = mapKeyPtr;
 		uint64_t mapEntry = n_sub_82892960(ctx, base, entryMap, stack + 80);
-		result = n_sub_8288D810(ctx, base, mapEntry, nameHash, listCount);
+		result = WorldMapInfo_Entry_SetCount(ctx, base, mapEntry, nameHash, listCount);
 		if (listBegin != 0) {
 			result = HandleTarget_Free(ctx, base, listBegin);
 		}
@@ -1411,7 +1447,7 @@ uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 }
 PROMOTED_ENTRY(60, sub_82892040, 0x82892040) { ctx.r3.u64 = n_sub_82892040(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82892198(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint64_t CECWorldMapInfo_UpdateSilverKeyTotals(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
 	constexpr int32_t str_TXT_820C647C_B_ = int32_t(0x820C647C);
 	constexpr int32_t str_TXT_820DFCD8_B_ = int32_t(0x820DFCD8);
 	constexpr int32_t str_TXT_820DFD04_B_ = int32_t(0x820DFD04);
@@ -1435,15 +1471,15 @@ uint64_t n_sub_82892198(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
 		// state the callees may pass on
 		ctx.r1.u64 = stack;
-		uint32_t regionHash = n_sub_828923B8(ctx, base, worldMapInfoAddr, nameString);
+		uint32_t regionHash = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, nameString);
 		STORE32(stack + 92, regionHash);
 
 		// Search the str_TXT_820DFCD8_B_ table for the record whose name hashes to regionHash.
 		uint32_t silverKeyCount = 0;
 		uint64_t regionInfoBaseHash = String_HashFnv1(ctx, base, str_TXT_820DFCD8_B_, 0xFFFFFFFF811C9DC5ULL);
-		uint64_t regionTable = n_sub_829FB108(ctx, base, LOAD32(uint32_t(g_83490000) + 27600), regionInfoBaseHash);
+		uint64_t regionTable = HashMap_FindByHash(ctx, base, LOAD32(uint32_t(g_83490000) + 27600), regionInfoBaseHash);
 		if ((uint32_t)regionTable != 0) {
-			n_sub_829FBC40(ctx, base, stack + 80, regionTable, ctx.r8.u64);
+			GameDB_GetArrayField(ctx, base, stack + 80, regionTable, ctx.r8.u64);
 			uint32_t index = LOAD32(stack + 88);
 			uint32_t endIndex = LOAD32(stack + 84);
 			uint32_t entries = LOAD32(stack + 80);
@@ -1457,12 +1493,12 @@ uint64_t n_sub_82892198(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 				uint32_t recordMap = LOAD32(uint32_t(g_83490000) + 27600);
 				uint64_t record = HashMapU32_FindValue(ctx, base, recordMap, LOAD32(entryValue));
 				if ((uint32_t)record != 0) {
-					uint64_t TXT_820C647C_L_ = n_sub_82345978(ctx, base, record, str_TXT_820C647C_B_);
+					uint64_t TXT_820C647C_L_ = GameDB_GetStringField(ctx, base, record, str_TXT_820C647C_B_);
 					CCharString_ConstructFromCStr(ctx, base, stack + 80, TXT_820C647C_L_, -1);
 					uint32_t strData = LOAD32(stack + 80);
 					if (strData != 0 && LOAD32(strData + 4) != 0) {
 						// state the callee may pass on
-						if ((uint32_t)n_sub_828924A8(ctx, base, stack + 80) == regionHash) {
+						if ((uint32_t)CECWorldMapInfo_HashRegionName(ctx, base, stack + 80) == regionHash) {
 							silverKeyCount = GameDB_GetIntByName(ctx, base, record, str_TXT_820DFD04_B_);
 							CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 							break;
@@ -1488,33 +1524,36 @@ uint64_t n_sub_82892198(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr)
 			// the find ended at the header: no node for the key yet
 			STORE32(stack + 96, regionHash);
 			// state the callee may pass on
-			n_sub_82A12828(ctx, base, stack + 100);
+			ctx.r4.u64 = regionMap;
+			ctx.r5.u64 = regionHashKeyPtr;
+			WorldMapInfo_MapValue_Construct(ctx, base, stack + 100);
 			uint64_t newEntry = n_sub_82892960(ctx, base, regionMap, stack + 92);
-			n_sub_8288E408(ctx, base, newEntry, stack + 96);
-			n_sub_8292BB38(ctx, base, stack + 100);
+			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 96);
+			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 100);
 			regionHashKeyPtr = ctx.r5.u64;
 		}
 		// state the callee may pass on
+		ctx.r5.u64 = regionHashKeyPtr;
 		uint64_t mapEntry = n_sub_82892960(ctx, base, regionMap, stack + 92);
-		result = n_sub_8288D810(ctx, base, mapEntry, regionHash, silverKeyCount);
+		result = WorldMapInfo_Entry_SetCount(ctx, base, mapEntry, regionHash, silverKeyCount);
 	}
 
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82892198, 0x82892198) { ctx.r3.u64 = n_sub_82892198(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82892198, 0x82892198) { ctx.r3.u64 = CECWorldMapInfo_UpdateSilverKeyTotals(ctx, base, ctx.r3.u64); }
 
 // Hashes the name string, then walks the tree map at +148 (header node at +152) in order: returns the key
 // (+12) of the first node whose id list (head at +20, size at +24) holds the hash, or the hash itself.
-uint64_t n_sub_828923B8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uint64_t nameString) {
+uint64_t WorldMapInfo_LookupKeyByName(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uint64_t nameString) {
 	if (!UseLiftedCode(60, 0x828923B8)) { ctx.r3.u64 = worldMapInfo; ctx.r4.u64 = nameString; __imp__sub_828923B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828923B8);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	uint64_t nameHash = n_sub_828924A8(ctx, base, nameString);
+	uint64_t nameHash = CECWorldMapInfo_HashRegionName(ctx, base, nameString);
 
 	// Iterator {tree, node} at stack + 80, starting at the header's first link.
 	uint32_t header = LOAD32((uint32_t)worldMapInfo + 152);
@@ -1574,9 +1613,9 @@ uint64_t n_sub_828923B8(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo, uin
 		iterTree = LOAD32(stack + 80);
 	}
 }
-PROMOTED_ENTRY(60, sub_828923B8, 0x828923B8) { ctx.r3.u64 = n_sub_828923B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(60, sub_828923B8, 0x828923B8) { ctx.r3.u64 = WorldMapInfo_LookupKeyByName(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828924A8(CpuState& ctx, uint8_t* base, uint64_t sourceString) {
+uint64_t CECWorldMapInfo_HashRegionName(CpuState& ctx, uint8_t* base, uint64_t sourceString) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_82000BF4 = int32_t(0x82000BF4);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
@@ -1630,4 +1669,4 @@ uint64_t n_sub_828924A8(CpuState& ctx, uint8_t* base, uint64_t sourceString) {
 	ctx.r1.u64 = stack;
 	return hash;
 }
-PROMOTED_ENTRY(60, sub_828924A8, 0x828924A8) { ctx.r3.u64 = n_sub_828924A8(ctx, base, ctx.r4.u64); }
+PROMOTED_ENTRY(60, sub_828924A8, 0x828924A8) { ctx.r3.u64 = CECWorldMapInfo_HashRegionName(ctx, base, ctx.r4.u64); }

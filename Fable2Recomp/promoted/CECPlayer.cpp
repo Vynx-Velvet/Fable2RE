@@ -1,9 +1,9 @@
 // CECPlayer (vtable 0x82003188): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t entityAddr) {
+uint32_t CECPlayer_CanAttackEntity(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t entityAddr) {
 	if (!UseLiftedCode(1, 0x821A3658)) { ctx.r3.u64 = playerAddr; ctx.r4.u64 = entityAddr; __imp__sub_821A3658(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821A3658);
 	uint32_t stack = ctx.r1.u64;
@@ -119,6 +119,8 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	uint32_t players = LOAD32(arrayBegin);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r8.u64 = arrayBegin;
+	ctx.r9.u64 = arrayHolder;
 	uint32_t isPlayer = (uint32_t)Players_IsPlayer(ctx, base, players, entityAddr) & 0xFF;
 	callerR4 = ctx.r4.u64;
 	loadCallerState();
@@ -126,7 +128,7 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	if (isPlayer != 0)
 		return leave(0);
 
-	// When the entity has a component of type 122 (bit 26 of its mask word at +48) that n_sub_821C2C18
+	// When the entity has a component of type 122 (bit 26 of its mask word at +48) that LockComponent_GetLockState
 	// reports as 1, the player's entity must have one for which it reports 1 as well.
 	if ((LOAD32(entity + 48) >> 26) & 1) {
 		uint32_t entityComponent;
@@ -139,7 +141,7 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 			entityComponent = searchComponent(entity, 122);
 		}
 		callerR10 = 1;
-		if ((uint32_t)n_sub_821C2C18(ctx, base, entityComponent) == 1) {
+		if ((uint32_t)LockComponent_GetLockState(ctx, base, entityComponent) == 1) {
 			uint32_t playerEntity = player->m_4;
 			uint32_t playerMask = LOAD32(playerEntity + 48);
 			callerR10 = playerMask;
@@ -158,7 +160,7 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 				playerComponent = searchComponent(playerEntity, 122);
 				callerR10 = searchPos;
 			}
-			if ((uint32_t)n_sub_821C2C18(ctx, base, playerComponent) != 1)
+			if ((uint32_t)LockComponent_GetLockState(ctx, base, playerComponent) != 1)
 				return leave(0);
 		}
 	} else {
@@ -172,7 +174,7 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	if ((entityCheck & 0xFF) == 0)
 		return leave(0);
 
-	uint64_t safetyModeEnabled = n_sub_821EE210(ctx, base, playerAddr);  // Lua_Player_IsSafetyModeEnabled
+	uint64_t safetyModeEnabled = Lua_Player_IsSafetyModeEnabled(ctx, base, playerAddr);  // Lua_Player_IsSafetyModeEnabled
 	loadCallerState();
 	if ((safetyModeEnabled & 0xFF) == 0)
 		return leave(1);
@@ -206,10 +208,10 @@ uint32_t n_sub_821A3658(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	loadCallerState();
 	return leave(component133Check == 4 ? 1 : 0);
 }
-PROMOTED_ENTRY(1, sub_821A3658, 0x821A3658) { ctx.r3.u64 = n_sub_821A3658(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(1, sub_821A3658, 0x821A3658) { ctx.r3.u64 = CECPlayer_CanAttackEntity(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_821B8960  [100 bytes]
-uint64_t n_sub_821B8960(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
+uint64_t CECPlayer_GetLinkedObject(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	if (!UseLiftedCode(2, 0x821B8960)) { ctx.r3.u64 = playerAddr; __imp__sub_821B8960(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821B8960);
 	uint32_t stack = ctx.r1.u64;
@@ -227,10 +229,10 @@ uint64_t n_sub_821B8960(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(2, sub_821B8960, 0x821B8960) { ctx.r3.u64 = n_sub_821B8960(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(2, sub_821B8960, 0x821B8960) { ctx.r3.u64 = CECPlayer_GetLinkedObject(ctx, base, ctx.r3.u32); }
 
 // sub_821EE210 = Lua_Player_IsSafetyModeEnabled (Lua Player.IsSafetyModeEnabled)  [552 bytes]
-uint64_t n_sub_821EE210(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
+uint64_t Lua_Player_IsSafetyModeEnabled(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(4, 0x821EE210)) { ctx.r3.u64 = playerAddr; __imp__sub_821EE210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821EE210);
@@ -390,7 +392,7 @@ uint64_t n_sub_821EE210(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(4, sub_821EE210, 0x821EE210) { ctx.r3.u64 = n_sub_821EE210(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(4, sub_821EE210, 0x821EE210) { ctx.r3.u64 = Lua_Player_IsSafetyModeEnabled(ctx, base, ctx.r3.u32); }
 
 uint64_t CECPlayer_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outName) {
 	constexpr int32_t str_TXT_820A84C8_B_ = int32_t(0x820A84C8);
@@ -402,17 +404,17 @@ uint64_t CECPlayer_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outName) 
 }
 PROMOTED_ENTRY(20, sub_823BE790, 0x823BE790) { ctx.r3.u64 = CECPlayer_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823BEE20(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t deleteFlags) {
+uint64_t CECPlayer_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(21, 0x823BEE20)) { ctx.r3.u64 = playerAddr; ctx.r4.u64 = deleteFlags; __imp__sub_823BEE20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823BEE20);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
-	n_sub_823BEE70(ctx, base, playerAddr);
+	CECPlayer_Destructor(ctx, base, playerAddr);
 	if (deleteFlags & 0x1)
 		HandleTarget_Free(ctx, base, playerAddr);
 	return playerAddr;
 }
-PROMOTED_ENTRY(21, sub_823BEE20, 0x823BEE20) { ctx.r3.u64 = n_sub_823BEE20(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(21, sub_823BEE20, 0x823BEE20) { ctx.r3.u64 = CECPlayer_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_823BF518  [128 bytes]
 uint32_t CECPlayer_GetFlag1A(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
@@ -454,7 +456,7 @@ uint32_t CECPlayer_GetFlag1A(CpuState& ctx, uint8_t* base, uint32_t playerAddr) 
 }
 PROMOTED_ENTRY(21, sub_823BF518, 0x823BF518) { ctx.r3.u64 = CECPlayer_GetFlag1A(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_823C0E78(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t forwardedArg) {
+uint64_t CECPlayer_RefreshAbilities(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t forwardedArg) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(21, 0x823C0E78)) { ctx.r3.u64 = playerAddr; ctx.r6.u64 = forwardedArg; __imp__sub_823C0E78(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823C0E78);
@@ -476,13 +478,14 @@ uint64_t n_sub_823C0E78(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 
 	// state the callee may pass on
 	ctx.r8.u64 = contextMode;
-	uint64_t result = n_sub_823C01F8(ctx, base, playerAddr, selectedValue, abilityFlags, forwardedArg);
+	ctx.r9.u64 = contextData;
+	uint64_t result = CECPlayer_ApplyAbilityFlags(ctx, base, playerAddr, selectedValue, abilityFlags, forwardedArg);
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823C0E78, 0x823C0E78) { ctx.r3.u64 = n_sub_823C0E78(ctx, base, ctx.r3.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(21, sub_823C0E78, 0x823C0E78) { ctx.r3.u64 = CECPlayer_RefreshAbilities(ctx, base, ctx.r3.u64, ctx.r6.u64); }
 
 uint64_t CECPlayer_GetCombinedAbilityFlags(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -541,7 +544,7 @@ uint64_t CECPlayer_GetCombinedAbilityFlags(CpuState& ctx, uint8_t* base, uint32_
 }
 PROMOTED_ENTRY(21, sub_823C0F08, 0x823C0F08) { ctx.r3.u64 = CECPlayer_GetCombinedAbilityFlags(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_823C1C70(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CECPlayer_RefreshAbilityState(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(21, 0x823C1C70)) { ctx.r3.u64 = playerAddr; ctx.r5.u64 = arg2; ctx.r6.u64 = arg3; __imp__sub_823C1C70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823C1C70);
 	uint32_t stack = ctx.r1.u64;
@@ -553,9 +556,9 @@ uint64_t n_sub_823C1C70(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	ctx.r1.u64 = stack;
 	ctx.r5.u64 = arg2;
 	ctx.r6.u64 = arg3;
-	n_sub_82392C88(ctx, base, componentBefore, playerAddr);
+	CECDoor_UpdateOpenStateForEntity(ctx, base, componentBefore, playerAddr);
 
-	// r6, r7 and xer.ca as the calls leave them are handed on to n_sub_823C8620
+	// r6, r7 and xer.ca as the calls leave them are handed on to CECPlayer_InitHeroCombatBalance
 	uint64_t r6Value = ctx.r6.u64;
 	PPCXERRegister flags = ctx.xer;
 
@@ -612,6 +615,7 @@ uint64_t n_sub_823C1C70(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 		}
 
 		// state the callee may pass on
+		ctx.r7.u64 = r7Value;
 		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		n_sub_82483858(ctx, base, value, playerAddr + 356, playerAddr + 12, 0);
@@ -621,7 +625,7 @@ uint64_t n_sub_823C1C70(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	}
 
 	ctx.xer.ca = flags.ca;
-	uint64_t result = n_sub_823C8620(ctx, base, playerAddr, r6Value, r7Value);
+	uint64_t result = CECPlayer_InitHeroCombatBalance(ctx, base, playerAddr, r6Value, r7Value);
 	if ((uint32_t)arg2 != 0) {
 		player->m_2C = uint8_t(1);
 	}
@@ -630,7 +634,7 @@ uint64_t n_sub_823C1C70(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823C1C70, 0x823C1C70) { ctx.r3.u64 = n_sub_823C1C70(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(21, sub_823C1C70, 0x823C1C70) { ctx.r3.u64 = CECPlayer_RefreshAbilityState(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64); }
 
 uint32_t n_sub_823C2610(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -740,8 +744,9 @@ uint32_t n_sub_823C2610(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 		callTarget.u64 = target112;
 		ctx.r3.u64 = stack + 88;
 		ctx.r4.u64 = value49;
+		ctx.r10.u64 = target112;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		result = n_sub_827E7968(ctx, base, ctx.r3.u64, stack + 80);
+		result = Entity_GetCombatComponentIfValid(ctx, base, ctx.r3.u64, stack + 80);
 		proceed = (result & 0xFF) != 0;
 
 		STORE32(stack + 88, g_820F1664);
@@ -755,6 +760,8 @@ uint32_t n_sub_823C2610(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 		uint32_t target72 = LOAD32(LOAD32(value49) + 72);
 		callTarget.u64 = target72;
 		ctx.r3.u64 = value49;
+		ctx.r9.u64 = r9Value;
+		ctx.r10.u64 = target72;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// the vtable pointer is read again after the call
@@ -765,6 +772,10 @@ uint32_t n_sub_823C2610(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 		uint32_t target64 = LOAD32(value49Vtable + 64);
 		callTarget.u64 = target64;
 		ctx.r3.u64 = stack + 104;
+		ctx.r4.u64 = value49;
+		ctx.r5.u64 = holder;
+		ctx.r6.u64 = 0;
+		ctx.r9.u64 = target64;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		STORE32(stack + 104, g_820F1664);
@@ -840,6 +851,7 @@ uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t o
 
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
+			ctx.r7.u64 = r7Value;
 			result = SharedHandleList_Erase(ctx, base, eraseResultSlot, handleList, iterator);
 			r4Value = ctx.r4.u64;
 			r7Value = ctx.r7.u64;
@@ -862,7 +874,7 @@ uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t o
 }
 PROMOTED_ENTRY(21, sub_823C4D58, 0x823C4D58) { ctx.r3.u64 = SharedHandleList_EraseMatching(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_823C5D18(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t expressionId) {
+uint32_t CECPlayer_CanPlayExpression(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t expressionId) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(21, 0x823C5D18)) { ctx.r3.u64 = playerAddr; ctx.r4.u64 = expressionId; __imp__sub_823C5D18(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823C5D18);
@@ -887,6 +899,7 @@ uint32_t n_sub_823C5D18(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = expressionId;
+		ctx.r7.u64 = holderInner;
 		uint32_t checkResult = n_sub_82607090(ctx, base, target);
 		r4Value = ctx.r4.u64;
 		r7Value = ctx.r7.u64;
@@ -906,7 +919,8 @@ uint32_t n_sub_823C5D18(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 				uint32_t handle = (link != 0) ? LOAD32(link + 36) : 0xFFFFFFFFu;
 
 				// state the callee may pass on
-				uint32_t check2 = n_sub_823023E0(ctx, base, handle);
+				ctx.r6.u64 = r6Value;
+				uint32_t check2 = CECPlayer_CanPerformAction(ctx, base, handle);
 				r4Value = ctx.r4.u64;
 				r6Value = ctx.r6.u64;
 				r7Value = ctx.r7.u64;
@@ -928,9 +942,9 @@ uint32_t n_sub_823C5D18(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	ctx.r8.u64 = r8Value;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823C5D18, 0x823C5D18) { ctx.r3.u64 = n_sub_823C5D18(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(21, sub_823C5D18, 0x823C5D18) { ctx.r3.u64 = CECPlayer_CanPlayExpression(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_823C8620(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CECPlayer_InitHeroCombatBalance(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(21, 0x823C8620)) { ctx.r3.u64 = playerAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; __imp__sub_823C8620(ctx, base); return ctx.r3.u64; }
@@ -972,14 +986,14 @@ uint64_t n_sub_823C8620(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823C8620, 0x823C8620) { ctx.r3.u64 = n_sub_823C8620(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(21, sub_823C8620, 0x823C8620) { ctx.r3.u64 = CECPlayer_InitHeroCombatBalance(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_823C8810(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t handlePtr) {
+uint64_t CECPlayer_AssignLinkedHandle(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint64_t handlePtr) {
 	if (!UseLiftedCode(21, 0x823C8810)) { ctx.r3.u64 = playerAddr; ctx.r4.u64 = handlePtr; __imp__sub_823C8810(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823C8810);
 	uint32_t stack = ctx.r1.u64;
 	const uint32_t msrBits = ctx.r13.u32;
-	// r9, r10 and cr0 as the reference-taking loop leaves them; n_sub_8238F350 receives them
+	// r9, r10 and cr0 as the reference-taking loop leaves them; Entity_AssignSharedHandle receives them
 	uint64_t lockState = ctx.r9.u64;
 	PPCCRRegister storeResult = ctx.cr0;
 	CECPlayer* player = GameObject<CECPlayer>(base, playerAddr);
@@ -1014,14 +1028,14 @@ uint64_t n_sub_823C8810(CpuState& ctx, uint8_t* base, uint32_t playerAddr, uint6
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
 	ctx.cr0 = storeResult;
-	n_sub_8238F350(ctx, base, linkedObject, stack + 80);
+	Entity_AssignSharedHandle(ctx, base, linkedObject, stack + 80);
 	uint64_t result = SharedHandle_Release(ctx, base, handlePtr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823C8810, 0x823C8810) { ctx.r3.u64 = n_sub_823C8810(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(21, sub_823C8810, 0x823C8810) { ctx.r3.u64 = CECPlayer_AssignLinkedHandle(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 uint64_t n_sub_823C88F0(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -1055,11 +1069,11 @@ uint64_t n_sub_823C88F0(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	uint32_t entityParam = LOAD32(playerEntity + 36);
 	uint32_t managerHandle = LOAD32(LOAD32(manager + 12) + 128);
 	// state the callee may pass on
-	return n_sub_8233A810(ctx, base, managerHandle, entityParam, arg2);
+	return List_RemoveFirstKey(ctx, base, managerHandle, entityParam, arg2);
 }
 PROMOTED_ENTRY(21, sub_823C88F0, 0x823C88F0) { ctx.r3.u64 = n_sub_823C88F0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_823CC6F8(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
+uint64_t CECPlayer_InitDogState(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820A8B7C_B_ = int32_t(0x820A8B7C);
 	constexpr int32_t str_TXT_820A8B98_B_ = int32_t(0x820A8B98);
@@ -1081,7 +1095,7 @@ uint64_t n_sub_823CC6F8(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	uint64_t playerSubobject = (uint32_t)playerAddr == 0 ? 0 : playerAddr + 16;
 	uint32_t component = LOAD32(uint32_t(player->m_4) + 124);
 	ctx.r1.u64 = stack;
-	n_sub_8229E750(ctx, base, component, playerAddr + 368, playerSubobject);
+	PhysicsCharacter_AddToPushList(ctx, base, component, playerAddr + 368, playerSubobject);
 
 	// m_36 is cleared only when the hash reached through holderInner+36 equals the hash of the
 	// Marcus Memorial demon-door path.
@@ -1117,16 +1131,16 @@ uint64_t n_sub_823CC6F8(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	uint32_t tempCharString = stack + 80;
 	uint32_t tempRecordRef = stack + 88;
 
-	// n_sub_82297F88 gets str_TXT_820AD538_B_ with m_98, then str_TXT_820AD544_B_ with the initial m_90 minus m_98
+	// Audio_SetCategoryVolume gets str_TXT_820AD538_B_ with m_98, then str_TXT_820AD544_B_ with the initial m_90 minus m_98
 	ctx.r6.u64 = r6Value;  // state the callee may pass on
 	CCharString_ConstructFromCStr(ctx, base, tempCharString, str_TXT_820AD538_B_, -1);
 	ctx.fpscr.disableFlushMode();
-	n_sub_82297F88(ctx, base, LOAD32(globalBase + 27596), tempCharString, double(player->m_98));
+	Audio_SetCategoryVolume(ctx, base, LOAD32(globalBase + 27596), tempCharString, double(player->m_98));
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tempCharString);
 
 	CCharString_ConstructFromCStr(ctx, base, tempCharString, str_TXT_820AD544_B_, -1);
 	ctx.fpscr.disableFlushMode();
-	n_sub_82297F88(ctx, base, LOAD32(globalBase + 27596), tempCharString,
+	Audio_SetCategoryVolume(ctx, base, LOAD32(globalBase + 27596), tempCharString,
 	               double(float(initialM90 - double(player->m_98))));
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tempCharString);
 
@@ -1160,19 +1174,19 @@ uint64_t n_sub_823CC6F8(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823CC6F8, 0x823CC6F8) { ctx.r3.u64 = n_sub_823CC6F8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(21, sub_823CC6F8, 0x823CC6F8) { ctx.r3.u64 = CECPlayer_InitDogState(ctx, base, ctx.r3.u64); }
 
 // sub_823CC998  [16 bytes]
-uint64_t n_sub_823CC998(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
+uint64_t CECPlayer_SetPhysicsCharacterTarget(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	if (!UseLiftedCode(21, 0x823CC998)) { ctx.r3.u64 = playerAddr; __imp__sub_823CC998(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823CC998);
 	CECPlayer* player = GameObject<CECPlayer>(base, playerAddr);
 	uint32_t physicsCharacter = LOAD32((uint32_t)player->m_4 + 124);
-	return n_sub_8229E5F8(ctx, base, physicsCharacter, playerAddr + 368);
+	return CECPhysicsSimulationCharacterControlled_SetTargetEntity(ctx, base, physicsCharacter, playerAddr + 368);
 }
-PROMOTED_ENTRY(21, sub_823CC998, 0x823CC998) { ctx.r3.u64 = n_sub_823CC998(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(21, sub_823CC998, 0x823CC998) { ctx.r3.u64 = CECPlayer_SetPhysicsCharacterTarget(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t forwardedArg) {
+uint64_t CECPlayer_Update(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint64_t forwardedArg) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -1187,7 +1201,7 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 
 	if (player->m_37 != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_823C0E78(ctx, base, playerAddr, forwardedArg);
+		CECPlayer_RefreshAbilities(ctx, base, playerAddr, forwardedArg);
 		forwardedArg = ctx.r6.u64;
 		player->m_37 = uint8_t(0);
 	}
@@ -1197,9 +1211,9 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	ctx.r6.u64 = forwardedArg;
 	CECPlayer_PruneEntityList(ctx, base, playerAddr);
 
-	n_sub_823CD340(ctx, base, playerAddr);
-	n_sub_823CDD28(ctx, base, playerAddr);
-	n_sub_823CEA38(ctx, base, playerAddr);
+	CECPlayer_UpdateAmbience(ctx, base, playerAddr);
+	CECPlayer_UpdateThemeEffects(ctx, base, playerAddr);
+	CECPlayer_UpdateRainAudio(ctx, base, playerAddr);
 
 	if (player->m_15C != 0) {
 		// The first virtual call is handed the stack block at +80. Its 16 bytes are copied to +112, and a byte
@@ -1271,7 +1285,7 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 
 	CECPlayer_UpdateRangedWeaponsAutoHeal(ctx, base, playerAddr);
 
-	n_sub_823D1830(ctx, base, playerAddr);
+	CECPlayer_UpdateTimedComponents(ctx, base, playerAddr);
 
 	// Resolve the entity handle at +104 of the first entry of the player list (the same steps as
 	// EntityHandle_Get) and compare it with this player's entity (m_4).
@@ -1280,9 +1294,9 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	uint64_t playerList = LOAD32(playerHolder + 4);
 	uint32_t playerEntity = player->m_4;
 	uint32_t firstPlayer = LOAD32((uint32_t)playerList);
-	// n_sub_82525EF0 at the end takes r3 from the state: this handle's address unless a later call's result replaces it
+	// EntityHandle_Resolve_82525EF0 at the end takes r3 from the state: this handle's address unless a later call's result replaces it
 	uint64_t lastR3 = (int64_t)(uint64_t)firstPlayer + 104;
-	// r8 handed to n_sub_823CCD48: the player list, or what EntityHandle_Release left in r8
+	// r8 handed to CECPlayer_UpdateHenchmanCopyable: the player list, or what EntityHandle_Release left in r8
 	uint64_t r8Value = playerList;
 	uint32_t controlBlock = LOAD32(firstPlayer + 108);
 
@@ -1303,11 +1317,11 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 
 	if (playerEntity == firstPlayerEntity) {
 		ctx.r8.u64 = r8Value;
-		n_sub_823CCD48(ctx, base, playerAddr);
+		CECPlayer_UpdateHenchmanCopyable(ctx, base, playerAddr);
 
 		n_sub_823CE660(ctx, base, playerAddr, ctx.r8.u64);
 
-		lastR3 = n_sub_823CF1E8(ctx, base, playerAddr, ctx.r8.u64);
+		lastR3 = CECPlayer_UpdateFirstPlayerItems(ctx, base, playerAddr, ctx.r8.u64);
 	}
 
 	// The value m_3C caches: 1 while m_3B is set or the world frame has not passed m_40 + 10.
@@ -1321,13 +1335,13 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 	uint32_t m3B = player->m_3B;
 	uint32_t worldFrame = LOAD32(kWorldFrameAddr);
 
-	// r7 handed to the calls below: the cached value, or what n_sub_823228C0 left in r7
+	// r7 handed to the calls below: the cached value, or what CECPlayer_SetSafetyMode left in r7
 	uint64_t r7Value = m3CValue(m3B, worldFrame);
 	if ((uint32_t)r7Value != player->m_3C) {
 		uint32_t newValue = m3CValue(m3B, worldFrame);
 		uint32_t handler = LOAD32(LOAD32(LOAD32(globals + 26912) + 12) + 140);
 		ctx.r7.u64 = r7Value;
-		lastR3 = n_sub_823228C0(ctx, base, handler, newValue);
+		lastR3 = CECPlayer_SetSafetyMode(ctx, base, handler, newValue);
 		r7Value = ctx.r7.u64;
 		worldFrame = LOAD32(kWorldFrameAddr);
 	}
@@ -1336,15 +1350,15 @@ uint64_t n_sub_823CC9A8(CpuState& ctx, uint8_t* base, uint64_t playerAddr, uint6
 
 	ctx.r3.u64 = lastR3;
 	ctx.r7.u64 = r7Value;
-	uint64_t result = n_sub_82525EF0(ctx, base);
+	uint64_t result = EntityHandle_Resolve_82525EF0(ctx, base);
 
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823CC9A8, 0x823CC9A8) { ctx.r3.u64 = n_sub_823CC9A8(ctx, base, ctx.r3.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(21, sub_823CC9A8, 0x823CC9A8) { ctx.r3.u64 = CECPlayer_Update(ctx, base, ctx.r3.u64, ctx.r6.u64); }
 
-uint32_t n_sub_823D1830(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
+uint32_t CECPlayer_UpdateTimedComponents(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	if (!UseLiftedCode(21, 0x823D1830)) { ctx.r3.u64 = playerAddr; __imp__sub_823D1830(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823D1830);
 	uint32_t stack = ctx.r1.u64;
@@ -1400,7 +1414,7 @@ uint32_t n_sub_823D1830(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 
 		// Walk the list at player + 260 with a checked iterator (list, node) kept at stack + 80 / + 84; the
 		// trap calls are that iterator's checks. Each node whose frame at +12 is at or before the current
-		// world frame is handed to n_sub_8261A508 with the component and then erased.
+		// world frame is handed to Inventory_AddItem with the component and then erased.
 		auto iteratorTrap = [&] {
 			ctx.r1.u64 = stack;
 			ppc_trap(ctx, base, 22);
@@ -1427,7 +1441,7 @@ uint32_t n_sub_823D1830(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 				if (node == iterHead)
 					iteratorTrap();
 				ctx.r1.u64 = stack;
-				n_sub_8261A508(ctx, base, stack + 96, component13, LOAD32(node + 8), 1);
+				Inventory_AddItem(ctx, base, stack + 96, component13, LOAD32(node + 8), 1);
 				uint32_t created = LOAD32(stack + 96);
 				if (created != 0)
 					PtrList_RemoveAll(ctx, base, created, stack + 96);
@@ -1449,9 +1463,9 @@ uint32_t n_sub_823D1830(CpuState& ctx, uint8_t* base, uint64_t playerAddr) {
 	ctx.r1.u64 = stack;
 	return (uint32_t)eraseResult;
 }
-PROMOTED_ENTRY(21, sub_823D1830, 0x823D1830) { ctx.r3.u64 = n_sub_823D1830(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(21, sub_823D1830, 0x823D1830) { ctx.r3.u64 = CECPlayer_UpdateTimedComponents(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_823D20A0(CpuState& ctx, uint8_t* base, uint64_t player, uint32_t microphoneIndex, uint64_t forwardedArg) {
+uint64_t CECPlayer_SetMicrophoneIndex(CpuState& ctx, uint8_t* base, uint64_t player, uint32_t microphoneIndex, uint64_t forwardedArg) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(21, 0x823D20A0)) { ctx.r3.u64 = player; ctx.r4.u64 = microphoneIndex; ctx.r8.u64 = forwardedArg; __imp__sub_823D20A0(ctx, base); return ctx.r3.u64; }
@@ -1470,7 +1484,7 @@ uint64_t n_sub_823D20A0(CpuState& ctx, uint8_t* base, uint64_t player, uint32_t 
 	// state the callee may pass on (r8 then goes on to n_sub_823D2820)
 	ctx.r1.u64 = stack;
 	ctx.r8.u64 = forwardedArg;
-	uint64_t createdRef = n_sub_829F86A0(ctx, base, stack + 88, refSource);
+	uint64_t createdRef = StringRef_Construct(ctx, base, stack + 88, refSource);
 
 	uint64_t microphoneSlot = n_sub_823D2820(ctx, base, player + 184, stack + 80, ctx.r8.u64);
 	RefPtr_Assign(ctx, base, microphoneSlot, createdRef);
@@ -1560,4 +1574,4 @@ uint64_t n_sub_823D20A0(CpuState& ctx, uint8_t* base, uint64_t player, uint32_t 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(21, sub_823D20A0, 0x823D20A0) { ctx.r3.u64 = n_sub_823D20A0(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r8.u64); }
+PROMOTED_ENTRY(21, sub_823D20A0, 0x823D20A0) { ctx.r3.u64 = CECPlayer_SetMicrophoneIndex(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r8.u64); }

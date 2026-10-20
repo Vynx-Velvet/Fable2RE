@@ -1,9 +1,9 @@
 // CLayerManager (vtable 0x8200C21C): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t layerEntry, double lowerBound, double upperBound, double amount) {
+uint32_t CLayerManager_UpdateTargetRange(CpuState& ctx, uint8_t* base, uint64_t layerEntry, double lowerBound, double upperBound, double amount) {
 	if (!UseLiftedCode(90, 0x82C37408)) { ctx.r4.u64 = layerEntry; ctx.f1.f64 = lowerBound; ctx.f2.f64 = upperBound; ctx.f3.f64 = amount; __imp__sub_82C37408(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C37408);
 	uint32_t stack = ctx.r1.u64;
@@ -54,7 +54,7 @@ uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t layerEntry, doubl
 		const double rangeEnd = LOAD_F32(targetSlot + 16);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		n_sub_82C509A8(ctx, base, 0, rangeStart, rangeEnd, callF3);
+		CalculateRangeProgress(ctx, base, 0, rangeStart, rangeEnd, callF3);
 		// the virtual call gets the registers sub_82C509A8 leaves
 		layerEntry = ctx.r4.u64;
 		callF1 = ctx.f1.f64;
@@ -81,7 +81,7 @@ uint32_t n_sub_82C37408(CpuState& ctx, uint8_t* base, uint64_t layerEntry, doubl
 	ctx.r1.u64 = stack;
 	return ctx.r3.u32;
 }
-PROMOTED_ENTRY(90, sub_82C37408, 0x82C37408) { ctx.r3.u64 = n_sub_82C37408(ctx, base, ctx.r4.u64, ctx.f1.f64, ctx.f2.f64, ctx.f3.f64); }
+PROMOTED_ENTRY(90, sub_82C37408, 0x82C37408) { ctx.r3.u64 = CLayerManager_UpdateTargetRange(ctx, base, ctx.r4.u64, ctx.f1.f64, ctx.f2.f64, ctx.f3.f64); }
 
 uint32_t CLayerManager_ClearChildFlags(CpuState& ctx, uint8_t* base, uint32_t layerManagerAddr) {
 	if (!UseLiftedCode(90, 0x82C37600)) { ctx.r3.u64 = layerManagerAddr; __imp__sub_82C37600(ctx, base); return ctx.r3.u32; }
@@ -453,7 +453,7 @@ uint64_t CLayerManager_BroadcastUpdate(CpuState& ctx, uint8_t* base, uint64_t la
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 	// r3 on return: this call's result, or the iterator address once the loop has advanced
-	uint64_t result = n_sub_82C50270(ctx, base, layerManagerAddr + 4, updateData);
+	uint64_t result = RefPtrList_Add(ctx, base, layerManagerAddr + 4, updateData);
 
 	// Checked STL iterator on the game stack: {owning container, current node}.
 	const uint32_t childMap = (uint32_t)layerManagerAddr + 28;
@@ -513,7 +513,7 @@ uint64_t CLayerManager_BroadcastUpdate2(CpuState& ctx, uint8_t* base, uint64_t l
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 	// r3 on return: this call's result, or the iterator address once the loop has advanced
-	uint64_t result = n_sub_82C505E8(ctx, base, layerManagerAddr + 4, updateData);
+	uint64_t result = RefPtrList_Remove(ctx, base, layerManagerAddr + 4, updateData);
 
 	// Checked STL iterator on the game stack: {owning container, current node}.
 	const uint32_t childMap = (uint32_t)layerManagerAddr + 28;
@@ -565,7 +565,7 @@ PROMOTED_ENTRY(90, sub_82C37AE8, 0x82C37AE8) { ctx.r3.u64 = CLayerManager_Broadc
 
 // Walks the child map at +0x1C. Entries whose byte at +20 is set are kept; for every other entry the two
 // objects it points to are called through their vtables and the pointers cleared, then the entry is erased.
-uint32_t n_sub_82C37FE8(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr, uint64_t r8Value) {
+uint32_t CLayerManager_RemoveUnmarkedEntries(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr, uint64_t r8Value) {
 	if (!UseLiftedCode(90, 0x82C37FE8)) { ctx.r3.u64 = layerManagerAddr; ctx.r8.u64 = r8Value; __imp__sub_82C37FE8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C37FE8);
 	uint32_t stack = ctx.r1.u64;
@@ -639,7 +639,7 @@ uint32_t n_sub_82C37FE8(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 		// erase the entry; the result holds the iterator to the next one
 		uint64_t iterator = LOAD64(stack + 80);
 		ctx.r1.u64 = stack;
-		result = n_sub_82C360B8(ctx, base, stack + 88, layerManagerAddr + 28, iterator, r8Value);
+		result = StdMap_EraseIterator_82C360B8(ctx, base, stack + 88, layerManagerAddr + 28, iterator, r8Value);
 		r8Value = ctx.r8.u64;
 		STORE64(stack + 80, LOAD64(result));
 		node = LOAD32(stack + 84);
@@ -650,7 +650,7 @@ uint32_t n_sub_82C37FE8(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(90, sub_82C37FE8, 0x82C37FE8) { ctx.r3.u64 = n_sub_82C37FE8(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(90, sub_82C37FE8, 0x82C37FE8) { ctx.r3.u64 = CLayerManager_RemoveUnmarkedEntries(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
 // Gets the child-map entry for entryKey and clears its word at +8. If the template map at +0x10 has a node
 // for templateKey, factory creates the child object from it into the entry, and the template's two floats
@@ -695,7 +695,7 @@ uint64_t CLayerManager_CreateEntry(CpuState& ctx, uint8_t* base, uint64_t layerM
 		uint32_t layerEntry = stack + 112;
 		// state the callee may pass on
 		ctx.r5.u64 = stack + 284;
-		n_sub_821D5BA0(ctx, base, layerEntry);
+		CCharString_Constructor(ctx, base, layerEntry);
 		LayerEntry_SetValues(ctx, base, layerEntry, 0, LOAD32(templateNode + 16));
 		LayerEntry_SetField32(ctx, base, layerEntry, 1);
 		if (layerManager->m_paused != 0) {
@@ -723,7 +723,7 @@ uint64_t CLayerManager_CreateEntry(CpuState& ctx, uint8_t* base, uint64_t layerM
 		STORE32(stack + 80, 0);
 
 		if (LOAD32((uint32_t)entry) != 0) {
-			n_sub_82C50130(ctx, base, layerManagerAddr + 4, entry);
+			LayerManager_RegisterChild(ctx, base, layerManagerAddr + 4, entry);
 			uint32_t child = LOAD32((uint32_t)entry);
 			uint32_t vtable = LOAD32(child);
 			uint32_t childMethod = LOAD32(vtable + 12);
@@ -797,8 +797,8 @@ PROMOTED_ENTRY(90, sub_82C386C0, 0x82C386C0) { ctx.r3.u64 = CLayerManager_FindOr
 // Unless the manager is shut down, asks source (vtable slot +44) to fill the buffer at stack+128. On success
 // it clears the child flags, builds a list from m_2C and the buffer's first and third floats, finds or creates
 // the child entry of every list item, marks it (byte at +20) and passes it values from the item and the
-// buffer, then erases the unmarked entries (n_sub_82C37FE8) and frees the list.
-uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr, uint64_t source) {
+// buffer, then erases the unmarked entries (CLayerManager_RemoveUnmarkedEntries) and frees the list.
+uint64_t CLayerManager_UpdateLayers(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr, uint64_t source) {
 	if (!UseLiftedCode(91, 0x82C38760)) { ctx.r3.u64 = layerManagerAddr; ctx.r4.u64 = source; __imp__sub_82C38760(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C38760);
 	PPCRegister scratch{};
@@ -830,9 +830,10 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 			STORE_F32(stack + 96, LOAD_F32(stack + 128));
 			STORE_F32(stack + 100, float(thirdFloat));
 			// state the callee may pass on
-			n_sub_82C37C48(ctx, base, listAddr);
+			ctx.f13.f64 = thirdFloat;
+			List_Construct_82C37C48(ctx, base, listAddr);
 
-			n_sub_82C04B58(ctx, base, layerManager->m_2C, LOAD64(stack + 96), (uint64_t)listAddr);
+			LayerCollection_CollectInRange(ctx, base, layerManager->m_2C, LOAD64(stack + 96), (uint64_t)listAddr);
 
 			// The iterator at stack+96 is {list, node}; the traps are the checked-iterator tests.
 			uint32_t listHead = LOAD32(stack + 108);
@@ -925,8 +926,10 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 				}
 
 				// state the callee may pass on
+				ctx.r8.u64 = r8ForCall;
+				ctx.r9.u64 = r9ForCall;
 				ctx.v1 = vec;
-				n_sub_82C37490(ctx, base, entry, kindArg);
+				LayerEntry_SetShape(ctx, base, entry, kindArg);
 				ctx.fpscr.disableFlushMode();
 				double itemFloat1 = double(LOAD_F32(item + 8));
 				double itemFloat2 = double(LOAD_F32(item + 12));
@@ -934,7 +937,7 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 				VSTORE((stack + 160) & ~0xF, V8(v59));
 				double bufferFloat = double(LOAD_F32(stack + 164));
 				// state the callee may pass on
-				n_sub_82C37408(ctx, base, entry, itemFloat1, itemFloat2, bufferFloat);
+				CLayerManager_UpdateTargetRange(ctx, base, entry, itemFloat1, itemFloat2, bufferFloat);
 				r8Value = ctx.r8.u64;
 				if (node == LOAD32(iterList + 4)) {
 					ppc_trap(ctx, base, 22);
@@ -942,8 +945,8 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 				node = LOAD32(node);
 			}
 
-			n_sub_82C37FE8(ctx, base, layerManagerAddr, r8Value);
-			n_sub_82C045B8(ctx, base, listAddr);
+			CLayerManager_RemoveUnmarkedEntries(ctx, base, layerManagerAddr, r8Value);
+			List_Clear(ctx, base, listAddr);
 			result = HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 108));
 			r4Value = ctx.r4.u64;
 		}
@@ -954,7 +957,7 @@ uint64_t n_sub_82C38760(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr,
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(91, sub_82C38760, 0x82C38760) { ctx.r3.u64 = n_sub_82C38760(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(91, sub_82C38760, 0x82C38760) { ctx.r3.u64 = CLayerManager_UpdateLayers(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint32_t CLayerManager_Destruct(CpuState& ctx, uint8_t* base, uint64_t layerManagerAddr) {
 	if (!UseLiftedCode(91, 0x82C389B0)) { ctx.r3.u64 = layerManagerAddr; __imp__sub_82C389B0(ctx, base); return ctx.r3.u32; }
@@ -978,7 +981,7 @@ uint32_t CLayerManager_Destruct(CpuState& ctx, uint8_t* base, uint64_t layerMana
 	uint64_t childMapEnd = LOAD64(stack + 80);
 	STORE32(stack + 92, childMapFirst);
 	uint64_t childMapBegin = LOAD64(stack + 88);
-	n_sub_82C36860(ctx, base, stack + 88, childMapAddr, childMapBegin, childMapEnd);
+	ChildMap_EraseRange(ctx, base, stack + 88, childMapAddr, childMapBegin, childMapEnd);
 
 	HandleTarget_FreeThunk(ctx, base, layerManager->m_childMap);
 	layerManager->m_childMap = 0;
@@ -995,13 +998,14 @@ uint32_t CLayerManager_Destruct(CpuState& ctx, uint8_t* base, uint64_t layerMana
 	uint64_t templateMapEnd = LOAD64(stack + 88);
 	uint64_t templateMapBegin = LOAD64(stack + 80);
 	// state the callee may pass on
-	n_sub_82C36EB8(ctx, base, stack + 88, templateMapAddr, templateMapBegin, templateMapEnd);
+	ctx.r7.u64 = templateMapHead;
+	TemplateMap_EraseRange(ctx, base, stack + 88, templateMapAddr, templateMapBegin, templateMapEnd);
 
 	HandleTarget_FreeThunk(ctx, base, layerManager->m_templateMap);
 	layerManager->m_templateMap = 0;
 	layerManager->m_18 = 0;
 
-	n_sub_82C502D8(ctx, base, layerManagerAddr + 4);
+	RefPtrList_Destructor(ctx, base, layerManagerAddr + 4);
 	C_8200A34C_Destructor(ctx, base, (uint32_t)layerManagerAddr);
 
 	stack = PopStackFrame(stack, 128);

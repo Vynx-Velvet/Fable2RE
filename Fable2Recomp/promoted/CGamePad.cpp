@@ -1,9 +1,11 @@
+
+
 // CGamePad (vtable 0x82002D38): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -85,8 +87,12 @@ uint32_t CGamePad_QueueTriggerEvents(CpuState& ctx, uint8_t* base, uint32_t game
 			STORE_F64(stack + 224, timeStamp);
 			STORE8(stack + 216, 0);
 			// state the callee may pass on
+			ctx.f9.f64 = magnitude;
+			ctx.f10.f64 = levelValue;
 			ctx.f11 = f11Value;
-			result = n_sub_829FA5E8(ctx, base, eventQueue, queuedEvent);
+			ctx.f12.f64 = elapsedF;
+			ctx.f13.f64 = levelScale;
+			result = EventQueue_PushBack(ctx, base, eventQueue, queuedEvent);
 			f1Value = ctx.f1.f64;
 			f11Value = ctx.f11;
 			carry = ctx.xer.ca;
@@ -200,7 +206,7 @@ uint32_t CGamePad_QueueButtonEvent(CpuState& ctx, uint8_t* base, uint32_t gamePa
 	ctx.f11.f64 = f11Value;
 	ctx.f12 = f12Value;
 	ctx.f13.f64 = tickRate;
-	uint32_t result = n_sub_829FA5E8(ctx, base, eventQueue, queuedEvent);
+	uint32_t result = EventQueue_PushBack(ctx, base, eventQueue, queuedEvent);
 	stack = PopStackFrame(stack, 304);
 	ctx.r1.u64 = stack;
 	return result;
@@ -209,7 +215,7 @@ PROMOTED_ENTRY(0, sub_82188F20, 0x82188F20) { ctx.r3.u64 = CGamePad_QueueButtonE
 
 // When the pad's state can be read: passes the elapsed time to the member at +72, then clamps both motor speeds
 // to 0..1 (constants at 0x820994B4 / 0x820994C0), scales them by 65535 and sends them to the pad as its vibration.
-uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
+uint64_t CGamePad_ApplyVibration(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 	if (!UseLiftedCode(12, 0x822B36F8)) { ctx.r3.u64 = gamePadAddr; __imp__sub_822B36F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822B36F8);
 	uint32_t stack = ctx.r1.u64;
@@ -231,8 +237,12 @@ uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 		double tickRate = LOAD_F64(0x83496EC8u);
 		double elapsed = tickDelta / tickRate;
 		// state the callee may pass on
+		ctx.f9.f64 = elapsed;
+		ctx.f10.f64 = tickDelta;
+		ctx.f11.f64 = ticks;
 		ctx.f12 = timebase;
-		n_sub_8218C500(ctx, base, gamePadAddr + 72, double(float(elapsed)));
+		ctx.f13.f64 = tickRate;
+		ScreenShakeList_Update(ctx, base, gamePadAddr + 72, double(float(elapsed)));
 
 		// Branch-free compares: index 4 when value < limit or unordered, else 0, into the table at 0x82100170
 		// (1.0, -1.0); the sign of the float read selects between two values.
@@ -284,8 +294,23 @@ uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 		uint32_t vibrationToSend = gamePad->m_VibrationState;
 		uint32_t padIndex = gamePad->m_PadIndex;
 		// state the callee may pass on
+		ctx.r6.u64 = signTable;
+		ctx.r7.u64 = leftMaxIndex;
+		ctx.r8.u64 = rightMotorValue;
+		ctx.r9.u64 = vibrationForRight;
+		ctx.f1.f64 = rightOverMax;
+		ctx.f2.f64 = leftOverMax;
+		ctx.f3.f64 = rightFloored;
+		ctx.f4.f64 = rightMinSign;
 		ctx.f5 = rightMotorBits;
 		ctx.f6 = leftMotorBits;
+		ctx.f7.f64 = rightScaled;
+		ctx.f8.f64 = leftScaled;
+		ctx.f9.f64 = rightClamped;
+		ctx.f10.f64 = rightMaxSign;
+		ctx.f11.f64 = leftClamped;
+		ctx.f12.f64 = motorScale;
+		ctx.f13.f64 = maxSpeed;
 		result = GamePad_XamInputSetVibration(ctx, base, padIndex, vibrationToSend);
 	}
 
@@ -293,7 +318,7 @@ uint64_t n_sub_822B36F8(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(12, sub_822B36F8, 0x822B36F8) { ctx.r3.u64 = n_sub_822B36F8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(12, sub_822B36F8, 0x822B36F8) { ctx.r3.u64 = CGamePad_ApplyVibration(ctx, base, ctx.r3.u32); }
 
 // Reads the pad's capabilities and state; when both succeed, updates the pad from the new state, keeps a copy of
 // the state's 12-byte gamepad block at +60 and flushes the pad's events.
@@ -344,7 +369,7 @@ uint64_t CGamePad_ProcessState(CpuState& ctx, uint8_t* base, uint64_t gamePadAdd
 }
 PROMOTED_ENTRY(12, sub_822B3848, 0x822B3848) { ctx.r3.u64 = CGamePad_ProcessState(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
-// Reads the pad's state; when that succeeds, refreshes the pad's vibration (n_sub_822B36F8).
+// Reads the pad's state; when that succeeds, refreshes the pad's vibration (CGamePad_ApplyVibration).
 uint64_t CGamePad_UpdateRumble(CpuState& ctx, uint8_t* base, uint64_t gamePadAddr) {
 	if (!UseLiftedCode(12, 0x822BA4A8)) { ctx.r3.u64 = gamePadAddr; __imp__sub_822BA4A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822BA4A8);
@@ -357,7 +382,7 @@ uint64_t CGamePad_UpdateRumble(CpuState& ctx, uint8_t* base, uint64_t gamePadAdd
 	ctx.r3.u64 = gamePad->m_PadIndex;
 	uint64_t result = GamePad_XamInputGetState(ctx, base, stateBuffer);
 	if ((uint32_t)result == 0) {
-		result = n_sub_822B36F8(ctx, base, gamePadAddr);
+		result = CGamePad_ApplyVibration(ctx, base, gamePadAddr);
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -403,6 +428,7 @@ uint64_t CGamePad_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t game
 	uint32_t padIndex = gamePad->m_PadIndex;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = gamePadVtable;
 	GamePad_XamInputSetVibration(ctx, base, padIndex, stopVibration);
 
 	uint32_t vibrationState = gamePad->m_VibrationState;
@@ -478,7 +504,7 @@ uint64_t CGamePad_ReleaseAllButtons(CpuState& ctx, uint8_t* base, uint64_t gameP
 		// state the callee may pass on
 		ctx.f1.f64 = f1State;
 		ctx.f13.f64 = queuedEventTime;
-		n_sub_829FA5E8(ctx, base, eventQueue, eventBlock);
+		EventQueue_PushBack(ctx, base, eventQueue, eventBlock);
 		f1State = ctx.f1.f64;
 
 		// the queue call may have changed the list: advancing from its end is an error
@@ -497,12 +523,12 @@ uint64_t CGamePad_ReleaseAllButtons(CpuState& ctx, uint8_t* base, uint64_t gameP
 }
 PROMOTED_ENTRY(88, sub_82BE3C08, 0x82BE3C08) { ctx.r3.u64 = CGamePad_ReleaseAllButtons(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
-uint64_t n_sub_82BE3D48(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, double floatArg1) {
+uint64_t CGamePad_ReleaseAllButtons_82BE3D48(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, double floatArg1) {
 	if (!UseLiftedCode(88, 0x82BE3D48)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.f1.f64 = floatArg1; __imp__sub_82BE3D48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BE3D48);
 	return CGamePad_ReleaseAllButtons(ctx, base, arg1, arg2, floatArg1);
 }
-PROMOTED_ENTRY(88, sub_82BE3D48, 0x82BE3D48) { ctx.r3.u64 = n_sub_82BE3D48(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(88, sub_82BE3D48, 0x82BE3D48) { ctx.r3.u64 = CGamePad_ReleaseAllButtons_82BE3D48(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
 uint64_t CGamePad_StopVibration(CpuState& ctx, uint8_t* base, uint64_t gamePadAddr) {
 	if (!UseLiftedCode(88, 0x82BE3D50)) { ctx.r3.u64 = gamePadAddr; __imp__sub_82BE3D50(ctx, base); return ctx.r3.u64; }
@@ -521,7 +547,7 @@ uint64_t CGamePad_StopVibration(CpuState& ctx, uint8_t* base, uint64_t gamePadAd
 }
 PROMOTED_ENTRY(88, sub_82BE3D50, 0x82BE3D50) { ctx.r3.u64 = CGamePad_StopVibration(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BE3E00(CpuState& ctx, uint8_t* base, uint64_t gamePadAddr, uint64_t shakeType, double fadeDuration) {
+uint64_t CGamePad_SetScreenShakeFade(CpuState& ctx, uint8_t* base, uint64_t gamePadAddr, uint64_t shakeType, double fadeDuration) {
 	if (!UseLiftedCode(88, 0x82BE3E00)) { ctx.r3.u64 = gamePadAddr; ctx.r4.u64 = shakeType; ctx.f1.f64 = fadeDuration; __imp__sub_82BE3E00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BE3E00);
 	uint32_t stack = ctx.r1.u32;
@@ -546,7 +572,7 @@ uint64_t n_sub_82BE3E00(CpuState& ctx, uint8_t* base, uint64_t gamePadAddr, uint
 	ctx.f2.f64 = fadeDuration;
 	return shakeList;
 }
-PROMOTED_ENTRY(88, sub_82BE3E00, 0x82BE3E00) { ctx.r3.u64 = n_sub_82BE3E00(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(88, sub_82BE3E00, 0x82BE3E00) { ctx.r3.u64 = CGamePad_SetScreenShakeFade(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
 uint64_t CGamePad_ResetVibration(CpuState& ctx, uint8_t* base, uint32_t gamePadAddr) {
 	if (!UseLiftedCode(88, 0x82BE3E80)) { ctx.r3.u64 = gamePadAddr; __imp__sub_82BE3E80(ctx, base); return ctx.r3.u64; }
@@ -572,6 +598,9 @@ uint64_t CGamePad_ResetVibration(CpuState& ctx, uint8_t* base, uint32_t gamePadA
 	uint32_t padIndex = gamePad->m_PadIndex;
 	uint32_t stateBufferAddr = stack + 80;
 	// state the callee may pass on: the input query takes the pad index from r3
+	ctx.r3.u64 = padIndex;
+	ctx.r8.u64 = vibrationStateAgain;
+	ctx.r9.u64 = vibrationState;
 	ctx.r10.s64 = int32_t(0x820A0000);  // high half of the motor-speed constant's address
 	uint32_t getStateResult = GamePad_XamInputGetState(ctx, base, stateBufferAddr);
 	if (getStateResult != 0) {

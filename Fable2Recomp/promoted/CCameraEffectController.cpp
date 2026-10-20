@@ -1,9 +1,9 @@
 // CCameraEffectController (vtable 0x820028E4): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821C3320(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr) {
+uint64_t CCameraEffectController_IsActive(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr) {
 	if (!UseLiftedCode(2, 0x821C3320)) { ctx.r3.u64 = cameraEffectControllerAddr; __imp__sub_821C3320(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821C3320);
 	uint32_t stack = ctx.r1.u64;
@@ -59,11 +59,12 @@ uint64_t n_sub_821C3320(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 		}
 	}
 
-	// The result is 1 when the squared length of the first three components of the vector n_sub_821DE960 returns exceeds the threshold.
+	// The result is 1 when the squared length of the first three components of the vector CCameraEffectController_GetPosition returns exceeds the threshold.
 	uint32_t vectorBufferAddr = stack + 80;
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	uint32_t vectorAddr = n_sub_821DE960(ctx, base, vectorBufferAddr, cameraEffectControllerAddr);
+	ctx.f13.f64 = f13Value;
+	uint32_t vectorAddr = CCameraEffectController_GetPosition(ctx, base, vectorBufferAddr, cameraEffectControllerAddr);
 	PPCVRegister vector{};
 	SET_V8(vector, VLOAD(vectorAddr & ~0xFu));
 	ctx.fpscr.enableFlushMode();
@@ -80,7 +81,7 @@ uint64_t n_sub_821C3320(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 	ctx.r1.u64 = stack;
 	return exceedsThreshold;
 }
-PROMOTED_ENTRY(2, sub_821C3320, 0x821C3320) { ctx.r3.u64 = n_sub_821C3320(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(2, sub_821C3320, 0x821C3320) { ctx.r3.u64 = CCameraEffectController_IsActive(ctx, base, ctx.r3.u64); }
 
 // sub_822D7EA0  [84 bytes]
 double CCameraEffectController_GetModeValue(CpuState& ctx, uint8_t* base, uint32_t cameraEffectControllerAddr) {
@@ -132,65 +133,6 @@ uint64_t CCameraEffectController_Destruct(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(54, sub_827D0F48, 0x827D0F48) { ctx.r3.u64 = CCameraEffectController_Destruct(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827D1090(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr, uint64_t effectDataAddr) {
-	if (!UseLiftedCode(54, 0x827D1090)) { ctx.r3.u64 = cameraEffectControllerAddr; ctx.r4.u64 = effectDataAddr; __imp__sub_827D1090(ctx, base); return ctx.r3.u64; }
-	LiftedFrame frame(0x827D1090);
-	uint32_t stack = ctx.r1.u64;
-	CCameraEffectController* cameraEffectController = GameObject<CCameraEffectController>(base, cameraEffectControllerAddr);
-	stack = PushStackFrame(base, stack, 160);
-
-	uint32_t effectAddr = (uint32_t)effectDataAddr;
-	// r4 as left for callers: the input, or what n_sub_821DECC8 leaves in it.
-	uint64_t callerR4 = effectDataAddr;
-
-	// Flag 0x2 in the word at +0x48 asks for the six values at +0x4C to be rebuilt; the flag is cleared afterwards.
-	if ((LOAD32(effectAddr + 0x48) & 2) != 0) {
-		ctx.fpscr.disableFlushMode();
-		double valueA0 = double(LOAD_F32(effectAddr + 0xA0));
-		double constantValue = double(LOAD_F32(0x820994B4u));
-		uint32_t sourceAddr;
-		if (valueA0 == constantValue) {
-			// six copies of the constant, built on the stack
-			sourceAddr = stack + 80;
-			for (uint32_t i = 0; i < 6; ++i) {
-				STORE_F32(sourceAddr + 4 * i, float(constantValue));
-			}
-		} else {
-			// state the callee may pass on
-			ctx.r1.u64 = stack;
-			uint64_t vec4Addr = n_sub_827D0FC0(ctx, base, stack + 80, effectDataAddr);
-			sourceAddr = n_sub_821DECC8(ctx, base, stack + 112, effectDataAddr, vec4Addr);
-			callerR4 = ctx.r4.u64;
-		}
-		for (uint32_t i = 0; i < 6; ++i) {
-			STORE32(effectAddr + 0x4C + 4 * i, LOAD32(sourceAddr + 4 * i));
-		}
-		STORE32(effectAddr + 0x48, LOAD32(effectAddr + 0x48) & ~2u);
-	}
-
-	// Copy the six values to offsets 0x00..0x14 of the output.
-	ctx.fpscr.disableFlushMode();
-	float value0 = LOAD_F32(effectAddr + 0x4C);
-	float value1 = LOAD_F32(effectAddr + 0x50);
-	float value2 = LOAD_F32(effectAddr + 0x54);
-	float value3 = LOAD_F32(effectAddr + 0x58);
-	float value4 = LOAD_F32(effectAddr + 0x5C);
-	float value5 = LOAD_F32(effectAddr + 0x60);
-	cameraEffectController->vtable = AS_U32(value0);
-	cameraEffectController->m_4 = value1;
-	cameraEffectController->m_8 = value2;
-	cameraEffectController->m_C = value3;
-	cameraEffectController->m_10 = value4;
-	cameraEffectController->m_mode = AS_U32(value5);
-
-	stack = PopStackFrame(stack, 160);
-	ctx.r1.u64 = stack;
-	// callers read r4 after the call
-	ctx.r4.u64 = callerR4;
-	return cameraEffectControllerAddr;
-}
-PROMOTED_ENTRY(54, sub_827D1090, 0x827D1090) { ctx.r3.u64 = n_sub_827D1090(ctx, base, ctx.r3.u64, ctx.r4.u64); }
-
 // sub_827D11A8  [92 bytes]
 uint64_t CCameraEffectController_ResetBlend(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr, uint64_t initDataAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -201,8 +143,8 @@ uint64_t CCameraEffectController_ResetBlend(CpuState& ctx, uint8_t* base, uint64
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
 
-	// n_sub_827D2830 copies fields of the data at initDataAddr into the object.
-	uint64_t result = n_sub_827D2830(ctx, base, cameraEffectControllerAddr, initDataAddr);
+	// CCameraEffectController_InitFromData copies fields of the data at initDataAddr into the object.
+	uint64_t result = CCameraEffectController_InitFromData(ctx, base, cameraEffectControllerAddr, initDataAddr);
 
 	// constants at 0x820994B4 (reset value) and 0x820994C0 (blend duration)
 	uint32_t constantsAddr = uint32_t(g_820A0000) - 27468;
@@ -231,10 +173,10 @@ uint64_t CCameraEffectController_SetMode(CpuState& ctx, uint8_t* base, uint32_t 
 	uint32_t modeStringAddr = stack + 84;
 	cameraEffectController->m_mode = newMode;
 	ctx.r1.u64 = stack;
-	uint32_t modeStringSource = n_sub_827D2AB8(ctx, base, modeStringAddr, cameraEffectControllerAddr);
+	uint32_t modeStringSource = CCameraEffectController_GetModeName(ctx, base, modeStringAddr, cameraEffectControllerAddr);
 	uint32_t nameStringAddr = stack + 80;
 	CCharString_CopyTransformed(ctx, base, nameStringAddr, modeStringSource);
-	uint32_t nameHash = n_sub_82BFD780(ctx, base, nameStringAddr);
+	uint32_t nameHash = CCharString_GetHash(ctx, base, nameStringAddr);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameStringAddr);
 	cameraEffectController->m_nameHash = nameHash;
 	uint64_t releaseResult = CCharString_ReleaseAndDecGlobalCountA(ctx, base, modeStringAddr);
@@ -300,7 +242,7 @@ uint64_t CCameraEffectController_SetNames(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(54, sub_827D1340, 0x827D1340) { ctx.r3.u64 = CCameraEffectController_SetNames(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_827D2EE8(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr) {
+uint32_t CCameraEffectController_UpdateTargetValue(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr) {
 	if (!UseLiftedCode(54, 0x827D2EE8)) { ctx.r3.u64 = cameraEffectControllerAddr; __imp__sub_827D2EE8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x827D2EE8);
 	uint32_t stack = ctx.r1.u64;
@@ -390,7 +332,7 @@ uint32_t n_sub_827D2EE8(CpuState& ctx, uint8_t* base, uint64_t cameraEffectContr
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(54, sub_827D2EE8, 0x827D2EE8) { ctx.r3.u64 = n_sub_827D2EE8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(54, sub_827D2EE8, 0x827D2EE8) { ctx.r3.u64 = CCameraEffectController_UpdateTargetValue(ctx, base, ctx.r3.u64); }
 
 void CCameraEffectController_SetColorBytes(CpuState& ctx, uint8_t* base, uint32_t cameraEffectControllerAddr, uint32_t colorBytesAddr) {
 	if (!UseLiftedCode(54, 0x827D33A0)) { ctx.r3.u64 = cameraEffectControllerAddr; ctx.r4.u64 = colorBytesAddr; __imp__sub_827D33A0(ctx, base); return; }
@@ -464,6 +406,10 @@ uint64_t n_sub_827D3A08(CpuState& ctx, uint8_t* base, uint64_t effectController)
 		callTarget.u64 = ownerMethod;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = stack + 80;
+		ctx.r4.u64 = ownerTarget;
+		ctx.r8.u64 = stateR8;
+		ctx.r9.u64 = stateR9;
+		ctx.r10.u64 = ownerMethod;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		uint64_t ownEntity = EntityHandle_Get_825575C8(ctx, base, ownHandle);

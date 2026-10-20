@@ -1,9 +1,9 @@
 // CDataTableSet (vtable 0x820FE3BC): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -16,7 +16,7 @@ uint64_t CDataTableSet_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t
 	LiftedFrame frame(0x82BBCA18);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
-	n_sub_82BBCA68(ctx, base, self);
+	CDataTableSet_Destructor(ctx, base, self);
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, self);
 	}
@@ -104,11 +104,13 @@ uint64_t CDataTableSet_FindRowByNumber(CpuState& ctx, uint8_t* base, uint64_t da
 		if (LOAD32(column + 8) != 0) {
 			// the column's type is not 0 (number): format a diagnostic into the stack buffer and pass it to the handler
 			uint64_t messageBuffer = uint64_t(stack) + 80;
-			n_sub_82CA3EB8(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE338_B_, tableIndex, columnIndex, 0, str_TXT_820ECADC_B_);
+			String_Format(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE338_B_, tableIndex, columnIndex, 0, str_TXT_820ECADC_B_);
 			int32_t logger = g_83310000;
 			uint32_t logFunction = LOAD32(uint32_t(logger) + 19068);
 			ctx.r3.u64 = 2;
 			ctx.r4.u64 = messageBuffer;
+			ctx.r6.u64 = logFunction;
+			ctx.r7.s64 = logger;
 			REX_CALL_INDIRECT_FUNC(logFunction);
 			stack = PopStackFrame(stack, 384);
 			ctx.r1.u64 = stack;
@@ -174,12 +176,14 @@ uint64_t CDataTableSet_FindRowByString(CpuState& ctx, uint8_t* base, uint64_t da
 		if (int32_t(LOAD32(column + 8)) != 1) {
 			// the column's type is not 1 (string): format a diagnostic into the stack buffer and pass it to the handler
 			const uint64_t message = (uint64_t)stack + 80;
-			n_sub_82CA3EB8(ctx, base, message, 256, str_TXT_820FE390_B_, str_TXT_820FE338_B_, tableIndex, columnIndex, 0, str_TXT_820FE388_B_);
+			String_Format(ctx, base, message, 256, str_TXT_820FE390_B_, str_TXT_820FE338_B_, tableIndex, columnIndex, 0, str_TXT_820FE388_B_);
 
 			const int32_t logManager = g_83310000;
 			const uint32_t logFn = LOAD32((uint32_t)logManager + 19068);
 			ctx.r3.u64 = 2;
 			ctx.r4.u64 = message;
+			ctx.r6.u64 = logFn;
+			ctx.r7.s64 = logManager;
 			REX_CALL_INDIRECT_FUNC(logFn);
 
 			stack = PopStackFrame(stack, 384);
@@ -362,10 +366,10 @@ uint64_t CDataTableSet_SetString(CpuState& ctx, uint8_t* base, uint64_t dataTabl
 			STORE16(stringTemp + 4, 0);
 			STORE16(stringTemp + 6, 0);
 			if ((uint32_t)newString != 0) {
-				n_sub_82BA8850(ctx, base, stringTemp, newString, -1);
+				CCharString_AssignCStr(ctx, base, stringTemp, newString, -1);
 			}
-			n_sub_82BA8AC8(ctx, base, LOAD32(cellPtr), stringTemp);
-			result = n_sub_82BA8800(ctx, base, stringTemp);
+			CCharString_Assign_82BA8AC8(ctx, base, LOAD32(cellPtr), stringTemp);
+			result = CCharString_Destructor(ctx, base, stringTemp);
 		}
 	}
 	stack = PopStackFrame(stack, 112);
@@ -398,11 +402,14 @@ uint64_t CDataTableSet_GetTable(CpuState& ctx, uint8_t* base, uint32_t dataTable
 	// index out of range or empty table slot: format a message and pass it to the handler stored at 0x83314A7C
 	uint64_t messageBuffer = uint64_t(stack) + 80;
 	ctx.r1.u64 = stack;
-	n_sub_82CA3EB8(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE348_B_, tableIndex, 0, 0, str_TXT_820ECADC_B_);
+	String_Format(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE348_B_, tableIndex, 0, 0, str_TXT_820ECADC_B_);
 
 	const int32_t handlerBase = g_83310000;
 	uint32_t reportHandler = LOAD32(uint32_t(handlerBase) + 19068);
 	ctx.r3.u64 = 2;
+	ctx.r4.u64 = messageBuffer;
+	ctx.r6.u64 = reportHandler;
+	ctx.r7.s64 = handlerBase;
 	REX_CALL_INDIRECT_FUNC(reportHandler);
 
 	stack = PopStackFrame(stack, 352);
@@ -433,7 +440,7 @@ uint64_t CDataTableSet_GetColumn(CpuState& ctx, uint8_t* base, uint64_t dataTabl
 		// column index out of range: format a message (its type argument is always str_TXT_820ECADC_B_)
 		// and pass it to the handler stored at 0x83314A7C
 		uint64_t messageBuffer = uint64_t(stack) + 80;
-		n_sub_82CA3EB8(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE35C_B_, tableIndex, columnIndex, 0, str_TXT_820ECADC_B_);
+		String_Format(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_, str_TXT_820FE35C_B_, tableIndex, columnIndex, 0, str_TXT_820ECADC_B_);
 
 		const int32_t handlerBase = g_83310000;
 		uint32_t reportHandler = LOAD32(uint32_t(handlerBase) + 19068);
@@ -517,13 +524,16 @@ uint64_t CDataTableSet_ReportCellError(CpuState& ctx, uint8_t* base, uint64_t er
 
 	const uint64_t messageBuffer = uint64_t(stack) + 80;
 	ctx.r1.u64 = stack;
-	n_sub_82CA3EB8(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_,
+	String_Format(ctx, base, messageBuffer, 256, str_TXT_820FE390_B_,
 	               errorMessage, tableIndex, columnIndex, rowIndex, (uint64_t)(int64_t)cellTypeName);
 
 	// hand the message to the reporting handler installed at 0x83314A7C
 	const uint32_t handlerFn = LOAD32(uint32_t(g_83310000) + 19068);
 	// state the callee may read (r6 holds the sign-extended page address)
 	ctx.r3.u64 = 2;
+	ctx.r4.u64 = messageBuffer;
+	ctx.r5.u64 = handlerFn;
+	ctx.r6.s64 = g_83310000;
 	REX_CALL_INDIRECT_FUNC(handlerFn);
 
 	stack = PopStackFrame(stack, 352);

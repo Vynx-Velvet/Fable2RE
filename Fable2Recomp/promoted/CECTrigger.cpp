@@ -1,9 +1,9 @@
 // CECTrigger (vtable 0x820033C8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -56,7 +56,7 @@ uint64_t CECTrigger_HasEntity(CpuState& ctx, uint8_t* base, uint32_t triggerAddr
 }
 PROMOTED_ENTRY(0, sub_8218AE80, 0x8218AE80) { ctx.r3.u64 = CECTrigger_HasEntity(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint32_t n_sub_8218AF28(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+uint32_t CECTrigger_RemoveDarkAreaEntities(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	constexpr int32_t str_TXT_820E0F10_B_ = int32_t(0x820E0F10);
 	if (!UseLiftedCode(0, 0x8218AF28)) { ctx.r3.u64 = triggerAddr; __imp__sub_8218AF28(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8218AF28);
@@ -108,7 +108,7 @@ uint32_t n_sub_8218AF28(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 		}
 
 		ctx.r1.u64 = stack;
-		result = n_sub_8218C068(ctx, base, stack + 80, entity);
+		result = CECTrigger_IsEntityInVolume(ctx, base, stack + 80, entity);
 		if ((result & 0xFF) != 0) {
 			if (node == LOAD32(iterList + 4)) {
 				ppc_trap(ctx, base, 22);
@@ -118,13 +118,13 @@ uint32_t n_sub_8218AF28(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			continue;
 		}
 
-		uint64_t idHolder = n_sub_821D9F40(ctx, base, stack + 96, triggerAddr);
+		uint64_t idHolder = Component_GetId(ctx, base, stack + 96, triggerAddr);
 		const uint64_t fnvOffsetBasis = (uint64_t)(int64_t)-2128871424 | 40389;
 		uint64_t fieldHash = String_HashFnv1(ctx, base, (uint64_t)(int64_t)str_TXT_820E0F10_B_, fnvOffsetBasis);
 		ctx.r4.u64 = fnvOffsetBasis;  // state the callee may pass on
 		uint64_t idRef = IdRef_Get(ctx, base, idHolder);
 		ctx.r7.u64 = fieldHash;  // state the callee may pass on
-		uint32_t field = n_sub_821E55C8(ctx, base, idRef, fieldHash, stack + 84);
+		uint32_t field = GameDB_FindFieldValueByKey(ctx, base, idRef, fieldHash, stack + 84);
 		// r9 handed to the calls below: as the lookup left it, or whether the field value is 0
 		uint64_t r9State = ctx.r9.u64;
 		bool fieldSet = false;
@@ -165,9 +165,9 @@ uint32_t n_sub_8218AF28(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_8218AF28, 0x8218AF28) { ctx.r3.u64 = n_sub_8218AF28(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_8218AF28, 0x8218AF28) { ctx.r3.u64 = CECTrigger_RemoveDarkAreaEntities(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8218B0D0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+uint64_t CECTrigger_AddEntityFromHandleVector(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	if (!UseLiftedCode(0, 0x8218B0D0)) { ctx.r3.u64 = triggerAddr; __imp__sub_8218B0D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8218B0D0);
 	uint32_t stack = ctx.r1.u64;
@@ -219,9 +219,9 @@ uint64_t n_sub_8218B0D0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 		ctx.r1.u64 = stack;
 		result = CECTrigger_HasEntity(ctx, base, triggerAddr, entityId);
 		if ((uint32_t(result) & 0xFF) == 0) {
-			result = n_sub_8218C068(ctx, base, triggerContext, entityId);
+			result = CECTrigger_IsEntityInVolume(ctx, base, triggerContext, entityId);
 			if ((uint32_t(result) & 0xFF) != 0) {
-				result = n_sub_828BA3F8(ctx, base, triggerAddr, entityId);
+				result = CECTrigger_AddEntity(ctx, base, triggerAddr, entityId);
 				break;
 			}
 		}
@@ -231,9 +231,9 @@ uint64_t n_sub_8218B0D0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_8218B0D0, 0x8218B0D0) { ctx.r3.u64 = n_sub_8218B0D0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_8218B0D0, 0x8218B0D0) { ctx.r3.u64 = CECTrigger_AddEntityFromHandleVector(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8218B1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+uint64_t CECTrigger_UpdateEntityState(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(0, 0x8218B1B0)) { ctx.r3.u64 = triggerAddr; __imp__sub_8218B1B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8218B1B0);
@@ -246,10 +246,10 @@ uint64_t n_sub_8218B1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	if (trigger->m_41 != 0) {
 		ctx.r1.u64 = stack;
 		EntityManager_RemoveInvalidEntities(ctx, base, triggerAddr);
-		n_sub_8218AF28(ctx, base, triggerAddr);
+		CECTrigger_RemoveDarkAreaEntities(ctx, base, triggerAddr);
 
 		if (trigger->m_40 != 0) {
-			result = n_sub_8218B0D0(ctx, base, triggerAddr);
+			result = CECTrigger_AddEntityFromHandleVector(ctx, base, triggerAddr);
 		} else {
 			// the search argument is a stack slot holding the address of the trigger's +20 member
 			STORE32(stack + 80, (uint32_t)triggerAddr + 20);
@@ -261,13 +261,16 @@ uint64_t n_sub_8218B1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			uint32_t searchObject = LOAD32(tableSlot + 12);
 
 			// state the callee may pass on
-			result = n_sub_828BB3E8(ctx, base, searchObject, stack + 80);
+			ctx.r7.u64 = tableSlot;
+			ctx.r8.u64 = table;
+			ctx.r9.u64 = rootChild;
+			result = GameObject_FindEntityByContext(ctx, base, searchObject, stack + 80);
 
 			const uint64_t foundEntity = result;
 			if ((uint32_t)foundEntity != 0 && (LOAD8((uint32_t)foundEntity + 144) & 64) != 0) {
 				result = CECTrigger_HasEntity(ctx, base, triggerAddr, foundEntity);
 				if (((uint32_t)result & 0xFF) == 0) {
-					result = n_sub_828BA3F8(ctx, base, triggerAddr, foundEntity);
+					result = CECTrigger_AddEntity(ctx, base, triggerAddr, foundEntity);
 				}
 			}
 		}
@@ -277,7 +280,7 @@ uint64_t n_sub_8218B1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_8218B1B0, 0x8218B1B0) { ctx.r3.u64 = n_sub_8218B1B0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_8218B1B0, 0x8218B1B0) { ctx.r3.u64 = CECTrigger_UpdateEntityState(ctx, base, ctx.r3.u64); }
 
 uint64_t CECTrigger_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8ABC_B_ = int32_t(0x820C8ABC);
@@ -294,7 +297,7 @@ uint64_t CECTrigger_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNam
 }
 PROMOTED_ENTRY(62, sub_828B8888, 0x828B8888) { ctx.r3.u64 = CECTrigger_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828B8E48(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t dbRecord) {
+uint64_t CECTrigger_InitializeFromRecord(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t dbRecord) {
 	constexpr int32_t str_TXT_820E0EA4_B_ = int32_t(0x820E0EA4);
 	if (!UseLiftedCode(62, 0x828B8E48)) { ctx.r3.u64 = triggerAddr; ctx.r4.u64 = dbRecord; __imp__sub_828B8E48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828B8E48);
@@ -303,7 +306,7 @@ uint64_t n_sub_828B8E48(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	stack = PushStackFrame(base, stack, 112);
 	uint32_t subObject = trigger->m_4;
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, subObject, triggerAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, subObject, triggerAddr);
 	subObject = trigger->m_4;
 	STORE8(subObject + 144, uint8_t(LOAD8(subObject + 144) | 1));
 	if ((uint32_t)dbRecord != 0) {
@@ -327,15 +330,15 @@ uint64_t n_sub_828B8E48(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 		} else {
 			entry = 0;
 		}
-		result = n_sub_828BAE58(ctx, base, triggerAddr + 12, entry);
+		result = SharedHandle_Assign_828BAE58(ctx, base, triggerAddr + 12, entry);
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828B8E48, 0x828B8E48) { ctx.r3.u64 = n_sub_828B8E48(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(62, sub_828B8E48, 0x828B8E48) { ctx.r3.u64 = CECTrigger_InitializeFromRecord(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+uint64_t CECTrigger_LoadTriggerData(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_828BB170 = int32_t(0x828BB170);
 	if (!UseLiftedCode(62, 0x828B9408)) { ctx.r3.u64 = triggerAddr; __imp__sub_828B9408(ctx, base); return ctx.r3.u64; }
@@ -362,7 +365,7 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 		if ((uint32_t)allocation != 0) {
 			uint32_t linkedObject = trigger->m_4;
 			uint32_t dataFirstWord = LOAD32(LOAD32((uint32_t)dataSlot));
-			newObject = n_sub_828B88C8(ctx, base, allocation, linkedObject, dataFirstWord);
+			newObject = TriggerData_Construct(ctx, base, allocation, linkedObject, dataFirstWord);
 			r9State = ctx.r9.u64;
 			flags.ca = ctx.xer.ca;
 		}
@@ -405,10 +408,11 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 		const uint64_t handleVectorAddr = (int64_t)triggerAddr + 36;
 		// state the callee may pass on
+		ctx.r9.u64 = r9State;
 		ctx.xer.ca = flags.ca;
 		EntityHandleVector_Clear(ctx, base, handleVectorAddr);
 		flags.ca = ctx.xer.ca;
-		n_sub_826BF728(ctx, base, handleVectorAddr, firstCount, ctx.r8.u64);
+		EntityHandleVector_Reserve(ctx, base, handleVectorAddr, firstCount, ctx.r8.u64);
 		r4State = ctx.r4.u64;
 		flags.ca = ctx.xer.ca;
 
@@ -438,7 +442,7 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 				// state the callee may pass on
 				ctx.xer.ca = flags.ca;
-				uint64_t entity = n_sub_82264448(ctx, base, lookupContext, offset + begin);
+				uint64_t entity = EntityManager_LookupEntity(ctx, base, lookupContext, offset + begin);
 				r6State = ctx.r6.u64;
 				r7State = ctx.r7.u64;
 				r8State = ctx.r8.u64;
@@ -454,7 +458,7 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 					ctx.r10.u64 = flagBit;  // state the callee may pass on
 					EntityHandle_SetTarget(ctx, base, stack + 80, entity);
 					flags.ca = ctx.xer.ca;
-					n_sub_82366260(ctx, base, handleVectorAddr, stack + 80);
+					EntityHandleVector_PushBack(ctx, base, handleVectorAddr, stack + 80);
 					flags.ca = ctx.xer.ca;
 					STORE32(stack + 80, handleVtable);
 					EntityHandle_Release(ctx, base, stack + 80);
@@ -504,7 +508,7 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 				// state the callee may pass on
 				ctx.xer.ca = flags.ca;
-				uint64_t entity = n_sub_82264448(ctx, base, lookupContext, offset + begin);
+				uint64_t entity = EntityManager_LookupEntity(ctx, base, lookupContext, offset + begin);
 				r4State = entity;
 
 				uint32_t flagBit = 0;
@@ -539,6 +543,7 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.r4.u64 = r4State;
 	ctx.xer.ca = flags.ca;
 	uint64_t result = SharedHandle_Release(ctx, base, dataSlot);
 	STORE32((uint32_t)dataSlot, 0);
@@ -546,9 +551,9 @@ uint64_t n_sub_828B9408(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828B9408, 0x828B9408) { ctx.r3.u64 = n_sub_828B9408(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(62, sub_828B9408, 0x828B9408) { ctx.r3.u64 = CECTrigger_LoadTriggerData(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_828B96C8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+uint64_t CECTrigger_InitializeDarkArea(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	constexpr int32_t str_TXT_820E0F10_B_ = int32_t(0x820E0F10);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(62, 0x828B96C8)) { ctx.r3.u64 = triggerAddr; __imp__sub_828B96C8(ctx, base); return ctx.r3.u64; }
@@ -559,7 +564,7 @@ uint64_t n_sub_828B96C8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	uint64_t result = triggerAddr;
 	if (trigger->m_41 == 0) {
 		ctx.r1.u64 = stack;
-		uint64_t idHolder = n_sub_821D9F40(ctx, base, (uint64_t)stack + 80, triggerAddr);
+		uint64_t idHolder = Component_GetId(ctx, base, (uint64_t)stack + 80, triggerAddr);
 		uint64_t idRef = IdRef_Get(ctx, base, idHolder);
 		result = GameDB_ReadBoolField_82303F38(ctx, base, idRef, (uint64_t)(int64_t)str_TXT_820E0F10_B_);
 		if (((uint32_t)result & 0xFF) != 0) {
@@ -568,8 +573,10 @@ uint64_t n_sub_828B96C8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 			uint32_t tableSlot = LOAD32(table + 4);
 			uint32_t entityHandle = LOAD32(tableSlot);
 			// state the callee may pass on
+			ctx.r8.u64 = tableSlot;
+			ctx.r9.u64 = table;
 			uint64_t entity = EntityHandle_Get(ctx, base, entityHandle);
-			result = n_sub_828B9788(ctx, base, triggerAddr, entity);
+			result = CECTrigger_SetTargetEntity(ctx, base, triggerAddr, entity);
 			if (trigger->m_41 != 1) {
 				trigger->m_41 = uint8_t(1);
 			}
@@ -579,11 +586,11 @@ uint64_t n_sub_828B96C8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828B96C8, 0x828B96C8) { ctx.r3.u64 = n_sub_828B96C8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(62, sub_828B96C8, 0x828B96C8) { ctx.r3.u64 = CECTrigger_InitializeDarkArea(ctx, base, ctx.r3.u64); }
 
 // Sets m_40 (and m_41 unless the byte at +65 is 1). A flagged target entity that HandleVector_Find does not
-// find in the handle vector at +36 gets a handle, which goes to n_sub_82366260 with that vector.
-uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t targetEntity) {
+// find in the handle vector at +36 gets a handle, which goes to EntityHandleVector_PushBack with that vector.
+uint64_t CECTrigger_SetTargetEntity(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t targetEntity) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(62, 0x828B9788)) { ctx.r3.u64 = triggerAddr; ctx.r4.u64 = targetEntity; __imp__sub_828B9788(ctx, base); return ctx.r3.u64; }
@@ -617,6 +624,7 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r9.u64 = lastEntry;
 		result = HandleVector_Find(ctx, base, stack + 96, beginIter, endIter, stack + 188);
 		callerR4 = ctx.r4.u64;
 
@@ -630,9 +638,10 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 			uint64_t entityHandleVtable = g_820F1664;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)entityHandleVtable);
+			ctx.r9.u64 = entityHandleVtable;
 			EntityHandle_SetTarget(ctx, base, stack + 80, targetEntity);
 
-			n_sub_82366260(ctx, base, handleVector, stack + 80);
+			EntityHandleVector_PushBack(ctx, base, handleVector, stack + 80);
 
 			// the same vtable address, rebuilt from its high half
 			uint32_t releaseVtable = (uint32_t)((int64_t)g_820F0000 + 5732);
@@ -652,11 +661,11 @@ uint64_t n_sub_828B9788(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828B9788, 0x828B9788) { ctx.r3.u64 = n_sub_828B9788(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(62, sub_828B9788, 0x828B9788) { ctx.r3.u64 = CECTrigger_SetTargetEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // For a flagged target, looks in the handle vector (m_28..m_2C) for a flagged entity whose words at +20/+24
 // equal the target's, then returns 1 if that entity is found in the list at +52 (head node m_38), else 0.
-uint64_t n_sub_828B9A40(CpuState& ctx, uint8_t* base, uint32_t triggerAddr, uint64_t targetEntity) {
+uint64_t CECTrigger_IsTargetInList(CpuState& ctx, uint8_t* base, uint32_t triggerAddr, uint64_t targetEntity) {
 	if (!UseLiftedCode(62, 0x828B9A40)) { ctx.r3.u64 = triggerAddr; ctx.r4.u64 = targetEntity; __imp__sub_828B9A40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828B9A40);
 	uint32_t stack = ctx.r1.u64;
@@ -718,7 +727,7 @@ uint64_t n_sub_828B9A40(CpuState& ctx, uint8_t* base, uint32_t triggerAddr, uint
 	uint64_t beginIter = LOAD64(stack + 96);
 	// state the callee may pass on
 	ctx.r9.u64 = firstNode;
-	uint32_t foundIter = n_sub_828BB230(ctx, base, stack + 96, beginIter, endIter, stack + 80);
+	uint32_t foundIter = List_FindValue(ctx, base, stack + 96, beginIter, endIter, stack + 80);
 
 	uint32_t iterOwner = LOAD32(foundIter);
 	if (iterOwner == 0 || iterOwner != listAddr) {
@@ -732,11 +741,11 @@ uint64_t n_sub_828B9A40(CpuState& ctx, uint8_t* base, uint32_t triggerAddr, uint
 	ctx.r8.u64 = inList ? 0 : 1;
 	return inList ? 1 : 0;
 }
-PROMOTED_ENTRY(62, sub_828B9A40, 0x828B9A40) { ctx.r3.u64 = n_sub_828B9A40(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(62, sub_828B9A40, 0x828B9A40) { ctx.r3.u64 = CECTrigger_IsTargetInList(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // When the trigger's game-database bool str_TXT_820E0F10_B_ is set: resolves the entity handle reached from the
-// global object at 0x83496920 and, when n_sub_828B9A40 reports a match for that entity, calls n_sub_828BA620.
-uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
+// global object at 0x83496920 and, when CECTrigger_IsTargetInList reports a match for that entity, calls n_sub_828BA620.
+uint64_t CECTrigger_ProcessDarkArea(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	constexpr int32_t str_TXT_820E0F10_B_ = int32_t(0x820E0F10);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(62, 0x828BA1B0)) { ctx.r3.u64 = triggerAddr; __imp__sub_828BA1B0(ctx, base); return ctx.r3.u64; }
@@ -744,7 +753,7 @@ uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	uint64_t refSlot = n_sub_821D9F40(ctx, base, stack + 80, triggerAddr);
+	uint64_t refSlot = Component_GetId(ctx, base, stack + 80, triggerAddr);
 	uint64_t idRef = IdRef_Get(ctx, base, refSlot);
 	uint64_t result = GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820E0F10_B_);
 	if (uint32_t(result & 0xFF) != 0) {
@@ -753,12 +762,14 @@ uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 		uint32_t handleSlot = LOAD32(handleOwner + 4);
 		uint32_t handle = LOAD32(handleSlot);
 		// state the callee may pass on
+		ctx.r8.u64 = handleSlot;
+		ctx.r9.u64 = handleOwner;
 		uint64_t entityResult = EntityHandle_Get(ctx, base, handle);
 		result = entityResult;
 		uint32_t entity = (uint32_t)entityResult;
 		if (entity != 0 && (LOAD8(entity + 144) & 64) != 0) {
 			// the full 64-bit result goes on to both calls, as in the original
-			result = n_sub_828B9A40(ctx, base, triggerAddr, entityResult);
+			result = CECTrigger_IsTargetInList(ctx, base, triggerAddr, entityResult);
 			if (uint32_t(result & 0xFF) != 0) {
 				result = n_sub_828BA620(ctx, base, entityResult);
 			}
@@ -768,11 +779,11 @@ uint64_t n_sub_828BA1B0(CpuState& ctx, uint8_t* base, uint64_t triggerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828BA1B0, 0x828BA1B0) { ctx.r3.u64 = n_sub_828BA1B0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(62, sub_828BA1B0, 0x828BA1B0) { ctx.r3.u64 = CECTrigger_ProcessDarkArea(ctx, base, ctx.r3.u64); }
 
 // Runs once (guard byte at 0x834BE89C): passes the 12-byte elements of the array at 0x8349C1F4 two at a time
-// to n_sub_82A3A508 as vectors, then passes a value read through the result of a virtual call on the global
-// object at 0x83496920 to n_sub_821DDE30 and destroys the temporary C_820A64F4 object.
+// to C_820A64F4_Initialize as vectors, then passes a value read through the result of a virtual call on the global
+// object at 0x83496920 to EffectManager_AddEffect and destroys the temporary C_820A64F4 object.
 uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_8349C1F4 = int32_t(0x8349C1F4);
@@ -862,7 +873,7 @@ uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 					ctx.v2 = v2;
 					ctx.v12 = v12;
 					ctx.v13 = v13;
-					n_sub_82A3A508(ctx, base, tempObject);
+					C_820A64F4_Initialize(ctx, base, tempObject);
 					argR6 = ctx.r6.u64;
 					argR7 = ctx.r7.u64;
 					argR8 = ctx.r8.u64;
@@ -881,13 +892,20 @@ uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 				callTarget.u64 = uint64_t(vfunc);
 				ctx.r1.u64 = stack;
 				ctx.r3.u64 = globalObj;
+				ctx.r6.u64 = argR6;
+				ctx.r7.u64 = argR7;
+				ctx.r8.u64 = argR8;
+				ctx.r9.u64 = vfunc;
+				ctx.r10.u64 = vtablePtr;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 				uint64_t callResult = ctx.r3.u64;
 				uint32_t resultInner = LOAD32(uint32_t(callResult) + 4);
 				uint32_t innerValue = LOAD32(resultInner);
 				// state the callee may pass on
-				n_sub_821DDE30(ctx, base, tempObject, innerValue, 1);
+				ctx.r7.u64 = resultInner;
+				ctx.r8.u64 = callResult;
+				EffectManager_AddEffect(ctx, base, tempObject, innerValue, 1);
 				result = C_820A64F4_Destructor(ctx, base, tempObject);
 			}
 		}
@@ -901,9 +919,9 @@ uint64_t n_sub_828BA278(CpuState& ctx, uint8_t* base) {
 PROMOTED_ENTRY(62, sub_828BA278, 0x828BA278) { ctx.r3.u64 = n_sub_828BA278(ctx, base); }
 
 // Passes a stack buffer to a virtual call (vtable +64) on the object at +124 of the entity at m_4, posts that
-// buffer with MessageEvents_PostMessageEvent for the m_4 entity and the given entity, calls n_sub_828BA4F0 when
+// buffer with MessageEvents_PostMessageEvent for the m_4 entity and the given entity, calls CECTrigger_AddEntityLightRef when
 // the trigger's game-database bool str_TXT_820E0F10_B_ is set, and inserts a handle to the entity into the list at +52.
-uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t entity) {
+uint64_t CECTrigger_AddEntity(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint64_t entity) {
 	constexpr int32_t str_TXT_820E0F10_B_ = int32_t(0x820E0F10);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -942,17 +960,18 @@ uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 
 	MessageEvents_PostMessageEvent(ctx, base, postTarget, 26, eventBuffer, ownerEntity, entity, 101, 0);
 
-	uint64_t refSlot = n_sub_821D9F40(ctx, base, stack + 88, triggerAddr);
+	uint64_t refSlot = Component_GetId(ctx, base, stack + 88, triggerAddr);
 	uint64_t idRef = IdRef_Get(ctx, base, refSlot);
 	if (uint32_t(GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820E0F10_B_) & 0xFF) != 0) {
 		// the original hands over the low 32 bits of the trigger address
-		n_sub_828BA4F0(ctx, base, (uint32_t)entity);
+		CECTrigger_AddEntityLightRef(ctx, base, (uint32_t)entity);
 	}
 
 	uint32_t tempHandle = stack + 80;
 	uint64_t entityHandleVtable = g_820F1664;
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, uint32_t(entityHandleVtable));
+	ctx.r9.u64 = entityHandleVtable;
 	EntityHandle_SetTarget(ctx, base, tempHandle, entity);
 
 	uint32_t listAddr = triggerAddr + 52;
@@ -972,13 +991,13 @@ uint64_t n_sub_828BA3F8(CpuState& ctx, uint8_t* base, uint64_t triggerAddr, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828BA3F8, 0x828BA3F8) { ctx.r3.u64 = n_sub_828BA3F8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(62, sub_828BA3F8, 0x828BA3F8) { ctx.r3.u64 = CECTrigger_AddEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // When bit 1 of the word at +0x28 is set, passes Light_AddRef the value word of one of the entity's sorted
 // 8-byte {key, value} records (+0x48..+0x4C): the one indexed by the byte at +0x21 of the object at +0x8C when
 // that pointer is set, else the record with key 33 (with none, the word at end + 4 is read).
 // Returns Light_AddRef's result, or the incoming r3 when the bit is clear.
-uint32_t n_sub_828BA4F0(CpuState& ctx, uint8_t* base, uint32_t entityAddr) {
+uint32_t CECTrigger_AddEntityLightRef(CpuState& ctx, uint8_t* base, uint32_t entityAddr) {
 	if (!UseLiftedCode(62, 0x828BA4F0)) { ctx.r4.u64 = entityAddr; __imp__sub_828BA4F0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828BA4F0);
 	uint32_t stack = ctx.r1.u64;
@@ -1044,4 +1063,4 @@ uint32_t n_sub_828BA4F0(CpuState& ctx, uint8_t* base, uint32_t entityAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(62, sub_828BA4F0, 0x828BA4F0) { ctx.r3.u64 = n_sub_828BA4F0(ctx, base, ctx.r4.u32); }
+PROMOTED_ENTRY(62, sub_828BA4F0, 0x828BA4F0) { ctx.r3.u64 = CECTrigger_AddEntityLightRef(ctx, base, ctx.r4.u32); }

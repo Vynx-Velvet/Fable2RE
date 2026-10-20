@@ -1,9 +1,9 @@
 // CBufferedInputStream (vtable 0x820F1E60): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -168,6 +168,9 @@ uint64_t CBufferedInputStream_ReadCharString(CpuState& ctx, uint8_t* base, uint6
 			STORE8(charAddr, c);
 		} else {
 			ctx.r1.u64 = stack;
+			ctx.r7.u64 = lockR7;
+			ctx.r8.u64 = lockR8;
+			ctx.r9.u64 = lockR9;
 			CBufferedReadStream_Read(ctx, base, sourceStream, charAddr, 1);
 			regR5 = ctx.r5.u64;
 			regR6 = ctx.r6.u64;
@@ -182,6 +185,8 @@ uint64_t CBufferedInputStream_ReadCharString(CpuState& ctx, uint8_t* base, uint6
 		}
 
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = regR5;
+		ctx.r6.u64 = regR6;
 		ctx.r8.u64 = regR8;
 		CBufferedInputStream_ReadChar(ctx, base, bufferedInputStreamAddr, currentChar);
 		lockR7 = ctx.r7.u64;
@@ -260,6 +265,9 @@ uint64_t CBufferedInputStream_ReadWideString(CpuState& ctx, uint8_t* base, uint6
 			STORE32((uint32_t)sourceStream + streamReadOff, bytesRead + 2);
 		} else {
 			ctx.r1.u64 = stack;
+			ctx.r7.u64 = readArg7;
+			ctx.r8.u64 = readArg8;
+			ctx.r9.u64 = readArg9;
 			CBufferedReadStream_Read(ctx, base, sourceStream, wideCharBuffer, 2);
 			appendR5 = ctx.r5.u64;
 			appendR6 = ctx.r6.u64;
@@ -283,6 +291,8 @@ uint64_t CBufferedInputStream_ReadWideString(CpuState& ctx, uint8_t* base, uint6
 		}
 
 		ctx.r1.u64 = stack;
+		ctx.r5.u64 = appendR5;
+		ctx.r6.u64 = appendR6;
 		ctx.r8.u64 = appendR8;
 		CWideString_AppendChar(ctx, base, bufferedInputStreamAddr, currentWideChar);
 		readArg7 = ctx.r7.u64;
@@ -384,7 +394,7 @@ uint64_t CBufferedInputStream_Reset(CpuState& ctx, uint8_t* base, uint64_t buffe
 }
 PROMOTED_ENTRY(73, sub_82A1CEF0, 0x82A1CEF0) { ctx.r3.u64 = CBufferedInputStream_Reset(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t bufferOut, uint64_t byteCountOut) {
+uint64_t CBufferedInputStream_ReadBuffer(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t bufferOut, uint64_t byteCountOut) {
 	if (!UseLiftedCode(73, 0x82A1CF98)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = bufferOut; ctx.r5.u64 = byteCountOut; __imp__sub_82A1CF98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1CF98);
 	uint32_t stack = ctx.r1.u64;
@@ -443,17 +453,17 @@ uint64_t n_sub_82A1CF98(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(73, sub_82A1CF98, 0x82A1CF98) { ctx.r3.u64 = n_sub_82A1CF98(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(73, sub_82A1CF98, 0x82A1CF98) { ctx.r3.u64 = CBufferedInputStream_ReadBuffer(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82A1D030(CpuState& ctx, uint8_t* base, uint32_t bufferedInputStreamAddr, uint32_t offset) {
+uint64_t CBufferedInputStream_IsOffsetValid(CpuState& ctx, uint8_t* base, uint32_t bufferedInputStreamAddr, uint32_t offset) {
 	if (!UseLiftedCode(73, 0x82A1D030)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = offset; __imp__sub_82A1D030(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1D030);
 	CBufferedInputStream* bufferedInputStream = GameObject<CBufferedInputStream>(base, bufferedInputStreamAddr);
 	return (int32_t)offset < (int32_t)bufferedInputStream->m_bufferSize ? 1 : 0;
 }
-PROMOTED_ENTRY(73, sub_82A1D030, 0x82A1D030) { ctx.r3.u64 = n_sub_82A1D030(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(73, sub_82A1D030, 0x82A1D030) { ctx.r3.u64 = CBufferedInputStream_IsOffsetValid(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t buffer, uint64_t byteCount) {
+uint64_t CBufferedInputStream_Read(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t buffer, uint64_t byteCount) {
 	if (!UseLiftedCode(73, 0x82A1D050)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = buffer; ctx.r5.u64 = byteCount; __imp__sub_82A1D050(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A1D050);
 	uint32_t stack = ctx.r1.u64;
@@ -499,7 +509,7 @@ uint64_t n_sub_82A1D050(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStre
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(73, sub_82A1D050, 0x82A1D050) { ctx.r3.u64 = n_sub_82A1D050(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(73, sub_82A1D050, 0x82A1D050) { ctx.r3.u64 = CBufferedInputStream_Read(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint32_t CWideString_AppendChar(CpuState& ctx, uint8_t* base, uint64_t bufferedInputStreamAddr, uint64_t appendedChar) {
 	if (!UseLiftedCode(83, 0x82B39010)) { ctx.r3.u64 = bufferedInputStreamAddr; ctx.r4.u64 = appendedChar; __imp__sub_82B39010(ctx, base); return ctx.r3.u32; }

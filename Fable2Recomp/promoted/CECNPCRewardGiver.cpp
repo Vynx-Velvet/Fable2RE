@@ -1,9 +1,11 @@
+
+
 // CECNPCRewardGiver (vtable 0x82004760): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -80,7 +82,7 @@ uint64_t CECNPCRewardGiver_HasAvailableReward(CpuState& ctx, uint8_t* base, uint
 }
 PROMOTED_ENTRY(3, sub_821C74E8, 0x821C74E8) { ctx.r3.u64 = CECNPCRewardGiver_HasAvailableReward(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_821C75E0(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
+uint32_t CECNPCRewardGiver_CanGiveReward(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(3, 0x821C75E0)) { ctx.r3.u64 = nPCRewardGiverAddr; __imp__sub_821C75E0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821C75E0);
@@ -123,6 +125,8 @@ uint32_t n_sub_821C75E0(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	if (!entryAllowed) return giveUp();
 
 	// state the callee may pass on
+	ctx.r8.u64 = reg8;
+	ctx.r9.u64 = recordHolder;
 	uint32_t entity = EntityHandle_Get(ctx, base, LOAD32(handleRecord));
 	reg6 = ctx.r6.u64;
 	reg7 = ctx.r7.u64;
@@ -187,15 +191,17 @@ uint32_t n_sub_821C75E0(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	}
 
 	// state the callee may pass on
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint32_t queryResult = n_sub_822040D0(ctx, base, entryValue, nPCRewardGiver->m_4);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return queryResult != 4 ? 1 : 0;
 }
-PROMOTED_ENTRY(3, sub_821C75E0, 0x821C75E0) { ctx.r3.u64 = n_sub_821C75E0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(3, sub_821C75E0, 0x821C75E0) { ctx.r3.u64 = CECNPCRewardGiver_CanGiveReward(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
+uint64_t CECNPCRewardGiver_Update(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_82000AF4 = int32_t(0x82000AF4);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -207,26 +213,27 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	stack = PushStackFrame(base, stack, 144);
 	ctx.r1.u64 = stack;
 
-	uint32_t rewardReady = n_sub_821C75E0(ctx, base, nPCRewardGiverAddr);
+	uint32_t rewardReady = CECNPCRewardGiver_CanGiveReward(ctx, base, nPCRewardGiverAddr);
 	// r8 is carried from callee to callee and handed to CECNPCRewardGiver_HasAvailableReward below.
 	uint64_t reg8 = ctx.r8.u64;
 	uint32_t player = LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12) + 168);
 
 	if ((rewardReady & 0xFF) != 0) {
-		uint32_t itemFound = n_sub_82450BD8(ctx, base, nPCRewardGiverAddr);
+		uint32_t itemFound = CECNPCRewardGiver_HasMatchingReward(ctx, base, nPCRewardGiverAddr);
 		reg8 = ((itemFound & 0xFF) == 0) ? 1 : 0;
 		uint32_t wantedModifier = (uint32_t)(reg8 ^ 1) + 50;
 		if (nPCRewardGiver->m_1C != wantedModifier) {
 			// state the callee may pass on
-			uint32_t itemFoundAgain = n_sub_82450BD8(ctx, base, nPCRewardGiverAddr);
+			uint32_t itemFoundAgain = CECNPCRewardGiver_HasMatchingReward(ctx, base, nPCRewardGiverAddr);
 			nPCRewardGiver->m_1C = ((itemFoundAgain & 0xFF) != 0 ? 1u : 0u) + 50;
 
-			n_sub_82452680(ctx, base, stack + 80, nPCRewardGiverAddr);
+			BuildRewardString(ctx, base, stack + 80, nPCRewardGiverAddr);
 
 			uint32_t globalRef = LOAD32(LOAD32(uint32_t(g_83490000) + 26788) + 32);
 			uint32_t owner = nPCRewardGiver->m_4;
 			uint32_t statsTarget = LOAD32(globalRef + 28);
 			// state the callee may pass on
+			ctx.r6.u64 = globalRef;
 			CCharString_AssignFromWideStr(ctx, base, stack + 88, uint64_t(g_82000AF4));
 
 			Stats_ApplyModifierIfAllowed(ctx, base, statsTarget, stack + 80, owner, stack + 88, nPCRewardGiver->m_1C);
@@ -242,13 +249,13 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			reg8 = ctx.r8.u64;
 		}
 	} else if (nPCRewardGiver->m_1C != 0) {
-		n_sub_824506A8(ctx, base, nPCRewardGiverAddr);
+		CECNPCRewardGiver_GiveReward(ctx, base, nPCRewardGiverAddr);
 		reg8 = ctx.r8.u64;
 	}
 
 	// state the callee may pass on
 	uint64_t result = CECNPCRewardGiver_HasAvailableReward(ctx, base, nPCRewardGiverAddr);
-	// r4 is handed back to the caller; r6-r8 and the carry flag are handed to n_sub_82294C68.
+	// r4 is handed back to the caller; r6-r8 and the carry flag are handed to CECTargeted_CanInteract.
 	uint64_t retR4 = ctx.r4.u64;
 	uint64_t reg6 = ctx.r6.u64;
 	uint64_t reg7 = ctx.r7.u64;
@@ -307,11 +314,14 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 				}
 
 				// state the callee may pass on
+				ctx.r4.u64 = retR4;
+				ctx.r6.u64 = reg6;
+				ctx.r7.u64 = reg7;
 				ctx.xer.ca = flags.ca;
-				result = n_sub_82294C68(ctx, base, entryValue);
+				result = CECTargeted_CanInteract(ctx, base, entryValue);
 				retR4 = ctx.r4.u64;
 				if ((result & 0xFF) != 0) {
-					result = n_sub_821B5478(ctx, base, LOAD32(player + 4), 226);
+					result = Player_IsActionActive(ctx, base, LOAD32(player + 4), 226);
 					retR4 = ctx.r4.u64;
 				}
 			}
@@ -324,11 +334,11 @@ uint64_t n_sub_821C77D8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r4.u64 = retR4;
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821C77D8, 0x821C77D8) { ctx.r3.u64 = n_sub_821C77D8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(3, sub_821C77D8, 0x821C77D8) { ctx.r3.u64 = CECNPCRewardGiver_Update(ctx, base, ctx.r3.u64); }
 
-// Asks rewardEvent for its kind (vtable slot 1): kind 8 goes to n_sub_82451308; on kind 9 the giver runs
-// n_sub_824506A8, then the component of the type its own vtable slot 4 returns is removed from m_4.
-uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t rewardEvent) {
+// Asks rewardEvent for its kind (vtable slot 1): kind 8 goes to CECNPCRewardGiver_ApplyReward; on kind 9 the giver runs
+// CECNPCRewardGiver_GiveReward, then the component of the type its own vtable slot 4 returns is removed from m_4.
+uint64_t CECNPCRewardGiver_OnEvent(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t rewardEvent) {
 	if (!UseLiftedCode(7, 0x82232A60)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = rewardEvent; __imp__sub_82232A60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82232A60);
 	uint32_t stack = ctx.r1.u64;
@@ -347,7 +357,7 @@ uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	int32_t kind = ctx.r3.u32;
 
 	if (kind == 8) {
-		result = n_sub_82451308(ctx, base, nPCRewardGiverAddr, rewardEvent);
+		result = CECNPCRewardGiver_ApplyReward(ctx, base, nPCRewardGiverAddr, rewardEvent);
 	} else {
 		// the kind is asked for again
 		getKindFn = LOAD32(LOAD32((uint32_t)rewardEvent) + 4);
@@ -357,11 +367,12 @@ uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		result = ctx.r3.u64;
 		if ((int32_t)result == 9) {
-			n_sub_824506A8(ctx, base, nPCRewardGiverAddr);
+			CECNPCRewardGiver_GiveReward(ctx, base, nPCRewardGiverAddr);
 			uint32_t getComponentTypeFn = LOAD32((uint32_t)nPCRewardGiver->vtable + 16);
 			uint32_t owner = nPCRewardGiver->m_4;
 			callTarget.u64 = getComponentTypeFn;
 			ctx.r3.u64 = nPCRewardGiverAddr;
+			ctx.r10.u64 = getComponentTypeFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			uint64_t componentType = ctx.r3.u64;
 			result = Entity_RemoveComponentByType(ctx, base, owner, componentType, ctx.r8.u64);
@@ -372,7 +383,7 @@ uint64_t n_sub_82232A60(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(7, sub_82232A60, 0x82232A60) { ctx.r3.u64 = n_sub_82232A60(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(7, sub_82232A60, 0x82232A60) { ctx.r3.u64 = CECNPCRewardGiver_OnEvent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CECNPCRewardGiver_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820B32DC_B_ = int32_t(0x820B32DC);
@@ -393,7 +404,7 @@ PROMOTED_ENTRY(25, sub_8244FF98, 0x8244FF98) { ctx.r3.u64 = CECNPCRewardGiver_Ge
 
 // Constructor: owner in m_4 and an empty list at +12; the first construction also fills the table at
 // 0x83497F2C and sorts it.
-uint64_t n_sub_82450038(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t owner) {
+uint64_t CECNPCRewardGiver_Constructor(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t owner) {
 	if (!UseLiftedCode(25, 0x82450038)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = owner; __imp__sub_82450038(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82450038);
 	uint32_t stack = ctx.r1.u64;
@@ -436,15 +447,15 @@ uint64_t n_sub_82450038(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 		// r3 is handed from call to call, starting with the node.
 		ctx.r3.u64 = node;
 		ctx.xer.ca = nodeCarry;
-		uint32_t carried = n_sub_82453140(ctx, base);
+		uint32_t carried = CECNPCRewardGiver_RegisterRewardType1(ctx, base);
 		ctx.r3.u64 = carried;
-		carried = n_sub_82453210(ctx, base);
+		carried = CECNPCRewardGiver_RegisterRewardType2(ctx, base);
 		ctx.r3.u64 = carried;
-		carried = n_sub_824532E0(ctx, base);
+		carried = CECNPCRewardGiver_RegisterRewardType3(ctx, base);
 		ctx.r3.u64 = carried;
-		carried = n_sub_824533B0(ctx, base);
+		carried = CECNPCRewardGiver_RegisterRewardType7(ctx, base);
 		ctx.r3.u64 = carried;
-		n_sub_82453480(ctx, base);
+		CECNPCRewardGiver_RegisterRewardType5(ctx, base);
 
 		uint32_t handlerTable = 0x83497F2C;
 		if (LOAD8(handlerTable + 17) != 0) {
@@ -469,10 +480,10 @@ uint64_t n_sub_82450038(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return nPCRewardGiverAddr;
 }
-PROMOTED_ENTRY(25, sub_82450038, 0x82450038) { ctx.r3.u64 = n_sub_82450038(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_82450038, 0x82450038) { ctx.r3.u64 = CECNPCRewardGiver_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Deleting destructor: runs the destructor and frees the object when bit 0 of the flags is set.
-uint64_t n_sub_82450130(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t deleteFlags) {
+uint64_t CECNPCRewardGiver_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(25, 0x82450130)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82450130(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82450130);
 	uint32_t stack = ctx.r1.u64;
@@ -480,7 +491,7 @@ uint64_t n_sub_82450130(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
 	ctx.r4.u64 = deleteFlags;
-	n_sub_82450180(ctx, base, nPCRewardGiverAddr);
+	CECNPCRewardGiver_Destructor(ctx, base, nPCRewardGiverAddr);
 	if (((uint32_t)deleteFlags & 1) != 0) {
 		HandleTarget_Free(ctx, base, nPCRewardGiverAddr);
 	}
@@ -488,10 +499,10 @@ uint64_t n_sub_82450130(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return nPCRewardGiverAddr;
 }
-PROMOTED_ENTRY(25, sub_82450130, 0x82450130) { ctx.r3.u64 = n_sub_82450130(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_82450130, 0x82450130) { ctx.r3.u64 = CECNPCRewardGiver_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Destructor: empties the list at +12, frees its sentinel node (m_10), then installs vtable 0x820A8D10.
-uint32_t n_sub_82450180(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
+uint32_t CECNPCRewardGiver_Destructor(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
 	if (!UseLiftedCode(25, 0x82450180)) { ctx.r3.u64 = nPCRewardGiverAddr; __imp__sub_82450180(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82450180);
 	uint32_t stack = ctx.r1.u64;
@@ -509,20 +520,20 @@ uint32_t n_sub_82450180(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return freeResult;
 }
-PROMOTED_ENTRY(25, sub_82450180, 0x82450180) { ctx.r3.u64 = n_sub_82450180(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_82450180, 0x82450180) { ctx.r3.u64 = CECNPCRewardGiver_Destructor(ctx, base, ctx.r3.u64); }
 
 // sub_824501D8  [4 bytes]
-uint64_t n_sub_824501D8(CpuState& ctx, uint8_t* base, uint64_t rewardGiver) {
+uint64_t CECNPCRewardGiver_GiveRewardThunk(CpuState& ctx, uint8_t* base, uint64_t rewardGiver) {
 	if (!UseLiftedCode(25, 0x824501D8)) { ctx.r3.u64 = rewardGiver; __imp__sub_824501D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824501D8);
-	return n_sub_824506A8(ctx, base, rewardGiver);
+	return CECNPCRewardGiver_GiveReward(ctx, base, rewardGiver);
 }
-PROMOTED_ENTRY(25, sub_824501D8, 0x824501D8) { ctx.r3.u64 = n_sub_824501D8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_824501D8, 0x824501D8) { ctx.r3.u64 = CECNPCRewardGiver_GiveRewardThunk(ctx, base, ctx.r3.u64); }
 
-// Calls n_sub_82392C88 with the owner (m_4). Given a GameDB record and no skip flag, it then clears m_20 when the
+// Calls CECDoor_UpdateOpenStateForEntity with the owner (m_4). Given a GameDB record and no skip flag, it then clears m_20 when the
 // record's TXT_820B32F0_B_ equals the float at 0x820994B4, and sets the rewards up from the record
-// (n_sub_824505A8).
-uint64_t n_sub_824501E0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t record, uint64_t skipRewardSetup) {
+// (CECNPCRewardGiver_TryGiveReward).
+uint64_t CECNPCRewardGiver_LoadFromRecord(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t record, uint64_t skipRewardSetup) {
 	constexpr int32_t str_TXT_820B32F0_B_ = int32_t(0x820B32F0);
 	if (!UseLiftedCode(25, 0x824501E0)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = record; ctx.r5.u64 = skipRewardSetup; __imp__sub_824501E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824501E0);
@@ -532,7 +543,7 @@ uint64_t n_sub_824501E0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	uint32_t owner = nPCRewardGiver->m_4;
 	ctx.r1.u64 = stack;
 	ctx.r5.u64 = skipRewardSetup; // state the callee may pass on
-	uint64_t result = n_sub_82392C88(ctx, base, owner, nPCRewardGiverAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, owner, nPCRewardGiverAddr);
 	if ((uint32_t)record != 0 && (int32_t)skipRewardSetup == 0) {
 		GameDB_GetFloatByName(ctx, base, record, str_TXT_820B32F0_B_);
 		double TXT_820B32F0_L_ = ctx.f1.f64;
@@ -540,19 +551,19 @@ uint64_t n_sub_824501E0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 		if (TXT_820B32F0_L_ == double(LOAD_F32(0x820994B4u))) {
 			nPCRewardGiver->m_20 = uint8_t(0);
 		}
-		result = n_sub_824505A8(ctx, base, nPCRewardGiverAddr, record);
+		result = CECNPCRewardGiver_TryGiveReward(ctx, base, nPCRewardGiverAddr, record);
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824501E0, 0x824501E0) { ctx.r3.u64 = n_sub_824501E0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(25, sub_824501E0, 0x824501E0) { ctx.r3.u64 = CECNPCRewardGiver_LoadFromRecord(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // With a GameDB record and m_20 set: unless a random roll (Rng_NextScaledFloat on the generator at +120 of the
 // object reached through the global at 0x83496920) exceeds the record's TXT_820B32F0_B_, picks a reward from
-// the record's TXT_820B3330_B_ list (n_sub_82450250), resolves it, and hands it to n_sub_824511C0 unless m_1A excludes
+// the record's TXT_820B3330_B_ list (CECNPCRewardGiver_SelectRandomReward), resolves it, and hands it to CECNPCRewardGiver_AddReward unless m_1A excludes
 // reward type 2 or m_19 excludes reward type 7.
-uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t record) {
+uint64_t CECNPCRewardGiver_TryGiveReward(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t record) {
 	constexpr int32_t str_TXT_820B32F0_B_ = int32_t(0x820B32F0);
 	constexpr int32_t str_TXT_820B3330_B_ = int32_t(0x820B3330);
 	constexpr int32_t str_TXT_820B333C_B_ = int32_t(0x820B333C);
@@ -569,7 +580,7 @@ uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 		uint32_t slot = LOAD32(LOAD32(globalRoot + 12) + 88);
 		uint32_t holder = LOAD32(slot + 4);
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = slot; // state the callees may pass on (n_sub_82450250 below takes ctx.r8 as its second argument)
+		ctx.r8.u64 = slot; // state the callees may pass on (CECNPCRewardGiver_SelectRandomReward below takes ctx.r8 as its second argument)
 		result = GameDB_GetFloatByName(ctx, base, record, str_TXT_820B32F0_B_);
 		double TXT_820B32F0_L_ = ctx.f1.f64;
 		ctx.fpscr.disableFlushMode();
@@ -582,7 +593,7 @@ uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 				uint32_t idRef = stack + 80;
 				// state the callee may pass on
 				ctx.f1.f64 = f1;
-				uint32_t rewardId = (uint32_t)n_sub_82450250(ctx, base, result, ctx.r8.u64);
+				uint32_t rewardId = (uint32_t)CECNPCRewardGiver_SelectRandomReward(ctx, base, result, ctx.r8.u64);
 				f1 = ctx.f1.f64;
 				IdRef_ConstructFromId(ctx, base, idRef, rewardId);
 				result = IdRef_Get(ctx, base, idRef);
@@ -593,7 +604,7 @@ uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 					bool excluded = (nPCRewardGiver->m_1A != 0 && TXT_820B333C_L_ == 2) ||
 					                (nPCRewardGiver->m_19 != 0 && TXT_820B333C_L_ == 7);
 					if (!excluded) {
-						result = n_sub_824511C0(ctx, base, nPCRewardGiverAddr, rewardRecord);
+						result = CECNPCRewardGiver_AddReward(ctx, base, nPCRewardGiverAddr, rewardRecord);
 						f1 = ctx.f1.f64;
 					}
 				}
@@ -605,12 +616,12 @@ uint64_t n_sub_824505A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.f1.f64 = f1; // callers read f1 after the call
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824505A8, 0x824505A8) { ctx.r3.u64 = n_sub_824505A8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_824505A8, 0x824505A8) { ctx.r3.u64 = CECNPCRewardGiver_TryGiveReward(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Builds a string on the stack: str_TXT_820B36C0_B_ with the string at +128 of the owner m_4 appended (RefCountedString_Assign
-// appends to a non-empty string). Passes it with the owner to n_sub_821BD998 and n_sub_823B6CE0, clears m_1C and
+// appends to a non-empty string). Passes it with the owner to InteractionManager_RemoveText and n_sub_823B6CE0, clears m_1C and
 // releases the string.
-uint64_t n_sub_824506A8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
+uint64_t CECNPCRewardGiver_GiveReward(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
 	constexpr int32_t str_TXT_820B36C0_B_ = int32_t(0x820B36C0);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(25, 0x824506A8)) { ctx.r3.u64 = nPCRewardGiverAddr; __imp__sub_824506A8(ctx, base); return ctx.r3.u64; }
@@ -627,7 +638,7 @@ uint64_t n_sub_824506A8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	CCharString_ConstructFromCStr(ctx, base, text, str_TXT_820B36C0_B_, -1);
 	RefCountedString_Assign(ctx, base, text, (uint64_t)nPCRewardGiver->m_4 + 128); // m_4 read again, as the original does
-	n_sub_821BD998(ctx, base, target, owner, text);
+	InteractionManager_RemoveText(ctx, base, target, owner, text);
 	ctx.r3.u64 = target; // state the callee may pass on
 	n_sub_823B6CE0(ctx, base, owner, text, ctx.r8.u64);
 
@@ -639,18 +650,18 @@ uint64_t n_sub_824506A8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824506A8, 0x824506A8) { ctx.r3.u64 = n_sub_824506A8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(25, sub_824506A8, 0x824506A8) { ctx.r3.u64 = CECNPCRewardGiver_GiveReward(ctx, base, ctx.r3.u32); }
 
 // Returns 1 when m_20 is set, the flags at +75 (clear) and +73 (set) of the state object reached through the
-// global at 0x83496920 allow it, and some listed reward that n_sub_827AD310 matches with the owner (m_4) reports
+// global at 0x83496920 allow it, and some listed reward that NPCReward_IsAvailableToOwner matches with the owner (m_4) reports
 // a value other than 3 from its first virtual function; 0 otherwise.
-uint64_t n_sub_82450BD8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
+uint64_t CECNPCRewardGiver_HasMatchingReward(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(25, 0x82450BD8)) { ctx.r3.u64 = nPCRewardGiverAddr; __imp__sub_82450BD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82450BD8);
 	uint32_t stack = ctx.r1.u64;
 	// r7-r9 as the original has them: the lookups below leave values in them, they are handed to
-	// n_sub_827AD310, read back after the calls and left for the callers at the return.
+	// NPCReward_IsAvailableToOwner, read back after the calls and left for the callers at the return.
 	uint64_t r7 = ctx.r7.u64;
 	uint64_t r8 = ctx.r8.u64;
 	uint64_t r9 = ctx.r9.u64;
@@ -678,7 +689,10 @@ uint64_t n_sub_82450BD8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 				uint32_t TXT_820B36C0_L_ = LOAD32(node + 8);
 				uint32_t owner = nPCRewardGiver->m_4;
 				ctx.r1.u64 = stack;
-				uint64_t matched = n_sub_827AD310(ctx, base, TXT_820B36C0_L_, owner);
+				ctx.r7.u64 = r7;
+				ctx.r8.u64 = r8;
+				ctx.r9.u64 = r9;
+				uint64_t matched = NPCReward_IsAvailableToOwner(ctx, base, TXT_820B36C0_L_, owner);
 				r7 = ctx.r7.u64;
 				r8 = ctx.r8.u64;
 				r9 = ctx.r9.u64;
@@ -712,14 +726,14 @@ uint64_t n_sub_82450BD8(CpuState& ctx, uint8_t* base, uint32_t nPCRewardGiverAdd
 	ctx.r9.u64 = r9;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82450BD8, 0x82450BD8) { ctx.r3.u64 = n_sub_82450BD8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(25, sub_82450BD8, 0x82450BD8) { ctx.r3.u64 = CECNPCRewardGiver_HasMatchingReward(ctx, base, ctx.r3.u32); }
 
 // When m_20 is set: looks the reward record's TXT_820B333C_B_ up in the sorted table of 8-byte {type, factory} entries
 // whose begin and end pointers are at +4 and +8 of 0x83497F2C. When the type is there, its factory makes a reward
 // object from the owner (m_4) and the record, and the object, held through a shared handle, is inserted at the end
 // position of the list at +12 (m_10 is its end node). For reward type 3, m_18 is then set from the record's
 // TXT_820B33D4_B_ field.
-uint64_t n_sub_824511C0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t rewardRecord) {
+uint64_t CECNPCRewardGiver_AddReward(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t rewardRecord) {
 	constexpr int32_t str_TXT_820B333C_B_ = int32_t(0x820B333C);
 	constexpr int32_t str_TXT_820B33D4_B_ = int32_t(0x820B33D4);
 	constexpr int32_t g_83497F2C = int32_t(0x83497F2C);
@@ -781,7 +795,7 @@ uint64_t n_sub_824511C0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 			STORE32(handle, rewardObject);
 			uint64_t source;
 			if (rewardObject != 0) {
-				source = n_sub_82453018(ctx, base, handle);
+				source = SharedHandle_CreateFromObject(ctx, base, handle);
 				flags.ca = ctx.xer.ca;
 			} else {
 				source = handle;
@@ -812,15 +826,15 @@ uint64_t n_sub_824511C0(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.xer.ca = flags.ca; // callers read xer.ca after the call
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824511C0, 0x824511C0) { ctx.r3.u64 = n_sub_824511C0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_824511C0, 0x824511C0) { ctx.r3.u64 = CECNPCRewardGiver_AddReward(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// Calls n_sub_824506A8. Then, when the flags at +75 (clear) and +73 (set) of the state object (+104 of the holder
+// Calls CECNPCRewardGiver_GiveReward. Then, when the flags at +75 (clear) and +73 (set) of the state object (+104 of the holder
 // reached through the global at 0x83496920) allow it, the entity the holder's handle (its first word) resolves to
 // and the entity at +4 of `info` both have bit 0x40 of byte +144 set, and Players_IsPlayer accepts the holder's
 // handle with the latter: the first listed reward whose virtual function at +16 accepts is given the entity
 // through its virtual function at +20 and marked (byte +13).
 // Finally removes from the owner (m_4) the component of the type this object's virtual function at +16 returns.
-uint64_t n_sub_82451308(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t info) {
+uint64_t CECNPCRewardGiver_ApplyReward(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr, uint64_t info) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(25, 0x82451308)) { ctx.r3.u64 = nPCRewardGiverAddr; ctx.r4.u64 = info; __imp__sub_82451308(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82451308);
@@ -831,7 +845,7 @@ uint64_t n_sub_82451308(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = info; // state the callee may pass on
-	n_sub_824506A8(ctx, base, nPCRewardGiverAddr);
+	CECNPCRewardGiver_GiveReward(ctx, base, nPCRewardGiverAddr);
 	// r4, r8 and r9 as the original has them: read back after the calls and handed to the virtual calls.
 	uint64_t r4 = ctx.r4.u64;
 	uint64_t r8 = ctx.r8.u64;
@@ -916,11 +930,11 @@ uint64_t n_sub_82451308(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_82451308, 0x82451308) { ctx.r3.u64 = n_sub_82451308(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_82451308, 0x82451308) { ctx.r3.u64 = CECNPCRewardGiver_ApplyReward(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Calls the first virtual function of every reward in the list at +12 and sets byte +28 of those for which it
 // returns 3; then sets m_18. Returns what the last call returned (the object address when the list is empty).
-uint64_t n_sub_824514A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
+uint64_t CECNPCRewardGiver_UpdateRewardAvailability(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAddr) {
 	if (!UseLiftedCode(25, 0x824514A8)) { ctx.r3.u64 = nPCRewardGiverAddr; __imp__sub_824514A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824514A8);
 	uint32_t stack = ctx.r1.u64;
@@ -957,4 +971,4 @@ uint64_t n_sub_824514A8(CpuState& ctx, uint8_t* base, uint64_t nPCRewardGiverAdd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824514A8, 0x824514A8) { ctx.r3.u64 = n_sub_824514A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_824514A8, 0x824514A8) { ctx.r3.u64 = CECNPCRewardGiver_UpdateRewardAvailability(ctx, base, ctx.r3.u64); }

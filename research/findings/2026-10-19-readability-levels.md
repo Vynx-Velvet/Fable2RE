@@ -185,3 +185,55 @@ and a new naming round over what is still unnamed), names for globals (a publish
 exist yet: 2,088 functions still use one by address), field access through the class model instead of raw offsets
 (1,608 functions), and the 1,885 functions whose register code the analysis cannot show to be unneeded (a model
 rewrite with the analysis' facts, or a more precise analysis of registers that are only saved and restored).
+
+## The evening: template families, applied names, and what went wrong
+
+**Template families (`tools/rewrite/templates.py`).** A family of small functions that are copies of one shape gets
+one reviewed template; each member's rewrite is written from its own lifted code, which must have the shape exactly.
+`name-hash`: the start-up functions that hash a property or definition name (FNV-1 from the offset basis, or
+`String_HashLimited100`, stored with or without its top bit) and keep it in a global, `HashName_<Name>` storing to
+`g_HashOf_<Name>` (the name is the string constant's: the published modules hold a reference,
+`HashName_TXT_<address>_B_`). 1,808 members, all passing the strict check, promoted and recorded (reviewer
+`template+claude`). `lifted-named`: the lifter's own text with the readable form, where that is already readable C++
+with every name (after the names below): 184, checked, promoted, recorded (`lifter+claude`).
+
+**The check did not see one fault.** The game's load check failed in 3 of 5 runs with the name-hash members in:
+the game thread spun in a loop while loading. Switching parts of the start-up area back to the original code
+(`lifted_disable_ranges`) found it: with the 1,653 FNV-1 members switched back, every load passed. Their helper
+called the hash through the function's entry with r3 and r4 set (`sub_821F3C28(ctx, base)`); the strict check
+replaces every callee with a recording stub, so it compares what a call is handed, never what the real callee does
+when reached that way. With the helper making the lifter's own sequence (a direct call to `String_HashFnv1`, then
+r4 = the basis), 4 of 4 load runs passed. Why the entry path misbehaves in the game is not understood yet;
+`RegisterAtExit` uses the same path and has passed every game check so far, so it stays under watch. Rule from
+this: a helper that changes how a callee is reached needs a game check of its own, not only the strict check.
+
+**Names applied.** The naming rounds (promoted functions, then 1,250 lifted functions a naming round could finish:
+611 more function names and 748 locals for USD 0.29) were applied with `tools/lift/apply_names.py`: 11,045 lifted
+functions re-lifted, 1,399 of them tested again (the rest kept their tested text); 6 of them now fail the tester
+(arguments passed through to a callee, one crash, one timeout) and run recompiled.
+
+**Two faults in the naming step, both repaired.**
+- `promote.py sync` renamed fields with the pattern `(->|\.)\s*name`, so a comment ending in a full stop took the
+  next line with it: a definition after it broke the build, a statement after it would have become part of the
+  comment. 761 functions were put back from their texts before the sync (every function keeps its statement
+  count, checked) and the pattern fixed.
+- Field names from the model were wrong where it mattered most: it gave the function's class names for offsets the
+  code reads on other objects (offset 0 of `CAKElementBuilder`, its vtable, became `key`, the first word of the
+  tree nodes it searches). All 1,287 of the evening's field names were withdrawn and the modules put back to their
+  earlier names; `name_pass.py` takes no field names until a check that the offset is the class's own exists.
+
+**Global names** (`tools/rewrite/name_globals_pass.py`, 532 globals the promoted code uses by address, each with
+its users' code): 84 names with medium or high confidence, some weak (`g_GameText16`) and some made from the text
+of the string a global is built from. Not applied: names for globals need their own dictionary and a better view
+of what each global is.
+
+Result of the evening: **6,274 of 41,186 game functions (15.2%)** are readable C++ with every name (6,217 promoted,
+57 by hand); 1,268 readable with names still to give, 1,885 at machine level. Build and game checks: see the status
+page. The aim of 25% needs names for globals (they keep about 2,200 functions from the named level), field names
+with a check, and rewrites of the machine-level functions.
+
+**Correction (2026-10-20).** The readable form's rule for register hand-overs was wrong: a write to a register
+the callee passes on was dropped whenever its value was not built from a parameter, so frame addresses handed to
+callees went too, and its first run did not treat a call through a pointer as a reader. 362 of the functions it
+wrote lost hand-overs that matter; one of them crashed Havok on Continue. The rule, the repair of the 362 and the
+two game checks that catch it are in [the finding of 2026-10-20](2026-10-20-prologue-and-continue-crash.md).

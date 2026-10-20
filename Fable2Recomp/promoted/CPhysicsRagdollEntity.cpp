@@ -1,9 +1,9 @@
 // CPhysicsRagdollEntity (vtable 0x82005480): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -98,7 +98,7 @@ uint32_t CPhysicsRagdollEntity_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 	ctx.r1.u64 = stack;
 	SharedHandle_Release(ctx, base, handleAddr);
 
-	uint32_t result = n_sub_823EE4D0(ctx, base, physicsRagdollEntityAddr);
+	uint32_t result = C_820F06D0_Destructor(ctx, base, physicsRagdollEntityAddr);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
@@ -130,16 +130,16 @@ uint64_t CPhysicsRagdollEntity_RemoveFromWorld(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(32, sub_825217A8, 0x825217A8) { ctx.r3.u64 = CPhysicsRagdollEntity_RemoveFromWorld(ctx, base, ctx.r3.u32); }
 
-void n_sub_82521818(CpuState& ctx, uint8_t* base, uint32_t entity) {
+void CPhysicsRagdollEntity_SetTranslation(CpuState& ctx, uint8_t* base, uint32_t entity) {
 	if (!UseLiftedCode(32, 0x82521818)) { ctx.r3.u64 = entity; __imp__sub_82521818(ctx, base); return; }
 	LiftedFrame frame(0x82521818);
 	PPCVRegister value = ctx.v1;
 	VSTORE((entity + 240u) & ~0xF, V8(value));
 	return;
 }
-PROMOTED_ENTRY(32, sub_82521818, 0x82521818) { n_sub_82521818(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(32, sub_82521818, 0x82521818) { CPhysicsRagdollEntity_SetTranslation(ctx, base, ctx.r3.u32); }
 
-void n_sub_82521828(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEntityAddr, uint64_t quaternionLow, uint64_t quaternionHigh) {
+void CPhysicsRagdollEntity_SetRotation(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEntityAddr, uint64_t quaternionLow, uint64_t quaternionHigh) {
 	if (!UseLiftedCode(32, 0x82521828)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = quaternionLow; ctx.r5.u64 = quaternionHigh; __imp__sub_82521828(ctx, base); return; }
 	LiftedFrame frame(0x82521828);
 	uint32_t stack = ctx.r1.u32;
@@ -150,9 +150,9 @@ void n_sub_82521828(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEntityA
 	physicsRagdollEntity->m_108 = quaternionHigh;
 	return;
 }
-PROMOTED_ENTRY(32, sub_82521828, 0x82521828) { n_sub_82521828(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(32, sub_82521828, 0x82521828) { CPhysicsRagdollEntity_SetRotation(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr) {
+uint64_t CPhysicsRagdollEntity_UpdateRagdollFromTransform(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr) {
 	if (!UseLiftedCode(32, 0x82521850)) { ctx.r3.u64 = physicsRagdollEntityAddr; __imp__sub_82521850(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82521850);
 	uint32_t stack = ctx.r1.u64;
@@ -248,18 +248,21 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 	STORE32(buf96 + 8, limbValue | 0x80000000u);
 	uint32_t limbTableAgain = LOAD32(pRagdoll + 44);
 
+	ctx.r7.u64 = limbValue;
+	ctx.r8.u64 = limbTable;
+	ctx.r9.u64 = buf80;
 	ctx.v11 = vecSource;
 	ctx.v12 = vecBroadcast;
 	ctx.v13 = vecConstant;
 	n_sub_82D5D008(ctx, base, buf192, one, limbTableAgain, buf96);
 
-	uint32_t poseData = n_sub_82D5DB78(ctx, base, buf192);
+	uint32_t poseData = BoneData_GetTransforms(ctx, base, buf192);
 	uint32_t poseValue = LOAD32(poseData);
 	uint32_t pRagdoll2 = physicsRagdollEntity->m_pRagdoll;
-	n_sub_82E67700(ctx, base, pRagdoll2, poseValue, buf144);
+	Ragdoll_SetPose(ctx, base, pRagdoll2, poseValue, buf144);
 
 	uint32_t ragdollData = physicsRagdollEntity->m_30;
-	n_sub_82E66200(ctx, base, ragdollData);
+	Skeleton_UpdateBones(ctx, base, ragdollData);
 
 	uint64_t result = n_sub_821A1580(ctx, base, buf192);
 
@@ -274,6 +277,11 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 		uint32_t entryIndex = 22;
 		uint32_t scaled = (uint32_t)combined << 4;
 		uint32_t entry = LOAD32(stride + tableBase);
+		ctx.r6.u64 = entryIndex;
+		ctx.r7.u64 = combined;
+		ctx.r8.u64 = stride;
+		ctx.r9.u64 = tableBase;
+		ctx.r10.u64 = index;
 		result = n_sub_82D4ECA8(ctx, base, entry, value, scaled);
 	}
 
@@ -281,9 +289,9 @@ uint64_t n_sub_82521850(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_82521850, 0x82521850) { ctx.r3.u64 = n_sub_82521850(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(32, sub_82521850, 0x82521850) { ctx.r3.u64 = CPhysicsRagdollEntity_UpdateRagdollFromTransform(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_825219C8(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr, uint64_t arg2) {
+uint64_t CPhysicsRagdollEntity_SetTransform(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr, uint64_t arg2) {
 	if (!UseLiftedCode(32, 0x825219C8)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = arg2; __imp__sub_825219C8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825219C8);
 	uint32_t stack = ctx.r1.u64;
@@ -304,17 +312,18 @@ uint64_t n_sub_825219C8(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEnt
 	SET_V8(translation, VLOAD((transformAddr + 0x30u) & ~0xFu));
 	VSTORE((entityAddr + translationOffset & ~0xFu), V8(translation));
 
+	ctx.r9.u64 = translationOffset;
 	ctx.f1.f64 = quatValue;
-	uint64_t result = n_sub_82521850(ctx, base, physicsRagdollEntityAddr);
+	uint64_t result = CPhysicsRagdollEntity_UpdateRagdollFromTransform(ctx, base, physicsRagdollEntityAddr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(32, sub_825219C8, 0x825219C8) { ctx.r3.u64 = n_sub_825219C8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(32, sub_825219C8, 0x825219C8) { ctx.r3.u64 = CPhysicsRagdollEntity_SetTransform(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82521A28  [16 bytes]
-void n_sub_82521A28(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
+void CPhysicsRagdollEntity_CopyVectorAtF0(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
 	if (!UseLiftedCode(32, 0x82521A28)) { ctx.r3.u64 = destination; ctx.r4.u64 = source; __imp__sub_82521A28(ctx, base); return; }
 	LiftedFrame frame(0x82521A28);
 	PPCVRegister vec{};
@@ -322,9 +331,9 @@ void n_sub_82521A28(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t
 	VSTORE(destination & ~0xF, V8(vec));
 	return;
 }
-PROMOTED_ENTRY(32, sub_82521A28, 0x82521A28) { n_sub_82521A28(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(32, sub_82521A28, 0x82521A28) { CPhysicsRagdollEntity_CopyVectorAtF0(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-void n_sub_82521A38(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
+void CPhysicsRagdollEntity_CopyVectorAt100(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
 	if (!UseLiftedCode(32, 0x82521A38)) { ctx.r3.u64 = destination; ctx.r4.u64 = source; __imp__sub_82521A38(ctx, base); return; }
 	LiftedFrame frame(0x82521A38);
 	uint64_t secondHalf = LOAD64(source + 264);
@@ -332,7 +341,7 @@ void n_sub_82521A38(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t
 	STORE64(destination + 8, secondHalf);
 	return;
 }
-PROMOTED_ENTRY(32, sub_82521A38, 0x82521A38) { n_sub_82521A38(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(32, sub_82521A38, 0x82521A38) { CPhysicsRagdollEntity_CopyVectorAt100(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 uint64_t CPhysicsRagdollEntity_SetMotionType(CpuState& ctx, uint8_t* base, uint64_t physicsRagdollEntityAddr, uint64_t motionType) {
 	if (!UseLiftedCode(32, 0x82521B38)) { ctx.r3.u64 = physicsRagdollEntityAddr; ctx.r4.u64 = motionType; __imp__sub_82521B38(ctx, base); return ctx.r3.u64; }
@@ -366,7 +375,7 @@ uint64_t CPhysicsRagdollEntity_SetMotionType(CpuState& ctx, uint8_t* base, uint6
 				if (physicsRagdollEntityAddr != 0) {
 					ctx.r1.u64 = stack;
 					ctx.xer.ca = flags.ca;
-					physicsRagdollEntityAddr = n_sub_82D7B398(ctx, base, physicsRagdollEntityAddr, physicsMotionMode, 1, 0);
+					physicsRagdollEntityAddr = HavokRigidBody_SetMotionType(ctx, base, physicsRagdollEntityAddr, physicsMotionMode, 1, 0);
 					motionType = ctx.r4.u64;
 				}
 			}
@@ -403,7 +412,7 @@ uint64_t n_sub_82523398(CpuState& ctx, uint8_t* base, uint32_t physicsRagdollEnt
 
 		uint32_t boneResultAddr = stack + 80;
 		ctx.r1.u64 = stack;
-		n_sub_82D7C158(ctx, base, boneResultAddr, boneArg);
+		RigidBody_GetMotionType(ctx, base, boneResultAddr, boneArg);
 
 		if (LOAD8(boneResultAddr) != 0) {
 			stack = PopStackFrame(stack, 128);

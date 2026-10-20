@@ -1,9 +1,9 @@
 // CCtypeWChar (vtable 0x8200E258): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -19,7 +19,7 @@ uint64_t CCtypeWChar_Is(CpuState& ctx, uint8_t* base, uint64_t ctypeThis, uint32
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	uint32_t classFlags = n_sub_82CD2040(ctx, base, character);
+	uint32_t classFlags = GetCharacterClassFlags(ctx, base, character);
 
 	// Only the low 16 bits of the masked flags decide membership.
 	uint16_t maskedClass = (uint16_t)(classFlags & classMask);
@@ -31,12 +31,12 @@ uint64_t CCtypeWChar_Is(CpuState& ctx, uint8_t* base, uint64_t ctypeThis, uint32
 }
 PROMOTED_ENTRY(92, sub_82C741D8, 0x82C741D8) { ctx.r3.u64 = CCtypeWChar_Is(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u32); }
 
-uint64_t n_sub_82C74220(CpuState& ctx, uint8_t* base, uint32_t ctype, uint64_t source, uint64_t sourceEnd, uint32_t destination) {
+uint64_t CCtypeWChar_ToLower_82C74220(CpuState& ctx, uint8_t* base, uint32_t ctype, uint64_t source, uint64_t sourceEnd, uint32_t destination) {
 	if (!UseLiftedCode(92, 0x82C74220)) { ctx.r3.u64 = ctype; ctx.r4.u64 = source; ctx.r5.u64 = sourceEnd; ctx.r6.u64 = destination; __imp__sub_82C74220(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C74220);
-	return n_sub_82CD2068(ctx, base, source, sourceEnd, destination);
+	return CCtypeWChar_ToLowerRange_82CD2068(ctx, base, source, sourceEnd, destination);
 }
-PROMOTED_ENTRY(92, sub_82C74220, 0x82C74220) { ctx.r3.u64 = n_sub_82C74220(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u32); }
+PROMOTED_ENTRY(92, sub_82C74220, 0x82C74220) { ctx.r3.u64 = CCtypeWChar_ToLower_82C74220(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u32); }
 
 uint64_t CCtypeWChar_ScanIs(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, uint64_t ctypeMask, uint64_t rangeBegin, uint64_t rangeEnd) {
 	if (!UseLiftedCode(92, 0x82C74238)) { ctx.r3.u64 = ctypeWCharAddr; ctx.r4.u64 = ctypeMask; ctx.r5.u64 = rangeBegin; ctx.r6.u64 = rangeEnd; __imp__sub_82C74238(ctx, base); return ctx.r3.u64; }
@@ -167,7 +167,7 @@ uint64_t CCtypeWChar_Widen(CpuState& ctx, uint8_t* base, uint32_t self, uint32_t
 }
 PROMOTED_ENTRY(92, sub_82C743B8, 0x82C743B8) { ctx.r3.u64 = CCtypeWChar_Widen(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82C74408(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, uint64_t rangeBegin, uint64_t rangeEnd) {
+uint64_t CCtypeWChar_WidenRange_82C74408(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, uint64_t rangeBegin, uint64_t rangeEnd) {
 	if (!UseLiftedCode(92, 0x82C74408)) { ctx.r3.u64 = ctypeWCharAddr; ctx.r4.u64 = rangeBegin; ctx.r5.u64 = rangeEnd; __imp__sub_82C74408(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C74408);
 	CCtypeWChar* ctypeWChar = GameObject<CCtypeWChar>(base, ctypeWCharAddr);
@@ -181,7 +181,7 @@ uint64_t n_sub_82C74408(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, u
 	REX_CALL_INDIRECT_FUNC(virtualMethod);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(92, sub_82C74408, 0x82C74408) { ctx.r3.u64 = n_sub_82C74408(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(92, sub_82C74408, 0x82C74408) { ctx.r3.u64 = CCtypeWChar_WidenRange_82C74408(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CCtypeWChar_WidenRange(CpuState& ctx, uint8_t* base, uint32_t self, uint64_t source, uint32_t sourceEnd, uint32_t dest, uint32_t destCapacity) {
 	if (!UseLiftedCode(92, 0x82C74420)) { ctx.r3.u64 = self; ctx.r4.u64 = source; ctx.r5.u64 = sourceEnd; ctx.r6.u64 = dest; ctx.r7.u64 = destCapacity; __imp__sub_82C74420(ctx, base); return ctx.r3.u64; }
@@ -236,6 +236,7 @@ uint64_t CCtypeWChar_Narrow(CpuState& ctx, uint8_t* base, uint64_t self, uint64_
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r5.u64 = conversionState;
 	ctx.r6.u64 = self + 24;
 	uint32_t conversionResult = CRT_WcToMbSingleByte(ctx, base, convertedByte, wideChar, r8Value);
 
@@ -250,7 +251,7 @@ uint64_t CCtypeWChar_Narrow(CpuState& ctx, uint8_t* base, uint64_t self, uint64_
 }
 PROMOTED_ENTRY(92, sub_82C744B0, 0x82C744B0) { ctx.r3.u64 = CCtypeWChar_Narrow(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C74500(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, uint64_t rangeStart, uint64_t rangeEnd) {
+uint64_t CCtypeWChar_NarrowRange_82C74500(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, uint64_t rangeStart, uint64_t rangeEnd) {
 	if (!UseLiftedCode(92, 0x82C74500)) { ctx.r3.u64 = ctypeWCharAddr; ctx.r4.u64 = rangeStart; ctx.r5.u64 = rangeEnd; __imp__sub_82C74500(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C74500);
 	CCtypeWChar* ctypeWChar = GameObject<CCtypeWChar>(base, ctypeWCharAddr);
@@ -267,7 +268,7 @@ uint64_t n_sub_82C74500(CpuState& ctx, uint8_t* base, uint64_t ctypeWCharAddr, u
 	REX_CALL_INDIRECT_FUNC(callee);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(92, sub_82C74500, 0x82C74500) { ctx.r3.u64 = n_sub_82C74500(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(92, sub_82C74500, 0x82C74500) { ctx.r3.u64 = CCtypeWChar_NarrowRange_82C74500(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CCtypeWChar_NarrowRange(CpuState& ctx, uint8_t* base, uint64_t self, uint64_t sourceBegin, uint32_t sourceEnd, uint32_t defaultChar, uint64_t destBegin, uint64_t destCapacity) {
 	if (!UseLiftedCode(92, 0x82C74518)) { ctx.r3.u64 = self; ctx.r4.u64 = sourceBegin; ctx.r5.u64 = sourceEnd; ctx.r6.u64 = defaultChar; ctx.r7.u64 = destBegin; ctx.r8.u64 = destCapacity; __imp__sub_82C74518(ctx, base); return ctx.r3.u64; }

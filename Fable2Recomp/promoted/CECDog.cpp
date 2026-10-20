@@ -1,9 +1,11 @@
+
+
 // CECDog (vtable 0x82003108): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -12,7 +14,7 @@
 #include "lifted/readable_support.h"
 
 // Returns the object the handle at +300 refers to; a handle whose object is gone is released and 0 returned.
-uint64_t n_sub_82174238(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
+uint64_t CECDog_GetFetchTarget(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 	if (!UseLiftedCode(0, 0x82174238)) { ctx.r3.u64 = ownerAddr; __imp__sub_82174238(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82174238);
 	uint32_t stack = ctx.r1.u64;
@@ -37,12 +39,12 @@ uint64_t n_sub_82174238(CpuState& ctx, uint8_t* base, uint64_t ownerAddr) {
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(0, sub_82174238, 0x82174238) { ctx.r3.u64 = n_sub_82174238(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_82174238, 0x82174238) { ctx.r3.u64 = CECDog_GetFetchTarget(ctx, base, ctx.r3.u64); }
 
 // When m_11C <= 1 and the count at 0x8331950C is past m_88: passes the first two components of a vector
-// (truncated to int32) to n_sub_823509C8, hands its result to n_sub_827898B8, and sets m_88 to the count
+// (truncated to int32) to SpatialGrid_FindCellForPoint, hands its result to n_sub_827898B8, and sets m_88 to the count
 // plus the double at 0x83319510.
-uint32_t n_sub_821780B8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint32_t CECDog_UpdateDetection(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	if (!UseLiftedCode(0, 0x821780B8)) { ctx.r3.u64 = dogAddr; __imp__sub_821780B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821780B8);
@@ -106,8 +108,8 @@ uint32_t n_sub_821780B8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 			// state the callee may pass on
 			ctx.f11 = yInt;
 			ctx.f13 = xInt;
-			const uint64_t found = n_sub_823509C8(ctx, base, chainEnd, stack + 80);
-			// the last argument is r8 as n_sub_823509C8 left it
+			const uint64_t found = SpatialGrid_FindCellForPoint(ctx, base, chainEnd, stack + 80);
+			// the last argument is r8 as SpatialGrid_FindCellForPoint left it
 			n_sub_827898B8(ctx, base, dogAddr, found, 1, ctx.r8.u64);
 
 			// m_88 = (int32)(count + the double at 0x83319510); the count is converted through the stack slot.
@@ -135,11 +137,11 @@ uint32_t n_sub_821780B8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.r1.u64 = stack;
 	return (uint32_t)dogAddr;
 }
-PROMOTED_ENTRY(0, sub_821780B8, 0x821780B8) { ctx.r3.u64 = n_sub_821780B8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_821780B8, 0x821780B8) { ctx.r3.u64 = CECDog_UpdateDetection(ctx, base, ctx.r3.u64); }
 
-// Lowers m_78 and m_7C by the same step, calls n_sub_82789AA8 when state 7's watched value (m_78 in phase 0,
+// Lowers m_78 and m_7C by the same step, calls CECDog_TransitionState when state 7's watched value (m_78 in phase 0,
 // m_7C in phase 5) is not above the trigger level, then selects each value against the bound at 0x820994B4.
-uint32_t n_sub_82186980(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint32_t CECDog_UpdatePhaseTimers(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
@@ -185,7 +187,13 @@ uint32_t n_sub_82186980(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 		if (reached) {
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
-			n_sub_82789AA8(ctx, base, dogAddr, state);
+			ctx.f8.f64 = step;
+			ctx.f9.f64 = quotient;
+			ctx.f10.f64 = denom;
+			ctx.f11.f64 = origM7C;
+			ctx.f12.f64 = trigger;
+			ctx.f13.f64 = newM7C;
+			CECDog_TransitionState(ctx, base, dogAddr, state);
 		}
 	}
 
@@ -222,7 +230,7 @@ uint32_t n_sub_82186980(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.f13.f64 = curM78;
 	return m7CUnordered;
 }
-PROMOTED_ENTRY(0, sub_82186980, 0x82186980) { ctx.r3.u64 = n_sub_82186980(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_82186980, 0x82186980) { ctx.r3.u64 = CECDog_UpdatePhaseTimers(ctx, base, ctx.r3.u64); }
 
 // If the handle at +300 still has an object and both it and the entity at m_4 have component 2: a vector from
 // each component is tested against a squared-length limit, and each component's vtable +152 method gets the
@@ -381,7 +389,13 @@ uint32_t CECDog_UpdateFetchTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr
 
 	const uint32_t entityMethod152 = LOAD32(LOAD32(entityComponent) + 152);
 	callTarget.u64 = entityMethod152;
+	ctx.r3.u64 = entityComponent;
+	ctx.r4.u64 = target;
+	ctx.r5.u64 = withinFlag;
 	// state the callee may pass on
+	ctx.r8.u64 = passedR8;
+	ctx.r9.u64 = stack + 80;
+	ctx.r10.u64 = entityMethod152;
 	ctx.v13 = lengthSq;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
@@ -389,6 +403,8 @@ uint32_t CECDog_UpdateFetchTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr
 	const uint32_t targetMethod152 = LOAD32(targetVtable + 152);
 	callTarget.u64 = targetMethod152;
 	ctx.r3.u64 = targetComponent;
+	ctx.r4.u64 = entity;
+	ctx.r5.u64 = withinFlag;
 	// state the callee may pass on
 	ctx.r8.u64 = targetMethod152;
 	ctx.r9.u64 = targetVtable;
@@ -401,11 +417,11 @@ uint32_t CECDog_UpdateFetchTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr
 }
 PROMOTED_ENTRY(11, sub_822AEF78, 0x822AEF78) { ctx.r3.u64 = CECDog_UpdateFetchTarget(ctx, base, ctx.r3.u64); }
 
-// When the entity at m_4 has component 24, n_sub_82500CB0 finds through it an entity by the hash of the
+// When the entity at m_4 has component 24, Component_FindEntityByNameHash finds through it an entity by the hash of the
 // str_TXT_820019B0_B_ string. A newly found valid entity becomes m_17C, and the member at +1032 is given the
-// str_TXT_820D4B1C_B_ string (or the non-empty string n_sub_82345978 returns for str_TXT_820D4B30_B_ from the
-// entity's component 83); with no valid entity, n_sub_8277DC78 may run on that member and clear m_17C.
-uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+// str_TXT_820D4B1C_B_ string (or the non-empty string GameDB_GetStringField returns for str_TXT_820D4B30_B_ from the
+// entity's component 83); with no valid entity, EntitySlot_Clear may run on that member and clear m_17C.
+uint32_t CECDog_UpdateCarryAttachment(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t str_TXT_820019B0_B_ = int32_t(0x820019B0);
 	constexpr int32_t str_TXT_820D4B1C_B_ = int32_t(0x820D4B1C);
 	constexpr int32_t str_TXT_820D4B30_B_ = int32_t(0x820D4B30);
@@ -486,11 +502,12 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.r6.u64 = searchR6;
 	ctx.cr0 = searchCr0;
 	ctx.xer.ca = searchXer.ca;
 	CCharString_ConstructFromCStr(ctx, base, stack + 88, str_TXT_820019B0_B_, -1);
 	const uint64_t nameHash = String_HashCrc32(ctx, base, stack + 88);
-	const uint32_t carried = n_sub_82500CB0(ctx, base, component24, nameHash);
+	const uint32_t carried = Component_FindEntityByNameHash(ctx, base, component24, nameHash);
 	const uint32_t releaseResult = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 
 	if (carried != 0 && (LOAD8(carried + 144) & 64) != 0) {
@@ -515,10 +532,10 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 			// state the callee may pass on
 			ctx.cr0 = searchCr0;
 			ctx.xer.ca = searchXer.ca;
-			const uint64_t idSource = n_sub_821D9F40(ctx, base, stack + 96, component83);
+			const uint64_t idSource = Component_GetId(ctx, base, stack + 96, component83);
 			const uint64_t idRef = IdRef_Get(ctx, base, idSource);
 			ctx.r7.u64 = uint64_t(str_TXT_820D4B30_B_);  // state the callee may pass on (sign-extended)
-			const uint64_t animName = n_sub_82345978(ctx, base, idRef, str_TXT_820D4B30_B_);
+			const uint64_t animName = GameDB_GetStringField(ctx, base, idRef, str_TXT_820D4B30_B_);
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, animName, -1);
 			// a non-empty name replaces the default
 			const uint32_t nameData = LOAD32(stack + 80);
@@ -532,14 +549,14 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 
 		const uint64_t memberAddr = dogAddr + 1032;
 		n_sub_8277D2D0(ctx, base, memberAddr, dog->m_4, stack + 88, TXT_8349B370_G_, 5, 4);
-		n_sub_8277D960(ctx, base, memberAddr, dog->m_4, -1, 255);
+		EntitySlot_SetMode(ctx, base, memberAddr, dog->m_4, -1, 255);
 		const uint32_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
 		return result;
 	}
 
-	// No valid entity: with m_41C set, n_sub_8277DC78 runs when its +24 value * c + its +20 value
+	// No valid entity: with m_41C set, EntitySlot_Clear runs when its +24 value * c + its +20 value
 	// (fused, rounded to single) exceeds c, the float at 0x820994B4.
 	const uint32_t carryState = dog->m_41C;
 	const uint64_t memberAddr = dogAddr + 1032;
@@ -554,7 +571,7 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 		ctx.f12.f64 = value20;
 		ctx.f13.f64 = value24;
 		if (combined > c) {
-			const uint32_t result = n_sub_8277DC78(ctx, base, memberAddr, dog->m_4);
+			const uint32_t result = EntitySlot_Clear(ctx, base, memberAddr, dog->m_4);
 			dog->m_17C = 0;
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
@@ -565,11 +582,11 @@ uint32_t n_sub_822B1A00(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.r1.u64 = stack;
 	return (uint32_t)memberAddr;
 }
-PROMOTED_ENTRY(12, sub_822B1A00, 0x822B1A00) { ctx.r3.u64 = n_sub_822B1A00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(12, sub_822B1A00, 0x822B1A00) { ctx.r3.u64 = CECDog_UpdateCarryAttachment(ctx, base, ctx.r3.u64); }
 
 // Stores at +1152 the vector from the object at m_4 +124 plus the scaled, normalized negation of what
 // Quat_MultiplyAndReturn returns for that object's quaternion; returns the address of the normalized vector.
-uint64_t n_sub_822BDA90(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
+uint64_t CECDog_UpdateMouthPosition(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
 	if (!UseLiftedCode(12, 0x822BDA90)) { ctx.r3.u64 = dogAddr; __imp__sub_822BDA90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822BDA90);
 	PPCRegister scratch{};
@@ -658,10 +675,10 @@ uint64_t n_sub_822BDA90(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
 	ctx.v13 = scaleVec;
 	return dirAddr;
 }
-PROMOTED_ENTRY(12, sub_822BDA90, 0x822BDA90) { ctx.r3.u64 = n_sub_822BDA90(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(12, sub_822BDA90, 0x822BDA90) { ctx.r3.u64 = CECDog_UpdateMouthPosition(ctx, base, ctx.r3.u32); }
 
 // sub_822D1CB8  [1272 bytes]
-uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t targetAddr) {
+uint32_t CECDog_CanUseTarget(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t targetAddr) {
 	constexpr int32_t str_TXT_820BDC44_B_ = int32_t(0x820BDC44);
 	constexpr int32_t str_TXT_820C7554_B_ = int32_t(0x820C7554);
 	if (!UseLiftedCode(13, 0x822D1CB8)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = targetAddr; __imp__sub_822D1CB8(ctx, base); return ctx.r3.u32; }
@@ -750,7 +767,7 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			ctx.xer.ca = xer.ca;
-			uint64_t lockRef = n_sub_821D9F40(ctx, base, stack + 80, keyLock);
+			uint64_t lockRef = Component_GetId(ctx, base, stack + 80, keyLock);
 			xer.ca = ctx.xer.ca;
 			uint64_t lockId = IdRef_Get(ctx, base, lockRef);
 			ctx.r7.u64 = str_TXT_820BDC44_B_;  // state the callee may pass on
@@ -760,7 +777,7 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 			regR7 = ctx.r7.u64;
 			regR8 = ctx.r8.u64;
 			if (TXT_820BDC44_L_ > 0) {
-				uint32_t bombardTarget = n_sub_82174238(ctx, base, dogAddr);
+				uint32_t bombardTarget = CECDog_GetFetchTarget(ctx, base, dogAddr);
 				regR4 = ctx.r4.u64;
 				regR6 = ctx.r6.u64;
 				regR7 = ctx.r7.u64;
@@ -776,6 +793,7 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 						regR10 = searchPos;
 					}
 					// state the callee may pass on
+					ctx.r6.u64 = regR6;
 					ctx.xer.ca = xer.ca;
 					CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820C7554_B_, -1);
 					int32_t silverKeysHeld = ItemList_CountByTypeName(ctx, base, inventory, stack + 80);
@@ -828,7 +846,7 @@ uint32_t n_sub_822D1CB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	ctx.xer.ca = xer.ca;
 	return result;
 }
-PROMOTED_ENTRY(13, sub_822D1CB8, 0x822D1CB8) { ctx.r3.u64 = n_sub_822D1CB8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(13, sub_822D1CB8, 0x822D1CB8) { ctx.r3.u64 = CECDog_CanUseTarget(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CECDog_IsHealthLow(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
 	if (!UseLiftedCode(13, 0x822D3240)) { ctx.r3.u64 = dogAddr; __imp__sub_822D3240(ctx, base); return ctx.r3.u64; }
@@ -944,14 +962,14 @@ uint64_t CECDog_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameStr
 }
 PROMOTED_ENTRY(51, sub_8277CAB0, 0x8277CAB0) { ctx.r3.u64 = CECDog_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8277E558(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t deleteFlags) {
+uint64_t CECDog_Delete(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(51, 0x8277E558)) { ctx.r3.u64 = objectAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8277E558(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277E558);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_8277E630(ctx, base, objectAddr);
+	CECDog_Destructor(ctx, base, objectAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectAddr);
 	}
@@ -959,9 +977,9 @@ uint64_t n_sub_8277E558(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint6
 	ctx.r1.u64 = stack;
 	return objectAddr;
 }
-PROMOTED_ENTRY(51, sub_8277E558, 0x8277E558) { ctx.r3.u64 = n_sub_8277E558(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(51, sub_8277E558, 0x8277E558) { ctx.r3.u64 = CECDog_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint64_t CECDog_Initialise(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t TXT_8349B4E4_G_ = int32_t(0x8349B4E4);
 	if (!UseLiftedCode(51, 0x8277E8A8)) { ctx.r3.u64 = dogAddr; __imp__sub_8277E8A8(ctx, base); return ctx.r3.u64; }
@@ -973,9 +991,9 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	stack = PushStackFrame(base, stack, 208);
 	uint32_t entity = dog->m_4;
 	ctx.r1.u64 = stack;
-	n_sub_82392C88(ctx, base, entity, dogAddr);
+	CECDoor_UpdateOpenStateForEntity(ctx, base, entity, dogAddr);
 
-	// Vector registers the call above leaves; carried on to n_sub_822BDA90.
+	// Vector registers the call above leaves; carried on to CECDog_UpdateMouthPosition.
 	PPCVRegister vec9 = ctx.v9;
 	PPCVRegister vec10 = ctx.v10;
 	PPCVRegister vec11 = ctx.v11;
@@ -1010,7 +1028,7 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	dog->m_1B4 = LOAD_F32(0x820994B4u);
 
 	uint32_t entityFlags = LOAD32(entity + 36);
-	// Register values handed to n_sub_822BDA90 below.
+	// Register values handed to CECDog_UpdateMouthPosition below.
 	uint64_t regR6 = (entityFlags >> 6) & 1;
 	uint64_t regR7 = entityFlags;
 	uint64_t regR8 = 1;
@@ -1061,7 +1079,7 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 		uint32_t holderField144 = LOAD32(holder + 144);
 		ctx.xer.ca = xer.ca;  // state the callee may pass on
 		uint64_t index = StringPairArray_FindIndexByName(ctx, base, holder, TXT_8349B4E4_G_);
-		n_sub_821F5980(ctx, base, stack + 112, index, holderField144, holder, 1);
+		StringPairArray_GetEntry(ctx, base, stack + 112, index, holderField144, holder, 1);
 		regR6 = ctx.r6.u64;
 		regR7 = g_820A0000 - 28384;  // 0x82099120, sign-extended
 		regR8 = g_820A0000;
@@ -1093,7 +1111,7 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.v11 = vec11;
 	ctx.v12 = vec12;
 	ctx.v13 = vec13;
-	n_sub_822BDA90(ctx, base, dogAddr);
+	CECDog_UpdateMouthPosition(ctx, base, dogAddr);
 
 	entity = dog->m_4;
 	uint32_t interfaceObj = LOAD32(entity + 124);
@@ -1114,9 +1132,9 @@ uint64_t n_sub_8277E8A8(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(51, sub_8277E8A8, 0x8277E8A8) { ctx.r3.u64 = n_sub_8277E8A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(51, sub_8277E8A8, 0x8277E8A8) { ctx.r3.u64 = CECDog_Initialise(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double deltaTime) {
+uint64_t CECDog_Update(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double deltaTime) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	if (!UseLiftedCode(51, 0x827818D0)) { ctx.r3.u64 = dogAddr; ctx.f1.f64 = deltaTime; __imp__sub_827818D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827818D0);
@@ -1148,10 +1166,10 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double d
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.f1.f64 = deltaTime;
-		uint32_t found = n_sub_82781AD0(ctx, base, stack + 80);
+		uint32_t found = CECDog_GetPlayerStartPosition(ctx, base, stack + 80);
 		regF1 = ctx.f1.f64;
 		if ((found & 0xFF) == 0) {
-			n_sub_82781A08(ctx, base, dogAddr, stack + 80);
+			CECDog_GetBombardTargetPosition(ctx, base, dogAddr, stack + 80);
 			regF1 = ctx.f1.f64;
 		}
 
@@ -1189,8 +1207,10 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double d
 			dog->m_D8 = uint32_t(nowAgain - (uint64_t)LOAD32(stack + 84));
 		} else {
 			// state the callee may pass on
+			ctx.r7.u64 = isHealthLow;
 			ctx.f9 = ticksB;
 			ctx.f10 = ticksA;
+			ctx.f11.f64 = timeScale;
 			ctx.v1 = regV1;
 			result = n_sub_827814D8(ctx, base, dogAddr, 0, ctx.f1.f64);
 			regR4 = ctx.r4.u64;
@@ -1210,9 +1230,9 @@ uint64_t n_sub_827818D0(CpuState& ctx, uint8_t* base, uint64_t dogAddr, double d
 	ctx.v1 = regV1;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_827818D0, 0x827818D0) { ctx.r3.u64 = n_sub_827818D0(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(51, sub_827818D0, 0x827818D0) { ctx.r3.u64 = CECDog_Update(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
-uint32_t n_sub_82781A08(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t outVecAddr) {
+uint32_t CECDog_GetBombardTargetPosition(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t outVecAddr) {
 	if (!UseLiftedCode(51, 0x82781A08)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = outVecAddr; __imp__sub_82781A08(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82781A08);
 	uint32_t stack = ctx.r1.u64;
@@ -1241,7 +1261,7 @@ uint32_t n_sub_82781A08(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = outVecAddr;
-		uint32_t bombardTarget = n_sub_82174238(ctx, base, dogAddr);
+		uint32_t bombardTarget = CECDog_GetFetchTarget(ctx, base, dogAddr);
 		uint32_t targetObj = LOAD32(bombardTarget + 124);
 		uint32_t vtable = LOAD32(targetObj);
 		uint32_t method = LOAD32(vtable + 64);
@@ -1264,9 +1284,9 @@ uint32_t n_sub_82781A08(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_82781A08, 0x82781A08) { ctx.r3.u64 = n_sub_82781A08(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(51, sub_82781A08, 0x82781A08) { ctx.r3.u64 = CECDog_GetBombardTargetPosition(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82781AD0(CpuState& ctx, uint8_t* base, uint32_t outVecAddr) {
+uint32_t CECDog_GetPlayerStartPosition(CpuState& ctx, uint8_t* base, uint32_t outVecAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(51, 0x82781AD0)) { ctx.r4.u64 = outVecAddr; __imp__sub_82781AD0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82781AD0);
@@ -1284,7 +1304,7 @@ uint32_t n_sub_82781AD0(CpuState& ctx, uint8_t* base, uint32_t outVecAddr) {
 		uint64_t targetEntity = (uint64_t)LOAD32(target + 4) + 176;
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		uint32_t result = n_sub_8238EF38(ctx, base, targetEntity, outVecAddr, (uint64_t)stack + 80);
+		uint32_t result = PlayerStart_GetPosition(ctx, base, targetEntity, outVecAddr, (uint64_t)stack + 80);
 		stack = PopStackFrame(stack, 112);
 		ctx.r1.u64 = stack;
 		return result;
@@ -1297,9 +1317,9 @@ uint32_t n_sub_82781AD0(CpuState& ctx, uint8_t* base, uint32_t outVecAddr) {
 	ctx.r7.u64 = owner;
 	return 0;
 }
-PROMOTED_ENTRY(51, sub_82781AD0, 0x82781AD0) { ctx.r3.u64 = n_sub_82781AD0(ctx, base, ctx.r4.u32); }
+PROMOTED_ENTRY(51, sub_82781AD0, 0x82781AD0) { ctx.r3.u64 = CECDog_GetPlayerStartPosition(ctx, base, ctx.r4.u32); }
 
-uint64_t n_sub_82781B38(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint64_t CECDog_InitializeEntitySlots(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	if (!UseLiftedCode(51, 0x82781B38)) { ctx.r3.u64 = dogAddr; __imp__sub_82781B38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82781B38);
 	uint32_t stack = ctx.r1.u64;
@@ -1313,7 +1333,7 @@ uint64_t n_sub_82781B38(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	do {
 		ctx.r1.u64 = stack;
 		ctx.xer.ca = flags.ca;
-		result = n_sub_8277D770(ctx, base, entry, owner);
+		result = EntitySlot_Initialize(ctx, base, entry, owner);
 		flags.ca = remaining > 0;
 		remaining = (uint32_t)((int32_t)remaining - 1);
 		entry += 32;
@@ -1322,9 +1342,9 @@ uint64_t n_sub_82781B38(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_82781B38, 0x82781B38) { ctx.r3.u64 = n_sub_82781B38(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(51, sub_82781B38, 0x82781B38) { ctx.r3.u64 = CECDog_InitializeEntitySlots(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82781B70(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t outPoint, uint64_t navigation) {
+uint32_t CECDog_GetFacingTargetPoint(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t outPoint, uint64_t navigation) {
 	if (!UseLiftedCode(51, 0x82781B70)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = outPoint; ctx.r5.u64 = navigation; __imp__sub_82781B70(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82781B70);
 	uint32_t stack = ctx.r1.u64;
@@ -1393,6 +1413,10 @@ uint32_t n_sub_82781B70(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r5.u64 = navigation;
+		ctx.r6.u64 = reg6;
+		ctx.r7.u64 = reg7;
+		ctx.r8.u64 = reg8;
+		ctx.r9.u64 = reg9;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -1430,9 +1454,9 @@ uint32_t n_sub_82781B70(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 	ctx.cr0.so = compare0.so;
 	return facingFailed ^ 1;
 }
-PROMOTED_ENTRY(51, sub_82781B70, 0x82781B70) { ctx.r3.u64 = n_sub_82781B70(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(51, sub_82781B70, 0x82781B70) { ctx.r3.u64 = CECDog_GetFacingTargetPoint(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_82783188(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
+uint32_t CECDog_IsEntry137FlagSet(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
 	if (!UseLiftedCode(52, 0x82783188)) { ctx.r3.u64 = dogAddr; __imp__sub_82783188(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82783188);
 	uint32_t stack = ctx.r1.u32;
@@ -1508,9 +1532,9 @@ uint32_t n_sub_82783188(CpuState& ctx, uint8_t* base, uint32_t dogAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82783188, 0x82783188) { ctx.r3.u64 = n_sub_82783188(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(52, sub_82783188, 0x82783188) { ctx.r3.u64 = CECDog_IsEntry137FlagSet(ctx, base, ctx.r3.u32); }
 
-double n_sub_82788BF0(CpuState& ctx, uint8_t* base, uint32_t dogAddr, double target) {
+double CECDog_UpdateFacingAngle(CpuState& ctx, uint8_t* base, uint32_t dogAddr, double target) {
 	if (!UseLiftedCode(52, 0x82788BF0)) { ctx.r3.u64 = dogAddr; ctx.f1.f64 = target; __imp__sub_82788BF0(ctx, base); return ctx.f1.f64; }
 	LiftedFrame frame(0x82788BF0);
 	constexpr uint32_t kThresholdAddr  = 0x820994B4;
@@ -1558,9 +1582,9 @@ double n_sub_82788BF0(CpuState& ctx, uint8_t* base, uint32_t dogAddr, double tar
 	dog->m_48 = float(current + delta);
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82788BF0, 0x82788BF0) { ctx.f1.f64 = n_sub_82788BF0(ctx, base, ctx.r3.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(52, sub_82788BF0, 0x82788BF0) { ctx.f1.f64 = CECDog_UpdateFacingAngle(ctx, base, ctx.r3.u32, ctx.f1.f64); }
 
-uint64_t n_sub_82789A30(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, double amount) {
+uint64_t CECDog_SetStateTimer(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, double amount) {
 	if (!UseLiftedCode(52, 0x82789A30)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r8.u64 = arg4; ctx.f1.f64 = amount; __imp__sub_82789A30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82789A30);
 	uint32_t stack = ctx.r1.u64;
@@ -1596,14 +1620,14 @@ uint64_t n_sub_82789A30(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82789A30, 0x82789A30) { ctx.r3.u64 = n_sub_82789A30(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(52, sub_82789A30, 0x82789A30) { ctx.r3.u64 = CECDog_SetStateTimer(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r8.u64, ctx.f1.f64); }
 
-uint64_t n_sub_82789AA8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t arg2) {
+uint64_t CECDog_TransitionState(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x82789AA8)) { ctx.r3.u64 = dogAddr; ctx.r8.u64 = arg2; __imp__sub_82789AA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82789AA8);
 	uint32_t stack = ctx.r1.u64;
-	uint64_t reg9 = ctx.r9.u64;   // r9 as the original leaves it, handed to n_sub_82789B68
+	uint64_t reg9 = ctx.r9.u64;   // r9 as the original leaves it, handed to CECDog_ApplyState
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
 	stack = PushStackFrame(base, stack, 96);
 
@@ -1640,14 +1664,14 @@ uint64_t n_sub_82789AA8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82789B68(ctx, base, dogAddr);
+	uint64_t result = CECDog_ApplyState(ctx, base, dogAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82789AA8, 0x82789AA8) { ctx.r3.u64 = n_sub_82789AA8(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(52, sub_82789AA8, 0x82789AA8) { ctx.r3.u64 = CECDog_TransitionState(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82789B68(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint64_t CECDog_ApplyState(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_82099334 = int32_t(0x82099334);
 	constexpr int32_t g_82790000 = int32_t(0x82790000);
 	if (!UseLiftedCode(52, 0x82789B68)) { ctx.r3.u64 = dogAddr; __imp__sub_82789B68(ctx, base); return ctx.r3.u64; }
@@ -1749,27 +1773,30 @@ uint64_t n_sub_82789B68(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.f13.f64 = stateValue1;
 	ctx.xer.ca = flags.ca;
 	if (state == 2 || state == 3) {
-		n_sub_8277D960(ctx, base, slot4, slotOwner, -1, 31);
+		EntitySlot_SetMode(ctx, base, slot4, slotOwner, -1, 31);
 	} else {
-		n_sub_8277DC78(ctx, base, slot4, slotOwner);
+		ctx.r5.u64 = reg5;
+		ctx.r6.u64 = uint64_t(dataBase);
+		ctx.r7.u64 = reg7;
+		EntitySlot_Clear(ctx, base, slot4, slotOwner);
 	}
 
 	uint64_t result;
 	if (state == 5) {
-		n_sub_8277D960(ctx, base, dogAddr + 936, dog->m_4, -1, 255);
-		result = n_sub_8277D960(ctx, base, dogAddr + 1064, dog->m_4, -1, 255);
+		EntitySlot_SetMode(ctx, base, dogAddr + 936, dog->m_4, -1, 255);
+		result = EntitySlot_SetMode(ctx, base, dogAddr + 1064, dog->m_4, -1, 255);
 	} else {
-		n_sub_8277DC78(ctx, base, dogAddr + 936, dog->m_4);
-		result = n_sub_8277DC78(ctx, base, dogAddr + 1064, dog->m_4);
+		EntitySlot_Clear(ctx, base, dogAddr + 936, dog->m_4);
+		result = EntitySlot_Clear(ctx, base, dogAddr + 1064, dog->m_4);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82789B68, 0x82789B68) { ctx.r3.u64 = n_sub_82789B68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_82789B68, 0x82789B68) { ctx.r3.u64 = CECDog_ApplyState(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8278A258(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CECDog_MustStay(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t str_TXT_820C0000_B_ = int32_t(0x820C0000);
 	constexpr int32_t str_TXT_820D4AF0_B_ = int32_t(0x820D4AF0);
 	constexpr int32_t str_TXT_820D4B0C_B_ = int32_t(0x820D4B0C);
@@ -1802,12 +1829,12 @@ uint64_t n_sub_8278A258(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 	if (LOAD32(aiManagerRef) != 0) {
 		ctx.r5.u64 = str_TXT_820D4B0C_B_;   // state the callee may pass on
 		ctx.r6.u64 = str_TXT_820D4AF0_B_;
-		n_sub_82792368(ctx, base, scriptCall, aiManagerRef);
+		Lua_PrepareAIManagerGetMustStayType(ctx, base, scriptCall, aiManagerRef);
 
 		uint64_t reg9 = LOAD32(scriptCall);
 		if (reg9 != 0) {
 			uint32_t owner = dog->m_4;
-			int32_t stayType = n_sub_827924E8(ctx, base, scriptCall, aiManagerRef, owner, ctx.r6.u64, ctx.r7.u64);
+			int32_t stayType = Lua_CallAIManagerGetMustStayType(ctx, base, scriptCall, aiManagerRef, owner, ctx.r6.u64, ctx.r7.u64);
 			reg9 = ctx.r9.u64;
 			mustStay = stayType == 1 || stayType == 2 || stayType == 3;
 		}
@@ -1817,15 +1844,16 @@ uint64_t n_sub_8278A258(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t
 	}
 
 	mustStay = mustStay || dog->m_22 != 0;
+	ctx.r6.u64 = reg6;
 	SharedHandle_Release(ctx, base, aiManagerRef);
 	SharedHandle_Release(ctx, base, globalsRef);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return mustStay ? 1 : 0;
 }
-PROMOTED_ENTRY(52, sub_8278A258, 0x8278A258) { ctx.r3.u64 = n_sub_8278A258(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(52, sub_8278A258, 0x8278A258) { ctx.r3.u64 = CECDog_MustStay(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t ownerEntity) {
+uint32_t CECDog_SetOwnerEntity(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t ownerEntity) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x8278ADB8)) { ctx.r3.u64 = dogAddr; ctx.r4.u64 = ownerEntity; __imp__sub_8278ADB8(ctx, base); return ctx.r3.u32; }
@@ -1917,7 +1945,11 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	const uint32_t handleOwner = LOAD32(handleOwnerSlot);
 
 	// state the callee may pass on
+	ctx.r6.u64 = r6Value;
+	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = handleOwnerSlot;
+	ctx.r9.u64 = node;
+	ctx.r10.u64 = root;
 	EntityHandle_SetTarget(ctx, base, entityHandle, currentOwner);
 
 	EntityHandle_Assign(ctx, base, handleOwner + 192, entityHandle);
@@ -1929,9 +1961,9 @@ uint32_t n_sub_8278ADB8(CpuState& ctx, uint8_t* base, uint64_t dogAddr, uint64_t
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_8278ADB8, 0x8278ADB8) { ctx.r3.u64 = n_sub_8278ADB8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(52, sub_8278ADB8, 0x8278ADB8) { ctx.r3.u64 = CECDog_SetOwnerEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8278B118(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
+uint64_t CECDog_ClearTargetEntity(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(52, 0x8278B118)) { ctx.r3.u64 = dogAddr; __imp__sub_8278B118(ctx, base); return ctx.r3.u64; }
@@ -1962,4 +1994,4 @@ uint64_t n_sub_8278B118(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	ctx.r6.s64 = -1;  // callers read r6 after the call
 	return result;
 }
-PROMOTED_ENTRY(52, sub_8278B118, 0x8278B118) { ctx.r3.u64 = n_sub_8278B118(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_8278B118, 0x8278B118) { ctx.r3.u64 = CECDog_ClearTargetEntity(ctx, base, ctx.r3.u64); }

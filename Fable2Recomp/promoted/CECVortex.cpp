@@ -1,9 +1,9 @@
 // CECVortex (vtable 0x820D0A70): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -56,22 +56,22 @@ uint64_t CECVortex_GetEntity(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) 
 PROMOTED_ENTRY(49, sub_8272F080, 0x8272F080) { ctx.r3.u64 = CECVortex_GetEntity(ctx, base, ctx.r3.u64); }
 
 // sub_8272F330  [80 bytes]
-uint64_t n_sub_8272F330(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t deleteFlags) {
+uint64_t CECVortex_Delete(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t deleteFlags) {
 	if (!UseLiftedCode(49, 0x8272F330)) { ctx.r3.u64 = vortex; ctx.r4.u64 = deleteFlags; __imp__sub_8272F330(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8272F330);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
-	n_sub_8272F380(ctx, base, vortex);
+	CECVortex_Cleanup(ctx, base, vortex);
 	// bit 0 set: the vortex's memory is freed as well
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, vortex);
 	}
 	return vortex;
 }
-PROMOTED_ENTRY(49, sub_8272F330, 0x8272F330) { ctx.r3.u64 = n_sub_8272F330(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_8272F330, 0x8272F330) { ctx.r3.u64 = CECVortex_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_8272FFD8  [508 bytes]
-uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+uint64_t CECVortex_Activate(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -87,14 +87,14 @@ uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	const uint32_t tempHandleAddr = stack + 144;
 	uint64_t result = vortexAddr;
 
-	// n_sub_82264448 maps the 8-byte value at keyAddr to an entity; the result goes into the
+	// EntityManager_LookupEntity maps the 8-byte value at keyAddr to an entity; the result goes into the
 	// EntityHandle at handleAddr through a temporary handle at stack+144.
 	auto assignHandleFromKey = [&](uint64_t keyAddr, uint64_t handleAddr) {
 		uint32_t root = LOAD32(uint32_t(g_83490000) + 26912);
 		root = LOAD32(root + 12);
 		const uint32_t lookupObject = LOAD32(LOAD32(LOAD32(root + 88) + 4));
 		ctx.r1.u64 = stack;
-		const uint64_t entity = n_sub_82264448(ctx, base, lookupObject, keyAddr);
+		const uint64_t entity = EntityManager_LookupEntity(ctx, base, lookupObject, keyAddr);
 		STORE32(tempHandleAddr, uint32_t(g_820F1664));
 		STORE32(tempHandleAddr + 4, 0);
 		EntityHandle_SetTarget(ctx, base, (uint64_t)stack + 144, entity);
@@ -143,6 +143,8 @@ uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		const double m30 = vortex->m_30;
 
 		// state the callee may pass on
+		ctx.r4.u64 = r4ForGet;
+		ctx.f1.f64 = distance;
 		const uint64_t entity360 = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 360);
 		const uint64_t entity352 = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 352);
 		ctx.fpscr.disableFlushMode();
@@ -152,7 +154,7 @@ uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		ctx.v1 = from;
 		SET_V8(ctx.v2, VLOAD(directionAddr & ~0xF));
 		ctx.v127 = from;
-		result = n_sub_827301D8(ctx, base, vortexAddr, entity352, entity360,
+		result = CECVortex_CreateTrailEffect(ctx, base, vortexAddr, entity352, entity360,
 		                        m18, mE3, m14, m30, m34, m38, m5C, m60);
 	}
 	ctx.fpscr.disableFlushMode();
@@ -165,10 +167,10 @@ uint64_t n_sub_8272FFD8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_8272FFD8, 0x8272FFD8) { ctx.r3.u64 = n_sub_8272FFD8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_8272FFD8, 0x8272FFD8) { ctx.r3.u64 = CECVortex_Activate(ctx, base, ctx.r3.u64); }
 
 // sub_82730978  [328 bytes]
-uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint64_t r8Value) {
+uint64_t CECVortex_Deactivate(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint64_t r8Value) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(49, 0x82730978)) { ctx.r3.u64 = vortexAddr; ctx.r8.u64 = r8Value; __imp__sub_82730978(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82730978);
@@ -182,15 +184,15 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 	for (uint64_t index = 0; index < 4; ++index) {
 		ctx.r1.u64 = stack;
 		ctx.r8.u64 = r8Value;  // state the callee may pass on
-		n_sub_82731F28(ctx, base, vortexAddr, index, 0);
+		CECVortex_ClearSlotHandle(ctx, base, vortexAddr, index, 0);
 		r8Value = ctx.r8.u64;
 	}
-	n_sub_827323E8(ctx, base, vortexAddr);
+	CECVortex_ClearPrimaryHandle(ctx, base, vortexAddr);
 	uint64_t r9Value = ctx.r9.u64;
 	flags.ca = ctx.xer.ca;
 
 	// vector of 8-byte EntityHandles at +0x1B0 (begin at +4, end at +8): pass each handle's
-	// entity (0 when gone; a stale handle is released) to n_sub_82734508, then clear the vector
+	// entity (0 when gone; a stale handle is released) to CECVortex_ApplyToEntity, then clear the vector
 	const uint64_t handleVectorAddr = vortexAddr + 432;
 	const uint32_t firstBegin = vortex->m_1B4;
 	if (firstBegin != 0) {
@@ -231,9 +233,10 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 			}
 
 			// state the callee may pass on
+			ctx.r9.u64 = r9Value;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
-			n_sub_82734508(ctx, base, vortexAddr, entity, ctx.r8.u64);
+			CECVortex_ApplyToEntity(ctx, base, vortexAddr, entity, ctx.r8.u64);
 			r9Value = ctx.r9.u64;
 			compare0 = ctx.cr0;
 			flags.ca = ctx.xer.ca;
@@ -241,6 +244,7 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 		}
 	}
 	// state the callee may pass on
+	ctx.r9.u64 = r9Value;
 	ctx.xer.ca = flags.ca;
 	EntityHandleVector_Clear(ctx, base, handleVectorAddr);
 
@@ -272,9 +276,9 @@ uint64_t n_sub_82730978(CpuState& ctx, uint8_t* base, uint64_t vortexAddr, uint6
 	ctx.r1.u64 = stack;
 	return isHeroEntity;
 }
-PROMOTED_ENTRY(49, sub_82730978, 0x82730978) { ctx.r3.u64 = n_sub_82730978(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(49, sub_82730978, 0x82730978) { ctx.r3.u64 = CECVortex_Deactivate(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+uint64_t CECVortex_Update(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(49, 0x82730AC0)) { ctx.r3.u64 = vortexAddr; __imp__sub_82730AC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82730AC0);
@@ -287,7 +291,7 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	const uint64_t skipCountdown = vortex->m_E3;
 	const double floorValue = double(LOAD_F32(floorAddr));
 
-	// m_4C counts down by n_sub_824BB4D8(owner) unless m_E3 is set; when it reaches the floor
+	// m_4C counts down by Entity_GetUpdateStep(owner) unless m_E3 is set; when it reaches the floor
 	// value it is clamped there and the owner (m_4) is destroyed.
 	double ownerStep = ctx.f1.f64;  // f1 stays as the caller left it when the countdown is skipped
 	uint64_t r10Value = skipCountdown;
@@ -296,7 +300,7 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		const uint32_t owner = vortex->m_4;
 		ctx.r1.u64 = stack;
 		ctx.r10.u64 = r10Value;  // state the callee may pass on
-		ownerStep = n_sub_824BB4D8(ctx, base, owner);
+		ownerStep = Entity_GetUpdateStep(ctx, base, owner);
 		r10Value = ctx.r10.u32;
 		ctx.fpscr.disableFlushMode();
 		double countdown = double(vortex->m_4C);
@@ -322,14 +326,15 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.f1.f64 = ownerStep;
 	const uint32_t target = EntityHandle_Get_825575C8(ctx, base, vortexAddr + 352);
-	const double targetStep = n_sub_824BB4D8(ctx, base, target);
+	const double targetStep = Entity_GetUpdateStep(ctx, base, target);
 	ctx.fpscr.disableFlushMode();
 	ctx.f1.f64 = targetStep;  // state the callee may pass on
-	n_sub_82731A60(ctx, base, vortexAddr);
+	CECVortex_StartBurst(ctx, base, vortexAddr);
 
 	const uint32_t owner = vortex->m_4;
-	const double ownerStepNow = n_sub_824BB4D8(ctx, base, owner);
+	const double ownerStepNow = Entity_GetUpdateStep(ctx, base, owner);
 	ctx.fpscr.disableFlushMode();
 	// m_68 rises by ownerStepNow * (float at 0x820994CC) up to m_6C
 	const double limit6C = double(vortex->m_6C);
@@ -343,10 +348,10 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	}
 
 	ctx.f1.f64 = ownerStepNow;  // state the callee may pass on
-	n_sub_82730D28(ctx, base, vortexAddr);
-	n_sub_827311C0(ctx, base, vortexAddr);
-	n_sub_827325C8(ctx, base, vortexAddr, ctx.r8.u64);
-	n_sub_82733878(ctx, base, vortexAddr);
+	CECVortex_UpdateTargetDirection(ctx, base, vortexAddr);
+	CECVortex_UpdateTrail(ctx, base, vortexAddr);
+	CECVortex_HandleShudderHit(ctx, base, vortexAddr, ctx.r8.u64);
+	CECVortex_UpdatePulse(ctx, base, vortexAddr);
 	flags.ca = ctx.xer.ca;
 
 	// m_54 and m_58 count down by targetStep and are clamped at the floor value
@@ -370,7 +375,7 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	}
 
 	// four EntityHandles from +368: release the ones whose entity cell is empty, pass the
-	// others' entity to n_sub_824B8938 with the vector at +320 in v1
+	// others' entity to Entity_ApplyVectorForce with the vector at +320 in v1
 	uint64_t targetWordAddr = vortexAddr + 372;
 	uint32_t handlesLeft = 4;
 	do {
@@ -384,7 +389,7 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			} else {
 				SET_V8(ctx.v1, VLOAD(((uint32_t)vortexAddr + 320) & ~0xF));
 				ctx.xer.ca = flags.ca;  // state the callee may pass on
-				n_sub_824B8938(ctx, base, entity);
+				Entity_ApplyVectorForce(ctx, base, entity);
 			}
 		}
 		flags.ca = handlesLeft != 0;  // carry of the decrement
@@ -395,15 +400,15 @@ uint64_t n_sub_82730AC0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	// state the callee may pass on: cr0 and xer.ca as the loop's last decrement left them
 	ctx.cr0.compare<int32_t>(int32_t(handlesLeft), 0, flags);
 	ctx.xer.ca = flags.ca;
-	n_sub_827320F0(ctx, base, vortexAddr);
+	CECVortex_SpawnWaterSplash(ctx, base, vortexAddr);
 	const uint64_t result = n_sub_82731308(ctx, base, vortexAddr, 0);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82730AC0, 0x82730AC0) { ctx.r3.u64 = n_sub_82730AC0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_82730AC0, 0x82730AC0) { ctx.r3.u64 = CECVortex_Update(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t searchedEntity) {
+uint32_t CECVortex_HasHandle(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t searchedEntity) {
 	if (!UseLiftedCode(49, 0x82730C78)) { ctx.r3.u64 = vortexAddr; ctx.r4.u64 = searchedEntity; __imp__sub_82730C78(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82730C78);
 	uint32_t stack = ctx.r1.u64;
@@ -445,6 +450,7 @@ uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.r9.u64 = endPtrReread;
 	const uint32_t foundIterator = HandleVector_Find(ctx, base, (uint64_t)stack + 96, beginIterator, endIterator, (uint64_t)stack + 172);
 
 	const uint32_t foundVector = LOAD32(foundIterator);
@@ -457,9 +463,9 @@ uint32_t n_sub_82730C78(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 	ctx.r1.u64 = stack;
 	return foundPtr == vectorEnd ? 0 : 1;
 }
-PROMOTED_ENTRY(49, sub_82730C78, 0x82730C78) { ctx.r3.u64 = n_sub_82730C78(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(49, sub_82730C78, 0x82730C78) { ctx.r3.u64 = CECVortex_HasHandle(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+uint32_t CECVortex_UpdateTargetDirection(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_820991F0 = int32_t(0x820991F0);
 	constexpr int32_t g_8209B4E0 = int32_t(0x8209B4E0);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -482,7 +488,7 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	if (LOAD8((uint32_t)vortexAddr + 227) != 0) {
 		const uint32_t owner = vortex->m_4;
 		ctx.r1.u64 = stack;
-		const double step = n_sub_824BB4D8(ctx, base, owner);
+		const double step = Entity_GetUpdateStep(ctx, base, owner);
 		const uint64_t targetHandleAddr = vortexAddr + 360;
 		ctx.fpscr.disableFlushMode();
 		STORE_F32(stack + 96, float(step));
@@ -586,7 +592,7 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			ctx.v12 = v12Value;
 			ctx.v126 = vec120;
 			ctx.v127 = vec130;
-			const uint32_t moveVecAddr = n_sub_827315F8(ctx, base, stack + 144, vortexAddr, stack + 80);
+			const uint32_t moveVecAddr = CECVortex_ComputeMoveVector(ctx, base, stack + 144, vortexAddr, stack + 80);
 			length = ctx.f1.f64;
 			v12Value = ctx.v12;
 			// vector at +304 += moveVec * step (step was stored at stack+96)
@@ -655,7 +661,7 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			VSTORE(vec120Addr & ~0xF, V8(copied));
 		}
 
-		// m_A8 counts down by step. When the byte at stack+80 (passed to n_sub_827315F8) is set,
+		// m_A8 counts down by step. When the byte at stack+80 (passed to CECVortex_ComputeMoveVector) is set,
 		// m_A8 is reloaded from 0x820994CC and m_2C counts up; otherwise m_2C resets once m_A8
 		// is at the floor value.
 		ctx.fpscr.disableFlushMode();
@@ -719,7 +725,7 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			vortex->m_74 = float(double(float(b0 + offset74)));
 			// state the callee may pass on
 			ctx.v12 = v12Value;
-			result = n_sub_82731090(ctx, base, vortexAddr);
+			result = CECVortex_GenerateWanderVector(ctx, base, vortexAddr);
 			v12Value = ctx.v12;
 			PPCVRegister settled{};
 			SET_V8(settled, VLOAD(vec130Addr & ~0xF));
@@ -737,14 +743,14 @@ uint32_t n_sub_82730D28(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82730D28, 0x82730D28) { ctx.r3.u64 = n_sub_82730D28(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_82730D28, 0x82730D28) { ctx.r3.u64 = CECVortex_UpdateTargetDirection(ctx, base, ctx.r3.u64); }
 
 // When m_9C is above the float at 0x820994B4: builds a vector at stack+96 from that float and m_9C and passes it
-// to n_sub_824B6920 with a random value from Rng_NextScaledFloat. That vector plus the vector at +240, minus the
+// to Quat_ApplyAngleRotation with a random value from Rng_NextScaledFloat. That vector plus the vector at +240, minus the
 // vector at +304, is normalized at stack+112; m_A0 becomes its length times the float at 0x8209B4E0, raised to at
 // least the float at 0x8209B650, and the vector at +256 becomes the normalized vector times the float at 0x82099334.
 // Returns stack+112 in that case, else the vortex address.
-uint32_t n_sub_82731090(CpuState& ctx, uint8_t* base, uint32_t vortexAddr) {
+uint32_t CECVortex_GenerateWanderVector(CpuState& ctx, uint8_t* base, uint32_t vortexAddr) {
 	constexpr int32_t g_8209B650 = int32_t(0x8209B650);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(49, 0x82731090)) { ctx.r3.u64 = vortexAddr; __imp__sub_82731090(ctx, base); return ctx.r3.u32; }
@@ -787,7 +793,7 @@ uint32_t n_sub_82731090(CpuState& ctx, uint8_t* base, uint32_t vortexAddr) {
 		ctx.r8.u64 = globalBase;  // state the callee may pass on
 		f1Value = Rng_NextScaledFloat(ctx, base, rngState, f1Value);
 		ctx.r4.u64 = rngState;  // state the callee may pass on
-		n_sub_824B6920(ctx, base, stack + 96, f1Value);
+		Quat_ApplyAngleRotation(ctx, base, stack + 96, f1Value);
 
 		PPCVRegister seedOut{}, vec240{}, vec304{}, offset{};
 		r8Value = uint64_t(stack) + 112;  // the original leaves the buffer address in r8
@@ -831,15 +837,15 @@ uint32_t n_sub_82731090(CpuState& ctx, uint8_t* base, uint32_t vortexAddr) {
 	ctx.v8 = v8Value;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82731090, 0x82731090) { ctx.r3.u64 = n_sub_82731090(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(49, sub_82731090, 0x82731090) { ctx.r3.u64 = CECVortex_GenerateWanderVector(ctx, base, ctx.r3.u32); }
 
-// While byte +227 is clear and m_9C is above the float at 0x820994B4: with step = n_sub_824BB4D8(m_4), stores
-// the vector at the address n_sub_827315F8 returns at +256 and adds step times it to the vector at +304. When
+// While byte +227 is clear and m_9C is above the float at 0x820994B4: with step = Entity_GetUpdateStep(m_4), stores
+// the vector at the address CECVortex_ComputeMoveVector returns at +256 and adds step times it to the vector at +304. When
 // n_sub_82736998 returns 0 for the result, the vector at +304 gets (its third float - step * the float at
 // 0x8209B4CC) merged in through the permute mask at 0x820991F0. Then m_A0 counts down by step; when it reaches
-// the limit it is clamped there and n_sub_82731090 is called. Returns the result of the last call made, or the
+// the limit it is clamped there and CECVortex_GenerateWanderVector is called. Returns the result of the last call made, or the
 // vortex address.
-uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+uint32_t CECVortex_UpdateTrail(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_820991F0 = int32_t(0x820991F0);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(49, 0x827311C0)) { ctx.r3.u64 = vortexAddr; __imp__sub_827311C0(ctx, base); return ctx.r3.u32; }
@@ -862,7 +868,7 @@ uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		double limit = double(LOAD_F32(constBase - 27468));
 		if (value9C > limit) {
 			ctx.r1.u64 = stack;
-			double step = n_sub_824BB4D8(ctx, base, vortex->m_4);
+			double step = Entity_GetUpdateStep(ctx, base, vortex->m_4);
 			uint32_t addr304 = uint32_t(vortexAddr) + 304;
 			ctx.fpscr.disableFlushMode();
 			uint32_t addr256 = uint32_t(vortexAddr) + 256;
@@ -876,7 +882,7 @@ uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			ctx.v1 = vec304;
 			ctx.v2 = vec256;
 			ctx.v127 = vec304;
-			uint32_t directionAddr = n_sub_827315F8(ctx, base, stack + 112, vortexAddr, 0);
+			uint32_t directionAddr = CECVortex_ComputeMoveVector(ctx, base, stack + 112, vortexAddr, 0);
 			v12Value = ctx.v12;
 
 			PPCVRegister stepLoad{}, stepSplat{}, direction{}, moved{};
@@ -923,7 +929,7 @@ uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 			if (reachedLimit) {
 				// state the callee may pass on
 				ctx.v12 = v12Value;
-				result = n_sub_82731090(ctx, base, uint32_t(vortexAddr));
+				result = CECVortex_GenerateWanderVector(ctx, base, uint32_t(vortexAddr));
 				r8Value = ctx.r8.u64;
 				v12Value = ctx.v12;
 			}
@@ -939,7 +945,7 @@ uint32_t n_sub_827311C0(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_827311C0, 0x827311C0) { ctx.r3.u64 = n_sub_827311C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_827311C0, 0x827311C0) { ctx.r3.u64 = CECVortex_UpdateTrail(ctx, base, ctx.r3.u64); }
 
 // scale = the float at 0x820994C0; when byte +227 is set it becomes scale - (scale - p) * the float at 0x820994CC,
 // p being the product of the floats at +132 and +128 of the object reached from 0x83496920 (raised to at least the
@@ -950,7 +956,7 @@ PROMOTED_ENTRY(49, sub_827311C0, 0x827311C0) { ctx.r3.u64 = n_sub_827311C0(ctx, 
 // 0x8209BA08; the function then returns stack+96 and leaves the length in f1 (else it returns the vortex address).
 // *outA and *outB get m_70 * scale times the floats at 0x8209BF50 and 0x8209B948 (byte +226 set) or at 0x8209DDA4
 // and 0x8209B710.
-uint32_t n_sub_82731BF0(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t outVector, uint32_t outA, uint32_t outB) {
+uint32_t CECVortex_ComputeParticleParams(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint32_t outVector, uint32_t outA, uint32_t outB) {
 	constexpr uint32_t g_8209B710 = 0x8209B710u;
 	constexpr uint32_t g_820A0000 = 0x820A0000u;
 	constexpr uint32_t g_83490000 = 0x83490000u;
@@ -1046,13 +1052,13 @@ uint32_t n_sub_82731BF0(CpuState& ctx, uint8_t* base, uint32_t vortexAddr, uint3
 	ctx.f1.f64 = f1Value;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82731BF0, 0x82731BF0) { ctx.r3.u64 = n_sub_82731BF0(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32, ctx.r6.u32); }
+PROMOTED_ENTRY(49, sub_82731BF0, 0x82731BF0) { ctx.r3.u64 = CECVortex_ComputeParticleParams(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32, ctx.r6.u32); }
 
-// Calls n_sub_82731F28(vortex, 0, 1). When m_1AC is set: builds a name string at stack+88 (from str_TXT_820D0A3C_B_,
+// Calls CECVortex_ClearSlotHandle(vortex, 0, 1). When m_1AC is set: builds a name string at stack+88 (from str_TXT_820D0A3C_B_,
 // then RefCountedString_Assign with a temporary string set to str_TXT_820D0A68_B_), hashes its characters with FNV-1, passes
-// the hash, m_1AC and the float at 0x820994C0 to n_sub_824B8428 (the vector at +320 in v1), and assigns a handle to
-// the result to the handle at +368. Returns the last string release result, or n_sub_82731F28's.
-uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+// the hash, m_1AC and the float at 0x820994C0 to CreateEntityFromNameHash (the vector at +320 in v1), and assigns a handle to
+// the result to the handle at +368. Returns the last string release result, or CECVortex_ClearSlotHandle's.
+uint64_t CECVortex_CreateGroundEffect(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -1069,7 +1075,7 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	stack = PushStackFrame(base, stack, 144);
 	ctx.r1.u64 = stack;
 
-	uint64_t result = n_sub_82731F28(ctx, base, vortexAddr, 0, 1);
+	uint64_t result = CECVortex_ClearSlotHandle(ctx, base, vortexAddr, 0, 1);
 
 	if (vortex->m_1AC != 0) {
 		const uint64_t tempString = uint64_t(stack) + 80;
@@ -1108,7 +1114,7 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		ctx.v2 = maskedScale;
 		ctx.v13 = scaleSplat;
 		ctx.v127 = maskedScale;
-		uint64_t entity = n_sub_824B8428(ctx, base, vortex->m_1AC, nameHash, 0, scale);
+		uint64_t entity = CreateEntityFromNameHash(ctx, base, vortex->m_1AC, nameHash, 0, scale);
 
 		// a temporary handle at stack+80 targets the result and is assigned to the handle at +368
 		const uint64_t tempHandle = uint64_t(stack) + 80;
@@ -1136,17 +1142,17 @@ uint64_t n_sub_82731DC8(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82731DC8, 0x82731DC8) { ctx.r3.u64 = n_sub_82731DC8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_82731DC8, 0x82731DC8) { ctx.r3.u64 = CECVortex_CreateGroundEffect(ctx, base, ctx.r3.u64); }
 
 // Clears the entity handle at owner + (handleSlotIndex + 46) * 8; does nothing (returns owner) when the handle has no
 // data, and only releases it (returning that result) when its data holds no target. Otherwise, when bit 21 of the
 // entity's +44 word is set, its element for key 85 is looked up: through the byte at +85 of its +140 object, or
 // else by a lower-bound search of the {key, value} pairs from +72 to +76 (without an exact match the word at
 // end + 4 is used). A non-null element gets byte +65 set to 1 with skipFadeOut 0 (then n_sub_8247EB68 is called on it
-// with the float at 0x82099568) or to 0 otherwise; with a non-zero skipFadeOut n_sub_824B8500 is called on the handle's
+// with the float at 0x82099568) or to 0 otherwise; with a non-zero skipFadeOut Entity_StopParticleEffect is called on the handle's
 // current target. Then a temporary handle {0x820F1664, 0} at stack+80 is released, assigned to the slot and
 // released again; the last release result is returned.
-uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t handleSlotIndex, uint64_t skipFadeOut) {
+uint64_t CECVortex_ClearSlotHandle(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t handleSlotIndex, uint64_t skipFadeOut) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(49, 0x82731F28)) { ctx.r3.u64 = vortex; ctx.r4.u64 = handleSlotIndex; ctx.r5.u64 = skipFadeOut; __imp__sub_82731F28(ctx, base); return ctx.r3.u64; }
@@ -1239,6 +1245,7 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t 
 				ctx.fpscr.disableFlushMode();
 				double fadeOutTime = double(LOAD_F32(0x82099568u));
 				// state the callee may pass on
+				ctx.r6.u64 = reg6;
 				ctx.r8.u64 = reg8;
 				ctx.cr0 = cr0;
 				ctx.xer.ca = xer.ca;
@@ -1255,10 +1262,14 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t 
 				STORE8(element + 65, uint8_t(0));
 			}
 			// state the callee may pass on
+			ctx.r6.u64 = reg6;
+			ctx.r7.u64 = reg7;
+			ctx.r8.u64 = reg8;
+			ctx.r9.u64 = reg9;
 			ctx.cr0 = cr0;
 			ctx.xer.ca = xer.ca;
 			uint64_t currentTarget = EntityHandle_Get_825575C8(ctx, base, handleSlot);
-			n_sub_824B8500(ctx, base, currentTarget);
+			Entity_StopParticleEffect(ctx, base, currentTarget);
 			reg6 = ctx.r6.u64;
 			reg7 = ctx.r7.u64;
 			reg8 = ctx.r8.u64;
@@ -1289,7 +1300,7 @@ uint64_t n_sub_82731F28(CpuState& ctx, uint8_t* base, uint64_t vortex, uint64_t 
 	ctx.r4.u64 = r4Value;  // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82731F28, 0x82731F28) { ctx.r3.u64 = n_sub_82731F28(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(49, sub_82731F28, 0x82731F28) { ctx.r3.u64 = CECVortex_ClearSlotHandle(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // Clears the entity handle at owner+400 when its target has bit 0x40 of byte +144 set; when the handle's data holds
 // no target the handle is only released (that result is returned), and without data nothing happens (returns
@@ -1298,7 +1309,7 @@ PROMOTED_ENTRY(49, sub_82731F28, 0x82731F28) { ctx.r3.u64 = n_sub_82731F28(ctx, 
 // at end + 4 is used) gets byte +65 set to 1 and n_sub_8247EB68 is called on it with the float at 0x8209B4E0. Then a
 // temporary handle {0x820F1664, 0} at stack+80 is released, assigned to the slot and released again; the last
 // release result is returned.
-uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t vortex) {
+uint32_t CECVortex_ClearPrimaryHandle(CpuState& ctx, uint8_t* base, uint64_t vortex) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(49, 0x827323E8)) { ctx.r3.u64 = vortex; __imp__sub_827323E8(ctx, base); return ctx.r3.u32; }
@@ -1385,6 +1396,7 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t vortex) {
 			ctx.fpscr.disableFlushMode();
 			double fadeOutTime = double(LOAD_F32(0x8209B4E0u));
 			// state the callee may pass on
+			ctx.r6.u64 = reg6;
 			ctx.r8.u64 = reg8;
 			ctx.xer.ca = xer.ca;
 			n_sub_8247EB68(ctx, base, element, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
@@ -1414,12 +1426,12 @@ uint32_t n_sub_827323E8(CpuState& ctx, uint8_t* base, uint64_t vortex) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_827323E8, 0x827323E8) { ctx.r3.u64 = n_sub_827323E8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_827323E8, 0x827323E8) { ctx.r3.u64 = CECVortex_ClearPrimaryHandle(ctx, base, ctx.r3.u64); }
 
-// Counts m_48 down by the step from n_sub_824BB4D8(m_4). When it reaches the floor at 0x820994B4 it is clamped
-// there, n_sub_824BADB8 is called with the target of the handle at +352, m_18, 4, m_14, 0x8000, the floor and m_70
+// Counts m_48 down by the step from Entity_GetUpdateStep(m_4). When it reaches the floor at 0x820994B4 it is clamped
+// there, SpawnVortexParticle is called with the target of the handle at +352, m_18, 4, m_14, 0x8000, the floor and m_70
 // (the vector at +320 in v1), and m_48 is reset to the float at 0x8209BF2C. Returns that call's result, else m_4.
-uint32_t n_sub_82733878(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
+uint32_t CECVortex_UpdatePulse(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	if (!UseLiftedCode(49, 0x82733878)) { ctx.r3.u64 = vortexAddr; __imp__sub_82733878(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82733878);
@@ -1432,8 +1444,8 @@ uint32_t n_sub_82733878(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 
 	uint32_t result = vortex->m_4;
 	ctx.r1.u64 = stack;
-	double step = n_sub_824BB4D8(ctx, base, result);
-	// f1 is left for callers: the step, or what n_sub_824BADB8 leaves in f1
+	double step = Entity_GetUpdateStep(ctx, base, result);
+	// f1 is left for callers: the step, or what SpawnVortexParticle leaves in f1
 	double f1Value = step;
 	ctx.fpscr.disableFlushMode();
 
@@ -1459,12 +1471,13 @@ uint32_t n_sub_82733878(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 		PPCVRegister vec320{};
 		SET_V8(vec320, VLOAD((uint32_t(vortexAddr) + 320u) & ~0xF));
 		// state the callee may pass on
+		ctx.f1.f64 = step;
 		uint64_t target = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		ctx.fpscr.disableFlushMode();
 		// state the callee may pass on
 		ctx.v1 = vec320;
 		ctx.v127 = vec320;
-		result = uint32_t(n_sub_824BADB8(ctx, base, target, value18, 4u, value14, 32768u, floorValue, intensity));
+		result = uint32_t(SpawnVortexParticle(ctx, base, target, value18, 4u, value14, 32768u, floorValue, intensity));
 		f1Value = ctx.f1.f64;
 		ctx.fpscr.disableFlushMode();
 		vortex->m_48 = LOAD_F32(floorAddr + 10872);
@@ -1478,4 +1491,4 @@ uint32_t n_sub_82733878(CpuState& ctx, uint8_t* base, uint64_t vortexAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82733878, 0x82733878) { ctx.r3.u64 = n_sub_82733878(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_82733878, 0x82733878) { ctx.r3.u64 = CECVortex_UpdatePulse(ctx, base, ctx.r3.u64); }

@@ -1,9 +1,9 @@
 // CThing (vtable 0x820F6B88): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_8220B7E0(CpuState& ctx, uint8_t* base, uint32_t thingAddr) {
+uint64_t CThing_UpdateTransformMatrices(CpuState& ctx, uint8_t* base, uint32_t thingAddr) {
 	if (!UseLiftedCode(5, 0x8220B7E0)) { ctx.r3.u64 = thingAddr; __imp__sub_8220B7E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8220B7E0);
 	uint32_t stack = ctx.r1.u64;
@@ -46,7 +46,7 @@ uint64_t n_sub_8220B7E0(CpuState& ctx, uint8_t* base, uint32_t thingAddr) {
 	VSTORE((matrixA + 16) & ~0xF, V8(out1));
 	VSTORE((matrixA + 32) & ~0xF, V8(out2));
 
-	uint64_t resultMatrix = n_sub_8220B698(ctx, base, stack + 80, matrixA);
+	uint64_t resultMatrix = Matrix4x4_Invert(ctx, base, stack + 80, matrixA);
 
 	uint32_t matrixB = thingAddr + 384;
 	SET_V8(out0, VLOAD((uint32_t)resultMatrix & ~0xF));
@@ -63,10 +63,10 @@ uint64_t n_sub_8220B7E0(CpuState& ctx, uint8_t* base, uint32_t thingAddr) {
 	ctx.v3 = out0;
 	return resultMatrix;
 }
-PROMOTED_ENTRY(5, sub_8220B7E0, 0x8220B7E0) { ctx.r3.u64 = n_sub_8220B7E0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(5, sub_8220B7E0, 0x8220B7E0) { ctx.r3.u64 = CThing_UpdateTransformMatrices(ctx, base, ctx.r3.u32); }
 
 // sub_822298E0  [128 bytes]
-uint64_t n_sub_822298E0(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
+uint64_t CThing_UpdateBoundingCenter(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 	if (!UseLiftedCode(6, 0x822298E0)) { ctx.r3.u64 = thingAddr; __imp__sub_822298E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822298E0);
 	PPCVRegister dataLo{};
@@ -104,7 +104,7 @@ uint64_t n_sub_822298E0(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 
 			ctx.r1.u64 = stack;
 			ctx.v1 = transformed;
-			n_sub_82A75ED8(ctx, base, resultAddr);
+			Matrix4x4_TransformVector_82A75ED8(ctx, base, resultAddr);
 			transformed = ctx.v1;
 			VSTORE(((uint32_t)thingAddr + 320u) & ~0xF, V8(transformed));
 		}
@@ -114,7 +114,7 @@ uint64_t n_sub_822298E0(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 	ctx.r1.u64 = stack;
 	return resultAddr;
 }
-PROMOTED_ENTRY(6, sub_822298E0, 0x822298E0) { ctx.r3.u64 = n_sub_822298E0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(6, sub_822298E0, 0x822298E0) { ctx.r3.u64 = CThing_UpdateBoundingCenter(ctx, base, ctx.r3.u64); }
 
 uint32_t CThing_SetState(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint32_t newState) {
 	if (!UseLiftedCode(76, 0x82A6D060)) { ctx.r3.u64 = thingAddr; ctx.r4.u64 = newState; __imp__sub_82A6D060(ctx, base); return ctx.r3.u32; }
@@ -130,10 +130,10 @@ uint32_t CThing_SetState(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint3
 		if (ownerWorld != 0) {
 			uint32_t stateField = (uint32_t)thingAddr + 32;
 			ctx.r1.u64 = stack;
-			n_sub_82AB20E0(ctx, base, stateField);
+			LinkedList_Unlink(ctx, base, stateField);
 			result = n_sub_82A7F338(ctx, base, (uint64_t)ownerWorld + 3412, thingAddr);
 			if (LOAD32((uint32_t)thingAddr + 60) != 0) {
-				n_sub_822C5040(ctx, base, stateField);
+				LinkedList_Link(ctx, base, stateField);
 				uint32_t ownerWorld2 = LOAD32(ownerWorld + 3676);
 				result = n_sub_822B80A0(ctx, base, ownerWorld2, thingAddr);
 			}
@@ -162,10 +162,10 @@ uint64_t CThing_SetFlag(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint32
 		if (owner != 0) {
 			uint32_t subObjectAddr = (uint32_t)(thingAddr + 32);
 			ctx.r1.u64 = stack;
-			n_sub_82AB20E0(ctx, base, subObjectAddr);
+			LinkedList_Unlink(ctx, base, subObjectAddr);
 			result = n_sub_82A7F338(ctx, base, (uint64_t)owner + 3412, thingAddr);
 			if (LOAD32((uint32_t)thingAddr + 60) != 0) {
-				n_sub_822C5040(ctx, base, subObjectAddr);
+				LinkedList_Link(ctx, base, subObjectAddr);
 				uint32_t ownerField = LOAD32(owner + 3676);
 				result = n_sub_822B80A0(ctx, base, ownerField, thingAddr);
 			}
@@ -244,7 +244,7 @@ uint32_t CThing_DerivedDestructor(CpuState& ctx, uint8_t* base, uint64_t thingAd
 	STORE32(thingAddr + 568, 0u);
 	STORE32(thingAddr + 572, 0u);
 	RefCountedPtr_ReleaseAtomic(ctx, base, thingAddr + 548);
-	n_sub_82A71078(ctx, base, thingAddr + 528);
+	Array_ClearFreeNodes(ctx, base, thingAddr + 528);
 
 	uint32_t result = CThing_Destructor(ctx, base, thingAddr);
 	stack = PopStackFrame(stack, 112);
@@ -253,7 +253,7 @@ uint32_t CThing_DerivedDestructor(CpuState& ctx, uint8_t* base, uint64_t thingAd
 }
 PROMOTED_ENTRY(76, sub_82A70A58, 0x82A70A58) { ctx.r3.u64 = CThing_DerivedDestructor(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82A7F0C0(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64_t flags, uint64_t arg3, uint64_t arg4) {
+uint64_t CThing_DeletingDestructor_82A7F0C0(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64_t flags, uint64_t arg3, uint64_t arg4) {
 	if (!UseLiftedCode(76, 0x82A7F0C0)) { ctx.r3.u64 = thingAddr; ctx.r4.u64 = flags; ctx.r7.u64 = arg3; ctx.r8.u64 = arg4; __imp__sub_82A7F0C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A7F0C0);
 	uint32_t stack = ctx.r1.u64;
@@ -271,7 +271,7 @@ uint64_t n_sub_82A7F0C0(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64
 	ctx.r1.u64 = stack;
 	return thingAddr;
 }
-PROMOTED_ENTRY(76, sub_82A7F0C0, 0x82A7F0C0) { ctx.r3.u64 = n_sub_82A7F0C0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(76, sub_82A7F0C0, 0x82A7F0C0) { ctx.r3.u64 = CThing_DeletingDestructor_82A7F0C0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_82A98278  [80 bytes]
 uint64_t CThing_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t thisPtr, uint64_t deleteFlags) {
@@ -324,7 +324,7 @@ uint32_t CThing_Destructor(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 
 	RefCountedPtr_ReleaseAtomic(ctx, base, (uint32_t)(thingAddr + 496));
 	RefCountedPtr_ReleaseAtomic(ctx, base, (uint32_t)(thingAddr + 492));
-	n_sub_82B18A20(ctx, base, (uint32_t)(thingAddr + 448));
+	GlobalObject_Destroy(ctx, base, (uint32_t)(thingAddr + 448));
 
 	// The four smart-pointer fields below are released with an atomic reference
 	// count decrement; when the count reaches zero the pointee's deleting
@@ -465,21 +465,21 @@ uint32_t CThing_Destructor(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 		thing->m_D4 = 0;
 	}
 
-	n_sub_82A99AC8(ctx, base, (uint32_t)(thingAddr + 196));
-	n_sub_82A773E0(ctx, base, (uint32_t)(thingAddr + 180));
+	Array_ClearElements16(ctx, base, (uint32_t)(thingAddr + 196));
+	PointerVector_Destroy(ctx, base, (uint32_t)(thingAddr + 180));
 
 	uint32_t handleB0 = thing->m_B0;
 	HandleTarget_Free(ctx, base, handleB0);
 	thing->m_B0 = 0;
 
-	uint32_t result = n_sub_82B15910(ctx, base, thingAddr);
+	uint32_t result = CThingComponent_Destruct_82B15910(ctx, base, thingAddr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(77, sub_82A982C8, 0x82A982C8) { ctx.r3.u64 = CThing_Destructor(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82A98520(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64_t createParams) {
+uint64_t CSceneEntityThing_ApplyCreateParams(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64_t createParams) {
 	if (!UseLiftedCode(77, 0x82A98520)) { ctx.r3.u64 = thingAddr; ctx.r4.u64 = createParams; __imp__sub_82A98520(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98520);
 	uint32_t stack = ctx.r1.u64;
@@ -535,17 +535,17 @@ uint64_t n_sub_82A98520(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint64
 		thing->m_E8 = thingE8 & ~16u;
 	}
 
-	n_sub_82A989F0(ctx, base, thingAddr, createParams);
+	CThing_InitializeCreateData(ctx, base, thingAddr, createParams);
 	CThing_ApplyCreateFlags(ctx, base, thingAddr, createFlags);
-	result = n_sub_822298E0(ctx, base, thingAddr);
+	result = CThing_UpdateBoundingCenter(ctx, base, thingAddr);
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(77, sub_82A98520, 0x82A98520) { ctx.r3.u64 = n_sub_82A98520(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(77, sub_82A98520, 0x82A98520) { ctx.r3.u64 = CSceneEntityThing_ApplyCreateParams(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82A989F0(CpuState& ctx, uint8_t* base, uint32_t thing, uint32_t source) {
+uint32_t CThing_InitializeCreateData(CpuState& ctx, uint8_t* base, uint32_t thing, uint32_t source) {
 	constexpr int32_t g_82099200 = int32_t(0x82099200);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(77, 0x82A989F0)) { ctx.r3.u64 = thing; ctx.r4.u64 = source; __imp__sub_82A989F0(ctx, base); return ctx.r3.u32; }
@@ -664,7 +664,7 @@ uint32_t n_sub_82A989F0(CpuState& ctx, uint8_t* base, uint32_t thing, uint32_t s
 	ctx.v1 = scaledRow1;
 	ctx.v2 = matrixRow0;
 	ctx.v3 = matrixRow1;
-	const uint32_t resultVector = n_sub_8220B698(ctx, base, matrixScratch, destMatrix);
+	const uint32_t resultVector = Matrix4x4_Invert(ctx, base, matrixScratch, destMatrix);
 
 	const uint32_t destMatrix2 = thing + 384;
 	PPCVRegister resultRow0 = loadAligned(resultVector);
@@ -690,9 +690,9 @@ uint32_t n_sub_82A989F0(CpuState& ctx, uint8_t* base, uint32_t thing, uint32_t s
 	ctx.v31 = scaledRow0;
 	return resultVector;
 }
-PROMOTED_ENTRY(77, sub_82A989F0, 0x82A989F0) { ctx.r3.u64 = n_sub_82A989F0(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(77, sub_82A989F0, 0x82A989F0) { ctx.r3.u64 = CThing_InitializeCreateData(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82A98BC8(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
+uint64_t CThing_RemoveFromMapC4Impl(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 	if (!UseLiftedCode(77, 0x82A98BC8)) { ctx.r3.u64 = thingAddr; __imp__sub_82A98BC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98BC8);
 	uint32_t stack = ctx.r1.u64;
@@ -715,31 +715,31 @@ uint64_t n_sub_82A98BC8(CpuState& ctx, uint8_t* base, uint64_t thingAddr) {
 	n_sub_82A99B28(ctx, base, tempPtr, thingFieldAddr, c8Pair, ccPair);
 
 	uint32_t fieldAddr = (uint32_t)thingAddr + 0x1EC;
-	uint64_t result = n_sub_82A70730(ctx, base, fieldAddr);
+	uint64_t result = RefCounted_Release(ctx, base, fieldAddr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(77, sub_82A98BC8, 0x82A98BC8) { ctx.r3.u64 = n_sub_82A98BC8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(77, sub_82A98BC8, 0x82A98BC8) { ctx.r3.u64 = CThing_RemoveFromMapC4Impl(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82A98D68(CpuState& ctx, uint8_t* base, uint64_t thing) {
+uint64_t CThing_RemoveFromMapB4AndClearChildren(CpuState& ctx, uint8_t* base, uint64_t thing) {
 	if (!UseLiftedCode(77, 0x82A98D68)) { ctx.r3.u64 = thing; __imp__sub_82A98D68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98D68);
 	GameStackFrame stackFrame(ctx, base, 96);
-	n_sub_82A98C28(ctx, base, thing);
+	CThing_RemoveFromMapB4(ctx, base, thing);
 	return CThing_ClearChildren(ctx, base, thing);
 }
-PROMOTED_ENTRY(77, sub_82A98D68, 0x82A98D68) { ctx.r3.u64 = n_sub_82A98D68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(77, sub_82A98D68, 0x82A98D68) { ctx.r3.u64 = CThing_RemoveFromMapB4AndClearChildren(ctx, base, ctx.r3.u64); }
 
 // sub_82A98DA0  [4 bytes]
-uint64_t n_sub_82A98DA0(CpuState& ctx, uint8_t* base, uint64_t thing) {
+uint64_t CThing_RemoveFromMapC4(CpuState& ctx, uint8_t* base, uint64_t thing) {
 	if (!UseLiftedCode(77, 0x82A98DA0)) { ctx.r3.u64 = thing; __imp__sub_82A98DA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82A98DA0);
-	uint64_t local1 = n_sub_82A98BC8(ctx, base, thing);
+	uint64_t local1 = CThing_RemoveFromMapC4Impl(ctx, base, thing);
 	return local1;
 }
-PROMOTED_ENTRY(77, sub_82A98DA0, 0x82A98DA0) { ctx.r3.u64 = n_sub_82A98DA0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(77, sub_82A98DA0, 0x82A98DA0) { ctx.r3.u64 = CThing_RemoveFromMapC4(ctx, base, ctx.r3.u64); }
 
 uint32_t CThing_ApplyCreateFlags(CpuState& ctx, uint8_t* base, uint64_t thingAddr, uint32_t createFlags) {
 	if (!UseLiftedCode(77, 0x82A99730)) { ctx.r3.u64 = thingAddr; ctx.r4.u64 = createFlags; __imp__sub_82A99730(ctx, base); return ctx.r3.u32; }

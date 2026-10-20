@@ -1,9 +1,9 @@
 // CSlideShowControl (vtable 0x820030C8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,14 +11,14 @@
 #include "lifted/native_decls.h"
 
 // sub_82BAD680  [8 bytes]
-uint64_t n_sub_82BAD680(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t deleteFlag) {
+uint64_t CSlideShowControl_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t deleteFlag) {
 	if (!UseLiftedCode(86, 0x82BAD680)) { ctx.r3.u64 = arg1; ctx.r4.u64 = deleteFlag; __imp__sub_82BAD680(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAD680);
 	// CSlideShowControl embeds its CAKElementBuilder at offset 0x4C.
 	uint64_t elementBuilder = arg1 - 0x4C;
 	return CAKElementBuilder_DeletingDestructor(ctx, base, elementBuilder, deleteFlag);
 }
-PROMOTED_ENTRY(86, sub_82BAD680, 0x82BAD680) { ctx.r3.u64 = n_sub_82BAD680(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(86, sub_82BAD680, 0x82BAD680) { ctx.r3.u64 = CSlideShowControl_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t context, uint64_t slideIndex, uint64_t preload) {
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
@@ -67,7 +67,7 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 		ctx.r10.u64 = preloadFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t preloadSlot = ctx.r3.u64 + 192;
-		n_sub_82284810(ctx, base, preloadSlot, stack + 172);
+		PointerArray_PushBack(ctx, base, preloadSlot, stack + 172);
 	}
 
 	show = LOAD32(controlAddr - 72);
@@ -140,7 +140,7 @@ uint64_t CSlideShowControl_GotoSlideByIndex(CpuState& ctx, uint8_t* base, uint64
 	ctx.r10.u64 = notifyVtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t notifySlot = ctx.r3.u64 + 240;
-	uint64_t result = n_sub_82284810(ctx, base, notifySlot, stack + 172);
+	uint64_t result = PointerArray_PushBack(ctx, base, notifySlot, stack + 172);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
@@ -334,7 +334,7 @@ uint64_t CSlideShowControl_PreviousSlide(CpuState& ctx, uint8_t* base, uint64_t 
 }
 PROMOTED_ENTRY(86, sub_82BAF858, 0x82BAF858) { ctx.r3.u64 = CSlideShowControl_PreviousSlide(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82BAF8E0(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr) {
+uint64_t CSlideShowControl_RestorePreviousSlide(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr) {
 	if (!UseLiftedCode(86, 0x82BAF8E0)) { ctx.r3.u64 = slideShowControlAddr; __imp__sub_82BAF8E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF8E0);
 	uint32_t stack = ctx.r1.u64;
@@ -369,9 +369,9 @@ uint64_t n_sub_82BAF8E0(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(86, sub_82BAF8E0, 0x82BAF8E0) { ctx.r3.u64 = n_sub_82BAF8E0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(86, sub_82BAF8E0, 0x82BAF8E0) { ctx.r3.u64 = CSlideShowControl_RestorePreviousSlide(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BAF940(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t slideIndex) {
+uint64_t CSlideShowControl_SetSlideIndex(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr, uint64_t slideIndex) {
 	if (!UseLiftedCode(86, 0x82BAF940)) { ctx.r3.u64 = slideShowControlAddr; ctx.r5.u64 = slideIndex; __imp__sub_82BAF940(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BAF940);
 	uint32_t stack = ctx.r1.u64;
@@ -397,7 +397,7 @@ uint64_t n_sub_82BAF940(CpuState& ctx, uint8_t* base, uint64_t slideShowControlA
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(86, sub_82BAF940, 0x82BAF940) { ctx.r3.u64 = n_sub_82BAF940(ctx, base, ctx.r3.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(86, sub_82BAF940, 0x82BAF940) { ctx.r3.u64 = CSlideShowControl_SetSlideIndex(ctx, base, ctx.r3.u64, ctx.r5.u64); }
 
 uint64_t n_sub_82BAF990(CpuState& ctx, uint8_t* base, uint64_t slideShowControlAddr) {
 	if (!UseLiftedCode(86, 0x82BAF990)) { ctx.r3.u64 = slideShowControlAddr; __imp__sub_82BAF990(ctx, base); return ctx.r3.u64; }

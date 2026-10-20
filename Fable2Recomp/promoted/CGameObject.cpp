@@ -1,9 +1,11 @@
+
+
 // CGameObject (vtable 0x82003E58): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -108,9 +110,9 @@ uint64_t C_82003E58_Reset(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr)
 PROMOTED_ENTRY(0, sub_821854A8, 0x821854A8) { ctx.r3.u64 = C_82003E58_Reset(ctx, base, ctx.r3.u64); }
 
 // CGameObject vtable slot 12. Hands a descriptor from the m_4 object to the m_8 object, passes each
-// element of the array at +0x6E0 to n_sub_82284810 and empties the array, then hands every item of
+// element of the array at +0x6E0 to PointerArray_PushBack and empties the array, then hands every item of
 // the m_4 object's list to its own slot +0x34 and to the m_8 object.
-uint64_t n_sub_82188720(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
+uint64_t CGameObject_ApplyProperties(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 	if (!UseLiftedCode(0, 0x82188720)) { ctx.r3.u64 = gameObjectAddr; __imp__sub_82188720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82188720);
 	uint32_t stack = ctx.r1.u64;
@@ -170,7 +172,7 @@ uint64_t n_sub_82188720(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 		if (cursor != end) {
 			// the end is recomputed from the array after every call
 			do {
-				result = n_sub_82284810(ctx, base, list, cursor);
+				result = PointerArray_PushBack(ctx, base, list, cursor);
 				cursor += 4;
 			} while (cursor != LOAD32(arrayHeader + 0x20) + (LOAD32(arrayHeader + 0x28) << 2));
 		}
@@ -179,7 +181,7 @@ uint64_t n_sub_82188720(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 		uint32_t capacity = LOAD32(arrayHeader + 0x24);
 		// state the callee may pass on
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		result = n_sub_82BA9068(ctx, base, allocator, storage, capacity << 2);
+		result = Allocator_Free_82BA9068(ctx, base, allocator, storage, capacity << 2);
 		STORE32(arrayHeader + 0x24, 0);
 		STORE32(arrayHeader + 0x20, 0);
 	}
@@ -233,7 +235,7 @@ uint64_t n_sub_82188720(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_82188720, 0x82188720) { ctx.r3.u64 = n_sub_82188720(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_82188720, 0x82188720) { ctx.r3.u64 = CGameObject_ApplyProperties(ctx, base, ctx.r3.u64); }
 
 // CGameObject vtable slot 13, called by sub_82188720 for each item of its list (this, in r3, is unused).
 // Copies the values of the item's property list (at +4) into the item's fields and marks each change
@@ -309,24 +311,20 @@ PROMOTED_ENTRY(0, sub_821888C0, 0x821888C0) { ctx.r3.u64 = C_82003E58_ApplyPrope
 
 // CGameObject vtable slot 14. The second argument uses the layout of the items that
 // C_82003E58_ApplyPropertyList fills in (fields +12..+59, bytes +248/+249, flags +251).
-uint64_t n_sub_8229DFE8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t itemAddr) {
+uint64_t CGameObject_ApplyItemProperties(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t itemAddr) {
 	if (!UseLiftedCode(11, 0x8229DFE8)) { ctx.r3.u64 = gameObjectAddr; ctx.r4.u64 = itemAddr; __imp__sub_8229DFE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8229DFE8);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 112);
+	GameStackFrame stackFrame(ctx, base, 112);
 
 	const uint32_t item = (uint32_t)itemAddr;
 
 	// C_82003E58_ApplyPropertyList sets flag 0x20 at +251 when it changes the floats at +12..+59
 	// or the bytes at +248/+249.
 	if (LOAD8(item + 251) & 0x20) {
-		ctx.r1.u64 = stack;
 		n_sub_8229E148(ctx, base, itemAddr + 60, item + 12, item + 24, item + 36, item + 48,
 		               LOAD8(item + 249), LOAD8(item + 248));
 	}
-
-	ctx.r1.u64 = stack;
-	n_sub_8229DEE0(ctx, base, gameObjectAddr + 44, itemAddr);
+	PropertyList_AddItem(ctx, base, gameObjectAddr + 44, itemAddr);
 
 	ctx.fpscr.disableFlushMode();
 	const double valueE4 = double(LOAD_F32(item + 0xE4));
@@ -334,13 +332,11 @@ uint64_t n_sub_8229DFE8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	    (valueE4 < double(LOAD_F32(0x8209B710u)) || (LOAD8(item + 251) & 2) != 0) ? 1u : 0u;
 
 	// state the callee may pass on
-	const uint64_t result = n_sub_822D8AA0(ctx, base, gameObjectAddr + 92, itemAddr, belowLimitOrFlagged);
-
-	stack = PopStackFrame(stack, 112);
-	ctx.r1.u64 = stack;
+	ctx.f13.f64 = valueE4;
+	const uint64_t result = ArrayGroups_ApplyItem(ctx, base, gameObjectAddr + 92, itemAddr, belowLimitOrFlagged);
 	return result;
 }
-PROMOTED_ENTRY(11, sub_8229DFE8, 0x8229DFE8) { ctx.r3.u64 = n_sub_8229DFE8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(11, sub_8229DFE8, 0x8229DFE8) { ctx.r3.u64 = CGameObject_ApplyItemProperties(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_8229E130  [20 bytes]
 void C_82003E58_Release(CpuState& ctx, uint8_t* base, uint32_t gameObjectAddr) {
@@ -407,23 +403,23 @@ uint64_t C_82003E58_Initialize(CpuState& ctx, uint8_t* base, uint64_t gameObject
 }
 PROMOTED_ENTRY(13, sub_822CD890, 0x822CD890) { ctx.r3.u64 = C_82003E58_Initialize(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// CGameObject vtable slot 0: runs n_sub_82BC3398 and frees the object when bit 0 of the flags is set.
-uint64_t n_sub_82BC3348(CpuState& ctx, uint8_t* base, uint64_t objectAddress, uint64_t destructorFlags) {
+// CGameObject vtable slot 0: runs CGameObject_Destructor and frees the object when bit 0 of the flags is set.
+uint64_t CGameObject_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t objectAddress, uint64_t destructorFlags) {
 	if (!UseLiftedCode(87, 0x82BC3348)) { ctx.r3.u64 = objectAddress; ctx.r4.u64 = destructorFlags; __imp__sub_82BC3348(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BC3348);
 	GameStackFrame stackFrame(ctx, base, 112);
 	// state the callee may pass on
-	n_sub_82BC3398(ctx, base, objectAddress);
+	CGameObject_Destructor(ctx, base, objectAddress);
 	if ((uint32_t(destructorFlags) & 1) != 0) {
 		HandleTarget_Free(ctx, base, objectAddress);
 	}
 	return objectAddress;
 }
-PROMOTED_ENTRY(87, sub_82BC3348, 0x82BC3348) { ctx.r3.u64 = n_sub_82BC3348(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(87, sub_82BC3348, 0x82BC3348) { ctx.r3.u64 = CGameObject_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// CGameObject destructor body; vtable slot 0 (n_sub_82BC3348) calls it and then frees the object when
+// CGameObject destructor body; vtable slot 0 (CGameObject_DeletingDestructor) calls it and then frees the object when
 // asked. It puts CGameObject's own vtable back first and leaves vtable 0x820FEA2C installed at the end.
-uint32_t n_sub_82BC3398(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
+uint32_t CGameObject_Destructor(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 	constexpr int32_t g_82003E58 = int32_t(0x82003E58);
 	if (!UseLiftedCode(87, 0x82BC3398)) { ctx.r3.u64 = gameObjectAddr; __imp__sub_82BC3398(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82BC3398);
@@ -450,23 +446,23 @@ uint32_t n_sub_82BC3398(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 	ctx.r10.u64 = ownVtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	n_sub_823F9A78(ctx, base, gameObjectAddr + 0x6C0, 1);
+	Vector_ClearAndFree(ctx, base, gameObjectAddr + 0x6C0, 1);
 	// the eight array groups C_82003E58_Reset clears
-	uint64_t groupsResult = n_sub_82BC4610(ctx, base, gameObjectAddr + 92);
+	uint64_t groupsResult = CGameObject_DestroyArrayGroups(ctx, base, gameObjectAddr + 92);
 
 	gameObject->m_refCount = 0;
 
-	// The buffer at m_4C holds m_50 elements of 72 bytes; it goes to n_sub_82BA9068 with the
+	// The buffer at m_4C holds m_50 elements of 72 bytes; it goes to Allocator_Free_82BA9068 with the
 	// allocator and both fields are cleared.
 	uint32_t elementCount = gameObject->m_50;
 	uint32_t buffer = gameObject->m_4C;
 	// state the callee may pass on
 	uint64_t allocator = Allocator_GetInstance(ctx, base);
-	n_sub_82BA9068(ctx, base, allocator, buffer, elementCount * 72);
+	Allocator_Free_82BA9068(ctx, base, allocator, buffer, elementCount * 72);
 	gameObject->m_50 = 0;
 	gameObject->m_4C = 0;
 
-	uint32_t result = n_sub_82BC3FB0(ctx, base, gameObjectAddr + 16);
+	uint32_t result = C_820FEB30_Destruct(ctx, base, gameObjectAddr + 16);
 
 	gameObject->vtable = 0x820FEA2Cu;
 
@@ -474,9 +470,9 @@ uint32_t n_sub_82BC3398(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(87, sub_82BC3398, 0x82BC3398) { ctx.r3.u64 = n_sub_82BC3398(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(87, sub_82BC3398, 0x82BC3398) { ctx.r3.u64 = CGameObject_Destructor(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t filename) {
+uint64_t CGameObject_Load(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t filename) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	if (!UseLiftedCode(87, 0x82BC3430)) { ctx.r3.u64 = gameObjectAddr; ctx.r7.u64 = filename; __imp__sub_82BC3430(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BC3430);
@@ -505,7 +501,7 @@ uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	ctx.r10.u64 = sourceVtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	uint32_t bsgEntry = n_sub_82BAA3D0(ctx, base, ctx.r3.u64, str_TXT_820FEA28_R_);
+	uint32_t bsgEntry = String_FindExtension(ctx, base, ctx.r3.u64, str_TXT_820FEA28_R_);
 	// char pointer; the fallback is passed on sign-extended, as the original does
 	uint64_t bsgText = LOAD32(bsgEntry);
 	if ((uint32_t)bsgText == 0) {
@@ -516,11 +512,11 @@ uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	STORE16(nameAddr + 4, 0);
 	STORE32(nameAddr, 0);
 	if ((uint32_t)bsgText != 0) {
-		n_sub_82BA8850(ctx, base, nameAddr, bsgText, -1);
+		CCharString_AssignCStr(ctx, base, nameAddr, bsgText, -1);
 	}
 	uint32_t nameData = LOAD32(nameAddr);
 
-	uint64_t loadResult = n_sub_82BC4978(ctx, base, streamAddr, nameAddr, gameObjectAddr + 16, gameObjectAddr + 12);
+	uint64_t loadResult = CGameObject_LoadFromStream(ctx, base, streamAddr, nameAddr, gameObjectAddr + 16, gameObjectAddr + 12);
 	bool loaded = (loadResult & 0xFF) != 0;
 	uint64_t lastResult = loadResult;
 
@@ -528,7 +524,7 @@ uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 		uint64_t nameSize = (uint64_t)LOAD16(nameAddr + 6) + 1;
 		// state the callee may pass on
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		lastResult = n_sub_82BA9068(ctx, base, allocator, nameData, nameSize);
+		lastResult = Allocator_Free_82BA9068(ctx, base, allocator, nameData, nameSize);
 	}
 
 	uint32_t labelData = LOAD32(labelAddr);
@@ -536,7 +532,7 @@ uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 		uint64_t labelSize = (uint64_t)LOAD16(labelAddr + 6) + 1;
 		// state the callee may pass on
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		n_sub_82BA9068(ctx, base, allocator, labelData, labelSize);
+		Allocator_Free_82BA9068(ctx, base, allocator, labelData, labelSize);
 		STORE16(labelAddr + 6, 0);
 		STORE16(labelAddr + 4, 0);
 		STORE32(labelAddr, 0);
@@ -563,9 +559,9 @@ uint64_t n_sub_82BC3430(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	ctx.r1.u64 = stack;
 	return success;
 }
-PROMOTED_ENTRY(87, sub_82BC3430, 0x82BC3430) { ctx.r3.u64 = n_sub_82BC3430(ctx, base, ctx.r3.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(87, sub_82BC3430, 0x82BC3430) { ctx.r3.u64 = CGameObject_Load(ctx, base, ctx.r3.u64, ctx.r7.u64); }
 
-uint64_t n_sub_82BC3568(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint32_t entryCountMinusOne, uint64_t arg3) {
+uint64_t CGameObject_ResolveEntryIds(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint32_t entryCountMinusOne, uint64_t arg3) {
 	if (!UseLiftedCode(87, 0x82BC3568)) { ctx.r3.u64 = gameObjectAddr; ctx.r4.u64 = entryCountMinusOne; ctx.r7.u64 = arg3; __imp__sub_82BC3568(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BC3568);
 	uint32_t stack = ctx.r1.u64;
@@ -581,7 +577,7 @@ uint64_t n_sub_82BC3568(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	ctx.fpscr.disableFlushMode();
 	ctx.r1.u64 = stack;
 	ctx.f1.f64 = double(LOAD_F32(0x8209BF2Cu));
-	n_sub_82BAE2E8(ctx, base, setupBuffer, entryCount, arg3);
+	Vector_Init(ctx, base, setupBuffer, entryCount, arg3);
 
 	// r6-r9 as the first indirect call receives them: the setup call's values (r9: m_20)
 	// unless the loop below runs
@@ -660,10 +656,12 @@ uint64_t n_sub_82BC3568(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	STORE32(stack + 84, entryCount);
 	STORE32(stack + 80, 0);
 	uint32_t allocSize = entryCount << 4;
+	ctx.r7.u64 = entryIndexTableBase;
+	ctx.r8.u64 = remainingEntries;
 	ctx.xer.ca = flags.ca;
 	uint64_t instanceA = Allocator_GetInstance(ctx, base);
 
-	uint64_t idBuffer = n_sub_82BA8F18(ctx, base, instanceA, (uint64_t)allocSize,
+	uint64_t idBuffer = Allocator_Allocate_82BA8F18(ctx, base, instanceA, (uint64_t)allocSize,
 	                                   (uint64_t)(int64_t)-2112891072, (uint64_t)(int64_t)-2112891192, 46);
 	STORE32(stack + 80, (uint32_t)idBuffer);
 	memset(ctx, base, idBuffer, 0, (uint64_t)allocSize);
@@ -721,22 +719,24 @@ uint64_t n_sub_82BC3568(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 
 	uint32_t idCount = LOAD32(stack + 84);
 	uint32_t idTable = LOAD32(stack + 80);
+	ctx.r7.u64 = cursor4;
+	ctx.r8.u64 = scratchR8;
 	ctx.xer.ca = flags.ca;
 	uint64_t instanceB = Allocator_GetInstance(ctx, base);
 
-	uint64_t freeResult = n_sub_82BA9068(ctx, base, instanceB, (uint64_t)idTable, (uint64_t)(idCount << 4));
+	uint64_t freeResult = Allocator_Free_82BA9068(ctx, base, instanceB, (uint64_t)idTable, (uint64_t)(idCount << 4));
 
 	STORE32(stack + 136, 0);
 	uint32_t entryTableCount = LOAD32(stack + 132);
 	uint32_t entryTable = LOAD32(stack + 128);
 	uint64_t instanceC = Allocator_GetInstance(ctx, base);
 
-	uint64_t result = n_sub_82BA9068(ctx, base, instanceC, (uint64_t)entryTable, (uint64_t)(entryTableCount << 2));
+	uint64_t result = Allocator_Free_82BA9068(ctx, base, instanceC, (uint64_t)entryTable, (uint64_t)(entryTableCount << 2));
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(87, sub_82BC3568, 0x82BC3568) { ctx.r3.u64 = n_sub_82BC3568(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r7.u64); }
+PROMOTED_ENTRY(87, sub_82BC3568, 0x82BC3568) { ctx.r3.u64 = CGameObject_ResolveEntryIds(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r7.u64); }
 
 // sub_82BC37A8  [8 bytes]
 void n_sub_82BC37A8(CpuState& ctx, uint8_t* base, uint32_t gameObjectAddr, uint32_t newValue) {
@@ -755,7 +755,7 @@ uint64_t n_sub_82BC37B0(CpuState& ctx, uint8_t* base, uint64_t objectAddr) {
 }
 PROMOTED_ENTRY(87, sub_82BC37B0, 0x82BC37B0) { ctx.r3.u64 = n_sub_82BC37B0(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint32_t sourceEntryList, uint32_t targetEntryList, uint32_t arg4, uint64_t arg5) {
+uint64_t CGameObject_CloneAssets(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint32_t sourceEntryList, uint32_t targetEntryList, uint32_t arg4, uint64_t arg5) {
 	if (!UseLiftedCode(87, 0x82BC37B8)) { ctx.r3.u64 = gameObjectAddr; ctx.r4.u64 = sourceEntryList; ctx.r5.u64 = targetEntryList; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_82BC37B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BC37B8);
 	uint32_t stack = ctx.r1.u64;
@@ -764,23 +764,25 @@ uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 
 	stack = PushStackFrame(base, stack, 272);
 
-	// blocks set up by n_sub_82BAE2E8: data pointer at +32, count at +36
+	// blocks set up by Vector_Init: data pointer at +32, count at +36
 	uint32_t blockA = stack + 96;
 	uint32_t blockB = stack + 144;
 	uint32_t entryCount = LOAD32(sourceEntryList + 40);
 	double initialValue = double(LOAD_F32(0x8209BF2Cu));
 
 	ctx.r1.u64 = stack;
-	n_sub_82BAE2E8(ctx, base, blockB, entryCount, arg5);
+	ctx.f1.f64 = initialValue;
+	Vector_Init(ctx, base, blockB, entryCount, arg5);
 	ctx.fpscr.disableFlushMode();
-	n_sub_82BAE2E8(ctx, base, blockA, entryCount, ctx.r7.u64);
+	ctx.f1.f64 = initialValue;
+	Vector_Init(ctx, base, blockA, entryCount, ctx.r7.u64);
 
 	if ((int32_t)entryCount > 0) {
 		uint32_t offset = 0;
 		int32_t remaining = (int32_t)entryCount;
 		do {
 			STORE32(stack + 80, LOAD32(LOAD32(LOAD32(sourceEntryList + 32) + offset) + 4));
-			n_sub_82BAE368(ctx, base, blockB, stack + 80);
+			Vector_PushBack(ctx, base, blockB, stack + 80);
 			// the loop's count-down leaves the carry set; the next call sees it
 			ctx.xer.ca = 1;
 			offset += 4;
@@ -792,7 +794,7 @@ uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	if (arg4 != 0) {
 		arg4Value = LOAD32(arg4 + 4);
 	}
-	n_sub_82BC4040(ctx, base, (uint32_t)gameObjectAddr + 16, blockB, blockA, arg4Value, ctx.r7.u64);
+	AssetManager_CloneAssets(ctx, base, (uint32_t)gameObjectAddr + 16, blockB, blockA, arg4Value, ctx.r7.u64);
 
 	if ((int32_t)entryCount > 0) {
 		uint32_t offset = 0;
@@ -846,7 +848,8 @@ uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	if (element != (uint32_t)arrayEnd) {
 		uint64_t memberAddr = gameObjectAddr + 1728;
 		do {
-			lastResult = n_sub_82284810(ctx, base, memberAddr, element);
+			ctx.r8.u64 = arrayEnd;
+			lastResult = PointerArray_PushBack(ctx, base, memberAddr, element);
 			arrayEnd = ctx.r8.u64;
 			element += 4;
 		} while (element != (LOAD32(targetEntryList + 40) << 2) + LOAD32(targetEntryList + 32));
@@ -855,8 +858,9 @@ uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	STORE32(blockA + 40, 0);
 	uint32_t blockACount = LOAD32(blockA + 36);
 	uint32_t blockAData = LOAD32(blockA + 32);
+	ctx.r8.u64 = arrayEnd;
 	uint64_t allocator = Allocator_GetInstance(ctx, base);
-	uint64_t freeResult = n_sub_82BA9068(ctx, base, allocator, blockAData, blockACount << 2);
+	uint64_t freeResult = Allocator_Free_82BA9068(ctx, base, allocator, blockAData, blockACount << 2);
 
 	STORE32(blockA + 36, 0);
 	STORE32(blockA + 32, 0);
@@ -864,15 +868,15 @@ uint64_t n_sub_82BC37B8(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	uint32_t blockBCount = LOAD32(blockB + 36);
 	uint32_t blockBData = LOAD32(blockB + 32);
 	uint64_t allocator2 = Allocator_GetInstance(ctx, base);
-	uint64_t result = n_sub_82BA9068(ctx, base, allocator2, blockBData, blockBCount << 2);
+	uint64_t result = Allocator_Free_82BA9068(ctx, base, allocator2, blockBData, blockBCount << 2);
 
 	stack = PopStackFrame(stack, 272);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(87, sub_82BC37B8, 0x82BC37B8) { ctx.r3.u64 = n_sub_82BC37B8(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u32, ctx.r6.u32, ctx.r7.u64); }
+PROMOTED_ENTRY(87, sub_82BC37B8, 0x82BC37B8) { ctx.r3.u64 = CGameObject_CloneAssets(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u32, ctx.r6.u32, ctx.r7.u64); }
 
-uint64_t n_sub_82BC3990(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t ownerAddr, uint64_t transformAddr) {
+uint64_t CGameObject_ComputeTransform(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, uint64_t ownerAddr, uint64_t transformAddr) {
 	if (!UseLiftedCode(87, 0x82BC3990)) { ctx.r3.u64 = gameObjectAddr; ctx.r4.u64 = ownerAddr; ctx.r5.u64 = transformAddr; __imp__sub_82BC3990(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BC3990);
 	uint32_t stack = ctx.r1.u64;
@@ -932,7 +936,7 @@ uint64_t n_sub_82BC3990(CpuState& ctx, uint8_t* base, uint64_t gameObjectAddr, u
 	ctx.r4.u64 = r4Out;  // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(87, sub_82BC3990, 0x82BC3990) { ctx.r3.u64 = n_sub_82BC3990(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(87, sub_82BC3990, 0x82BC3990) { ctx.r3.u64 = CGameObject_ComputeTransform(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t n_sub_82BC3A38(CpuState& ctx, uint8_t* base, uint64_t objectAddr) {
 	if (!UseLiftedCode(87, 0x82BC3A38)) { ctx.r3.u64 = objectAddr; __imp__sub_82BC3A38(ctx, base); return ctx.r3.u64; }

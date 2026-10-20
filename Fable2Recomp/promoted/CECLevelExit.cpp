@@ -1,9 +1,9 @@
 // CECLevelExit (vtable 0x82003408): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -29,7 +29,7 @@ uint64_t CECLevelExit_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classN
 }
 PROMOTED_ENTRY(55, sub_827E9860, 0x827E9860) { ctx.r3.u64 = CECLevelExit_GetClassName(ctx, base, ctx.r3.u64); }
 
-void n_sub_827E98A8(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32_t ownerEntity) {
+void CECLevelExit_Constructor(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32_t ownerEntity) {
 	if (!UseLiftedCode(55, 0x827E98A8)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = ownerEntity; __imp__sub_827E98A8(ctx, base); return; }
 	LiftedFrame frame(0x827E98A8);
 	CECLevelExit* levelExit = GameObject<CECLevelExit>(base, levelExitAddr);
@@ -74,9 +74,9 @@ void n_sub_827E98A8(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr, uint32
 	levelExit->m_3E = 0;
 	return;
 }
-PROMOTED_ENTRY(55, sub_827E98A8, 0x827E98A8) { n_sub_827E98A8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(55, sub_827E98A8, 0x827E98A8) { CECLevelExit_Constructor(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t destroyFlag) {
+uint64_t CECLevelExit_Destructor(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t destroyFlag) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(55, 0x827E99B0)) { ctx.r3.u64 = levelExitAddr; ctx.r4.u64 = destroyFlag; __imp__sub_827E99B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827E99B0);
@@ -103,9 +103,9 @@ uint64_t n_sub_827E99B0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	ctx.r1.u64 = stack;
 	return levelExitAddr;
 }
-PROMOTED_ENTRY(55, sub_827E99B0, 0x827E99B0) { ctx.r3.u64 = n_sub_827E99B0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(55, sub_827E99B0, 0x827E99B0) { ctx.r3.u64 = CECLevelExit_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t dbHandle) {
+uint64_t CECLevelExit_LoadFromGameDB(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t dbHandle) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
@@ -140,21 +140,21 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		uint64_t overriddenTextTagKey = (int64_t)g_820E0000 - 31364;
 
 		ctx.r1.u64 = stack;
-		n_sub_8239CD28(ctx, base, dbHandle, TXT_820D8528_L_, levelExitAddr + 12);
+		GameDB_ReadStringFieldByName(ctx, base, dbHandle, TXT_820D8528_L_, levelExitAddr + 12);
 		savedF1 = ctx.f1.f64;
 		savedF10 = ctx.f10.f64;
 		savedF11 = ctx.f11.f64;
 		savedF12 = ctx.f12.f64;
 		savedF13 = ctx.f13.f64;
 
-		n_sub_8239CD28(ctx, base, dbHandle, TXT_820D853C_L_, levelExitAddr + 16);
+		GameDB_ReadStringFieldByName(ctx, base, dbHandle, TXT_820D853C_L_, levelExitAddr + 16);
 		savedF1 = ctx.f1.f64;
 		savedF10 = ctx.f10.f64;
 		savedF11 = ctx.f11.f64;
 		savedF12 = ctx.f12.f64;
 		savedF13 = ctx.f13.f64;
 
-		n_sub_8239CD28(ctx, base, dbHandle, entityConnectingTo, levelExitAddr + 20);
+		GameDB_ReadStringFieldByName(ctx, base, dbHandle, entityConnectingTo, levelExitAddr + 20);
 		savedF1 = ctx.f1.f64;
 		savedF10 = ctx.f10.f64;
 		savedF11 = ctx.f11.f64;
@@ -165,7 +165,7 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 
 		GameDB_ReadFloatField(ctx, base, dbHandle, radiusKey, levelExitAddr + 36);
 
-		uint64_t TXT_820D857C_L_ = n_sub_82345978(ctx, base, dbHandle, overriddenTextTagKey);
+		uint64_t TXT_820D857C_L_ = GameDB_GetStringField(ctx, base, dbHandle, overriddenTextTagKey);
 		CCharString_AssignFromCStr(ctx, base, levelExitAddr + 24, TXT_820D857C_L_);
 		savedF1 = ctx.f1.f64;
 		savedF10 = ctx.f10.f64;
@@ -176,7 +176,7 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 
 	uint32_t entity = levelExit->m_4;
 	ctx.r1.u64 = stack;
-	n_sub_82392C88(ctx, base, entity, levelExitAddr);
+	CECDoor_UpdateOpenStateForEntity(ctx, base, entity, levelExitAddr);
 	savedF1 = ctx.f1.f64;
 	savedF10 = ctx.f10.f64;
 	savedF11 = ctx.f11.f64;
@@ -315,17 +315,24 @@ uint64_t n_sub_827E9A48(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		}
 	}
 
+	ctx.r5.u64 = savedR5;
+	ctx.r7.u64 = savedR7;
 	ctx.r8.u64 = savedR8;
+	ctx.r9.u64 = savedR9;
 	ctx.f1.f64 = savedF1;
-	uint64_t result = n_sub_827EA258(ctx, base, levelExitAddr, 1);
+	ctx.f10.f64 = savedF10;
+	ctx.f11.f64 = savedF11;
+	ctx.f12.f64 = savedF12;
+	ctx.f13.f64 = savedF13;
+	uint64_t result = CECLevelExit_SetActive(ctx, base, levelExitAddr, 1);
 	stack = PopStackFrame(stack, 176);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827E9A48, 0x827E9A48) { ctx.r3.u64 = n_sub_827E9A48(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(55, sub_827E9A48, 0x827E9A48) { ctx.r3.u64 = CECLevelExit_LoadFromGameDB(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827E9CB0  [420 bytes]
-uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t stream, uint32_t version, uint64_t flags) {
+uint64_t CECLevelExit_Serialize(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t stream, uint32_t version, uint64_t flags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820ADDD8_B_ = int32_t(0x820ADDD8);
 	constexpr int32_t str_TXT_820B59DC_B_ = int32_t(0x820B59DC);
@@ -345,7 +352,7 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 
 	ctx.r6.u64 = flags;
 	CCharString_ConstructFromCStr(ctx, base, tagName, str_TXT_820D857C_B_, -1);
-	n_sub_82A16EC0(ctx, base, tagName, stream, levelExitAddr + 24);
+	IStream_SerializeCCharString(ctx, base, tagName, stream, levelExitAddr + 24);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 
 	uint64_t r8Value = ctx.r8.u64;
@@ -397,14 +404,14 @@ uint64_t n_sub_827E9CB0(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	IStream_SerializeString(ctx, base, tagName, stream, stack + 80);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, tagName);
 	uint32_t isActive = LOAD8(stack + 80);
-	uint64_t result = n_sub_827EA258(ctx, base, levelExitAddr, isActive);
+	uint64_t result = CECLevelExit_SetActive(ctx, base, levelExitAddr, isActive);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827E9CB0, 0x827E9CB0) { ctx.r3.u64 = n_sub_827E9CB0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
+PROMOTED_ENTRY(55, sub_827E9CB0, 0x827E9CB0) { ctx.r3.u64 = CECLevelExit_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
 
-uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
+uint32_t CECLevelExit_AddFullPauseMenuDisable(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(55, 0x827E9E58)) { ctx.r3.u64 = levelExitAddr; __imp__sub_827E9E58(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x827E9E58);
@@ -525,9 +532,9 @@ uint32_t n_sub_827E9E58(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827E9E58, 0x827E9E58) { ctx.r3.u64 = n_sub_827E9E58(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(55, sub_827E9E58, 0x827E9E58) { ctx.r3.u64 = CECLevelExit_AddFullPauseMenuDisable(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
+uint64_t CECLevelExit_ActivateInternal(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(55, 0x827EA020)) { ctx.r3.u64 = levelExitAddr; __imp__sub_827EA020(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827EA020);
@@ -543,6 +550,8 @@ uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 		uint32_t entityRef = LOAD32(LOAD32(manager + 12) + 88);
 		uint32_t handleHolder = LOAD32(entityRef + 4);
 		ctx.r1.u64 = stack;
+		ctx.r8.u64 = handleHolder;
+		ctx.r9.u64 = entityRef;
 		result = EntityHandle_Get(ctx, base, LOAD32(handleHolder));
 		uint32_t entity = uint32_t(result);
 		compareResult = ctx.r7.u64;
@@ -599,8 +608,9 @@ uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 			}
 			if (hasEntry) {
 				STORE32(stack + 80, LOAD32(levelExitPtr + 48));
+				ctx.r7.u64 = compareResult;
 				ctx.xer.ca = flags.ca;
-				result = n_sub_824ED8F0(ctx, base, uint64_t(entryId) + 232, uint64_t(stack + 80));
+				result = Map_Erase(ctx, base, uint64_t(entryId) + 232, uint64_t(stack + 80));
 				flags.ca = ctx.xer.ca;
 			}
 		}
@@ -611,9 +621,9 @@ uint64_t n_sub_827EA020(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827EA020, 0x827EA020) { ctx.r3.u64 = n_sub_827EA020(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827EA020, 0x827EA020) { ctx.r3.u64 = CECLevelExit_ActivateInternal(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827EA1D8(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
+uint64_t CECLevelExit_RemoveDisplayBox(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	constexpr uint32_t g_gameLoopBase = 0x83490000;
 	if (!UseLiftedCode(55, 0x827EA1D8)) { ctx.r3.u64 = levelExitAddr; __imp__sub_827EA1D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827EA1D8);
@@ -629,7 +639,7 @@ uint64_t n_sub_827EA1D8(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 		uint64_t levelExitName = (uint64_t)levelExitAddr + 16;
 
 		ctx.r1.u64 = stack;
-		n_sub_823B7058(ctx, base, displayBoxList, levelExitId, levelExitName);
+		GUIDisplayBoxList_Add(ctx, base, displayBoxList, levelExitId, levelExitName);
 
 		uint32_t removeList = LOAD32(LOAD32(LOAD32(g_gameLoopBase + 26788) + 28) + 52);
 		uint64_t boxName = (uint64_t)levelExit->m_4 + 128;
@@ -641,16 +651,16 @@ uint64_t n_sub_827EA1D8(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827EA1D8, 0x827EA1D8) { ctx.r3.u64 = n_sub_827EA1D8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827EA1D8, 0x827EA1D8) { ctx.r3.u64 = CECLevelExit_RemoveDisplayBox(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827EA250(CpuState& ctx, uint8_t* base, uint64_t levelExit) {
+uint64_t CECLevelExit_Activate(CpuState& ctx, uint8_t* base, uint64_t levelExit) {
 	if (!UseLiftedCode(55, 0x827EA250)) { ctx.r3.u64 = levelExit; __imp__sub_827EA250(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827EA250);
-	return n_sub_827EA020(ctx, base, levelExit);
+	return CECLevelExit_ActivateInternal(ctx, base, levelExit);
 }
-PROMOTED_ENTRY(55, sub_827EA250, 0x827EA250) { ctx.r3.u64 = n_sub_827EA250(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827EA250, 0x827EA250) { ctx.r3.u64 = CECLevelExit_Activate(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t isActivated) {
+uint64_t CECLevelExit_SetActive(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, uint64_t isActivated) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820A335C_B_ = int32_t(0x820A335C);
 	constexpr int32_t str_TXT_820D8614_B_ = int32_t(0x820D8614);
@@ -708,7 +718,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 		if (levelExit->m_37 != 0) {
 			uint64_t built = 0;
 			ctx.r1.u64 = stack;
-			built = n_sub_821D9F40(ctx, base, stack + 96, levelExitAddr2);
+			built = Component_GetId(ctx, base, stack + 96, levelExitAddr2);
 			uint64_t idRef = IdRef_Get(ctx, base, built);
 			levelExitAddr = GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820D8640_B_);
 			isActivated = ctx.r4.u64;
@@ -808,6 +818,8 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				SET_V8(local95, rex::ppc::simde_mm_perm_epi8_(V8(local97), V8(local96), V8(local93)));
 				VSTORE((stack + 112) & ~0xF, V8(local95));
 
+				ctx.r6.s64 = local72;
+				ctx.f1.f64 = f1Value;
 				ctx.v11 = local95;
 				ctx.v12 = local96;
 				ctx.v13 = local97;
@@ -845,7 +857,7 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 				local86 = LOAD32(local86 + 32);
 				uint32_t local49 = LOAD32(local86 + 28);
 				ctx.r1.u64 = stack;
-				n_sub_823B7058(ctx, base, local49, v42, local71);
+				GUIDisplayBoxList_Add(ctx, base, local49, v42, local71);
 				uint64_t local64 = (uint64_t)levelExit->m_4 + 128;
 				uint32_t local50 = LOAD32(LOAD32(LOAD32(local91 + 26788) + 28) + 52);
 				levelExitAddr = GUIDisplayBoxLists_RemoveByName(ctx, base, local50, local64, ctx.r8.u64);
@@ -861,9 +873,9 @@ uint64_t n_sub_827EA258(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr, ui
 	ctx.r4.u64 = isActivated;
 	return levelExitAddr;
 }
-PROMOTED_ENTRY(55, sub_827EA258, 0x827EA258) { ctx.r3.u64 = n_sub_827EA258(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(55, sub_827EA258, 0x827EA258) { ctx.r3.u64 = CECLevelExit_SetActive(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827EB4F0(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
+uint64_t CECLevelExit_Deactivate(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	constexpr int32_t g_833198B8 = int32_t(0x833198B8);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -881,7 +893,7 @@ uint64_t n_sub_827EB4F0(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	STORE8(eventHandler + 44, 0);
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_823B3E00(ctx, base, eventHandler, uint32_t(g_833198B8), triggerValue);
+	uint64_t result = EventManager_TriggerEvent(ctx, base, eventHandler, uint32_t(g_833198B8), triggerValue);
 
 	int32_t paramA = g_83320000;
 	int32_t paramB = g_83490000;
@@ -902,9 +914,9 @@ uint64_t n_sub_827EB4F0(CpuState& ctx, uint8_t* base, uint32_t levelExitAddr) {
 	ctx.r8.s64 = paramA;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827EB4F0, 0x827EB4F0) { ctx.r3.u64 = n_sub_827EB4F0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(55, sub_827EB4F0, 0x827EB4F0) { ctx.r3.u64 = CECLevelExit_Deactivate(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
+uint64_t CECLevelExit_Activate_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	constexpr int32_t str_TXT_820D8640_B_ = int32_t(0x820D8640);
 	constexpr int32_t str_TXT_820D8664_B_ = int32_t(0x820D8664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -919,9 +931,9 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	const uint32_t levelExitField16 = levelExitAddr + 16;
 	const uint32_t gameGlobal = uint32_t(g_83490000);
 
-	n_sub_827E9E58(ctx, base, levelExitAddr);
+	CECLevelExit_AddFullPauseMenuDisable(ctx, base, levelExitAddr);
 
-	uint64_t idRef = IdRef_Get(ctx, base, n_sub_821D9F40(ctx, base, idOut, levelExitAddr));
+	uint64_t idRef = IdRef_Get(ctx, base, Component_GetId(ctx, base, idOut, levelExitAddr));
 	uint8_t TXT_820D8664_L_ = GameDB_ReadBoolField_82303F38(ctx, base, idRef, str_TXT_820D8664_B_);
 
 	STORE32(charStringBuf, 0u);
@@ -931,7 +943,7 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 
 	uint32_t exitEntity = levelExit->m_4;
 	uint32_t hudBase = LOAD32(LOAD32(gameGlobal + 26788) + 32);
-	n_sub_823B7058(ctx, base, LOAD32(hudBase + 28), exitEntity, levelExitField16);
+	GUIDisplayBoxList_Add(ctx, base, LOAD32(hudBase + 28), exitEntity, levelExitField16);
 
 	uint32_t boxList = LOAD32(LOAD32(gameGlobal + 26788) + 28);
 	uint32_t boxLists = LOAD32(boxList + 52);
@@ -941,7 +953,7 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	}
 
 	uint32_t exitKind = 2;
-	uint64_t idRef2 = IdRef_Get(ctx, base, n_sub_821D9F40(ctx, base, idOut, levelExitAddr));
+	uint64_t idRef2 = IdRef_Get(ctx, base, Component_GetId(ctx, base, idOut, levelExitAddr));
 	uint8_t isTXT_820D8640_B_ = GameDB_ReadBoolField_82303F38(ctx, base, idRef2, str_TXT_820D8640_B_);
 	if (isTXT_820D8640_B_ != 0) {
 		exitKind = 5;
@@ -951,8 +963,8 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 	uint32_t targetObject = LOAD32(LOAD32(worldSub + 88) + 4);
 	n_sub_8234AAC8(ctx, base, targetObject, levelExitAddr + 12, levelExitField16, levelExitAddr + 20, exitKind);
 
-	uint64_t idRef3 = IdRef_Get(ctx, base, n_sub_821D9F40(ctx, base, idOut, levelExitAddr));
-	uint64_t fieldText = n_sub_82345978(ctx, base, idRef3, (uint64_t)(int64_t)-2113042632);
+	uint64_t idRef3 = IdRef_Get(ctx, base, Component_GetId(ctx, base, idOut, levelExitAddr));
+	uint64_t fieldText = GameDB_GetStringField(ctx, base, idRef3, (uint64_t)(int64_t)-2113042632);
 	CCharString_ConstructFromCStr(ctx, base, charStringBuf, fieldText, -1);
 
 	uint32_t str = LOAD32(charStringBuf);
@@ -978,10 +990,10 @@ uint64_t n_sub_827EB570(CpuState& ctx, uint8_t* base, uint64_t levelExitAddr) {
 		}
 	}
 
-	n_sub_827EA020(ctx, base, levelExitAddr);
+	CECLevelExit_ActivateInternal(ctx, base, levelExitAddr);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, charStringBuf);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(55, sub_827EB570, 0x827EB570) { ctx.r3.u64 = n_sub_827EB570(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827EB570, 0x827EB570) { ctx.r3.u64 = CECLevelExit_Activate_827EB570(ctx, base, ctx.r3.u64); }

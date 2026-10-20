@@ -1,9 +1,9 @@
 // CECOnFire (vtable 0x820E0340): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -21,7 +21,7 @@ uint64_t CECOnFire_GetClassName(CpuState& ctx, uint8_t* base, uint64_t className
 }
 PROMOTED_ENTRY(61, sub_8289B3A0, 0x8289B3A0) { ctx.r3.u64 = CECOnFire_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
+uint64_t CECOnFire_Initialise(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(61, 0x8289BB08)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289BB08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289BB08);
@@ -42,7 +42,7 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	onFire->m_58 = fireValue;
 	onFire->m_5C = fireValue;
 
-	onFire->m_68 = (uint8_t)n_sub_824BD958(ctx, base, entity2);
+	onFire->m_68 = (uint8_t)Entity_IsFlammable(ctx, base, entity2);
 
 	uint32_t isNotOnFire = ((isOnFire & 0xFF) == 0) ? 1u : 0u;
 	onFire->m_14 = isNotOnFire;
@@ -75,10 +75,11 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 
 		if (hasTarget != 0) {
 			uint32_t entityPtr = LOAD32(obj4);
-			uint64_t target = n_sub_82264448(ctx, base, entityPtr, handleAddr);
+			uint64_t target = EntityManager_LookupEntity(ctx, base, entityPtr, handleAddr);
 			int64_t handleType = (int64_t)g_820F0000 + 5732;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleType);
+			ctx.r7.u64 = (uint64_t)handleType;
 			ctx.r8.s64 = g_820F0000;
 			EntityHandle_SetTarget(ctx, base, stack + 80, target);
 
@@ -96,9 +97,11 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 		uint32_t fieldC = onFire->m_C;
 		endingR4 = fieldC;
 		if (fieldC <= 3) {
+			ctx.r5.u64 = savedR5;
+			ctx.r6.u64 = savedR6;
 			ctx.r7.u64 = savedR7;
 			ctx.r8.u64 = savedR8;
-			result = n_sub_8289CC38(ctx, base, onFireAddr, fieldC);
+			result = CECOnFire_TransitionState(ctx, base, onFireAddr, fieldC);
 			endingR4 = ctx.r4.u64;
 		}
 	}
@@ -169,9 +172,9 @@ uint64_t n_sub_8289BB08(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	ctx.r4.u64 = endingR4;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289BB08, 0x8289BB08) { ctx.r3.u64 = n_sub_8289BB08(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289BB08, 0x8289BB08) { ctx.r3.u64 = CECOnFire_Initialise(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8289BD90(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
+uint64_t CECOnFire_Shutdown(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(61, 0x8289BD90)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289BD90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289BD90);
@@ -180,11 +183,11 @@ uint64_t n_sub_8289BD90(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_8289E4B0(ctx, base, onFireAddr);
+	CECOnFire_DisableBurning(ctx, base, onFireAddr);
 
 	uint64_t lastResult = 0;
 	for (uint64_t i = 0; i < 3; ++i) {
-		lastResult = n_sub_8289D9D8(ctx, base, onFireAddr, i, 1);
+		lastResult = CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, i, 1);
 	}
 
 	uint32_t fireFlag = onFire->m_68;
@@ -196,7 +199,7 @@ uint64_t n_sub_8289BD90(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 
 	if (fireFlag != 0) {
 		uint32_t attachedEntity = onFire->m_4;
-		lastResult = n_sub_824B9528(ctx, base, attachedEntity, 255, 255, 255);
+		lastResult = Entity_SetTint(ctx, base, attachedEntity, 255, 255, 255);
 	}
 
 	uint32_t manager = LOAD32(uint32_t(g_83490000) + 26912);
@@ -212,9 +215,9 @@ uint64_t n_sub_8289BD90(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	ctx.r1.u64 = stack;
 	return lastResult;
 }
-PROMOTED_ENTRY(61, sub_8289BD90, 0x8289BD90) { ctx.r3.u64 = n_sub_8289BD90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289BD90, 0x8289BD90) { ctx.r3.u64 = CECOnFire_Shutdown(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t onFireAddr) {
+uint32_t CECOnFire_GetFireStage(CpuState& ctx, uint8_t* base, uint32_t onFireAddr) {
 	constexpr int32_t g_83360000 = int32_t(0x83360000);
 	if (!UseLiftedCode(61, 0x8289C460)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289C460(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289C460);
@@ -247,7 +250,7 @@ uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t onFireAddr) {
 			lastThreshold = double(LOAD_F32(entry + fireParams + 12));
 			if (!(heat < lastThreshold)) {
 				ctx.r1.u64 = stack;
-				const uint32_t blocked = n_sub_824BD028(ctx, base, LOAD32(onFireAddr + 4));
+				const uint32_t blocked = Entity_CanIgnite(ctx, base, LOAD32(onFireAddr + 4));
 				if ((blocked & 0xFF) == 0) {
 					stage = 1;
 					stack = PopStackFrame(stack, 96);
@@ -266,9 +269,9 @@ uint32_t n_sub_8289C460(CpuState& ctx, uint8_t* base, uint32_t onFireAddr) {
 	ctx.f13.f64 = lastThreshold;
 	return stage;
 }
-PROMOTED_ENTRY(61, sub_8289C460, 0x8289C460) { ctx.r3.u64 = n_sub_8289C460(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(61, sub_8289C460, 0x8289C460) { ctx.r3.u64 = CECOnFire_GetFireStage(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint32_t fireState) {
+uint64_t CECOnFire_TransitionState(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint32_t fireState) {
 	if (!UseLiftedCode(61, 0x8289CC38)) { ctx.r3.u64 = onFireAddr; ctx.r4.u64 = fireState; __imp__sub_8289CC38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289CC38);
 	uint32_t stack = ctx.r1.u64;
@@ -292,7 +295,7 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 0: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		result = n_sub_8289E4B0(ctx, base, onFireAddr);
+		result = CECOnFire_DisableBurning(ctx, base, onFireAddr);
 		outR8 = ctx.r8.u64;
 		uint32_t stateWord = onFire->m_18;
 		outR4 = stateWord;
@@ -301,14 +304,14 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 			value = LOAD_F32(kFloatLow);
 		} else if ((int32_t)stateWord == -2) {
 			for (uint64_t i = 0; i < 3; ++i) {
-				result = n_sub_8289D9D8(ctx, base, onFireAddr, i, 0);
+				result = CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, i, 0);
 				outR4 = ctx.r4.u64;
 				outR8 = ctx.r8.u64;
 			}
 			ctx.fpscr.disableFlushMode();
 			value = LOAD_F32(kFloatLow);
 		} else {
-			result = n_sub_8289D9D8(ctx, base, onFireAddr, stateWord, 0);
+			result = CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, stateWord, 0);
 			outR4 = ctx.r4.u64;
 			outR8 = ctx.r8.u64;
 			ctx.fpscr.disableFlushMode();
@@ -319,15 +322,15 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 1: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		n_sub_8289E308(ctx, base, onFireAddr);
+		CECOnFire_EnableBurning(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
 			for (uint64_t i = 0; i < 3; ++i)
-				n_sub_8289D9D8(ctx, base, onFireAddr, i, 0);
+				CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, i, 0);
 		} else if ((int32_t)stateWord != -1) {
-			n_sub_8289D9D8(ctx, base, onFireAddr, stateWord, 0);
+			CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, stateWord, 0);
 		}
-		n_sub_8289D2E8(ctx, base, onFireAddr, 0);
+		CECOnFire_ApplyFireEffect(ctx, base, onFireAddr, 0);
 		uint32_t entity = (uint32_t)onFire->m_4;
 		result = n_sub_824BB560(ctx, base, entity, ctx.r8.u64);
 		outR4 = ctx.r4.u64;
@@ -352,15 +355,15 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 2: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		n_sub_8289E4B0(ctx, base, onFireAddr);
+		CECOnFire_DisableBurning(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
 			for (uint64_t i = 0; i < 3; ++i)
-				n_sub_8289D9D8(ctx, base, onFireAddr, i, 0);
+				CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, i, 0);
 		} else if ((int32_t)stateWord != -1) {
-			n_sub_8289D9D8(ctx, base, onFireAddr, stateWord, 0);
+			CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, stateWord, 0);
 		}
-		result = n_sub_8289D2E8(ctx, base, onFireAddr, 1);
+		result = CECOnFire_ApplyFireEffect(ctx, base, onFireAddr, 1);
 		outR4 = ctx.r4.u64;
 		uint32_t stateId = onFire->m_24;
 		outR8 = (uint64_t)stateId * 28;
@@ -376,15 +379,15 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	case 3: {
 		ctx.r0.u64 = jumpEntry;
 		ctx.r1.u64 = stack;
-		n_sub_8289E4B0(ctx, base, onFireAddr);
+		CECOnFire_DisableBurning(ctx, base, onFireAddr);
 		uint32_t stateWord = onFire->m_18;
 		if ((int32_t)stateWord == -2) {
 			for (uint64_t i = 0; i < 3; ++i)
-				n_sub_8289D9D8(ctx, base, onFireAddr, i, 0);
+				CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, i, 0);
 		} else if ((int32_t)stateWord != -1) {
-			n_sub_8289D9D8(ctx, base, onFireAddr, stateWord, 0);
+			CECOnFire_UpdateFireSlot(ctx, base, onFireAddr, stateWord, 0);
 		}
-		result = n_sub_8289D2E8(ctx, base, onFireAddr, 2);
+		result = CECOnFire_ApplyFireEffect(ctx, base, onFireAddr, 2);
 		outR4 = ctx.r4.u64;
 		uint32_t stateId = onFire->m_24;
 		outR8 = (uint64_t)stateId * 28;
@@ -409,9 +412,9 @@ uint64_t n_sub_8289CC38(CpuState& ctx, uint8_t* base, uint64_t onFireAddr, uint3
 	ctx.r8.u64 = outR8;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289CC38, 0x8289CC38) { ctx.r3.u64 = n_sub_8289CC38(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(61, sub_8289CC38, 0x8289CC38) { ctx.r3.u64 = CECOnFire_TransitionState(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint32_t n_sub_8289CEE8(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
+uint32_t CECOnFire_UpdateBurnTick(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(61, 0x8289CEE8)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289CEE8(ctx, base); return ctx.r3.u32; }
@@ -472,6 +475,8 @@ uint32_t n_sub_8289CEE8(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				SET_V8(vecSaved, VLOAD(uint32_t(dataBuf) & ~0xF));
 				uint32_t entity2C = onFire->m_2C;
 				uint32_t entity28 = onFire->m_28;
+				ctx.r8.u64 = dataBuf;
+				ctx.f13.f64 = fireLevel;
 				uint64_t entityHandle = EntityHandle_Get_825575C8(ctx, base, handleSource);
 				SET_V8(vecCopy, V8(vecSaved));
 				ctx.fpscr.disableFlushMode();
@@ -503,9 +508,9 @@ uint32_t n_sub_8289CEE8(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289CEE8, 0x8289CEE8) { ctx.r3.u64 = n_sub_8289CEE8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289CEE8, 0x8289CEE8) { ctx.r3.u64 = CECOnFire_UpdateBurnTick(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
+uint32_t CECOnFire_UpdateTemperature(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
 	constexpr int32_t g_83360000 = int32_t(0x83360000);
 	if (!UseLiftedCode(61, 0x8289CFE0)) { ctx.r3.u64 = onFireAddr; __imp__sub_8289CFE0(ctx, base); return ctx.r3.u32; }
@@ -527,7 +532,7 @@ uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 		result = burnOwnerAddr;
 
 		ctx.r1.u64 = stack;
-		double burnRate = n_sub_82207928(ctx, base, burnOwnerAddr);
+		double burnRate = Game_GetDeltaTime(ctx, base, burnOwnerAddr);
 		reg1 = burnRate;
 		reg8 = ctx.r8.u64;
 
@@ -577,6 +582,13 @@ uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				uint32_t field2C = onFire->m_2C;
 				uint32_t field28 = onFire->m_28;
 
+				ctx.r7.u64 = typeBurns;
+				ctx.r8.u64 = typeTableIndex;
+				ctx.r9.u64 = typeEntryOffset;
+				ctx.f1.f64 = burnRate;
+				ctx.f11.f64 = reg11;
+				ctx.f12.f64 = reg12;
+				ctx.f13.f64 = reg13;
 
 				uint64_t sourceHandle = EntityHandle_Get_825575C8(ctx, base, sourceHandleAddr);
 				reg13 = ctx.f13.f64;
@@ -585,7 +597,7 @@ uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 
 				STORE8(stack + 87, uint8_t(1));
 
-				result = n_sub_824BB6C8(ctx, base, sourceHandle, ownerField, field28, 1, field2C, 4096, 0, reg1);
+				result = Entity_ApplyDamage(ctx, base, sourceHandle, ownerField, field28, 1, field2C, 4096, 0, reg1);
 				reg8 = ctx.r8.u64;
 				reg1 = ctx.f1.f64;
 				reg13 = ctx.f13.f64;
@@ -603,9 +615,9 @@ uint32_t n_sub_8289CFE0(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	ctx.f13.f64 = reg13;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289CFE0, 0x8289CFE0) { ctx.r3.u64 = n_sub_8289CFE0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289CFE0, 0x8289CFE0) { ctx.r3.u64 = CECOnFire_UpdateTemperature(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8289D108(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
+uint64_t CECOnFire_Update(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -629,7 +641,7 @@ uint64_t n_sub_8289D108(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	if (LOAD8(onFireBase + 104) != 0) {
 		onFireAddr = onFire->m_4;
 		ctx.r1.u64 = stack;
-		local2 = n_sub_82207928(ctx, base, onFireAddr);
+		local2 = Game_GetDeltaTime(ctx, base, onFireAddr);
 
 		local15 = g_83320000;
 		local14 = onFire->m_24;
@@ -740,7 +752,7 @@ uint64_t n_sub_8289D108(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 				frames = 1;
 
 			uint32_t fireObj = static_cast<uint32_t>(onFire->m_4);
-			onFireAddr = n_sub_824B9528(ctx, base, fireObj, static_cast<uint64_t>(frames),
+			onFireAddr = Entity_SetTint(ctx, base, fireObj, static_cast<uint64_t>(frames),
 				static_cast<uint64_t>(frames), frames);
 			local11 = ctx.r4.u64;
 			local12 = ctx.r5.u64;
@@ -763,9 +775,9 @@ uint64_t n_sub_8289D108(CpuState& ctx, uint8_t* base, uint64_t onFireAddr) {
 	ctx.f1.f64 = local2;
 	return onFireAddr;
 }
-PROMOTED_ENTRY(61, sub_8289D108, 0x8289D108) { ctx.r3.u64 = n_sub_8289D108(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289D108, 0x8289D108) { ctx.r3.u64 = CECOnFire_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t slotIndex, uint64_t instant) {
+uint64_t CECOnFire_UpdateFireSlot(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t slotIndex, uint64_t instant) {
 	if (!UseLiftedCode(61, 0x8289D9D8)) { ctx.r3.u64 = table; ctx.r4.u64 = slotIndex; ctx.r5.u64 = instant; __imp__sub_8289D9D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289D9D8);
 	uint32_t stack = ctx.r1.u64;
@@ -870,6 +882,7 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 				fadeOutTime = (double)LOAD_F32(kFadeConsts);
 			}
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = r6v;
 			ctx.r8.u64 = r8v;
 			result = n_sub_8247EB68(ctx, base, particleId, fadeOutTime);  // Lua_ParticleEmitter_KillParticleWithFadeOut
 			if (!instantKill) {
@@ -902,9 +915,9 @@ uint64_t n_sub_8289D9D8(CpuState& ctx, uint8_t* base, uint64_t table, uint64_t s
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289D9D8, 0x8289D9D8) { ctx.r3.u64 = n_sub_8289D9D8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(61, sub_8289D9D8, 0x8289D9D8) { ctx.r3.u64 = CECOnFire_UpdateFireSlot(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t onFire) {
+uint32_t CECOnFire_EnableBurning(CpuState& ctx, uint8_t* base, uint32_t onFire) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(61, 0x8289E308)) { ctx.r3.u64 = onFire; __imp__sub_8289E308(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8289E308);
@@ -955,7 +968,7 @@ uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t onFire) {
 			ctx.r1.u64 = stack;
 			onFire = CECEntityModeManager_HasMode(ctx, base, target, 46);
 			if ((onFire & 0xFF) == 0) {
-				onFire = n_sub_823F1EB0(ctx, base, target, 46);
+				onFire = CECEntityModeManager_AddModeById(ctx, base, target, 46);
 			}
 		}
 	}
@@ -964,9 +977,9 @@ uint32_t n_sub_8289E308(CpuState& ctx, uint8_t* base, uint32_t onFire) {
 	ctx.r1.u64 = stack;
 	return onFire;
 }
-PROMOTED_ENTRY(61, sub_8289E308, 0x8289E308) { ctx.r3.u64 = n_sub_8289E308(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(61, sub_8289E308, 0x8289E308) { ctx.r3.u64 = CECOnFire_EnableBurning(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t onFire) {
+uint64_t CECOnFire_DisableBurning(CpuState& ctx, uint8_t* base, uint64_t onFire) {
 	constexpr uint32_t g_83490000 = 0x83490000;
 	if (!UseLiftedCode(61, 0x8289E4B0)) { ctx.r3.u64 = onFire; __imp__sub_8289E4B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8289E4B0);
@@ -1038,4 +1051,4 @@ uint64_t n_sub_8289E4B0(CpuState& ctx, uint8_t* base, uint64_t onFire) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_8289E4B0, 0x8289E4B0) { ctx.r3.u64 = n_sub_8289E4B0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_8289E4B0, 0x8289E4B0) { ctx.r3.u64 = CECOnFire_DisableBurning(ctx, base, ctx.r3.u64); }

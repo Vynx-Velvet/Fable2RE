@@ -1,9 +1,9 @@
 // COptionParser (vtable 0x8200E8E0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-void n_sub_82C84108(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint32_t outValue) {
+void COptionParser_GetFloatValue_82C84108(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint32_t outValue) {
 	if (!UseLiftedCode(93, 0x82C84108)) { ctx.r3.u64 = optionParserAddr; ctx.r4.u64 = outValue; __imp__sub_82C84108(ctx, base); return; }
 	LiftedFrame frame(0x82C84108);
 	COptionParser* optionParser = GameObject<COptionParser>(base, optionParserAddr);
@@ -19,10 +19,10 @@ void n_sub_82C84108(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uin
 	if (LOAD32(currentNode) != 3) return;
 	STORE32(outValue, LOAD32(currentNode + 0x20));
 }
-PROMOTED_ENTRY(93, sub_82C84108, 0x82C84108) { n_sub_82C84108(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(93, sub_82C84108, 0x82C84108) { COptionParser_GetFloatValue_82C84108(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 // sub_82C84128  [28 bytes]
-void n_sub_82C84128(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint32_t outValue) {
+void COptionParser_GetIntValue(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint32_t outValue) {
 	if (!UseLiftedCode(93, 0x82C84128)) { ctx.r3.u64 = optionParserAddr; ctx.r4.u64 = outValue; __imp__sub_82C84128(ctx, base); return; }
 	LiftedFrame frame(0x82C84128);
 	COptionParser* optionParser = GameObject<COptionParser>(base, optionParserAddr);
@@ -30,7 +30,7 @@ void n_sub_82C84128(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uin
 	if (LOAD32(currentNode) != 2) return;
 	STORE32(outValue, LOAD32(currentNode + 0x20));
 }
-PROMOTED_ENTRY(93, sub_82C84128, 0x82C84128) { n_sub_82C84128(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(93, sub_82C84128, 0x82C84128) { COptionParser_GetIntValue(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 // sub_82C84148  [28 bytes]
 void COptionParser_GetBoolValue(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint32_t outValue) {
@@ -69,8 +69,9 @@ uint64_t COptionParser_GetStringValue(CpuState& ctx, uint8_t* base, uint64_t opt
 	uint32_t capacity = LOAD32(currentNode + 0x1C);
 	uint64_t text = capacity >= 16 ? (uint64_t)LOAD32(currentNode + 8) : (uint64_t)currentNode + 8;
 	// state the callee may pass on
+	ctx.r9.u64 = capacity;
 	ctx.r10.u64 = outString;
-	return n_sub_82C825A0(ctx, base, outString, text);
+	return String_Assign(ctx, base, outString, text);
 }
 PROMOTED_ENTRY(93, sub_82C843A0, 0x82C843A0) { ctx.r3.u64 = COptionParser_GetStringValue(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
@@ -112,7 +113,7 @@ uint64_t COptionParser_FindNodeByName(CpuState& ctx, uint8_t* base, uint32_t opt
 					ppc_trap(ctx, base, 22);
 				}
 				ctx.r1.u64 = stack;
-				uint32_t matches = n_sub_82C843E0(ctx, base, currentNode, nodeName, firstNode);
+				uint32_t matches = OptionNode_NameMatches(ctx, base, currentNode, nodeName, firstNode);
 				if ((matches & 0xFF) == 0) {
 					boundsEnd = LOAD32(nodeList + 8);
 					if ((uint32_t)currentNode >= boundsEnd) ppc_trap(ctx, base, 22);
@@ -133,7 +134,7 @@ uint64_t COptionParser_FindNodeByName(CpuState& ctx, uint8_t* base, uint32_t opt
 }
 PROMOTED_ENTRY(93, sub_82C84540, 0x82C84540) { ctx.r3.u64 = COptionParser_FindNodeByName(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82C84610(CpuState& ctx, uint8_t* base, uint32_t optionParser, uint64_t nodeName, uint32_t outValue) {
+uint64_t COptionParser_GetFloatByName_82C84610(CpuState& ctx, uint8_t* base, uint32_t optionParser, uint64_t nodeName, uint32_t outValue) {
 	if (!UseLiftedCode(93, 0x82C84610)) { ctx.r3.u64 = optionParser; ctx.r4.u64 = nodeName; ctx.r5.u64 = outValue; __imp__sub_82C84610(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C84610);
 	GameStackFrame stackFrame(ctx, base, 96);
@@ -147,9 +148,9 @@ uint64_t n_sub_82C84610(CpuState& ctx, uint8_t* base, uint32_t optionParser, uin
 	}
 	return 0;
 }
-PROMOTED_ENTRY(93, sub_82C84610, 0x82C84610) { ctx.r3.u64 = n_sub_82C84610(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
+PROMOTED_ENTRY(93, sub_82C84610, 0x82C84610) { ctx.r3.u64 = COptionParser_GetFloatByName_82C84610(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82C84678(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint64_t nodeName, uint32_t outValue) {
+uint64_t COptionParser_GetIntByName(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint64_t nodeName, uint32_t outValue) {
 	if (!UseLiftedCode(93, 0x82C84678)) { ctx.r3.u64 = optionParserAddr; ctx.r4.u64 = nodeName; ctx.r5.u64 = outValue; __imp__sub_82C84678(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C84678);
 	GameStackFrame stackFrame(ctx, base, 96);
@@ -162,7 +163,7 @@ uint64_t n_sub_82C84678(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr,
 	}
 	return hasValue;
 }
-PROMOTED_ENTRY(93, sub_82C84678, 0x82C84678) { ctx.r3.u64 = n_sub_82C84678(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
+PROMOTED_ENTRY(93, sub_82C84678, 0x82C84678) { ctx.r3.u64 = COptionParser_GetIntByName(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
 
 // sub_82C846E0  [100 bytes]
 uint64_t COptionParser_GetBoolByName(CpuState& ctx, uint8_t* base, uint32_t optionParserAddr, uint64_t optionName, uint32_t outValue) {
@@ -215,7 +216,7 @@ uint64_t COptionParser_GetStringByName(CpuState& ctx, uint8_t* base, uint64_t op
 		? (uint64_t)LOAD32(value + 0x04)   // long string: buffer held behind a pointer
 		: (uint64_t)(value + 0x04);        // short string: buffer stored inline
 
-	n_sub_82C825A0(ctx, base, outString, stringData);
+	String_Assign(ctx, base, outString, stringData);
 	return 1;
 }
 PROMOTED_ENTRY(93, sub_82C847B0, 0x82C847B0) { ctx.r3.u64 = COptionParser_GetStringByName(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
@@ -272,7 +273,7 @@ uint32_t COptionParser_Dtor(CpuState& ctx, uint8_t* base, uint64_t optionParserA
 	STORE8(obj + 56, 0);
 
 	ctx.r1.u64 = stack;
-	n_sub_8235E680(ctx, base, obj + 20);
+	Container_Destruct(ctx, base, obj + 20);
 
 	// release the option object owned by the parser
 	uint32_t option = optionParser->m_C;
@@ -284,7 +285,7 @@ uint32_t COptionParser_Dtor(CpuState& ctx, uint8_t* base, uint64_t optionParserA
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	}
 
-	uint32_t result = n_sub_82C81BF8(ctx, base, optionParserAddr);
+	uint32_t result = C_8200E9A8_Destruct(ctx, base, optionParserAddr);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
@@ -312,7 +313,7 @@ uint64_t COptionParser_DeletingDtor(CpuState& ctx, uint8_t* base, uint64_t optio
 }
 PROMOTED_ENTRY(93, sub_82C85338, 0x82C85338) { ctx.r3.u64 = COptionParser_DeletingDtor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82C85658(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
+uint32_t COptionParser_GetCurrentNode(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
 	if (!UseLiftedCode(93, 0x82C85658)) { ctx.r3.u64 = optionParserAddr; ctx.r8.u64 = parseState; __imp__sub_82C85658(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C85658);
 	uint32_t stack = ctx.r1.u64;
@@ -324,13 +325,13 @@ uint32_t n_sub_82C85658(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 	if (LOAD32(parserAddr + 32) == 2) {
 		if (LOAD8(parserAddr + 16) != 0) {
 			ctx.r1.u64 = stack;
-			uint32_t flag = n_sub_82C85538(ctx, base, parserAddr + 108, entryAddr, parseState);
+			uint32_t flag = COptionParser_ParseValue(ctx, base, parserAddr + 108, entryAddr, parseState);
 			parseState = ctx.r8.u64;
 			STORE8(parserAddr + 16, (uint8_t)flag);
 		}
 		uint64_t workBufferAddr = (uint64_t)stack + 80;
 		ctx.r1.u64 = stack;
-		uint32_t value = n_sub_82C84838(ctx, base, workBufferAddr, entryAddr);
+		uint32_t value = COptionParser_ReadUInt32Value(ctx, base, workBufferAddr, entryAddr);
 		parseState = ctx.r8.u64;
 		optionParser->m_20 = LOAD32(value);
 		result = parserAddr + 108;
@@ -342,9 +343,9 @@ uint32_t n_sub_82C85658(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 	ctx.r8.u64 = parseState;
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C85658, 0x82C85658) { ctx.r3.u64 = n_sub_82C85658(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(93, sub_82C85658, 0x82C85658) { ctx.r3.u64 = COptionParser_GetCurrentNode(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C856D8(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
+uint64_t COptionParser_GetCurrentName(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
 	if (!UseLiftedCode(93, 0x82C856D8)) { ctx.r3.u64 = optionParserAddr; ctx.r8.u64 = parseState; __imp__sub_82C856D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C856D8);
 	uint32_t stack = ctx.r1.u64;
@@ -359,11 +360,11 @@ uint64_t n_sub_82C856D8(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 		uint64_t entry = optionParserAddr + 12;
 		if (LOAD8((uint32_t)optionParserAddr + 16) != 0) {
 			ctx.r1.u64 = stack;
-			uint32_t parsed = n_sub_82C85250(ctx, base, optionParserAddr + 80, entry, parseState);
+			uint32_t parsed = COptionParser_ParseName(ctx, base, optionParserAddr + 80, entry, parseState);
 			STORE8((uint32_t)optionParserAddr + 16, (uint8_t)parsed);
 		}
 		ctx.r1.u64 = stack;
-		uint32_t valuePtr = n_sub_82C84838(ctx, base, (uint64_t)stack + 80, entry);
+		uint32_t valuePtr = COptionParser_ReadUInt32Value(ctx, base, (uint64_t)stack + 80, entry);
 		optionParser->m_20 = LOAD32(valuePtr);
 		result = optionParserAddr + 80;
 	}
@@ -371,7 +372,7 @@ uint64_t n_sub_82C856D8(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C856D8, 0x82C856D8) { ctx.r3.u64 = n_sub_82C856D8(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(93, sub_82C856D8, 0x82C856D8) { ctx.r3.u64 = COptionParser_GetCurrentName(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
 uint32_t COptionParser_BuildNodeList(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t arg2) {
 	if (!UseLiftedCode(93, 0x82C85860)) { ctx.r3.u64 = optionParserAddr; ctx.r8.u64 = arg2; __imp__sub_82C85860(ctx, base); return ctx.r3.u32; }
@@ -393,7 +394,7 @@ uint32_t COptionParser_BuildNodeList(CpuState& ctx, uint8_t* base, uint64_t opti
 	uint64_t callState = 0;
 
 	ctx.r1.u64 = stack;
-	n_sub_82C84EF8(ctx, base, nodeListHead);
+	Vector_Clear_82C84EF8(ctx, base, nodeListHead);
 	callState = ctx.r8.u64;
 
 	uint32_t state;
@@ -409,18 +410,18 @@ uint32_t COptionParser_BuildNodeList(CpuState& ctx, uint8_t* base, uint64_t opti
 		STORE32(stack + 140, 0);
 
 		if (nodeActive) {
-			uint32_t writeResult = n_sub_82C85250(ctx, base, (uint64_t)stack + 112, nodeAddr, callState);
+			uint32_t writeResult = COptionParser_ParseName(ctx, base, (uint64_t)stack + 112, nodeAddr, callState);
 			callState = ctx.r8.u64;
 			STORE8(nodeAddr + 4, (uint8_t)writeResult);
 
 			if (LOAD8(nodeAddr + 4) != 0) {
-				writeResult = n_sub_82C85538(ctx, base, (uint64_t)stack + 140, nodeAddr, callState);
+				writeResult = COptionParser_ParseValue(ctx, base, (uint64_t)stack + 140, nodeAddr, callState);
 				callState = ctx.r8.u64;
 				STORE8(nodeAddr + 4, (uint8_t)writeResult);
 			}
 		}
 
-		n_sub_82C85468(ctx, base, nodeListHead, (uint64_t)stack + 112, callState);
+		COptionParser_AddNode(ctx, base, nodeListHead, (uint64_t)stack + 112, callState);
 		callState = ctx.r8.u64;
 
 		uint32_t value = 4;
@@ -495,7 +496,7 @@ PROMOTED_ENTRY(93, sub_82C85860, 0x82C85860) { ctx.r3.u64 = COptionParser_BuildN
 // Returns 0 when m_24 holds no string, or when name is given and the string at m_24 differs from it.
 // Otherwise increments m_8, copies that string into the string object at +52 (its address goes to m_28),
 // stores new m_nodeList, m_currentNode and m_24 values and returns 1.
-uint64_t n_sub_82C859E0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t name, uint64_t parseState) {
+uint64_t COptionParser_EnterOption(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t name, uint64_t parseState) {
 	if (!UseLiftedCode(93, 0x82C859E0)) { ctx.r3.u64 = optionParserAddr; ctx.r4.u64 = name; ctx.r8.u64 = parseState; __imp__sub_82C859E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C859E0);
 	COptionParser* optionParser = GameObject<COptionParser>(base, optionParserAddr);
@@ -509,7 +510,7 @@ uint64_t n_sub_82C859E0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 		bool nameDiffers = false;
 		if ((uint32_t)name != 0) {
 			ctx.r1.u64 = stack;
-			uint32_t differs = n_sub_82C84490(ctx, base, currentString, name, parseState);
+			uint32_t differs = String_NotEquals(ctx, base, currentString, name, parseState);
 			r4Out = ctx.r4.u64;
 			parseState = ctx.r8.u64;
 			nameDiffers = (differs & 0xFF) != 0;
@@ -534,9 +535,9 @@ uint64_t n_sub_82C859E0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			optionParser->m_nodeList = COptionParser_BuildNodeList(ctx, base, optionParserAddr, parseState);
-			optionParser->m_currentNode = n_sub_82C85658(ctx, base, optionParserAddr, ctx.r8.u64);
+			optionParser->m_currentNode = COptionParser_GetCurrentNode(ctx, base, optionParserAddr, ctx.r8.u64);
 
-			uint32_t nextString = n_sub_82C856D8(ctx, base, optionParserAddr, ctx.r8.u64);
+			uint32_t nextString = COptionParser_GetCurrentName(ctx, base, optionParserAddr, ctx.r8.u64);
 			r4Out = ctx.r4.u64;
 			parseState = ctx.r8.u64;
 			optionParser->m_24 = nextString;
@@ -552,11 +553,11 @@ uint64_t n_sub_82C859E0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 	ctx.r8.u64 = parseState;
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C859E0, 0x82C859E0) { ctx.r3.u64 = n_sub_82C859E0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(93, sub_82C859E0, 0x82C859E0) { ctx.r3.u64 = COptionParser_EnterOption(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 // Acts only when m_8 is nonzero: calls the virtual at vtable + 12 for as long as the virtual at vtable + 8
 // (second argument 0) returns a nonzero byte, then decrements m_8 and, unless it reached 0, sets a new m_24.
-uint64_t n_sub_82C85AA0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
+uint64_t COptionParser_LeaveOption(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr, uint64_t parseState) {
 	if (!UseLiftedCode(93, 0x82C85AA0)) { ctx.r3.u64 = optionParserAddr; ctx.r8.u64 = parseState; __imp__sub_82C85AA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C85AA0);
 	uint32_t stack = ctx.r1.u64;
@@ -570,7 +571,7 @@ uint64_t n_sub_82C85AA0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 		optionParser->m_28 = 0u;
 		ctx.r1.u64 = stack;
 		optionParser->m_nodeList = COptionParser_BuildNodeList(ctx, base, optionParserAddr, parseState);
-		optionParser->m_currentNode = n_sub_82C85658(ctx, base, optionParserAddr, ctx.r8.u64);
+		optionParser->m_currentNode = COptionParser_GetCurrentNode(ctx, base, optionParserAddr, ctx.r8.u64);
 
 		PPCRegister callTarget{};
 		uint32_t vtable = optionParser->vtable;
@@ -612,12 +613,12 @@ uint64_t n_sub_82C85AA0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 		uint32_t depth = optionParser->m_8;
 		optionParser->m_8 = depth - 1;
 		// state the callee may pass on
-		result = n_sub_82C84838(ctx, base, (uint64_t)stack + 80, optionParserAddr + 12);
+		result = COptionParser_ReadUInt32Value(ctx, base, (uint64_t)stack + 80, optionParserAddr + 12);
 		parseState = ctx.r8.u64;
 		r9Out = optionParser->m_8;
 		optionParser->m_20 = LOAD32((uint32_t)result);
 		if ((uint32_t)r9Out != 0) {
-			result = n_sub_82C856D8(ctx, base, optionParserAddr, ctx.r8.u64);
+			result = COptionParser_GetCurrentName(ctx, base, optionParserAddr, ctx.r8.u64);
 			parseState = ctx.r8.u64;
 			r9Out = ctx.r9.u64;
 			optionParser->m_24 = (uint32_t)result;
@@ -631,4 +632,4 @@ uint64_t n_sub_82C85AA0(CpuState& ctx, uint8_t* base, uint64_t optionParserAddr,
 	ctx.r9.u64 = r9Out;
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C85AA0, 0x82C85AA0) { ctx.r3.u64 = n_sub_82C85AA0(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(93, sub_82C85AA0, 0x82C85AA0) { ctx.r3.u64 = COptionParser_LeaveOption(ctx, base, ctx.r3.u64, ctx.r8.u64); }

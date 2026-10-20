@@ -1,9 +1,9 @@
 // CActionSequence (vtable 0x82005298): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -149,6 +149,7 @@ uint64_t CActionSequence_IsIndexValid(CpuState& ctx, uint8_t* base, uint32_t act
 }
 PROMOTED_ENTRY(13, sub_822D34E8, 0x822D34E8) { ctx.r3.u64 = CActionSequence_IsIndexValid(ctx, base, ctx.r3.u32); }
 
+
 // The first parameter is the shared handle that receives the copy (object at +0, control block at +4,
 // filled by C_820F1270_Clone); it is also the return value. sub_827F1100 is the CActionSequence constructor.
 uint64_t CActionSequence_Clone(CpuState& ctx, uint8_t* base, uint64_t resultHandleAddr, uint64_t sourceSequenceAddr) {
@@ -163,14 +164,14 @@ uint64_t CActionSequence_Clone(CpuState& ctx, uint8_t* base, uint64_t resultHand
 	uint64_t sequenceMemory = operator_new(ctx, base, 128);
 	uint64_t newSequence = 0;
 	if ((uint32_t)sequenceMemory != 0) {
-		newSequence = n_sub_827F1100(ctx, base, sequenceMemory, sourceSequenceAddr);
+		newSequence = CActionSequence_Constructor(ctx, base, sequenceMemory, sourceSequenceAddr);
 	}
 
 	C_820F1270_Clone(ctx, base, resultHandleAddr, newSequence);
 
 	uint32_t heldSequence = LOAD32((uint32_t)resultHandleAddr);
 	if (heldSequence != 0) {
-		n_sub_82180B28(ctx, base, heldSequence);
+		Vector_Clear12(ctx, base, heldSequence);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -279,7 +280,7 @@ uint32_t CActionSequence_SetActionAt(CpuState& ctx, uint8_t* base, uint32_t acti
 }
 PROMOTED_ENTRY(55, sub_827F14E8, 0x827F14E8) { ctx.r3.u64 = CActionSequence_SetActionAt(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_827F1598(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr, uint64_t newActionHandle) {
+uint64_t CActionSequence_SetCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr, uint64_t newActionHandle) {
 	if (!UseLiftedCode(55, 0x827F1598)) { ctx.r3.u64 = actionSequenceAddr; ctx.r4.u64 = newActionHandle; __imp__sub_827F1598(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827F1598);
 	uint32_t stack = ctx.r1.u64;
@@ -315,7 +316,7 @@ uint64_t n_sub_827F1598(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAdd
 			uint32_t actionCheck = ctx.r3.u32 & 0xFF;
 			if (actionCheck == 0) {
 				ctx.r9.u64 = actionCheck;  // state the callee may pass on
-				n_sub_826DF838(ctx, base, actionSequenceAddr);
+				CPhasedAction_Start(ctx, base, actionSequenceAddr);
 				n_sub_82285D10(ctx, base, actionSequenceAddr);
 			}
 		}
@@ -360,7 +361,8 @@ uint64_t n_sub_827F1598(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAdd
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(55, sub_827F1598, 0x827F1598) { ctx.r3.u64 = n_sub_827F1598(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(55, sub_827F1598, 0x827F1598) { ctx.r3.u64 = CActionSequence_SetCurrentAction(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+
 
 // Calls the virtual function at vtable +28 of each object in the action table (8-byte entries; begin at +88,
 // end at +92, as m_ActionsBegin/m_ActionsEnd) and returns in f1 the float constant at 0x820994B4 plus their
@@ -423,6 +425,7 @@ uint64_t n_sub_827F1680(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAdd
 	return lastR3;
 }
 PROMOTED_ENTRY(55, sub_827F1680, 0x827F1680) { ctx.r3.u64 = n_sub_827F1680(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+
 
 // Calls virtual slot 8 (vtable offset 32) on the object in the first word of every 8-byte entry of
 // m_ActionsBegin..m_ActionsEnd and adds the f1 each call leaves to a single-precision sum that starts at
@@ -495,14 +498,14 @@ uint64_t CActionSequence_Restart(CpuState& ctx, uint8_t* base, uint64_t actionSe
 }
 PROMOTED_ENTRY(55, sub_827F1800, 0x827F1800) { ctx.r3.u64 = CActionSequence_Restart(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827F1808(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr) {
+uint64_t CActionSequence_StartCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr) {
 	if (!UseLiftedCode(55, 0x827F1808)) { ctx.r3.u64 = actionSequenceAddr; __imp__sub_827F1808(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827F1808);
 	CActionSequence* actionSequence = GameObject<CActionSequence>(base, actionSequenceAddr);
 	uint32_t currentAction = actionSequence->m_CurrentAction;
-	return n_sub_826DF838(ctx, base, currentAction);
+	return CPhasedAction_Start(ctx, base, currentAction);
 }
-PROMOTED_ENTRY(55, sub_827F1808, 0x827F1808) { ctx.r3.u64 = n_sub_827F1808(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827F1808, 0x827F1808) { ctx.r3.u64 = CActionSequence_StartCurrentAction(ctx, base, ctx.r3.u64); }
 
 uint64_t CActionSequence_ClearCurrentAction(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr) {
 	if (!UseLiftedCode(55, 0x827F1810)) { ctx.r3.u64 = actionSequenceAddr; __imp__sub_827F1810(ctx, base); return ctx.r3.u64; }
@@ -543,7 +546,7 @@ uint64_t CActionSequence_GetCurrentAction(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(55, sub_827F1880, 0x827F1880) { ctx.r3.u64 = CActionSequence_GetCurrentAction(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827F1888(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr) {
+uint64_t CActionSequence_GetLastAction(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAddr) {
 	if (!UseLiftedCode(55, 0x827F1888)) { ctx.r3.u64 = actionSequenceAddr; __imp__sub_827F1888(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827F1888);
 	uint32_t stack = ctx.r1.u64;
@@ -562,4 +565,4 @@ uint64_t n_sub_827F1888(CpuState& ctx, uint8_t* base, uint64_t actionSequenceAdd
 	ctx.r1.u64 = stack;
 	return actionByType;
 }
-PROMOTED_ENTRY(55, sub_827F1888, 0x827F1888) { ctx.r3.u64 = n_sub_827F1888(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(55, sub_827F1888, 0x827F1888) { ctx.r3.u64 = CActionSequence_GetLastAction(ctx, base, ctx.r3.u64); }

@@ -1,9 +1,9 @@
 // CECObjectAttachment (vtable 0x82003C18): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82204D70(CpuState& ctx, uint8_t* base, uint64_t attachment, uint64_t target) {
+uint64_t CECObjectAttachment_AttachTarget(CpuState& ctx, uint8_t* base, uint64_t attachment, uint64_t target) {
 	if (!UseLiftedCode(5, 0x82204D70)) { ctx.r3.u64 = attachment; ctx.r4.u64 = target; __imp__sub_82204D70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82204D70);
 	uint32_t stack = ctx.r1.u64;
@@ -42,15 +42,15 @@ uint64_t n_sub_82204D70(CpuState& ctx, uint8_t* base, uint64_t attachment, uint6
 		result = n_sub_8250FF68(ctx, base, attachment, target);
 	} else if (targetType() == 3) {
 		ctx.r4.u64 = target; // state the callee may pass on
-		result = n_sub_825102F0(ctx, base, attachment);
+		result = CECObjectAttachment_ApplyAppearanceToEntities(ctx, base, attachment);
 	} else if (targetType() == 4) {
 		ctx.r4.u64 = target; // state the callee may pass on
-		result = n_sub_82510618(ctx, base, attachment);
+		result = CECObjectAttachment_SyncEntityAppearances(ctx, base, attachment);
 	} else {
 		int32_t finalType = targetType();
 		result = ctx.r3.u64;
 		if (finalType == 10 && LOAD8((uint32_t)target + 4) != 0) {
-			result = n_sub_8250DD60(ctx, base, attachment);
+			result = CECObjectAttachment_UpdateTransform(ctx, base, attachment);
 		}
 	}
 
@@ -58,9 +58,9 @@ uint64_t n_sub_82204D70(CpuState& ctx, uint8_t* base, uint64_t attachment, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(5, sub_82204D70, 0x82204D70) { ctx.r3.u64 = n_sub_82204D70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(5, sub_82204D70, 0x82204D70) { ctx.r3.u64 = CECObjectAttachment_AttachTarget(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_822374D0(CpuState& ctx, uint8_t* base, uint32_t objectAttachmentAddr, uint64_t outMatrix, uint64_t entity) {
+uint32_t CECObjectAttachment_GetMatrix(CpuState& ctx, uint8_t* base, uint32_t objectAttachmentAddr, uint64_t outMatrix, uint64_t entity) {
 	if (!UseLiftedCode(7, 0x822374D0)) { ctx.r3.u64 = objectAttachmentAddr; ctx.r4.u64 = outMatrix; ctx.r5.u64 = entity; __imp__sub_822374D0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822374D0);
 	uint32_t stack = ctx.r1.u64;
@@ -160,6 +160,9 @@ uint32_t n_sub_822374D0(CpuState& ctx, uint8_t* base, uint32_t objectAttachmentA
 	// state SharedHandle_GetRaw may pass on
 	ctx.r4.u64 = outMatrix;
 	ctx.r5.u64 = entity;
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
 	ctx.xer.ca = flags.ca;
 	uint64_t rawHandle = SharedHandle_GetRaw(ctx, base, handleId);
 	uint32_t result = n_sub_82235CE8(ctx, base, (uint32_t)outMatrix, owner, entity, rawHandle);
@@ -167,7 +170,7 @@ uint32_t n_sub_822374D0(CpuState& ctx, uint8_t* base, uint32_t objectAttachmentA
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(7, sub_822374D0, 0x822374D0) { ctx.r3.u64 = n_sub_822374D0(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(7, sub_822374D0, 0x822374D0) { ctx.r3.u64 = CECObjectAttachment_GetMatrix(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CECObjectAttachment_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820B7094_B_ = int32_t(0x820B7094);
@@ -185,7 +188,7 @@ uint64_t CECObjectAttachment_GetClassName(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(31, sub_8250C6E0, 0x8250C6E0) { ctx.r3.u64 = CECObjectAttachment_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t deletingFlags) {
+uint64_t CECObjectAttachment_Destructor(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t deletingFlags) {
 	if (!UseLiftedCode(31, 0x8250C720)) { ctx.r3.u64 = objectAttachmentAddr; ctx.r4.u64 = deletingFlags; __imp__sub_8250C720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8250C720);
 	uint32_t stack = ctx.r1.u64;
@@ -197,7 +200,7 @@ uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	ctx.r4.u64 = deletingFlags; // state the callee may pass on
 	SharedHandle_Release(ctx, base, objectAttachmentAddr + 36);
 
-	n_sub_82512018(ctx, base, objectAttachmentAddr + 24);
+	IntrusiveList_Init(ctx, base, objectAttachmentAddr + 24);
 
 	HandleTarget_Free(ctx, base, objectAttachment->m_1C);
 	objectAttachment->m_1C = 0;
@@ -214,9 +217,9 @@ uint64_t n_sub_8250C720(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	ctx.r1.u64 = stack;
 	return objectAttachmentAddr;
 }
-PROMOTED_ENTRY(31, sub_8250C720, 0x8250C720) { ctx.r3.u64 = n_sub_8250C720(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(31, sub_8250C720, 0x8250C720) { ctx.r3.u64 = CECObjectAttachment_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8250DD60(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr) {
+uint64_t CECObjectAttachment_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr) {
 	if (!UseLiftedCode(31, 0x8250DD60)) { ctx.r3.u64 = objectAttachmentAddr; __imp__sub_8250DD60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8250DD60);
 	uint32_t stack = ctx.r1.u64;
@@ -259,15 +262,15 @@ uint64_t n_sub_8250DD60(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	ctx.v1 = positionVector;
 	// the next call receives f1 as the conversion leaves it
 	ctx.f1.f64 = Quat_ToMatrix4x4(ctx, base, matrixBuffer, quatLo, quatHi);
-	uint64_t result = n_sub_8250DDF0(ctx, base, objectAttachmentAddr, matrixBuffer);
+	uint64_t result = CECObjectAttachment_SetMatrix(ctx, base, objectAttachmentAddr, matrixBuffer);
 
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_8250DD60, 0x8250DD60) { ctx.r3.u64 = n_sub_8250DD60(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_8250DD60, 0x8250DD60) { ctx.r3.u64 = CECObjectAttachment_UpdateTransform(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8250E9F8(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t key, uint64_t nameString, uint64_t expectedValue) {
+uint64_t CECObjectAttachment_EnsureProperty(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr, uint64_t key, uint64_t nameString, uint64_t expectedValue) {
 	if (!UseLiftedCode(31, 0x8250E9F8)) { ctx.r3.u64 = objectAttachmentAddr; ctx.r4.u64 = key; ctx.r5.u64 = nameString; ctx.r6.u64 = expectedValue; __imp__sub_8250E9F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8250E9F8);
 	uint32_t stack = ctx.r1.u64;
@@ -337,9 +340,9 @@ uint64_t n_sub_8250E9F8(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	ctx.r10.u64 = reg10;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_8250E9F8, 0x8250E9F8) { ctx.r3.u64 = n_sub_8250E9F8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(31, sub_8250E9F8, 0x8250E9F8) { ctx.r3.u64 = CECObjectAttachment_EnsureProperty(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint32_t n_sub_8250F5F0(CpuState& ctx, uint8_t* base, uint32_t attachment, uint32_t outMatrix, uint64_t parentTransform, uint64_t localTransform) {
+uint32_t CECObjectAttachment_GetComposedMatrix(CpuState& ctx, uint8_t* base, uint32_t attachment, uint32_t outMatrix, uint64_t parentTransform, uint64_t localTransform) {
 	if (!UseLiftedCode(31, 0x8250F5F0)) { ctx.r3.u64 = attachment; ctx.r4.u64 = outMatrix; ctx.r5.u64 = parentTransform; ctx.r6.u64 = localTransform; __imp__sub_8250F5F0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8250F5F0);
 	uint32_t stack = ctx.r1.u64;
@@ -351,7 +354,7 @@ uint32_t n_sub_8250F5F0(CpuState& ctx, uint8_t* base, uint32_t attachment, uint3
 
 	ctx.r1.u64 = stack;
 	ctx.r6.u64 = localTransform; // the callee hands r6 on
-	n_sub_822374D0(ctx, base, attachment, matrix, parentTransform);
+	CECObjectAttachment_GetMatrix(ctx, base, attachment, matrix, parentTransform);
 
 	Matrix4x4_Multiply(ctx, base, scratch, parentMatrix, matrix);
 	Matrix4x4_Multiply(ctx, base, matrix, scratch, localTransform);
@@ -369,13 +372,13 @@ uint32_t n_sub_8250F5F0(CpuState& ctx, uint8_t* base, uint32_t attachment, uint3
 	ctx.r9.u64 = lastQword;
 	return matrix;
 }
-PROMOTED_ENTRY(31, sub_8250F5F0, 0x8250F5F0) { ctx.r3.u64 = n_sub_8250F5F0(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(31, sub_8250F5F0, 0x8250F5F0) { ctx.r3.u64 = CECObjectAttachment_GetComposedMatrix(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u64, ctx.r6.u64); }
 
 // Only when the owner (+4) has bit 3 of its word at +36 set: walks the element handles in the list at +12.
 // A handle whose control block (at +4) starts with zero is released; for an entity with bit 0x40 of its byte
-// at +144 and bit 3 of its word at +36 set, n_sub_822B7EA8 receives the entity's key-3 value and the byte
+// at +144 and bit 3 of its word at +36 set, CECGraphicAppearance_SetSaturationMask receives the entity's key-3 value and the byte
 // at +196 of the owner's key-3 value. Returns the last element or call result of the walk, else the argument.
-uint64_t n_sub_825102F0(CpuState& ctx, uint8_t* base, uint64_t attachmentAddr) {
+uint64_t CECObjectAttachment_ApplyAppearanceToEntities(CpuState& ctx, uint8_t* base, uint64_t attachmentAddr) {
 	if (!UseLiftedCode(31, 0x825102F0)) { ctx.r3.u64 = attachmentAddr; __imp__sub_825102F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825102F0);
 	uint32_t stack = ctx.r1.u64;
@@ -536,7 +539,7 @@ uint64_t n_sub_825102F0(CpuState& ctx, uint8_t* base, uint64_t attachmentAddr) {
 					}
 					uint32_t ownerByte = LOAD8(ownerKey3Value + 196);
 					handOver();
-					result = n_sub_822B7EA8(ctx, base, entityKey3Value, ownerByte);
+					result = CECGraphicAppearance_SetSaturationMask(ctx, base, entityKey3Value, ownerByte);
 					readBack();
 					reg10 = ctx.r10.u32;
 				}
@@ -554,13 +557,13 @@ uint64_t n_sub_825102F0(CpuState& ctx, uint8_t* base, uint64_t attachmentAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_825102F0, 0x825102F0) { ctx.r3.u64 = n_sub_825102F0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_825102F0, 0x825102F0) { ctx.r3.u64 = CECObjectAttachment_ApplyAppearanceToEntities(ctx, base, ctx.r3.u64); }
 
 // Only when the owner (+4) has bit 3 of its word at +36 set: walks the entity handles in the list at +12.
 // A handle whose slot (pointed to by its +4) holds zero is released; for an entity with bit 0x40 of its byte
-// at +144 and bit 3 of its word at +36 set, n_sub_82548598 receives the entity's key-3 value and the owner's
+// at +144 and bit 3 of its word at +36 set, CECGraphicAppearance_SetTintBlock receives the entity's key-3 value and the owner's
 // key-3 value plus 96. Returns the last handle or call result of the walk, else the argument.
-uint64_t n_sub_82510618(CpuState& ctx, uint8_t* base, uint64_t attachment) {
+uint64_t CECObjectAttachment_SyncEntityAppearances(CpuState& ctx, uint8_t* base, uint64_t attachment) {
 	if (!UseLiftedCode(31, 0x82510618)) { ctx.r3.u64 = attachment; __imp__sub_82510618(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82510618);
 	uint32_t stack = ctx.r1.u64;
@@ -693,7 +696,7 @@ uint64_t n_sub_82510618(CpuState& ctx, uint8_t* base, uint64_t attachment) {
 						entityKey3Value = LOAD32((uint32_t)reg6 + 4);
 					}
 					handOver();
-					result = n_sub_82548598(ctx, base, entityKey3Value, (uint64_t)ownerKey3Value + 96);
+					result = CECGraphicAppearance_SetTintBlock(ctx, base, entityKey3Value, (uint64_t)ownerKey3Value + 96);
 					readBack();
 				}
 			}
@@ -711,9 +714,9 @@ uint64_t n_sub_82510618(CpuState& ctx, uint8_t* base, uint64_t attachment) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_82510618, 0x82510618) { ctx.r3.u64 = n_sub_82510618(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_82510618, 0x82510618) { ctx.r3.u64 = CECObjectAttachment_SyncEntityAppearances(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_825112C0(CpuState& ctx, uint8_t* base, uint64_t attachment) {
+uint64_t CECObjectAttachment_Update(CpuState& ctx, uint8_t* base, uint64_t attachment) {
 	if (!UseLiftedCode(31, 0x825112C0)) { ctx.r3.u64 = attachment; __imp__sub_825112C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x825112C0);
 	CECObjectAttachment* objectAttachment = GameObject<CECObjectAttachment>(base, attachment);
@@ -721,11 +724,11 @@ uint64_t n_sub_825112C0(CpuState& ctx, uint8_t* base, uint64_t attachment) {
 		uint32_t owner = objectAttachment->m_4;
 		return Vector_RemoveByValue(ctx, base, owner, attachment);
 	}
-	return n_sub_8250DD60(ctx, base, attachment);
+	return CECObjectAttachment_UpdateTransform(ctx, base, attachment);
 }
-PROMOTED_ENTRY(31, sub_825112C0, 0x825112C0) { ctx.r3.u64 = n_sub_825112C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_825112C0, 0x825112C0) { ctx.r3.u64 = CECObjectAttachment_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr) {
+uint64_t CECObjectAttachment_AttachParticleEmittersToEntities(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
@@ -780,6 +783,7 @@ uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	STORE32(stack + 84, 0);
 	STORE32(stack + 80, (uint32_t)entityHandleVtable);
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = entityHandleVtable;
 	EntityHandle_SetTarget(ctx, base, (uint64_t)stack + 80, targetEntity);
 
 	ctx.r8.s64 = g_834A0000;
@@ -794,4 +798,4 @@ uint64_t n_sub_825112E0(CpuState& ctx, uint8_t* base, uint64_t objectAttachmentA
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_825112E0, 0x825112E0) { ctx.r3.u64 = n_sub_825112E0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(31, sub_825112E0, 0x825112E0) { ctx.r3.u64 = CECObjectAttachment_AttachParticleEmittersToEntities(ctx, base, ctx.r3.u64); }

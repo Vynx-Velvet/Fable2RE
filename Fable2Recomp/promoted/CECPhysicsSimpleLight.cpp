@@ -1,9 +1,9 @@
 // CECPhysicsSimpleLight (vtable 0x82006FA8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821CB1B0(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
+uint64_t CECPhysicsSimpleLight_SetColour(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	if (!UseLiftedCode(3, 0x821CB1B0)) { ctx.r3.u64 = physicsSimpleLightAddr; __imp__sub_821CB1B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821CB1B0);
@@ -34,15 +34,17 @@ uint64_t n_sub_821CB1B0(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 	uint32_t linkedObject = physicsSimpleLight->m_4;
 
 	ctx.r1.u64 = stack;
+	ctx.r7.u64 = lightDesc;
+	ctx.r8.u64 = zero;
 
-	uint64_t result = n_sub_82202E90(ctx, base, linkedObject, stackArgAddr);
+	uint64_t result = Entity_NotifyEvent(ctx, base, linkedObject, stackArgAddr);
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821CB1B0, 0x821CB1B0) { ctx.r3.u64 = n_sub_821CB1B0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(3, sub_821CB1B0, 0x821CB1B0) { ctx.r3.u64 = CECPhysicsSimpleLight_SetColour(ctx, base, ctx.r3.u32); }
 
 uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight, uint64_t sourceTransform) {
 	if (!UseLiftedCode(3, 0x821DB4B0)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = sourceTransform; __imp__sub_821DB4B0(ctx, base); return ctx.r3.u64; }
@@ -92,7 +94,7 @@ uint64_t CECPhysicsSimpleLight_UpdateTransform(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(3, sub_821DB4B0, 0x821DB4B0) { ctx.r3.u64 = CECPhysicsSimpleLight_UpdateTransform(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_821FEEC0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
+uint64_t CECPhysicsSimpleLight_Disable(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
 	constexpr int32_t g_82000F94 = int32_t(0x82000F94);
 	if (!UseLiftedCode(5, 0x821FEEC0)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_821FEEC0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FEEC0);
@@ -103,14 +105,14 @@ uint64_t n_sub_821FEEC0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLigh
 	STORE8(stack + 84, 0);
 	uint32_t descriptor = stack + 80;
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82202E90(ctx, base, linkedObject, descriptor);
+	uint64_t result = Entity_NotifyEvent(ctx, base, linkedObject, descriptor);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(5, sub_821FEEC0, 0x821FEEC0) { ctx.r3.u64 = n_sub_821FEEC0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(5, sub_821FEEC0, 0x821FEEC0) { ctx.r3.u64 = CECPhysicsSimpleLight_Disable(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
+uint64_t CECPhysicsSimpleLight_Enable(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
 	constexpr int32_t g_82000F94 = int32_t(0x82000F94);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(11, 0x8229B070)) { ctx.r3.u64 = physicsSimpleLightAddr; __imp__sub_8229B070(ctx, base); return ctx.r3.u64; }
@@ -125,7 +127,7 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 
 	uint32_t entityBefore = physicsSimpleLight->m_4;
 	ctx.r1.u64 = stack;
-	n_sub_82202E90(ctx, base, entityBefore, stack + 80);
+	Entity_NotifyEvent(ctx, base, entityBefore, stack + 80);
 
 	uint64_t r9AfterFirstCall = ctx.r9.u64;
 	uint32_t carry = ctx.xer.ca;
@@ -197,6 +199,11 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 			}
 		}
 
+		ctx.r5.u64 = (uint64_t)flagBit;
+		ctx.r6.u64 = (uint64_t)r6;
+		ctx.r7.u64 = r7;
+		ctx.r8.u64 = r8;
+		ctx.r9.u64 = r9;
 		ctx.xer.ca = carry;
 		result = C_82001100_UpdateTransform(ctx, base, result);
 		carry = ctx.xer.ca;
@@ -207,15 +214,15 @@ uint64_t n_sub_8229B070(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLigh
 	ctx.xer.ca = carry;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_8229B070, 0x8229B070) { ctx.r3.u64 = n_sub_8229B070(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(11, sub_8229B070, 0x8229B070) { ctx.r3.u64 = CECPhysicsSimpleLight_Enable(ctx, base, ctx.r3.u32); }
 
-double n_sub_824D2880(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight) {
+double CECPhysicsSimpleLight_GetRadius(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight) {
 	if (!UseLiftedCode(29, 0x824D2880)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_824D2880(ctx, base); return ctx.f1.f64; }
 	LiftedFrame frame(0x824D2880);
 	ctx.fpscr.disableFlushMode();
 	return double(LOAD_F32(physicsSimpleLight + 12));
 }
-PROMOTED_ENTRY(29, sub_824D2880, 0x824D2880) { ctx.f1.f64 = n_sub_824D2880(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(29, sub_824D2880, 0x824D2880) { ctx.f1.f64 = CECPhysicsSimpleLight_GetRadius(ctx, base, ctx.r3.u32); }
 
 uint64_t CECPhysicsSimpleLight_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C88D8_B_ = int32_t(0x820C88D8);
@@ -233,7 +240,7 @@ uint64_t CECPhysicsSimpleLight_GetClassName(CpuState& ctx, uint8_t* base, uint64
 }
 PROMOTED_ENTRY(41, sub_82644EF0, 0x82644EF0) { ctx.r3.u64 = CECPhysicsSimpleLight_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82647688(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight, uint64_t deleteFlags) {
+uint64_t CECPhysicsSimpleLight_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight, uint64_t deleteFlags) {
 	if (!UseLiftedCode(41, 0x82647688)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = deleteFlags; __imp__sub_82647688(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82647688);
 	uint32_t stack = ctx.r1.u64;
@@ -242,7 +249,7 @@ uint64_t n_sub_82647688(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLigh
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_824C2360(ctx, base, physicsSimpleLight);
+	C_820A8D10_Destructor_824C2360(ctx, base, physicsSimpleLight);
 
 	if ((flags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
@@ -252,9 +259,9 @@ uint64_t n_sub_82647688(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLigh
 	ctx.r1.u64 = stack;
 	return object;
 }
-PROMOTED_ENTRY(41, sub_82647688, 0x82647688) { ctx.r3.u64 = n_sub_82647688(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(41, sub_82647688, 0x82647688) { ctx.r3.u64 = CECPhysicsSimpleLight_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-void n_sub_82749370(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
+void CECPhysicsSimpleLight_Constructor(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAddr) {
 	if (!UseLiftedCode(50, 0x82749370)) { ctx.r3.u64 = physicsSimpleLightAddr; __imp__sub_82749370(ctx, base); return; }
 	LiftedFrame frame(0x82749370);
 	CECPhysicsSimpleLight* physicsSimpleLight = GameObject<CECPhysicsSimpleLight>(base, physicsSimpleLightAddr);
@@ -265,18 +272,18 @@ void n_sub_82749370(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLightAdd
 	physicsSimpleLight->m_8 = secondQword;
 	return;
 }
-PROMOTED_ENTRY(50, sub_82749370, 0x82749370) { n_sub_82749370(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(50, sub_82749370, 0x82749370) { CECPhysicsSimpleLight_Constructor(ctx, base, ctx.r3.u32); }
 
-void n_sub_82749390(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight, uint32_t radiusSource) {
+void CECPhysicsSimpleLight_SetRadius(CpuState& ctx, uint8_t* base, uint32_t physicsSimpleLight, uint32_t radiusSource) {
 	if (!UseLiftedCode(50, 0x82749390)) { ctx.r3.u64 = physicsSimpleLight; ctx.r4.u64 = radiusSource; __imp__sub_82749390(ctx, base); return; }
 	LiftedFrame frame(0x82749390);
 	ctx.fpscr.disableFlushMode();
 	STORE_F32(physicsSimpleLight + 12, float(double(LOAD_F32(radiusSource))));
 	return;
 }
-PROMOTED_ENTRY(50, sub_82749390, 0x82749390) { n_sub_82749390(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(50, sub_82749390, 0x82749390) { CECPhysicsSimpleLight_SetRadius(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
+uint64_t CECPhysicsSimpleLight_Translate(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLight) {
 	if (!UseLiftedCode(50, 0x827493A0)) { ctx.r3.u64 = physicsSimpleLight; __imp__sub_827493A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827493A0);
 	uint32_t stack = ctx.r1.u64;
@@ -323,4 +330,4 @@ uint64_t n_sub_827493A0(CpuState& ctx, uint8_t* base, uint64_t physicsSimpleLigh
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(50, sub_827493A0, 0x827493A0) { ctx.r3.u64 = n_sub_827493A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(50, sub_827493A0, 0x827493A0) { ctx.r3.u64 = CECPhysicsSimpleLight_Translate(ctx, base, ctx.r3.u64); }

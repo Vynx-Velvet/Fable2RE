@@ -1,9 +1,9 @@
 // CCompositeComponent (vtable 0x820069E8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -101,6 +101,7 @@ uint64_t CCompositeComponent_Update(CpuState& ctx, uint8_t* base, uint64_t compo
 	return result;
 }
 PROMOTED_ENTRY(1, sub_82192160, 0x82192160) { ctx.r3.u64 = CCompositeComponent_Update(ctx, base, ctx.r3.u64); }
+
 
 // Copies the 16 bytes at source+80 to the start of the component. The second half is read before the
 // first half is written, as in the original, so overlapping ranges give the same result.
@@ -213,7 +214,7 @@ uint64_t CCompositeComponent_DestroyChildren(CpuState& ctx, uint8_t* base, uint6
 }
 PROMOTED_ENTRY(7, sub_8223E5C0, 0x8223E5C0) { ctx.r3.u64 = CCompositeComponent_DestroyChildren(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82670098(CpuState& ctx, uint8_t* base, uint64_t compositeComponent) {
+uint64_t CCompositeComponentHost_ReleaseComponentHandles(CpuState& ctx, uint8_t* base, uint64_t compositeComponent) {
 	if (!UseLiftedCode(43, 0x82670098)) { ctx.r3.u64 = compositeComponent; __imp__sub_82670098(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82670098);
 	uint32_t stack = ctx.r1.u64;
@@ -296,9 +297,9 @@ uint64_t n_sub_82670098(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82670098, 0x82670098) { ctx.r3.u64 = n_sub_82670098(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82670098, 0x82670098) { ctx.r3.u64 = CCompositeComponentHost_ReleaseComponentHandles(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82670180(CpuState& ctx, uint8_t* base, uint32_t compositeComponentAddr, uint64_t childArg) {
+uint64_t CCompositeComponent_ForEachChild_82670180(CpuState& ctx, uint8_t* base, uint32_t compositeComponentAddr, uint64_t childArg) {
 	if (!UseLiftedCode(43, 0x82670180)) { ctx.r3.u64 = compositeComponentAddr; ctx.r4.u64 = childArg; __imp__sub_82670180(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82670180);
 	uint32_t stack = ctx.r1.u64;
@@ -365,9 +366,9 @@ uint64_t n_sub_82670180(CpuState& ctx, uint8_t* base, uint32_t compositeComponen
 	ctx.r4.u64 = r4ForCaller;
 	return childResult;
 }
-PROMOTED_ENTRY(43, sub_82670180, 0x82670180) { ctx.r3.u64 = n_sub_82670180(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(43, sub_82670180, 0x82670180) { ctx.r3.u64 = CCompositeComponent_ForEachChild_82670180(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_828A7778(CpuState& ctx, uint8_t* base, uint64_t compositeComponent, uint64_t sourceObject, uint64_t map) {
+uint64_t CCompositeComponent_FindByTransform(CpuState& ctx, uint8_t* base, uint64_t compositeComponent, uint64_t sourceObject, uint64_t map) {
 	if (!UseLiftedCode(61, 0x828A7778)) { ctx.r3.u64 = compositeComponent; ctx.r5.u64 = sourceObject; ctx.r9.u64 = map; __imp__sub_828A7778(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A7778);
 	uint32_t stack = ctx.r1.u64;
@@ -375,7 +376,7 @@ uint64_t n_sub_828A7778(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	const uint32_t rotationPtr = (int64_t)compositeComponent + 80;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82878960(ctx, base, (uint32_t)positionPtr, rotationPtr, sourceObject);
+	Transform_GetPositionAndRotation(ctx, base, (uint32_t)positionPtr, rotationPtr, sourceObject);
 	uint64_t result = Map_Find_823942A0(ctx, base, map, positionPtr, rotationPtr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
@@ -383,9 +384,9 @@ uint64_t n_sub_828A7778(CpuState& ctx, uint8_t* base, uint64_t compositeComponen
 	ctx.r4.u64 = positionPtr;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A7778, 0x828A7778) { ctx.r3.u64 = n_sub_828A7778(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r9.u64); }
+PROMOTED_ENTRY(61, sub_828A7778, 0x828A7778) { ctx.r3.u64 = CCompositeComponent_FindByTransform(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r9.u64); }
 
-uint64_t n_sub_828A77B8(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint64_t arg2) {
+uint64_t CCompositeComponent_GetBoundingSphere(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint64_t arg2) {
 	if (!UseLiftedCode(61, 0x828A77B8)) { ctx.r3.u64 = boundingSphere; ctx.r4.u64 = arg2; __imp__sub_828A77B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A77B8);
 	uint32_t stack = ctx.r1.u64;
@@ -416,4 +417,4 @@ uint64_t n_sub_828A77B8(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, u
 	ctx.r1.u64 = stack;
 	return boundingSphere;
 }
-PROMOTED_ENTRY(61, sub_828A77B8, 0x828A77B8) { ctx.r3.u64 = n_sub_828A77B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(61, sub_828A77B8, 0x828A77B8) { ctx.r3.u64 = CCompositeComponent_GetBoundingSphere(ctx, base, ctx.r3.u64, ctx.r4.u64); }

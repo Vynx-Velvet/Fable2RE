@@ -1,9 +1,9 @@
 // CECCombat (vtable 0x82003F58): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,16 +11,14 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82238358(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t event, uint64_t arg3) {
+uint64_t CECCombat_HandleEvent(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t event, uint64_t arg3) {
 	if (!UseLiftedCode(7, 0x82238358)) { ctx.r3.u64 = combatAddr; ctx.r4.u64 = event; ctx.r8.u64 = arg3; __imp__sub_82238358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82238358);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	// event's virtual slot 1 returns a code; only code 8 continues below.
 	uint32_t arg2Vtable = LOAD32((uint32_t)event);
 	uint32_t codeFn = LOAD32(arg2Vtable + 4);
-	ctx.r1.u64 = stack;
 	ctx.r3.u64 = event;
 	ctx.r4.u64 = event;
 	ctx.r8.u64 = arg3;
@@ -38,17 +36,16 @@ uint64_t n_sub_82238358(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 
 		// virtual slot 4 of the combat object gives the component type to remove from its owner
 		ctx.r3.u64 = combatAddr;
+		ctx.r9.u64 = componentTypeFn;
+		ctx.r10.u64 = combatVtable;
 		REX_CALL_INDIRECT_FUNC(componentTypeFn);
 		uint64_t componentType = ctx.r3.u64;
 
 		result = Entity_RemoveComponentByType(ctx, base, ownerEntity, componentType, ctx.r8.u64);
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(7, sub_82238358, 0x82238358) { ctx.r3.u64 = n_sub_82238358(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(7, sub_82238358, 0x82238358) { ctx.r3.u64 = CECCombat_HandleEvent(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 uint64_t n_sub_827512B0(CpuState& ctx, uint8_t* base) {
 	if (!UseLiftedCode(50, 0x827512B0)) { __imp__sub_827512B0(ctx, base); return ctx.r3.u64; }
@@ -96,7 +93,7 @@ uint64_t CECCombat_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t com
 
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = deleteFlags;  // state the callee may pass on
-	n_sub_82799248(ctx, base, combatAddr + 276);
+	HandleList_Clear_82799248(ctx, base, combatAddr + 276);
 
 	List_ClearFreeNodes(ctx, base, combatAddr + 256);
 
@@ -170,7 +167,7 @@ uint64_t CECCombat_LoadProperties(CpuState& ctx, uint8_t* base, uint64_t combatA
 	// Read the properties from the GameDB into the combat component.
 	if ((uint32_t)propertyDef != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_8239CD28(ctx, base, propertyDef, uint64_t(str_TXT_820D4B7C_B_), combatAddr + 16);
+		GameDB_ReadStringFieldByName(ctx, base, propertyDef, uint64_t(str_TXT_820D4B7C_B_), combatAddr + 16);
 		flags.ca = ctx.xer.ca;
 		GameDB_ReadU32FieldByName(ctx, base, propertyDef, uint64_t(str_TXT_820BE994_B_), combatAddr + 84);
 		ctx.r9.s64 = namesHigh_820D0000;  // state the callee may pass on
@@ -183,7 +180,7 @@ uint64_t CECCombat_LoadProperties(CpuState& ctx, uint8_t* base, uint64_t combatA
 		GameDB_ReadFloatField(ctx, base, propertyDef, uint64_t(str_TXT_820A88C0_B_), combatAddr + 56);
 		GameDB_ReadFloatField(ctx, base, propertyDef, uint64_t(str_TXT_820D4BAC_B_), combatAddr + 64);
 		GameDB_ReadFloatField(ctx, base, propertyDef, uint64_t(str_TXT_820D4BD0_B_), combatAddr + 68);
-		CombatStyle_LoadShootingBalanceData(ctx, base, combatAddr, ctx.r6.u64, ctx.r7.u64);
+		CECCombat_LoadShootingBalanceData(ctx, base, combatAddr, ctx.r6.u64, ctx.r7.u64);
 		stateR4 = ctx.r4.u64;
 		stateR6 = ctx.r6.u64;
 		stateR7 = ctx.r7.u64;
@@ -260,8 +257,9 @@ uint64_t CECCombat_LoadProperties(CpuState& ctx, uint8_t* base, uint64_t combatA
 	}
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = stateR4;  // state the callee may pass on
+	ctx.r6.u64 = stateR6;
 	ctx.xer.ca = flags.ca;
-	uint64_t result = n_sub_82799248(ctx, base, combatAddr + 276);
+	uint64_t result = HandleList_Clear_82799248(ctx, base, combatAddr + 276);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
@@ -313,7 +311,7 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4B7C_B_, -1);
-	n_sub_82A16EC0(ctx, base, nameBuffer, stateStream, combatComponent + 16);
+	IStream_SerializeCCharString(ctx, base, nameBuffer, stateStream, combatComponent + 16);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4B9C_B_, -1);
@@ -321,18 +319,22 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BF4_B_, -1);
+	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeU32(ctx, base, stateStream, combatComponent + 104);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C04_B_, -1);
+	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 184);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BAC_B_, -1);
+	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4BD0_B_, -1);
+	ctx.r4.u64 = nameDataWord();
 	IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
@@ -350,18 +352,22 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C58_B_, -1);
+		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 136);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C74_B_, -1);
+		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 140);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C90_B_, -1);
+		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 48);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 		CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820D4C9C_B_, -1);
+		ctx.r4.u64 = nameDataWord();
 		IStream_SerializeFloat(ctx, base, stateStream, combatComponent + 52);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 	}
@@ -372,7 +378,7 @@ uint64_t CECCombat_SerializeProperties(CpuState& ctx, uint8_t* base, uint64_t co
 }
 PROMOTED_ENTRY(52, sub_827947B0, 0x827947B0) { ctx.r3.u64 = CECCombat_SerializeProperties(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82794AF8(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
+uint64_t CECCombat_UpdateRegroupPoint(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x82794AF8)) { ctx.r3.u64 = combatAddr; __imp__sub_82794AF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82794AF8);
@@ -385,7 +391,7 @@ uint64_t n_sub_82794AF8(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
 	if (LOAD8((uint32_t)combatAddr + 133) != 0) {
 		uint32_t owner = combat->m_owner;
 		ctx.r1.u64 = stack;
-		n_sub_82392C88(ctx, base, owner, combatAddr);
+		CECDoor_UpdateOpenStateForEntity(ctx, base, owner, combatAddr);
 
 		// Resolve the handle held by the first entry of the list reached from the global at
 		// 0x83496920.
@@ -394,6 +400,7 @@ uint64_t n_sub_82794AF8(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
 		uint32_t firstEntry = LOAD32(list + 4);
 		uint32_t handle = LOAD32(firstEntry);
 		ctx.r8.u64 = firstEntry;  // state the callee may pass on
+		ctx.r9.u64 = list;
 		result = EntityHandle_Get(ctx, base, handle);
 
 		// If the entity exists and has bit 0x40 set at +144, its component at +124 writes a
@@ -419,9 +426,9 @@ uint64_t n_sub_82794AF8(CpuState& ctx, uint8_t* base, uint64_t combatAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82794AF8, 0x82794AF8) { ctx.r3.u64 = n_sub_82794AF8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_82794AF8, 0x82794AF8) { ctx.r3.u64 = CECCombat_UpdateRegroupPoint(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82794BA8(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CECCombat_OverrideCombatStyle(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x82794BA8)) { ctx.r3.u64 = combatAddr; ctx.r7.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82794BA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82794BA8);
@@ -510,7 +517,9 @@ uint64_t n_sub_82794BA8(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 		ctx.f1.f64 = halfSize;  // state the callee may pass on
 		ctx.f9 = halfSizeInt;
 		ctx.f10 = xInt;
+		ctx.f11.f64 = x;
 		ctx.f12 = yInt;
+		ctx.f13.f64 = y;
 		n_sub_8279D718(ctx, base, firstEntryWord12, stack + 112, stack + 96);
 		arg2 = ctx.r7.u64;
 		arg3 = ctx.r8.u64;
@@ -544,7 +553,7 @@ uint64_t n_sub_82794BA8(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint6
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_82794BA8, 0x82794BA8) { ctx.r3.u64 = n_sub_82794BA8(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(52, sub_82794BA8, 0x82794BA8) { ctx.r3.u64 = CECCombat_OverrideCombatStyle(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_82794D28  [4 bytes]
 uint64_t CECCombat_RestoreCombatStyleThunk(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
@@ -656,7 +665,7 @@ uint64_t CECCombat_RestoreCombatStyle(CpuState& ctx, uint8_t* base, uint64_t com
 PROMOTED_ENTRY(52, sub_82796878, 0x82796878) { ctx.r3.u64 = CECCombat_RestoreCombatStyle(ctx, base, ctx.r3.u64, ctx.r7.u64); }
 
 // sub_82798DC0  [344 bytes]
-uint64_t CombatStyle_LoadShootingBalanceData(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CECCombat_LoadShootingBalanceData(CpuState& ctx, uint8_t* base, uint64_t combatAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t stringTableBase = int32_t(0x820D0000);
 	constexpr int32_t str_TXT_820D538C_B_ = int32_t(0x820D538C);
 	constexpr int32_t str_TXT_820D53A0_B_ = int32_t(0x820D53A0);
@@ -734,4 +743,4 @@ uint64_t CombatStyle_LoadShootingBalanceData(CpuState& ctx, uint8_t* base, uint6
 	ctx.r1.u64 = stack;
 	return releaseResult;
 }
-PROMOTED_ENTRY(52, sub_82798DC0, 0x82798DC0) { ctx.r3.u64 = CombatStyle_LoadShootingBalanceData(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(52, sub_82798DC0, 0x82798DC0) { ctx.r3.u64 = CECCombat_LoadShootingBalanceData(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64); }

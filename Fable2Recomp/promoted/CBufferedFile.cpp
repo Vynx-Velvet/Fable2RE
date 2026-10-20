@@ -1,9 +1,9 @@
 // CBufferedFile (vtable 0x820A6A48): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -82,7 +82,7 @@ uint64_t CBufferedFile_Open(CpuState& ctx, uint8_t* base, uint64_t bufferedFileA
 		createFlags = 0x08000000;
 	}
 
-	n_sub_82B3AEA0(ctx, base, stack + 80, fileName, ctx.r8.u64);
+	ResolveGameFilePath(ctx, base, stack + 80, fileName, ctx.r8.u64);
 	uint64_t r0 = ctx.r0.u64;  // r0 as the original code leaves it; handed on to the calls below
 	uint32_t stringData = LOAD32(stack + 80);
 	if (stringData == 0 || (int32_t)LOAD32(stringData + 4) <= 0) {
@@ -138,13 +138,13 @@ uint64_t CBufferedFile_Open(CpuState& ctx, uint8_t* base, uint64_t bufferedFileA
 		}
 	}
 
-	n_sub_82CC0750(ctx, base, 0x10000001u);
+	SetLastError(ctx, base, 0x10000001u);
 	// state the callee may pass on
-	uint64_t fileHandle = n_sub_82CBCC00(ctx, base, LOAD32(stringData), accessFlags, shareMode, disposition, createFlags);
-	uint64_t status = n_sub_82CC0758(ctx, base);
+	uint64_t fileHandle = File_Create(ctx, base, LOAD32(stringData), accessFlags, shareMode, disposition, createFlags);
+	uint64_t status = GetLastError(ctx, base);
 
 	if ((int32_t)fileHandle == -1 || ((uint32_t)status & 0x10000000) != 0) {
-		uint64_t errorCode = n_sub_82CC0758(ctx, base);
+		uint64_t errorCode = GetLastError(ctx, base);
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, (uint64_t)str_TXT_820F8C00_B_, -1);
 		RefCountedString_Assign(ctx, base, stack + 88, stack + 80);
 		CCharString_CopyConstruct(ctx, base, stack + 84, stack + 88);
@@ -164,12 +164,12 @@ uint64_t CBufferedFile_Open(CpuState& ctx, uint8_t* base, uint64_t bufferedFileA
 		return result;
 	}
 
-	bufferedFile->m_Length = (uint32_t)n_sub_82CBD6F8(ctx, base, fileHandle, 0);
-	n_sub_82CC0FC0(ctx, base, fileHandle, 0, 0, 0);
+	bufferedFile->m_Length = (uint32_t)File_GetSize(ctx, base, fileHandle, 0);
+	File_Seek(ctx, base, fileHandle, 0, 0, 0);
 	bufferedFile->m_Handle = (uint32_t)fileHandle;
 	bufferedFile->m_Position = 0;
 	STORE8((uint32_t)bufferedFileAddr + 0x14, uint8_t(1));  // the open flag
-	n_sub_82CC0FC0(ctx, base, fileHandle, 0, 0, 1);
+	File_Seek(ctx, base, fileHandle, 0, 0, 1);
 
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	stack = PopStackFrame(stack, 176);
@@ -187,9 +187,9 @@ uint64_t CBufferedFile_Close(CpuState& ctx, uint8_t* base, uint64_t bufferedFile
 	uint64_t result = bufferedFileAddr;
 	if (LOAD8((uint32_t)bufferedFileAddr + 0x14) != 0) {  // the open flag
 		ctx.r1.u64 = stack;
-		n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
+		File_Seek(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
 		File_FlushBuffers(ctx, base, bufferedFile->m_Handle);
-		result = n_sub_82CBBF60(ctx, base, bufferedFile->m_Handle);
+		result = File_CloseHandle(ctx, base, bufferedFile->m_Handle);
 	}
 	STORE8((uint32_t)bufferedFileAddr + 0x14, uint8_t(0));
 	stack = PopStackFrame(stack, 96);
@@ -342,7 +342,7 @@ uint64_t CBufferedFile_GetPosition(CpuState& ctx, uint8_t* base, uint32_t buffer
 	stack = PushStackFrame(base, stack, 96);
 	uint32_t handle = bufferedFile->m_Handle;
 	ctx.r1.u64 = stack;
-	n_sub_82CC0FC0(ctx, base, handle, 0, 0, 1);
+	File_Seek(ctx, base, handle, 0, 0, 1);
 	uint32_t position = bufferedFile->m_Position;
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -364,14 +364,14 @@ uint64_t CBufferedFile_SeekTo(CpuState& ctx, uint8_t* base, uint64_t bufferedFil
 	uint64_t callerR4 = seekPosition;
 	if ((int32_t)bufferedFile->m_Position != (int32_t)newPosition) {
 		ctx.r1.u64 = stack;
-		n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
+		File_Seek(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
 		if ((int32_t)newPosition > (int32_t)bufferedFile->m_Length) {
 			uint64_t message = (uint64_t)stack + 80;
 			CCharString_ConstructFromCStr(ctx, base, message, str_TXT_820F8C98_B_, -1);
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, message);
 		} else {
 			bufferedFile->m_Position = newPosition;
-			result = n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, seekPosition, 0, 0);
+			result = File_Seek(ctx, base, bufferedFile->m_Handle, seekPosition, 0, 0);
 		}
 		callerR4 = ctx.r4.u64;
 	}
@@ -392,7 +392,7 @@ uint64_t CBufferedFile_SeekRelative(CpuState& ctx, uint8_t* base, uint32_t buffe
 	CBufferedFile* bufferedFile = GameObject<CBufferedFile>(base, bufferedFileAddr);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
+	File_Seek(ctx, base, bufferedFile->m_Handle, 0, 0, 1);
 	uint32_t newPosition = bufferedFile->m_Position + byteOffset;
 	if ((int32_t)newPosition < 0) {
 		uint64_t message = (uint64_t)stack + 80;
@@ -408,7 +408,7 @@ uint64_t CBufferedFile_SeekRelative(CpuState& ctx, uint8_t* base, uint32_t buffe
 			bufferedFile->m_Position = newPosition;
 			ctx.r10.u64 = length;  // state the callee may pass on
 			File_FlushBuffers(ctx, base, bufferedFile->m_Handle);
-			result = n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, bufferedFile->m_Position, 0, 0);
+			result = File_Seek(ctx, base, bufferedFile->m_Handle, bufferedFile->m_Position, 0, 0);
 		}
 	}
 	stack = PopStackFrame(stack, 112);
@@ -429,8 +429,8 @@ uint64_t CBufferedFile_GrowLength(CpuState& ctx, uint8_t* base, uint64_t buffere
 	if ((int32_t)newLength > (int32_t)bufferedFile->m_Length) {
 		bufferedFile->m_Length = (uint32_t)newLength;
 		ctx.r1.u64 = stack;
-		n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, newLength, 0, 0);
-		result = n_sub_82CC0FC0(ctx, base, bufferedFile->m_Handle, bufferedFile->m_Position, 0, 0);
+		File_Seek(ctx, base, bufferedFile->m_Handle, newLength, 0, 0);
+		result = File_Seek(ctx, base, bufferedFile->m_Handle, bufferedFile->m_Position, 0, 0);
 		callerR4 = ctx.r4.u64;
 	}
 	stack = PopStackFrame(stack, 96);
@@ -440,9 +440,10 @@ uint64_t CBufferedFile_GrowLength(CpuState& ctx, uint8_t* base, uint64_t buffere
 }
 PROMOTED_ENTRY(83, sub_82B40470, 0x82B40470) { ctx.r3.u64 = CBufferedFile_GrowLength(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
+
 // Creates a CBufferedFile and opens it on the file name held at +24 of sourceAddr (the offset where a
 // CBufferedFile keeps m_FileName).
-uint64_t n_sub_82B40660(CpuState& ctx, uint8_t* base, uint64_t sourceAddr) {
+uint64_t CBufferedFile_CreateAndOpen(CpuState& ctx, uint8_t* base, uint64_t sourceAddr) {
 	constexpr int32_t g_820A6A48 = int32_t(0x820A6A48);
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(83, 0x82B40660)) { ctx.r3.u64 = sourceAddr; __imp__sub_82B40660(ctx, base); return ctx.r3.u64; }
@@ -496,7 +497,8 @@ uint64_t n_sub_82B40660(CpuState& ctx, uint8_t* base, uint64_t sourceAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(83, sub_82B40660, 0x82B40660) { ctx.r3.u64 = n_sub_82B40660(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(83, sub_82B40660, 0x82B40660) { ctx.r3.u64 = CBufferedFile_CreateAndOpen(ctx, base, ctx.r3.u64); }
+
 
 // Converts the FILETIME at fileTimeAddr and stores its year, month, day, hour, minute, second and
 // millisecond as seven 32-bit values at destAddr (the day of the week is not copied).

@@ -1,9 +1,9 @@
 // CECMood (vtable 0x82004460): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
+uint32_t CECMood_ApplyDamagedHealthEffects(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
 	constexpr int32_t str_TXT_820EA7C4_B_ = int32_t(0x820EA7C4);
 	constexpr int32_t str_TXT_82000F58_B_ = int32_t(0x82000F58);
@@ -96,6 +96,8 @@ uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 						STORE32(scratch + 8, 0);
 						STORE32(scratch + 12, 0);
 						// state the callee may pass on
+						ctx.f12.f64 = healthFloor;
+						ctx.f13.f64 = healthFraction;
 						ctx.cr0.lt = compare0.lt;
 						ctx.cr0.gt = compare0.gt;
 						ctx.cr0.eq = compare0.eq;
@@ -116,6 +118,8 @@ uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 						mood->m_28 = float(newM28);
 
 						// state the callee may pass on
+						ctx.f11.f64 = newM28;
+						ctx.f12.f64 = previousM28;
 						result = Vector_FreeAndReset(ctx, base, scratch);
 						// leave r4, cr0 and xer.ca as this call left them
 						callerR4 = ctx.r4.u64;
@@ -141,9 +145,9 @@ uint32_t n_sub_82186418(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_82186418, 0x82186418) { ctx.r3.u64 = n_sub_82186418(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(0, sub_82186418, 0x82186418) { ctx.r3.u64 = CECMood_ApplyDamagedHealthEffects(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
+uint32_t CECMood_ApplyCombatMoodEffects(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 	constexpr int32_t str_TXT_8200182C_B_ = int32_t(0x8200182C);
 	constexpr int32_t str_TXT_82001D5C_B_ = int32_t(0x82001D5C);
 	constexpr int32_t str_TXT_82000F58_B_ = int32_t(0x82000F58);
@@ -242,7 +246,12 @@ uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 							STORE32(stack + 88, 0);
 							STORE32(stack + 92, 0);
 							// state the callee may pass on
+							ctx.f8.f64 = elapsedFraction;
+							ctx.f9.f64 = elapsedSingle;
+							ctx.f10.f64 = elapsed;
 							ctx.f11 = elapsedBits;
+							ctx.f12.f64 = fullWeight;
+							ctx.f13.f64 = lowerLimit;
 							ctx.cr0.lt = compare0.lt;
 							ctx.cr0.gt = compare0.gt;
 							ctx.cr0.eq = compare0.eq;
@@ -263,6 +272,8 @@ uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 							mood->m_28 = float(newM28);
 
 							// state the callee may pass on
+							ctx.f11.f64 = newM28;
+							ctx.f12.f64 = previousM28;
 							result = Vector_FreeAndReset(ctx, base, stack + 80);
 							// leave r4, cr0 and xer.ca as this call left them
 							callerR4 = ctx.r4.u64;
@@ -289,7 +300,7 @@ uint32_t n_sub_8219CA78(CpuState& ctx, uint8_t* base, uint32_t moodAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(1, sub_8219CA78, 0x8219CA78) { ctx.r3.u64 = n_sub_8219CA78(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(1, sub_8219CA78, 0x8219CA78) { ctx.r3.u64 = CECMood_ApplyCombatMoodEffects(ctx, base, ctx.r3.u32); }
 
 uint64_t n_sub_821F0C60(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_t object, uint64_t virtualArg) {
 	if (!UseLiftedCode(4, 0x821F0C60)) { ctx.r3.u64 = moodAddr; ctx.r4.u64 = object; ctx.r8.u64 = virtualArg; __imp__sub_821F0C60(ctx, base); return ctx.r3.u64; }
@@ -311,7 +322,7 @@ uint64_t n_sub_821F0C60(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 	if ((int32_t)result == 8) {
 		ctx.r4.u64 = object;  // state the callee may pass on
-		result = n_sub_8291C680(ctx, base, moodAddr, ctx.r8.u64);
+		result = CECMood_Detach(ctx, base, moodAddr, ctx.r8.u64);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -320,7 +331,7 @@ uint64_t n_sub_821F0C60(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 }
 PROMOTED_ENTRY(4, sub_821F0C60, 0x821F0C60) { ctx.r3.u64 = n_sub_821F0C60(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint64_t n_sub_822B0118(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
+uint64_t CECMood_UpdateMoodState(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 	if (!UseLiftedCode(12, 0x822B0118)) { ctx.r3.u64 = moodAddr; __imp__sub_822B0118(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822B0118);
 	uint32_t stack = ctx.r1.u64;
@@ -387,6 +398,7 @@ uint64_t n_sub_822B0118(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 			uint32_t componentState = LOAD32(component + 156);
 			if (componentState != 5 && componentState != 25) {
 				// state the callee may pass on
+				ctx.r6.u64 = passedR6;
 				ctx.r8.u64 = passedR8;
 				ctx.xer.ca = flags.ca;
 				result = CECMood_UpdateCurrentMood(ctx, base, moodAddr);
@@ -398,7 +410,7 @@ uint64_t n_sub_822B0118(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(12, sub_822B0118, 0x822B0118) { ctx.r3.u64 = n_sub_822B0118(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(12, sub_822B0118, 0x822B0118) { ctx.r3.u64 = CECMood_UpdateMoodState(ctx, base, ctx.r3.u64); }
 
 uint64_t CECMood_UpdateCurrentMood(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
@@ -446,6 +458,9 @@ uint64_t CECMood_UpdateCurrentMood(CpuState& ctx, uint8_t* base, uint64_t moodAd
 	uint32_t moodName = stack + 80;
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.f11.f64 = driveBMagnitude;
+	ctx.f12.f64 = levelThreshold;
+	ctx.f13.f64 = levelMagnitude;
 	CCharString_ConstructFromCStr(ctx, base, moodName, g_82000C98, -1);
 	// r6 and xer.ca as the constructor left them, until the component lookup below changes them
 	uint64_t passedR6 = ctx.r6.u64;
@@ -458,6 +473,7 @@ uint64_t CECMood_UpdateCurrentMood(CpuState& ctx, uint8_t* base, uint64_t moodAd
 		double moodLevel = double(mood->m_C);
 		if (moodLevel > double(LOAD_F32(moodTuning + 384))) {
 			// state the callee may pass on
+			ctx.f13.f64 = moodLevel;
 			CCharString_AssignFromCStr(ctx, base, moodName, str_TXT_820EA864_B_);
 			mood->m_7C = 1;
 		} else {
@@ -555,7 +571,7 @@ uint64_t CECMood_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameSt
 }
 PROMOTED_ENTRY(65, sub_8291ABF8, 0x8291ABF8) { ctx.r3.u64 = CECMood_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_t arg2) {
+uint64_t CECMood_Update_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_t arg2) {
 	constexpr int32_t g_820991F0 = int32_t(0x820991F0);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -613,7 +629,9 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
-	uint64_t result = n_sub_821B1DC0(ctx, base, list, arg2);
+	ctx.r9.u64 = listBegin;
+	ctx.r10.u64 = listEnd;
+	uint64_t result = HandleVector_Clear(ctx, base, list, arg2);
 
 	if (LOAD8(0x83496BB5u) == 0) {
 		stack = PopStackFrame(stack, 288);
@@ -653,6 +671,8 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		callTarget.u64 = ownerGetVec;
 		ctx.r3.u64 = ownerVecAddr;
 		ctx.r4.u64 = ownerObject;
+		ctx.r9.u64 = ownerGetVec;
+		ctx.r10.u64 = ownerVtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		uint32_t constants = uint32_t(g_820A0000);
@@ -677,6 +697,8 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		ctx.r4.u64 = ownerVecAddr;  // state the callee may pass on
 		uint64_t camera = Player_GetCameraAssociatedWithPlayer(ctx, base, player);
 		// state the callee may pass on
+		ctx.f12.f64 = raisedElement2;
+		ctx.f13.f64 = ownerElement2;
 		ctx.v7 = laneMask;
 		ctx.v12 = raisedOwnerVec;
 		ctx.v13 = raisedLane;
@@ -689,6 +711,7 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		callTarget.u64 = entityGetVec;
 		ctx.r3.u64 = entityVecAddr;
 		ctx.r4.u64 = entityObject;
+		ctx.r10.u64 = entityGetVec;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// Difference from the camera transform's first vector to the entity's vector, element 2
@@ -737,11 +760,12 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 		// Two items (kinds 1 and 2, with m_24 and m_28) are created and pushed onto the mood's list.
 		// state the callee may pass on
+		ctx.f2.f64 = itemParamF2;
 		ctx.v3 = negXLane;
 		ctx.v4 = dirShifted;
 		ctx.v5 = fillShifted;
 		ctx.v6 = fillLanes;
-		uint32_t firstItem = n_sub_8291B128(ctx, base, ownerVecAddr, directionAddr, 1, itemParam, moodDrive);
+		uint32_t firstItem = MoodItem_Create(ctx, base, ownerVecAddr, directionAddr, 1, itemParam, moodDrive);
 		STORE32(stack + 84, firstItem);
 		Vector_PushBackU32(ctx, base, listAddr, stack + 84);
 
@@ -750,7 +774,7 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 		itemParam = double(LOAD_F32(tuning - 392));
 		moodDrive = double(mood->m_28);
 		ctx.f2.f64 = itemParamF2;  // state the callee may pass on
-		uint32_t secondItem = n_sub_8291B128(ctx, base, ownerVecAddr, directionAddr, 2, itemParam, moodDrive);
+		uint32_t secondItem = MoodItem_Create(ctx, base, ownerVecAddr, directionAddr, 2, itemParam, moodDrive);
 		STORE32(stack + 84, secondItem);
 		result = Vector_PushBackU32(ctx, base, listAddr, stack + 84);
 	}
@@ -759,9 +783,9 @@ uint64_t n_sub_8291B2D0(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(65, sub_8291B2D0, 0x8291B2D0) { ctx.r3.u64 = n_sub_8291B2D0(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(65, sub_8291B2D0, 0x8291B2D0) { ctx.r3.u64 = CECMood_Update_8291B2D0(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_8291C540(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
+uint64_t CECMood_Clear(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(65, 0x8291C540)) { ctx.r3.u64 = moodAddr; __imp__sub_8291C540(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8291C540);
@@ -837,12 +861,12 @@ uint64_t n_sub_8291C540(CpuState& ctx, uint8_t* base, uint64_t moodAddr) {
 	ctx.r1.u64 = stack;
 	return begin;
 }
-PROMOTED_ENTRY(65, sub_8291C540, 0x8291C540) { ctx.r3.u64 = n_sub_8291C540(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(65, sub_8291C540, 0x8291C540) { ctx.r3.u64 = CECMood_Clear(ctx, base, ctx.r3.u64); }
 
 // sub_8291C680  [236 bytes]
 // forwardedArg arrives in r8 and is only handed on: to List_InsertNodeCopyWord through r8 and as the
 // second argument of sub_821B1DC0.
-uint64_t n_sub_8291C680(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_t forwardedArg) {
+uint64_t CECMood_Detach(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_t forwardedArg) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(65, 0x8291C680)) { ctx.r3.u64 = moodAddr; ctx.r8.u64 = forwardedArg; __imp__sub_8291C680(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8291C680);
@@ -904,7 +928,9 @@ uint64_t n_sub_8291C680(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_821B1DC0(ctx, base, handles, forwardedArg);
+	ctx.r9.u64 = begin;
+	ctx.r10.u64 = checkedEnd;
+	HandleVector_Clear(ctx, base, handles, forwardedArg);
 
 	// Virtual slot 0x10 yields the component type that is removed from the entity at m_4.
 	uint32_t getComponentType = LOAD32(uint32_t(mood->vtable) + 16);
@@ -920,4 +946,4 @@ uint64_t n_sub_8291C680(CpuState& ctx, uint8_t* base, uint64_t moodAddr, uint64_
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(65, sub_8291C680, 0x8291C680) { ctx.r3.u64 = n_sub_8291C680(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(65, sub_8291C680, 0x8291C680) { ctx.r3.u64 = CECMood_Detach(ctx, base, ctx.r3.u64, ctx.r8.u64); }

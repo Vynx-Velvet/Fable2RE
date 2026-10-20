@@ -1,9 +1,9 @@
 // CECInChaos (vtable 0x820DFDE8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -24,7 +24,7 @@ PROMOTED_ENTRY(60, sub_82894D18, 0x82894D18) { ctx.r3.u64 = CECInChaos_GetClassN
 
 // Tears the object down: releases the three EntityHandle members, sets the vtable to 0x820A8D10 (C_820A8D10)
 // and frees the object when bit 0 of flags is set.
-uint64_t n_sub_82894E68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t flags) {
+uint64_t CECInChaos_Destructor(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t flags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(60, 0x82894E68)) { ctx.r3.u64 = inChaosAddr; ctx.r4.u64 = flags; __imp__sub_82894E68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82894E68);
@@ -56,11 +56,11 @@ uint64_t n_sub_82894E68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	ctx.r1.u64 = stack;
 	return inChaosAddr;
 }
-PROMOTED_ENTRY(60, sub_82894E68, 0x82894E68) { ctx.r3.u64 = n_sub_82894E68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(60, sub_82894E68, 0x82894E68) { ctx.r3.u64 = CECInChaos_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Serializes the floats at +72 and +76, the value at +68 and the entity UID at +92 by property name through
 // the stream, then sets m_41 to 1 if the low byte of serializeFlags is zero and to 0 otherwise.
-uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t stream, uint64_t serializeFlags) {
+uint64_t CECInChaos_Serialize(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t stream, uint64_t serializeFlags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820D0A08_B_ = int32_t(0x820D0A08);
 	constexpr int32_t str_TXT_820DFD40_B_ = int32_t(0x820DFD40);
@@ -100,7 +100,7 @@ uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchString);
 
 	CCharString_ConstructFromCStr(ctx, base, scratchString, str_TXT_820D0A08_B_, -1);
-	n_sub_8244DAE0(ctx, base, inChaosAddr + 92, scratchString, stream);
+	UID_Serialize(ctx, base, inChaosAddr + 92, scratchString, stream);
 	const uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchString);
 
 	inChaos->m_41 = uint8_t((serializeFlags & 0xFF) == 0);
@@ -109,12 +109,12 @@ uint64_t n_sub_82894FD8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82894FD8, 0x82894FD8) { ctx.r3.u64 = n_sub_82894FD8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(60, sub_82894FD8, 0x82894FD8) { ctx.r3.u64 = CECInChaos_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
 // When m_41 is set: points the EntityHandle at +100 at the entity looked up by the UID at +92 (if the UID is
 // nonzero), clears m_41 and m_40 and runs sub_82895338; then, when m_44 is set and m_46 clear, copies m_50 to
 // m_1C, sets m_46 and runs sub_82895690.
-uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t r8Value) {
+uint64_t CECInChaos_Update(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t r8Value) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x828950E0)) { ctx.r3.u64 = inChaosAddr; ctx.r8.u64 = r8Value; __imp__sub_828950E0(ctx, base); return ctx.r3.u64; }
@@ -138,7 +138,7 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 			const uint32_t firstWord = LOAD32(containerData);
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
-			const uint64_t entity = n_sub_82264448(ctx, base, firstWord, uidAddr);
+			const uint64_t entity = EntityManager_LookupEntity(ctx, base, firstWord, uidAddr);
 
 			// A temporary EntityHandle at stack+80 (vtable 0x820F1664, second word 0) is aimed at the entity,
 			// assigned to the handle at +100, then released.
@@ -147,6 +147,7 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
 			// state the callee may pass on
+			ctx.r6.u64 = handleVtable;
 			EntityHandle_SetTarget(ctx, base, tempHandle, entity);
 			EntityHandle_Assign(ctx, base, inChaosAddr + 100, tempHandle);
 			STORE32(stack + 80, (uint32_t)handleVtable);
@@ -161,13 +162,14 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		result = n_sub_82895338(ctx, base, inChaosAddr, r8Value);
+		ctx.r4.u64 = r4ForUpdate;
+		result = CECInChaos_StartEffects(ctx, base, inChaosAddr, r8Value);
 
 		if (inChaos->m_44 != 0 && inChaos->m_46 == 0) {
 			ctx.fpscr.disableFlushMode();
 			inChaos->m_1C = float(double(inChaos->m_50));
 			inChaos->m_46 = 1;
-			result = n_sub_82895690(ctx, base, inChaosAddr, 1);
+			result = CECInChaos_SetState(ctx, base, inChaosAddr, 1);
 		}
 	}
 
@@ -175,21 +177,21 @@ uint64_t n_sub_828950E0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_828950E0, 0x828950E0) { ctx.r3.u64 = n_sub_828950E0(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(60, sub_828950E0, 0x828950E0) { ctx.r3.u64 = CECInChaos_Update(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_828951F0(CpuState& ctx, uint8_t* base, uint64_t chaos) {
+uint64_t CECInChaos_End(CpuState& ctx, uint8_t* base, uint64_t chaos) {
 	if (!UseLiftedCode(60, 0x828951F0)) { ctx.r3.u64 = chaos; __imp__sub_828951F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828951F0);
 	GameStackFrame stackFrame(ctx, base, 96);
 
-	n_sub_828955A0(ctx, base, chaos);
-	return n_sub_828953C8(ctx, base, chaos);
+	CECInChaos_ApplyPendingEffect(ctx, base, chaos);
+	return CECInChaos_ReleaseEntity(ctx, base, chaos);
 }
-PROMOTED_ENTRY(60, sub_828951F0, 0x828951F0) { ctx.r3.u64 = n_sub_828951F0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828951F0, 0x828951F0) { ctx.r3.u64 = CECInChaos_End(ctx, base, ctx.r3.u64); }
 
 // Clears the byte at +66 and runs sub_82896518 and sub_82895D30; when the owner (m_4) has bit 0x40 of its byte
 // at +144 set, also runs sub_827178B8, sub_8271BAA8 and sub_824B7D48(3, owner, 5, 0) on it.
-uint64_t n_sub_82895338(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t r8Value) {
+uint64_t CECInChaos_StartEffects(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t r8Value) {
 	if (!UseLiftedCode(60, 0x82895338)) { ctx.r3.u64 = inChaosAddr; ctx.r8.u64 = r8Value; __imp__sub_82895338(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82895338);
 	uint32_t stack = ctx.r1.u64;
@@ -201,8 +203,8 @@ uint64_t n_sub_82895338(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	// state the callees may pass on; sub_8271BAA8 below takes r8 as the calls before it leave it
 	ctx.r1.u64 = stack;
 	ctx.r8.u64 = r8Value;
-	n_sub_82896518(ctx, base, inChaosAddr);
-	uint64_t result = n_sub_82895D30(ctx, base, inChaosAddr);
+	CECInChaos_ApplyMasks(ctx, base, inChaosAddr);
+	uint64_t result = CECInChaos_UpdateVictimHaze(ctx, base, inChaosAddr);
 
 	const uint32_t owner = inChaos->m_4;
 	if (owner != 0 && (LOAD8(owner + 144) & 64) != 0) {
@@ -215,12 +217,12 @@ uint64_t n_sub_82895338(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82895338, 0x82895338) { ctx.r3.u64 = n_sub_82895338(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(60, sub_82895338, 0x82895338) { ctx.r3.u64 = CECInChaos_StartEffects(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
 // Runs sub_82895F68, then empties the EntityHandle at +116 (destroying the entity it refers to). When the owner
 // (m_4) has the flag bits tested below and m_43 is set, finds the owner's entry with key 49 and calls the virtual
 // function at slot +72 of the object stored there.
-uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
+uint64_t CECInChaos_ReleaseEntity(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(60, 0x828953C8)) { ctx.r3.u64 = inChaosAddr; __imp__sub_828953C8(ctx, base); return ctx.r3.u64; }
@@ -234,7 +236,7 @@ uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	ctx.r1.u64 = stack;
 
 	// r6-r9 and the carry are tracked: the virtual call below receives them and callers read them back.
-	uint64_t result = n_sub_82895F68(ctx, base, inChaosAddr);
+	uint64_t result = CECInChaos_ReleaseHazeParticle(ctx, base, inChaosAddr);
 	uint64_t outR6 = ctx.r6.u64;
 	uint64_t outR7 = ctx.r7.u64;
 	uint64_t outR8 = ctx.r8.u64;
@@ -364,12 +366,12 @@ uint64_t n_sub_828953C8(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	ctx.xer.ca = xer.ca;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_828953C8, 0x828953C8) { ctx.r3.u64 = n_sub_828953C8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828953C8, 0x828953C8) { ctx.r3.u64 = CECInChaos_ReleaseEntity(ctx, base, ctx.r3.u64); }
 
 // When m_46 is set: clears it, sets m_1C from the float at 0x820994B4 + 120 and runs sub_82895690(.., 0). Then, if
 // bytes +52 and +53 of the object at root+12 -> +140 are both set, gets a vector from virtual slot +64 of the owner's
 // object at +124 and another from sub_821F5A90, and passes both (v1, v2) to sub_824BA2C0 for the owner.
-uint32_t n_sub_828955A0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
+uint32_t CECInChaos_ApplyPendingEffect(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(60, 0x828955A0)) { ctx.r3.u64 = inChaosAddr; __imp__sub_828955A0(ctx, base); return ctx.r3.u32; }
@@ -387,7 +389,7 @@ uint32_t n_sub_828955A0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 		ctx.fpscr.disableFlushMode();
 		inChaos->m_1C = float(double(LOAD_F32(g_820994B4 + 120)));
 		ctx.r1.u64 = stack;
-		result = n_sub_82895690(ctx, base, inChaosAddr, 0);
+		result = CECInChaos_SetState(ctx, base, inChaosAddr, 0);
 
 		const uint32_t globalRoot = LOAD32((uint32_t)g_83490000 + 26912);
 		const uint32_t gateObject = LOAD32(LOAD32(globalRoot + 12) + 140);
@@ -405,7 +407,7 @@ uint32_t n_sub_828955A0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 			const uint32_t owner = inChaos->m_4;
-			const uint32_t secondVectorAddr = n_sub_821F5A90(ctx, base, (uint64_t)stack + 160, ownerPart);
+			const uint32_t secondVectorAddr = GetFacingDirection(ctx, base, (uint64_t)stack + 160, ownerPart);
 			PPCVRegister secondVector{};
 			SET_V8(secondVector, VLOAD(secondVectorAddr & ~0xFu));
 			ctx.fpscr.disableFlushMode();
@@ -428,11 +430,11 @@ uint32_t n_sub_828955A0(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	ctx.r9.u64 = r9Value;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_828955A0, 0x828955A0) { ctx.r3.u64 = n_sub_828955A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_828955A0, 0x828955A0) { ctx.r3.u64 = CECInChaos_ApplyPendingEffect(ctx, base, ctx.r3.u64); }
 
 // When the new state differs from the byte at +0x40 and bit 5 of the data flags (+0x34) is set: stores it at +12
 // of the entry for key 133, runs sub_82895800 and then records it at +0x40.
-uint64_t n_sub_82895690(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t newStateArg) {
+uint64_t CECInChaos_SetState(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t newStateArg) {
 	if (!UseLiftedCode(60, 0x82895690)) { ctx.r3.u64 = inChaosAddr; ctx.r4.u64 = newStateArg; __imp__sub_82895690(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82895690);
 	uint32_t stack = ctx.r1.u64;
@@ -507,7 +509,7 @@ uint64_t n_sub_82895690(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 			ctx.cr0.eq = compare0.eq;
 			ctx.cr0.so = compare0.so;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_82895800(ctx, base, inChaosAddr);
+			result = CECInChaos_OnStateChanged(ctx, base, inChaosAddr);
 			inChaos->m_40 = newState;
 		}
 	}
@@ -516,11 +518,11 @@ uint64_t n_sub_82895690(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82895690, 0x82895690) { ctx.r3.u64 = n_sub_82895690(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(60, sub_82895690, 0x82895690) { ctx.r3.u64 = CECInChaos_SetState(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // When bit 13 of the flags at +0x2C of the object at +4 is set: finds its entry for key 77 (slot cached at +0x4D
 // of the object at +0x8C, else a binary search) and calls virtuals +0x48 and +0x8C on it.
-uint64_t n_sub_82895800(CpuState& ctx, uint8_t* base, uint64_t self) {
+uint64_t CECInChaos_OnStateChanged(CpuState& ctx, uint8_t* base, uint64_t self) {
 	if (!UseLiftedCode(60, 0x82895800)) { ctx.r3.u64 = self; __imp__sub_82895800(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82895800);
 	uint32_t stack = ctx.r1.u64;
@@ -599,12 +601,12 @@ uint64_t n_sub_82895800(CpuState& ctx, uint8_t* base, uint64_t self) {
 	ctx.r1.u64 = stack;
 	return self;
 }
-PROMOTED_ENTRY(60, sub_82895800, 0x82895800) { ctx.r3.u64 = n_sub_82895800(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82895800, 0x82895800) { ctx.r3.u64 = CECInChaos_OnStateChanged(ctx, base, ctx.r3.u64); }
 
 // Calls sub_82895C68, sub_82896128 and sub_828968B0, counts the timers at +0x4C and +0x48 down, feeds the +0x48
 // timer to the entity behind the handle at +0x6C, removes component type 206 from the owner when that timer runs
 // out or sub_824BCE78 returns 0, and formats the timer as text for sub_824B54A0 when the byte at 0x8349699D is set.
-uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t arg2) {
+uint64_t CECInChaos_Update_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t arg2) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_820DFD88_B_ = int32_t(0x820DFD88);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -622,12 +624,12 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 	stack = PushStackFrame(base, stack, 352);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_82895C68(ctx, base, inChaos);
+	CECInChaos_UpdateActivationTimer(ctx, base, inChaos);
 	n_sub_82896128(ctx, base, inChaos);
 	n_sub_828968B0(ctx, base, inChaos);
 
 	// f1Val / f13Val follow the original's f1 and f13: handed to calls below, f1 also left for the caller
-	double f1Val = n_sub_82207928(ctx, base, LOAD32(self + 4));
+	double f1Val = Game_GetDeltaTime(ctx, base, LOAD32(self + 4));
 	double f13Val = ctx.f13.f64;
 
 	const uint32_t globalPtr = LOAD32(uint32_t(g_83490000) + 26912);
@@ -660,6 +662,8 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 		}
 		if (expired) {
 			// state the callee may pass on
+			ctx.r8.u64 = r8Val;
+			ctx.f1.f64 = f1Val;
 			n_sub_82896D08(ctx, base, inChaos);
 			r8Val = ctx.r8.u64;
 			r9Val = ctx.r9.u64;
@@ -696,6 +700,10 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 	if (LOAD8(self + 66) != 0) {
 		const uint64_t handleAddr = inChaos + 108;
 		// state the callee may pass on
+		ctx.r8.u64 = r8Val;
+		ctx.r9.u64 = r9Val;
+		ctx.f1.f64 = f1Val;
+		ctx.f13.f64 = f13Val;
 		const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		r8Val = ctx.r8.u64;
 		r9Val = ctx.r9.u64;
@@ -746,8 +754,10 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 	if (removeComponent) {
 		STORE8(self + 67, 1);
 		// state the callee may pass on
-		n_sub_828955A0(ctx, base, inChaos);
-		n_sub_828953C8(ctx, base, inChaos);
+		ctx.f1.f64 = f1Val;
+		ctx.f13.f64 = f13Val;
+		CECInChaos_ApplyPendingEffect(ctx, base, inChaos);
+		CECInChaos_ReleaseEntity(ctx, base, inChaos);
 		result = Entity_RemoveComponentByType(ctx, base, LOAD32(self + 4), 206, ctx.r8.u64);
 		f1Val = ctx.f1.f64;
 		f13Val = ctx.f13.f64;
@@ -760,6 +770,8 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 		STORE_F64(stack + 32, f1Val);
 		const uint64_t textBuf = (uint64_t)stack + 128;
 		// state the callee may pass on
+		ctx.f1.f64 = f1Val;
+		ctx.f13.f64 = f13Val;
 		sprintf(ctx, base, textBuf, str_TXT_820DFD88_B_, LOAD64(stack + 32), ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64, debugTextEnabled);
 
 		const uint32_t owner = LOAD32(self + 4);
@@ -771,6 +783,8 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 		callTarget.u64 = LOAD32(vtable + 64);
 		ctx.r3.u64 = (uint64_t)stack + 96;
 		ctx.r4.u64 = component;
+		ctx.r9.u64 = callTarget.u64;
+		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		PPCVRegister vec{};
@@ -788,6 +802,7 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(loaded), V8(permMask)));
 		VSTORE(uint32_t(stack + 96) & ~0xF, V8(vec));
 		// state the callee may pass on
+		ctx.f13.f64 = f13Val;
 		ctx.v7 = permMask;
 		ctx.v13 = loaded;
 		const uint64_t textCopy = CCharString_CopyConstruct(ctx, base, (uint64_t)stack + 80, text);
@@ -805,12 +820,12 @@ uint64_t n_sub_82895968(CpuState& ctx, uint8_t* base, uint64_t inChaos, uint64_t
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(60, sub_82895968, 0x82895968) { ctx.r3.u64 = n_sub_82895968(ctx, base, ctx.r3.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(60, sub_82895968, 0x82895968) { ctx.r3.u64 = CECInChaos_Update_82895968(ctx, base, ctx.r3.u64, ctx.r6.u64); }
 
 // Counts the timer at +0x58 down. When it reaches the lower limit: with the flag at +0x45 set and +0x46 clear it
 // copies +0x50 to +0x1C, sets +0x46 and switches the state to 1 (sub_82895690); with the flag clear and +0x46 set
 // it calls sub_828955A0.
-uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
+uint32_t CECInChaos_UpdateActivationTimer(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	if (!UseLiftedCode(60, 0x82895C68)) { ctx.r3.u64 = inChaosAddr; __imp__sub_82895C68(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82895C68);
 	uint32_t stack = ctx.r1.u64;
@@ -819,7 +834,7 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	stack = PushStackFrame(base, stack, 96);
 	const uint32_t chaosData = inChaos->m_4;
 	ctx.r1.u64 = stack;
-	const double rawStep = n_sub_82207928(ctx, base, chaosData);
+	const double rawStep = Game_GetDeltaTime(ctx, base, chaosData);
 
 	ctx.fpscr.disableFlushMode();
 	double timer = double(LOAD_F32((uint32_t)inChaosAddr + 88));
@@ -844,7 +859,11 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 			inChaos->m_1C = float(double(inChaos->m_50));
 			inChaos->m_46 = uint8_t(1);
 			// state the callee may pass on
-			const uint32_t callResult = n_sub_82895690(ctx, base, inChaosAddr, 1);
+			ctx.r5.u64 = inChaosAddr;
+			ctx.f1.f64 = rawStep;
+			ctx.f12.f64 = timeStep;
+			ctx.f13.f64 = timer;
+			const uint32_t callResult = CECInChaos_SetState(ctx, base, inChaosAddr, 1);
 			// f1 and f13 stay as the callee left them
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
@@ -852,7 +871,11 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 		}
 		if (!stateFlag && alreadyActive) {
 			// state the callee may pass on
-			const uint32_t callResult = n_sub_828955A0(ctx, base, inChaosAddr);
+			ctx.r5.u64 = inChaosAddr;
+			ctx.f1.f64 = rawStep;
+			ctx.f12.f64 = timeStep;
+			ctx.f13.f64 = timer;
+			const uint32_t callResult = CECInChaos_ApplyPendingEffect(ctx, base, inChaosAddr);
 			// f1 and f13 stay as the callee left them
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
@@ -867,9 +890,9 @@ uint32_t n_sub_82895C68(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr) {
 	ctx.f13.f64 = timer;
 	return chaosData;
 }
-PROMOTED_ENTRY(60, sub_82895C68, 0x82895C68) { ctx.r3.u64 = n_sub_82895C68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82895C68, 0x82895C68) { ctx.r3.u64 = CECInChaos_UpdateActivationTimer(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
+uint64_t CECInChaos_ReleaseHazeParticle(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(60, 0x82895F68)) { ctx.r3.u64 = inChaos; __imp__sub_82895F68(ctx, base); return ctx.r3.u64; }
@@ -951,6 +974,7 @@ uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
 
 	if (killParticle) {
 		ctx.fpscr.disableFlushMode();
+		ctx.r6.u64 = reg6;
 		ctx.r8.u64 = reg8;
 		n_sub_8247EB68(ctx, base, particleId, double(LOAD_F32(0x820994B4u)));
 		reg6 = ctx.r6.u64;
@@ -960,6 +984,10 @@ uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
 		reg10 = ctx.r10.u64;
 	}
 
+	ctx.r6.u64 = reg6;
+	ctx.r7.u64 = reg7;
+	ctx.r8.u64 = reg8;
+	ctx.r9.u64 = reg9;
 	uint32_t liveEntity = EntityHandle_Get_825575C8(ctx, base, handleSlot);
 	Entity_DestroyImpl(ctx, base, liveEntity);
 
@@ -976,4 +1004,4 @@ uint64_t n_sub_82895F68(CpuState& ctx, uint8_t* base, uint64_t inChaos) {
 	ctx.r1.u64 = stack;
 	return inChaos;
 }
-PROMOTED_ENTRY(60, sub_82895F68, 0x82895F68) { ctx.r3.u64 = n_sub_82895F68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(60, sub_82895F68, 0x82895F68) { ctx.r3.u64 = CECInChaos_ReleaseHazeParticle(ctx, base, ctx.r3.u64); }

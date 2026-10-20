@@ -1,9 +1,9 @@
 // CPhysicsBodyComponent (vtable 0x82006818): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -61,6 +61,7 @@ uint64_t CPhysicsBodyComponent_IsActive(CpuState& ctx, uint8_t* base, uint64_t c
 		uint32_t subObject = LOAD32(componentAddr + 0x38);
 		uint32_t method = LOAD32(LOAD32(subObject) + 0x34);
 		ctx.r3.u64 = subObject;
+		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(method);
 		return ctx.r3.u64;
 	}
@@ -68,7 +69,7 @@ uint64_t CPhysicsBodyComponent_IsActive(CpuState& ctx, uint8_t* base, uint64_t c
 }
 PROMOTED_ENTRY(3, sub_821D9558, 0x821D9558) { ctx.r3.u64 = CPhysicsBodyComponent_IsActive(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82241448(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
+uint64_t CPhysicsBodyComponent_GetBodyEntity(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
 	if (!UseLiftedCode(7, 0x82241448)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_82241448(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82241448);
 	uint32_t subObject = LOAD32((uint32_t)physicsBodyComponentAddr + 56);
@@ -79,10 +80,10 @@ uint64_t n_sub_82241448(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	REX_CALL_INDIRECT_FUNC(virtualFn);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(7, sub_82241448, 0x82241448) { ctx.r3.u64 = n_sub_82241448(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(7, sub_82241448, 0x82241448) { ctx.r3.u64 = CPhysicsBodyComponent_GetBodyEntity(ctx, base, ctx.r3.u64); }
 
 // sub_8227D8B8  [208 bytes]
-uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
+uint32_t CPhysicsBodyComponent_RefreshAttachments(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
 	if (!UseLiftedCode(10, 0x8227D8B8)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_8227D8B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8227D8B8);
 	uint32_t casAddr{};
@@ -120,7 +121,7 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 			} while (!compare0.eq);
 		}
 		ctx.r1.u64 = stack;
-		uint32_t handleAObjectData = n_sub_82D5CE60(ctx, base, handleAObject);
+		uint32_t handleAObjectData = TransformBuffer_Initialize(ctx, base, handleAObject);
 		// Copy the shared handle at 0x8 (object + refcount) onto the stack, taking a reference.
 		uint32_t handleBRefCount = physicsBodyComponent->m_C;
 		uint32_t bodyAux = physicsBodyComponent->m_1C;
@@ -152,7 +153,7 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 				REX_LEAVE_GLOBAL_LOCK();
 			} while (!compare0.eq);
 		}
-		uint32_t handleBObjectData = n_sub_82D5DB78(ctx, base, handleBObject);
+		uint32_t handleBObjectData = BoneData_GetTransforms(ctx, base, handleBObject);
 		uint32_t targetType = 2;
 		uint32_t bodyAuxSub14 = LOAD32(bodyAuxSub + 20);
 		uint32_t handleBObjectData0 = LOAD32(handleBObjectData);
@@ -164,7 +165,7 @@ uint32_t n_sub_8227D8B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return physicsBodyComponentAddr;
 }
-PROMOTED_ENTRY(10, sub_8227D8B8, 0x8227D8B8) { ctx.r3.u64 = n_sub_8227D8B8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(10, sub_8227D8B8, 0x8227D8B8) { ctx.r3.u64 = CPhysicsBodyComponent_RefreshAttachments(ctx, base, ctx.r3.u32); }
 
 uint64_t CPhysicsBodyComponent_QueryPhysicsObject(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t query) {
 	if (!UseLiftedCode(12, 0x822B7D80)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = query; __imp__sub_822B7D80(ctx, base); return ctx.r3.u64; }
@@ -207,7 +208,7 @@ uint64_t CPhysicsBodyComponent_DeletingDestructor(CpuState& ctx, uint8_t* base, 
 	uint32_t deleteFlags = arg2;
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82739A20(ctx, base, arg1);
+	CPhysicsBodyComponent_Destructor(ctx, base, arg1);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, object);
 	}
@@ -217,7 +218,7 @@ uint64_t CPhysicsBodyComponent_DeletingDestructor(CpuState& ctx, uint8_t* base, 
 }
 PROMOTED_ENTRY(49, sub_82738BD0, 0x82738BD0) { ctx.r3.u64 = CPhysicsBodyComponent_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
+uint64_t CPhysicsBodyComponent_Destroy(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -250,7 +251,7 @@ uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 			STORE32(stack + 96, listenerId);
 			uint64_t listenerHandle = n_sub_8273A3A8(ctx, base, listenerArgSlot);
 
-			n_sub_827392E0(ctx, base, listenerHandle, handleSlot);
+			EntityHandle_Assign_827392E0(ctx, base, listenerHandle, handleSlot);
 
 			int32_t handleVtableBase = g_820F0000;
 			uint64_t handleVtable = (int64_t)handleVtableBase + 5732;
@@ -275,6 +276,11 @@ uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = componentAddr;
 		ctx.r4.u64 = entityHandle;
+		ctx.r6.u64 = entityEntry;
+		ctx.r7.u64 = entityList;
+		ctx.r8.u64 = entityManager;
+		ctx.r9.u64 = onEntityChanged;
+		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		result = n_sub_82522A78(ctx, base, physicsBodyComponent->m_Body, physicsBodyComponent->m_51);
@@ -299,7 +305,7 @@ uint64_t n_sub_82739358(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82739358, 0x82739358) { ctx.r3.u64 = n_sub_82739358(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(49, sub_82739358, 0x82739358) { ctx.r3.u64 = CPhysicsBodyComponent_Destroy(ctx, base, ctx.r3.u64); }
 
 // sub_82739620  [16 bytes]
 uint64_t n_sub_82739620(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2) {
@@ -367,6 +373,7 @@ uint64_t n_sub_82739650(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 			uint32_t bodyField2C = LOAD32(body + 0x2C);
 			uint32_t objectFirstWord = LOAD32((uint32_t)object);
 			// state the callee may pass on
+			ctx.r7.u64 = object;
 			n_sub_82E67E98(ctx, base, bodyField2C, objectFirstWord);
 
 			uint32_t globalObject2 = LOAD32(g_83330000 + 29792);
@@ -407,7 +414,7 @@ uint64_t n_sub_82739718(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	uint32_t body = physicsBodyComponent->m_Body;
 	if (body != 0) {
 		ctx.r1.u64 = stack;
-		uint32_t object = n_sub_82D5CE60(ctx, base, arg2);
+		uint32_t object = TransformBuffer_Initialize(ctx, base, arg2);
 		uint32_t bodyField2C = LOAD32(body + 0x2C);
 		uint32_t objectFirstWord = LOAD32(object);
 		result = n_sub_82E675D8(ctx, base, bodyField2C, objectFirstWord, arg3);
@@ -430,7 +437,7 @@ uint64_t n_sub_82739770(CpuState& ctx, uint8_t* base, uint64_t objectAddress) {
 PROMOTED_ENTRY(49, sub_82739770, 0x82739770) { ctx.r3.u64 = n_sub_82739770(ctx, base, ctx.r3.u64); }
 
 // sub_82739778  [576 bytes]
-uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2, uint64_t transform, uint64_t arg4, uint64_t arg5, uint64_t arg6, uint32_t map) {
+uint64_t CPhysicsBodyComponent_CreateRagdoll(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2, uint64_t transform, uint64_t arg4, uint64_t arg5, uint64_t arg6, uint32_t map) {
 	constexpr int32_t str_TXT_820CA624_B_ = int32_t(0x820CA624);
 	constexpr int32_t g_833375D4 = int32_t(0x833375D4);
 	constexpr int32_t g_8333B4A8 = int32_t(0x8333B4A8);
@@ -453,7 +460,7 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	// state the callee may pass on
 	ctx.r8.u64 = arg6;
-	n_sub_8281BB38(ctx, base, physicsFileIdAddr, transform, physicsFileName);
+	GameDB_GetPropertyByName(ctx, base, physicsFileIdAddr, transform, physicsFileName);
 
 	// m_60 = (incremented global counter << 31) + the 32-bit value the call above stored
 	uint32_t counterAddr = (uint32_t)g_83490000 + 27480;
@@ -462,18 +469,18 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	physicsBodyComponent->m_60 = ((uint64_t)(uint32_t)counter << 31) + (uint64_t)LOAD32(physicsFileIdAddr);
 
 	uint64_t sourceType = g_8333B4A8;
-	uint64_t sourceTypeDescriptor = n_sub_82D4F130(ctx, base, sourceType);
-	uint64_t sourceObject = n_sub_82D6B180(ctx, base, arg2, sourceTypeDescriptor, 0);
+	uint64_t sourceTypeDescriptor = ReadU32(ctx, base, sourceType);
+	uint64_t sourceObject = ComponentQuery_FindByHash(ctx, base, arg2, sourceTypeDescriptor, 0);
 
 	uint64_t pairType = g_833375D4;
-	uint64_t pairTypeDescriptor = n_sub_82D4F130(ctx, base, pairType);
-	uint32_t firstOfType = n_sub_82D6B180(ctx, base, arg2, pairTypeDescriptor, 0);
-	uint64_t pairTypeDescriptor2 = n_sub_82D4F130(ctx, base, pairType);
-	uint32_t nextOfType = n_sub_82D6B180(ctx, base, arg2, pairTypeDescriptor2, firstOfType);
+	uint64_t pairTypeDescriptor = ReadU32(ctx, base, pairType);
+	uint32_t firstOfType = ComponentQuery_FindByHash(ctx, base, arg2, pairTypeDescriptor, 0);
+	uint64_t pairTypeDescriptor2 = ReadU32(ctx, base, pairType);
+	uint32_t nextOfType = ComponentQuery_FindByHash(ctx, base, arg2, pairTypeDescriptor2, firstOfType);
 
 	uint32_t firstOfTypeWord8 = LOAD32(firstOfType + 8);
 	uint32_t sourceObjectWord44 = LOAD32((uint32_t)sourceObject + 44);
-	// Which one goes to n_sub_828A11B8 and which to n_sub_828A1258 depends on this match.
+	// Which one goes to CPhysicsBodyComponent_SetRagdollSource and which to CPhysicsBodyComponent_SetRagdollAttachment depends on this match.
 	uint32_t argFor11B8;
 	uint32_t argFor1258;
 	if (firstOfTypeWord8 == sourceObjectWord44) {
@@ -484,7 +491,7 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 		argFor1258 = nextOfType;
 	}
 
-	n_sub_82878960(ctx, base, vectorAddr, quaternionAddr, transform);
+	Transform_GetPositionAndRotation(ctx, base, vectorAddr, quaternionAddr, transform);
 	Map_Find_823942A0(ctx, base, map, vectorAddr, quaternionAddr);
 
 	uint32_t getRagdollSource = LOAD32(LOAD32((uint32_t)sourceObject) + 12);
@@ -511,8 +518,8 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 
 	// state the callee may pass on
 	ctx.r8.u64 = bodyCollisionMask;
-	n_sub_828A11B8(ctx, base, physicsBodyComponentAddr, argFor11B8);
-	n_sub_828A1258(ctx, base, physicsBodyComponentAddr, argFor1258);
+	CPhysicsBodyComponent_SetRagdollSource(ctx, base, physicsBodyComponentAddr, argFor11B8);
+	CPhysicsBodyComponent_SetRagdollAttachment(ctx, base, physicsBodyComponentAddr, argFor1258);
 
 	// state the callee may pass on
 	ctx.r4.u64 = arg2;
@@ -567,9 +574,9 @@ uint64_t n_sub_82739778(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(49, sub_82739778, 0x82739778) { ctx.r3.u64 = n_sub_82739778(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u32); }
+PROMOTED_ENTRY(49, sub_82739778, 0x82739778) { ctx.r3.u64 = CPhysicsBodyComponent_CreateRagdoll(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u32); }
 
-uint64_t n_sub_827399B8(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t linkedObject) {
+uint64_t CPhysicsBodyComponent_LinkObject(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t linkedObject) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	if (!UseLiftedCode(49, 0x827399B8)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = linkedObject; __imp__sub_827399B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827399B8);
@@ -606,9 +613,9 @@ uint64_t n_sub_827399B8(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_827399B8, 0x827399B8) { ctx.r3.u64 = n_sub_827399B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_827399B8, 0x827399B8) { ctx.r3.u64 = CPhysicsBodyComponent_LinkObject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82739B28(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
+uint64_t CPhysicsBodyComponent_UnlinkObject(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
 	if (!UseLiftedCode(49, 0x82739B28)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_82739B28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739B28);
 	uint32_t stack = ctx.r1.u64;
@@ -649,7 +656,7 @@ uint64_t n_sub_82739B28(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(49, sub_82739B28, 0x82739B28) { ctx.r3.u64 = n_sub_82739B28(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(49, sub_82739B28, 0x82739B28) { ctx.r3.u64 = CPhysicsBodyComponent_UnlinkObject(ctx, base, ctx.r3.u32); }
 
 // sub_82739B98  [8 bytes]
 uint64_t n_sub_82739B98(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr) {
@@ -660,7 +667,7 @@ uint64_t n_sub_82739B98(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 }
 PROMOTED_ENTRY(49, sub_82739B98, 0x82739B98) { ctx.r3.u64 = n_sub_82739B98(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82739BA0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t bodyData) {
+uint64_t CPhysicsBodyComponent_SetBodyData(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t bodyData) {
 	if (!UseLiftedCode(49, 0x82739BA0)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = bodyData; __imp__sub_82739BA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739BA0);
 	uint32_t stack = ctx.r1.u64;
@@ -691,9 +698,9 @@ uint64_t n_sub_82739BA0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r4.u64 = bodyData;
 	return body;
 }
-PROMOTED_ENTRY(49, sub_82739BA0, 0x82739BA0) { ctx.r3.u64 = n_sub_82739BA0(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_82739BA0, 0x82739BA0) { ctx.r3.u64 = CPhysicsBodyComponent_SetBodyData(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82739C08(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
+uint64_t CPhysicsBodyComponent_ReleaseBodyData(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr) {
 	if (!UseLiftedCode(49, 0x82739C08)) { ctx.r3.u64 = physicsBodyComponentAddr; __imp__sub_82739C08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739C08);
 	uint32_t stack = ctx.r1.u64;
@@ -720,9 +727,9 @@ uint64_t n_sub_82739C08(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return body;
 }
-PROMOTED_ENTRY(49, sub_82739C08, 0x82739C08) { ctx.r3.u64 = n_sub_82739C08(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(49, sub_82739C08, 0x82739C08) { ctx.r3.u64 = CPhysicsBodyComponent_ReleaseBodyData(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82739C70(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
+uint64_t CPhysicsBodyComponent_AttachBodyToComponent(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
 	if (!UseLiftedCode(49, 0x82739C70)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_82739C70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739C70);
 	uint32_t stack = ctx.r1.u64;
@@ -761,7 +768,7 @@ uint64_t n_sub_82739C70(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(49, sub_82739C70, 0x82739C70) { ctx.r3.u64 = n_sub_82739C70(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_82739C70, 0x82739C70) { ctx.r3.u64 = CPhysicsBodyComponent_AttachBodyToComponent(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 uint64_t CPhysicsBodyComponent_SetState(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t newState) {
 	if (!UseLiftedCode(49, 0x82739CC8)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newState; __imp__sub_82739CC8(ctx, base); return ctx.r3.u64; }
@@ -779,16 +786,16 @@ uint64_t CPhysicsBodyComponent_SetState(CpuState& ctx, uint8_t* base, uint64_t p
 	if ((int32_t)physicsBodyComponent->m_State != (int32_t)targetState) {
 		if (targetState == 2) {
 			ctx.r1.u64 = stack;
-			result = n_sub_82739208(ctx, base, physicsBodyComponentAddr);
+			result = CPhysicsBodyComponent_EnterState2(ctx, base, physicsBodyComponentAddr);
 			newState = ctx.r4.u64;
 		} else if (targetState == 3 || targetState == 4) {
 			ctx.r1.u64 = stack;
-			result = n_sub_82739358(ctx, base, physicsBodyComponentAddr);
+			result = CPhysicsBodyComponent_Destroy(ctx, base, physicsBodyComponentAddr);
 			newState = ctx.r4.u64;
 		}
 		if ((int32_t)physicsBodyComponent->m_State == 2) {
 			ctx.r1.u64 = stack;
-			n_sub_8227D8B8(ctx, base, physicsBodyComponentAddr);
+			CPhysicsBodyComponent_RefreshAttachments(ctx, base, physicsBodyComponentAddr);
 			scratchR9 = ctx.r9.u64;
 
 			// Build a shared handle {pointer, control block} on the stack and bump the control block refcount.
@@ -815,6 +822,9 @@ uint64_t CPhysicsBodyComponent_SetState(CpuState& ctx, uint8_t* base, uint64_t p
 			uint32_t vtableSlot = LOAD32((uint32_t)physicsBodyComponent->vtable + 96);
 			callTarget.u64 = vtableSlot;
 			ctx.r3.u64 = physicsBodyComponentAddr;
+			ctx.r4.u64 = handle;
+			ctx.r9.u64 = scratchR9;
+			ctx.r10.u64 = vtableSlot;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = SharedHandle_Release(ctx, base, (uint64_t)stack + 80);
 			newState = ctx.r4.u64;
@@ -838,7 +848,7 @@ uint64_t n_sub_82739D98(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 }
 PROMOTED_ENTRY(49, sub_82739D98, 0x82739D98) { ctx.r3.u64 = n_sub_82739D98(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82739DB0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
+uint64_t CPhysicsBodyComponent_AttachBodyToActionHandler(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(49, 0x82739DB0)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; __imp__sub_82739DB0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739DB0);
@@ -880,9 +890,9 @@ uint64_t n_sub_82739DB0(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(49, sub_82739DB0, 0x82739DB0) { ctx.r3.u64 = n_sub_82739DB0(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_82739DB0, 0x82739DB0) { ctx.r3.u64 = CPhysicsBodyComponent_AttachBodyToActionHandler(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollSource) {
+uint32_t CPhysicsBodyComponent_SetRagdollSource(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollSource) {
 	if (!UseLiftedCode(61, 0x828A11B8)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newRagdollSource; __imp__sub_828A11B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828A11B8);
 	uint32_t stack = ctx.r1.u64;
@@ -914,9 +924,9 @@ uint32_t n_sub_828A11B8(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return oldValue;
 }
-PROMOTED_ENTRY(61, sub_828A11B8, 0x828A11B8) { ctx.r3.u64 = n_sub_828A11B8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(61, sub_828A11B8, 0x828A11B8) { ctx.r3.u64 = CPhysicsBodyComponent_SetRagdollSource(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint32_t n_sub_828A1258(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollAttachment) {
+uint32_t CPhysicsBodyComponent_SetRagdollAttachment(CpuState& ctx, uint8_t* base, uint32_t physicsBodyComponentAddr, uint32_t newRagdollAttachment) {
 	if (!UseLiftedCode(61, 0x828A1258)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = newRagdollAttachment; __imp__sub_828A1258(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x828A1258);
 	uint32_t stack = ctx.r1.u64;
@@ -947,4 +957,4 @@ uint32_t n_sub_828A1258(CpuState& ctx, uint8_t* base, uint32_t physicsBodyCompon
 	ctx.r1.u64 = stack;
 	return oldRef;
 }
-PROMOTED_ENTRY(61, sub_828A1258, 0x828A1258) { ctx.r3.u64 = n_sub_828A1258(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(61, sub_828A1258, 0x828A1258) { ctx.r3.u64 = CPhysicsBodyComponent_SetRagdollAttachment(ctx, base, ctx.r3.u32, ctx.r4.u32); }

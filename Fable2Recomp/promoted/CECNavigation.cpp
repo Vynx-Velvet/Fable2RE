@@ -1,9 +1,9 @@
 // CECNavigation (vtable 0x82004860): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -74,7 +74,7 @@ void CECNavigation_SetSpeed(CpuState& ctx, uint8_t* base, uint32_t navigationAdd
 }
 PROMOTED_ENTRY(0, sub_82175F80, 0x82175F80) { CECNavigation_SetSpeed(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t queryKind, uint32_t skipTargetEntity, double floatArg1) {
+uint64_t CECNavigation_ComputeDistance(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t queryKind, uint32_t skipTargetEntity, double floatArg1) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83499170 = int32_t(0x83499170);
 	if (!UseLiftedCode(4, 0x821E7D58)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = queryKind; ctx.r5.u64 = skipTargetEntity; ctx.f1.f64 = floatArg1; __imp__sub_821E7D58(ctx, base); return ctx.r3.u64; }
@@ -145,6 +145,7 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 
 	if ((uint32_t)result != 0) {
 		// state the callee may pass on
+		ctx.r5.u64 = facingPointAddr;
 		result = CMoveGraphController_FindChildBByType(ctx, base, LOAD32((uint32_t)result + 24), g_83499170);
 		if ((uint32_t)result != 0) {
 			// the child's vtable slot +68 replaces the distance
@@ -210,7 +211,7 @@ uint64_t n_sub_821E7D58(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.f1.f64 = distance;
 	return result;
 }
-PROMOTED_ENTRY(4, sub_821E7D58, 0x821E7D58) { ctx.r3.u64 = n_sub_821E7D58(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(4, sub_821E7D58, 0x821E7D58) { ctx.r3.u64 = CECNavigation_ComputeDistance(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.f1.f64); }
 
 uint64_t CECNavigation_GetNavigationData(CpuState& ctx, uint8_t* base, uint32_t navigationAddr) {
 	if (!UseLiftedCode(4, 0x821E8750)) { ctx.r3.u64 = navigationAddr; __imp__sub_821E8750(ctx, base); return ctx.r3.u64; }
@@ -289,7 +290,7 @@ uint64_t CECNavigation_GetNavigationData(CpuState& ctx, uint8_t* base, uint32_t 
 }
 PROMOTED_ENTRY(4, sub_821E8750, 0x821E8750) { ctx.r3.u64 = CECNavigation_GetNavigationData(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint32_t CECNavigation_UpdateMeshPosition(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	constexpr int32_t g_82100000 = int32_t(0x82100000);
 	if (!UseLiftedCode(9, 0x8225F728)) { ctx.r3.u64 = navigationAddr; __imp__sub_8225F728(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8225F728);
@@ -354,8 +355,9 @@ uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 			const double floatArg1 = double(LOAD_F32((uint32_t)g_82100000 + 2000));
 			const double floatArg2 = double(LOAD_F32(0x8209BAA8u));
 			// state the callee may pass on
+			ctx.r8.u64 = bufferAddr;
 			ctx.v1 = copiedVector;
-			result = n_sub_82683428(ctx, base, 24, 1, navigationEntity, floatArg1, floatArg2);
+			result = MoveMesh(ctx, base, 24, 1, navigationEntity, floatArg1, floatArg2);
 			// the callee's v1 is stored again (and stays in v1 for callers)
 			VSTORE(copyDestAddr & ~0xF, V8(ctx.v1));
 		}
@@ -365,9 +367,9 @@ uint32_t n_sub_8225F728(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_8225F728, 0x8225F728) { ctx.r3.u64 = n_sub_8225F728(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(9, sub_8225F728, 0x8225F728) { ctx.r3.u64 = CECNavigation_UpdateMeshPosition(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
+uint64_t CECNavigation_UpdateAction(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 	if (!UseLiftedCode(9, 0x82260CF0)) { ctx.r3.u64 = navigation; __imp__sub_82260CF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82260CF0);
 	uint32_t stack = ctx.r1.u64;
@@ -451,12 +453,13 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 				SET_V8(v2Value, VLOAD(0x8349AD70u & ~0xF));
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
+				ctx.r6.u64 = stateR6;
 				ctx.v1 = stateV3;
 				ctx.v2 = v2Value;
 				ctx.v3 = stateV3;
 				ctx.cr0 = stateCr0;
 				ctx.xer.ca = stateCarry;
-				const uint64_t result = n_sub_82675EA8(ctx, base, navigation, 2);
+				const uint64_t result = CECNavigation_SetMode(ctx, base, navigation, 2);
 				stack = PopStackFrame(stack, 112);
 				ctx.r1.u64 = stack;
 				return result;
@@ -467,7 +470,7 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 				ctx.v3 = stateV3;
 				ctx.cr0 = stateCr0;
 				ctx.xer.ca = stateCarry;
-				const uint64_t result = n_sub_82192268(ctx, base, navigation);
+				const uint64_t result = CECNavigation_ResetMode(ctx, base, navigation);
 				stack = PopStackFrame(stack, 112);
 				ctx.r1.u64 = stack;
 				return result;
@@ -485,13 +488,15 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 			SET_V8(v1Value, VLOAD(((uint32_t)navigation + 528u) & ~0xF));
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = stateR6;
+			ctx.r7.u64 = stateR7;
 			ctx.v1 = v1Value;
 			ctx.v2 = v2Value;
 			ctx.v3 = stateV3;
 			ctx.cr0 = stateCr0;
 			ctx.xer.ca = stateCarry;
 			// what the callee leaves in r6-r9, v3, cr0 and xer.ca stays there for our callers
-			const uint64_t result = n_sub_82675F20(ctx, base, navigation, actionId);
+			const uint64_t result = CECNavigation_PlayAction(ctx, base, navigation, actionId);
 			stack = PopStackFrame(stack, 112);
 			ctx.r1.u64 = stack;
 			return result;
@@ -510,7 +515,7 @@ uint64_t n_sub_82260CF0(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 	ctx.xer.ca = stateCarry;
 	return navigation;
 }
-PROMOTED_ENTRY(9, sub_82260CF0, 0x82260CF0) { ctx.r3.u64 = n_sub_82260CF0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(9, sub_82260CF0, 0x82260CF0) { ctx.r3.u64 = CECNavigation_UpdateAction(ctx, base, ctx.r3.u64); }
 
 // sub_826714D0  [60 bytes]
 uint64_t CECNavigation_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
@@ -523,7 +528,7 @@ uint64_t CECNavigation_GetClassName(CpuState& ctx, uint8_t* base, uint64_t class
 }
 PROMOTED_ENTRY(43, sub_826714D0, 0x826714D0) { ctx.r3.u64 = CECNavigation_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82673510(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t deleteFlags) {
+uint64_t CECNavigation_Destructor(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t deleteFlags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(43, 0x82673510)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82673510(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82673510);
@@ -544,8 +549,8 @@ uint64_t n_sub_82673510(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	EntityHandle_Release(ctx, base, navigationAddr + 576);
 	navigation->m_244 = 0;
 
-	n_sub_8227CC80(ctx, base, navigationAddr + 400);
-	n_sub_8227CC80(ctx, base, navigationAddr + 272);
+	CECNavigation_ReleaseSubobject(ctx, base, navigationAddr + 400);
+	CECNavigation_ReleaseSubobject(ctx, base, navigationAddr + 272);
 
 	SharedHandle_Release(ctx, base, navigationAddr + 224);
 
@@ -564,12 +569,12 @@ uint64_t n_sub_82673510(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.r1.u64 = stack;
 	return navigationAddr;
 }
-PROMOTED_ENTRY(43, sub_82673510, 0x82673510) { ctx.r3.u64 = n_sub_82673510(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(43, sub_82673510, 0x82673510) { ctx.r3.u64 = CECNavigation_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Reads the navigation settings from the entity's database record (when there is one): turn angles are
 // converted with the constant at 0x821001DC (pi/180), deceleration and acceleration are raised to at least
 // the constant at 0x8209BAAC and scaled; then hands the object to sub_82392C88 together with its m_4.
-uint64_t n_sub_826735A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t entity) {
+uint64_t CECNavigation_LoadNavigationSettings(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t entity) {
 	constexpr int32_t str_TXT_82001024_B_ = int32_t(0x82001024);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -701,16 +706,16 @@ uint64_t n_sub_826735A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	}
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82392C88(ctx, base, uint32_t(navigation->m_4), navigationAddr);
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, uint32_t(navigation->m_4), navigationAddr);
 	stack = PopStackFrame(stack, 208);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_826735A8, 0x826735A8) { ctx.r3.u64 = n_sub_826735A8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(43, sub_826735A8, 0x826735A8) { ctx.r3.u64 = CECNavigation_LoadNavigationSettings(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Runs sub_82673148 on the pairs at +272 and +400; a non-zero m_E0 is resolved into the entity handle at
 // +128 (through a temporary handle on the stack), then released and cleared.
-uint64_t n_sub_82674008(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint64_t CECNavigation_ReleaseTargetHandles(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(43, 0x82674008)) { ctx.r3.u64 = navigationAddr; __imp__sub_82674008(ctx, base); return ctx.r3.u64; }
@@ -720,8 +725,8 @@ uint64_t n_sub_82674008(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	n_sub_82673148(ctx, base, navigationAddr + 272);
-	uint64_t result = n_sub_82673148(ctx, base, navigationAddr + 400);
+	EntityHandlePair_Release(ctx, base, navigationAddr + 272);
+	uint64_t result = EntityHandlePair_Release(ctx, base, navigationAddr + 400);
 
 	const uint64_t pendingHandle = navigation->m_E0;
 	uint64_t callerR4 = pendingHandle;
@@ -730,13 +735,14 @@ uint64_t n_sub_82674008(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 		const uint32_t lookupHolder = LOAD32(LOAD32(LOAD32(globalRoot + 12) + 88) + 4);
 		const uint32_t lookupObject = LOAD32(lookupHolder);
 		ctx.r8.u64 = lookupHolder;   // state the callee may pass on
-		uint64_t entity = n_sub_82264448(ctx, base, lookupObject, pendingHandle);
+		uint64_t entity = EntityManager_LookupEntity(ctx, base, lookupObject, pendingHandle);
 
 		// temporary entity handle at stack+80: vtable word, then an empty target
 		const int64_t handleVtable = (int64_t)g_820F0000 + 5732;
 		STORE32(stack + 84, 0);
 		STORE32(stack + 80, (uint32_t)handleVtable);
 		// state the callee may pass on
+		ctx.r6.u64 = handleVtable;
 		EntityHandle_SetTarget(ctx, base, stack + 80, entity);
 		EntityHandle_Assign(ctx, base, navigationAddr + 128, stack + 80);
 
@@ -754,11 +760,11 @@ uint64_t n_sub_82674008(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	ctx.r4.u64 = callerR4;   // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82674008, 0x82674008) { ctx.r3.u64 = n_sub_82674008(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82674008, 0x82674008) { ctx.r3.u64 = CECNavigation_ReleaseTargetHandles(ctx, base, ctx.r3.u64); }
 
 // Calls the function for the current mode m_AC (1-6) with the values stored on the object (the target in
 // the handle at +128, m_B0, m_9C, m_104); m_F0 is put back to the value it had before.
-uint64_t n_sub_826740A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint64_t CECNavigation_UpdateNavigationMode(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	constexpr int32_t g_82670000 = int32_t(0x82670000);
 	if (!UseLiftedCode(43, 0x826740A8)) { ctx.r3.u64 = navigationAddr; __imp__sub_826740A8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826740A8);
@@ -777,7 +783,7 @@ uint64_t n_sub_826740A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 		switch (mode) {
 		case 0: {
 			uint64_t target = EntityHandle_Get_825575C8(ctx, base, navigationAddr + 128);
-			result = n_sub_82674AA0(ctx, base, navigationAddr, target, 2, 0);
+			result = CECNavigation_SetShootingTarget(ctx, base, navigationAddr, target, 2, 0);
 			break;
 		}
 		case 1: {
@@ -828,13 +834,13 @@ uint64_t n_sub_826740A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 			const uint32_t storedB0 = navigation->m_B0;
 			ctx.fpscr.disableFlushMode();
 			const double stored9C = double(navigation->m_9C);
-			result = n_sub_82674F00(ctx, base, navigationAddr, 2, 0, storedB0, stored9C);
+			result = CECNavigation_SetMovementState(ctx, base, navigationAddr, 2, 0, storedB0, stored9C);
 			break;
 		}
 		case 5: {
 			const uint32_t storedB0 = navigation->m_B0;
 			uint64_t target = EntityHandle_Get_825575C8(ctx, base, navigationAddr + 128);
-			result = n_sub_82674D98(ctx, base, navigationAddr, target, 2, 0, storedB0);
+			result = CECNavigation_SetMode6Target(ctx, base, navigationAddr, target, 2, 0, storedB0);
 			break;
 		}
 		}
@@ -846,20 +852,20 @@ uint64_t n_sub_826740A8(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_826740A8, 0x826740A8) { ctx.r3.u64 = n_sub_826740A8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_826740A8, 0x826740A8) { ctx.r3.u64 = CECNavigation_UpdateNavigationMode(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82674290(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint64_t CECNavigation_ClearDynamicObstacles(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	if (!UseLiftedCode(43, 0x82674290)) { ctx.r3.u64 = navigationAddr; __imp__sub_82674290(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82674290);
-	return n_sub_826728C0(ctx, base, navigationAddr + 272);
+	return DynamicObstacleList_Clear(ctx, base, navigationAddr + 272);
 }
-PROMOTED_ENTRY(43, sub_82674290, 0x82674290) { ctx.r3.u64 = n_sub_82674290(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82674290, 0x82674290) { ctx.r3.u64 = CECNavigation_ClearDynamicObstacles(ctx, base, ctx.r3.u64); }
 
 // Sets the speed, then (unless +612 is above the limit at 0x8331950C, which returns 0) switches to mode
 // m_A8 = 3 / m_AC = 1 with the target: a position obtained from the target is first checked with
 // Combat_IsShootingPositionUsable, and an unusable one returns 0.
 // Returns 1 when the mode is set or was already set for this target.
-uint64_t n_sub_82674AA0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t target, uint64_t speed, uint64_t reinitFlag) {
+uint64_t CECNavigation_SetShootingTarget(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t target, uint64_t speed, uint64_t reinitFlag) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -952,8 +958,8 @@ uint64_t n_sub_82674AA0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		navigation->m_280 = (uint32_t)target;
 		navigation->m_A8 = 3u;
 		ctx.r6.u64 = 3;   // state the callee may pass on
-		n_sub_8225F728(ctx, base, navigationAddr);
-		n_sub_826772A0(ctx, base, navigationAddr);
+		CECNavigation_UpdateMeshPosition(ctx, base, navigationAddr);
+		CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
 		r4Value = 1;
 		navigation->m_260 = 2u;
 		navigation->m_AC = 1u;
@@ -964,7 +970,7 @@ uint64_t n_sub_82674AA0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.r4.u64 = r4Value;   // callers read r4 after the call
 	return 1;
 }
-PROMOTED_ENTRY(43, sub_82674AA0, 0x82674AA0) { ctx.r3.u64 = n_sub_82674AA0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(43, sub_82674AA0, 0x82674AA0) { ctx.r3.u64 = CECNavigation_SetShootingTarget(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // Sets the speed, then (unless +612 is above the limit at 0x8331950C) switches to mode m_A8 = 3 / m_AC = 2
 // with the target, unless that mode is already set for this target.
@@ -1010,6 +1016,8 @@ uint64_t n_sub_82674C08(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (!alreadyTargeting) {
 			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
+				ctx.r4.u64 = r4Value;
+				ctx.r5.u64 = r5Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 272);
 				r5Value = ctx.r5.u64;
 			}
@@ -1018,6 +1026,7 @@ uint64_t n_sub_82674C08(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, uint32_t(g_820F1664));
 			// state the callee may pass on
+			ctx.r5.u64 = r5Value;
 			EntityHandle_SetTarget(ctx, base, uint64_t(stack) + 80, target);
 			EntityHandle_Assign(ctx, base, navigationAddr + 128, uint64_t(stack) + 80);
 
@@ -1028,7 +1037,7 @@ uint64_t n_sub_82674C08(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 
 			navigation->m_280 = (uint32_t)target;
 			navigation->m_A8 = 3u;
-			result = n_sub_826772A0(ctx, base, navigationAddr);
+			result = CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
 			r4Value = ctx.r4.u64;
 			navigation->m_AC = 2u;
 			navigation->m_260 = 2u;
@@ -1074,7 +1083,7 @@ uint64_t n_sub_82674D18(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (navigation->m_178 != 0) {
 			navigation->m_A8 = 3u;
 			ctx.r4.u64 = r4Value;   // state the callee may pass on
-			result = n_sub_826772A0(ctx, base, navigationAddr);
+			result = CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
 			r4Value = ctx.r4.u64;
 			navigation->m_AC = 2u;
 		}
@@ -1091,7 +1100,7 @@ PROMOTED_ENTRY(43, sub_82674D18, 0x82674D18) { ctx.r3.u64 = n_sub_82674D18(ctx, 
 // with the target, unless that mode is already set for this target: m_9C is taken from one of two globals
 // (chosen by the byte at 0x834BE801), m_B0 from stateByte, and the vector the target's object writes is
 // copied to +32.
-uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t targetEntity, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte) {
+uint64_t CECNavigation_SetMode6Target(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t targetEntity, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -1134,6 +1143,8 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (!alreadyTargeting) {
 			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
+				ctx.r4.u64 = r4Value;
+				ctx.r5.u64 = r5Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 272);
 				r5Value = ctx.r5.u64;
 			}
@@ -1142,6 +1153,7 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, uint32_t(g_820F1664));
 			// state the callee may pass on
+			ctx.r5.u64 = r5Value;
 			EntityHandle_SetTarget(ctx, base, uint64_t(stack) + 80, targetEntity);
 			EntityHandle_Assign(ctx, base, navigationAddr + 128, uint64_t(stack) + 80);
 
@@ -1163,7 +1175,7 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			navigation->m_A8 = 3u;
 			navigation->m_B0 = (uint8_t)stateByte;
 			ctx.r5.u64 = useSecondValue;   // state the callee may pass on
-			n_sub_826772A0(ctx, base, navigationAddr);
+			CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
 
 			// the virtual function at +64 of the object at targetEntity+124 writes a vector to stack+96
 			const uint32_t targetObject = LOAD32((uint32_t)targetEntity + 124);
@@ -1189,9 +1201,9 @@ uint64_t n_sub_82674D98(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.r4.u64 = r4Value;   // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82674D98, 0x82674D98) { ctx.r3.u64 = n_sub_82674D98(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(43, sub_82674D98, 0x82674D98) { ctx.r3.u64 = CECNavigation_SetMode6Target(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte, double floatArg1) {
+uint64_t CECNavigation_SetMovementState(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte, double floatArg1) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -1238,6 +1250,9 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 		if (!(LOAD32(navigationAddr + 0xAC) == 5 && LOAD32(navigationAddr + 0xA8) == 3)) {
 			if ((reinitFlag & 0xFF) != 0) {
 				// state the callee may pass on
+				ctx.r4.u64 = r4Value;
+				ctx.r5.u64 = r5Value;
+				ctx.f1.f64 = f1Value;
 				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 0x110);
 				r4Value = ctx.r4.u64;
 				r5Value = ctx.r5.u64;
@@ -1250,6 +1265,7 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			STORE32(handleAddr + 4, 0u);
 			STORE32(handleAddr, uint32_t(g_820F1664));
 			// state the callee may pass on
+			ctx.f1.f64 = f1Value;
 			EntityHandle_Release(ctx, base, handleAddr);
 			f1Value = ctx.f1.f64;
 			f13Value = ctx.f13.f64;
@@ -1290,7 +1306,8 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 			navigation->m_B0 = (uint8_t)stateByte;
 
 			// state the callee may pass on
-			result = n_sub_826772A0(ctx, base, navigationAddr);
+			ctx.f13.f64 = f13Value;
+			result = CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
 			r4Value = ctx.r4.u64;
 			f1Value = ctx.f1.f64;
 			navigation->m_AC = 5u;
@@ -1305,9 +1322,9 @@ uint64_t n_sub_82674F00(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.f1.f64 = f1Value;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82674F00, 0x82674F00) { ctx.r3.u64 = n_sub_82674F00(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(43, sub_82674F00, 0x82674F00) { ctx.r3.u64 = CECNavigation_SetMovementState(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.f1.f64); }
 
-uint64_t n_sub_82675048(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint64_t CECNavigation_Stop(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
@@ -1344,17 +1361,18 @@ uint64_t n_sub_82675048(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	VSTORE(((uint32_t)navigationAddr + 624) & ~0xF, V8(vectorConstant));
 
 	// state the callee may pass on
-	n_sub_82192268(ctx, base, navigationAddr);
-	n_sub_82260CF0(ctx, base, navigationAddr);
+	ctx.r5.u64 = vectorConstantAddr;
+	CECNavigation_ResetMode(ctx, base, navigationAddr);
+	CECNavigation_UpdateAction(ctx, base, navigationAddr);
 	const uint64_t result = n_sub_821820C8(ctx, base, navigationAddr);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82675048, 0x82675048) { ctx.r3.u64 = n_sub_82675048(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82675048, 0x82675048) { ctx.r3.u64 = CECNavigation_Stop(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826772A0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
+uint64_t CECNavigation_ResetNavigationData(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(43, 0x826772A0)) { ctx.r3.u64 = navigationAddr; __imp__sub_826772A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826772A0);
@@ -1366,14 +1384,14 @@ uint64_t n_sub_826772A0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	uint64_t navigationData = CECNavigation_GetNavigationData(ctx, base, navigationAddr);
 	if ((uint32_t)navigationData != 0) {
 		ctx.fpscr.disableFlushMode();
-		n_sub_821E8388(ctx, base, navigationData, double(navigation->m_F0));
+		Entity_CheckHasBrain(ctx, base, navigationData, double(navigation->m_F0));
 	}
 
-	n_sub_82192268(ctx, base, navigationAddr);
-	n_sub_82260CF0(ctx, base, navigationAddr);
+	CECNavigation_ResetMode(ctx, base, navigationAddr);
+	CECNavigation_UpdateAction(ctx, base, navigationAddr);
 	CECNavigation_ClearCandidateData(ctx, base, navigationAddr);
 
-	uint64_t node = n_sub_8263EE30(ctx, base, navigation->m_4);
+	uint64_t node = Entity_GetComponentList(ctx, base, navigation->m_4);
 	bool isTargetClass = false;
 
 	if ((uint32_t)node != 0) {
@@ -1413,16 +1431,16 @@ uint64_t n_sub_826772A0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr) {
 	ctx.r9.u64 = notTargetClass;
 	return node;
 }
-PROMOTED_ENTRY(43, sub_826772A0, 0x826772A0) { ctx.r3.u64 = n_sub_826772A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_826772A0, 0x826772A0) { ctx.r3.u64 = CECNavigation_ResetNavigationData(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82677638(CpuState& ctx, uint8_t* base, uint64_t navigation) {
+uint64_t CECNavigation_Reset(CpuState& ctx, uint8_t* base, uint64_t navigation) {
 	if (!UseLiftedCode(43, 0x82677638)) { ctx.r3.u64 = navigation; __imp__sub_82677638(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82677638);
 	GameStackFrame stackFrame(ctx, base, 96);
-	n_sub_821B01D0(ctx, base, navigation);
-	return n_sub_826728C0(ctx, base, navigation + 272);
+	CECNavigation_ResetState(ctx, base, navigation);
+	return DynamicObstacleList_Clear(ctx, base, navigation + 272);
 }
-PROMOTED_ENTRY(43, sub_82677638, 0x82677638) { ctx.r3.u64 = n_sub_82677638(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82677638, 0x82677638) { ctx.r3.u64 = CECNavigation_Reset(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t arg2) {
 	if (!UseLiftedCode(43, 0x82677670)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = arg2; __imp__sub_82677670(ctx, base); return ctx.r3.u64; }
@@ -1443,7 +1461,7 @@ uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	result = ctx.r3.u64;
 
 	if ((int32_t)result == 10) {
-		result = n_sub_826776D0(ctx, base, navigationAddr, arg2);
+		result = CECNavigation_ReleaseAnimationControl(ctx, base, navigationAddr, arg2);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -1452,7 +1470,7 @@ uint64_t n_sub_82677670(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 }
 PROMOTED_ENTRY(43, sub_82677670, 0x82677670) { ctx.r3.u64 = n_sub_82677670(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint32_t interfacePtr) {
+uint64_t CECNavigation_ReleaseAnimationControl(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint32_t interfacePtr) {
 	if (!UseLiftedCode(43, 0x826776D0)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = interfacePtr; __imp__sub_826776D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826776D0);
 	uint32_t stack = ctx.r1.u64;
@@ -1523,6 +1541,9 @@ uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	if (hasAnimationControl) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
+		ctx.r8.u64 = r8Value;
 		ctx.xer.ca = flags.ca;
 		result = AnimationComponent_ReleaseAnimationControl(ctx, base, animationControl);
 
@@ -1536,7 +1557,7 @@ uint64_t n_sub_826776D0(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_826776D0, 0x826776D0) { ctx.r3.u64 = n_sub_826776D0(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(43, sub_826776D0, 0x826776D0) { ctx.r3.u64 = CECNavigation_ReleaseAnimationControl(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // Stores the float constant at 0x820994B4 to stack slots and gathers it into two vectors with lvlx loads and
 // lane merges, the way the compiled code does; with a 16-byte aligned stack both vectors written to +96 and

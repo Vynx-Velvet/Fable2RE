@@ -1,9 +1,9 @@
 // CECStats (vtable 0x820B6FF8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint32_t n_sub_82174F10(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
+uint32_t CECStats_ExpireTimedBonuses(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	if (!UseLiftedCode(0, 0x82174F10)) { ctx.r3.u64 = statsAddr; __imp__sub_82174F10(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82174F10);
@@ -67,7 +67,7 @@ uint32_t n_sub_82174F10(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 				CECStats_ClearBonus(ctx, base, uint32_t(statsAddr), bonusId, value);
 
 				// erase(): the helper returns the address of the iterator to continue from.
-				const uint64_t nextIterAddr = n_sub_824AE5C8(ctx, base, uint64_t(stack) + 88, statsAddr + 0x9C, LOAD64(iterAddr), ctx.r8.u64);
+				const uint64_t nextIterAddr = RbTreeIterator_Erase(ctx, base, uint64_t(stack) + 88, statsAddr + 0x9C, LOAD64(iterAddr), ctx.r8.u64);
 				result = nextIterAddr;
 				STORE64(iterAddr, LOAD64(uint32_t(nextIterAddr)));
 				continue;
@@ -82,7 +82,7 @@ uint32_t n_sub_82174F10(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	ctx.r1.u64 = stack;
 	return uint32_t(result);
 }
-PROMOTED_ENTRY(0, sub_82174F10, 0x82174F10) { ctx.r3.u64 = n_sub_82174F10(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(0, sub_82174F10, 0x82174F10) { ctx.r3.u64 = CECStats_ExpireTimedBonuses(ctx, base, ctx.r3.u64); }
 
 uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 	constexpr int32_t str_TXT_82002478_B_ = int32_t(0x82002478);
@@ -114,7 +114,9 @@ uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, 
 	STORE_F64(stack + 88, asInt.f64);
 	const uint32_t timeLimit = LOAD32(stack + 92);
 	// state the callee may pass on
+	ctx.f1.f64 = roundedValue;
 	ctx.f12 = asInt;
+	ctx.f13.f64 = roundedAsFloat;
 	uint32_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, keyString);
 
 	// Values the original code keeps in r7-r9 and hands to EntityHandle_Release.
@@ -204,7 +206,7 @@ uint32_t CECStats_RemoveExpiredPartyAnimalEntries(CpuState& ctx, uint8_t* base, 
 }
 PROMOTED_ENTRY(1, sub_8219C8A8, 0x8219C8A8) { ctx.r3.u64 = CECStats_RemoveExpiredPartyAnimalEntries(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_822385C0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint32_t bonusId) {
+uint64_t CECStats_IsBonusActive(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint32_t bonusId) {
 	if (!UseLiftedCode(7, 0x822385C0)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = bonusId; __imp__sub_822385C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822385C0);
 	uint32_t stack = ctx.r1.u32;
@@ -260,10 +262,10 @@ uint64_t n_sub_822385C0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint32
 	ctx.r4.u64 = searchedTree;                              // callers read r4 after the call
 	return isActive;
 }
-PROMOTED_ENTRY(7, sub_822385C0, 0x822385C0) { ctx.r3.u64 = n_sub_822385C0(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(7, sub_822385C0, 0x822385C0) { ctx.r3.u64 = CECStats_IsBonusActive(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // Lua_Stats_GetMorality: the morality value is returned in f1.
-uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
+uint64_t Lua_Stats_GetMorality(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr int32_t str_TXT_820B5ABC_B_ = int32_t(0x820B5ABC);
 	constexpr int32_t str_TXT_820B5AD4_B_ = int32_t(0x820B5AD4);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
@@ -272,7 +274,7 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	uint32_t stack = ctx.r1.u64;
 	CECStats* stats = GameObject<CECStats>(base, statsAddr);
 
-	// Register state of the original code: handed to n_sub_8223D5E0 and left for callers.
+	// Register state of the original code: handed to BalancingAugmentations_HasEntry and left for callers.
 	uint64_t r6Value = ctx.r6.u64;
 	uint32_t r7Value = ctx.r7.u32;
 	uint32_t r9Value = 0;
@@ -291,7 +293,7 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 
 	double morality = double(stats->m_10);
 	ctx.r1.u64 = stack;
-	const uint32_t bonusActive = n_sub_822385C0(ctx, base, statsAddr, 11);  // Lua_Stats_IsBonusActive
+	const uint32_t bonusActive = CECStats_IsBonusActive(ctx, base, statsAddr, 11);  // Lua_Stats_IsBonusActive
 	uint32_t r8Value = ctx.r8.u32;
 	if (uint32_t(bonusActive & 0xFF) != 0) {
 		CECStats_GetStatValue(ctx, base, uint32_t(statsAddr), 11);
@@ -361,7 +363,7 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 		// state the callee may pass on
 		ctx.cr0 = cr[0];
 		ctx.xer.ca = xer.ca;
-		const uint32_t hasEvilAddition = n_sub_8223D5E0(ctx, base, augment, 7);
+		const uint32_t hasEvilAddition = BalancingAugmentations_HasEntry(ctx, base, augment, 7);
 		cr[0] = ctx.cr0;
 		xer.ca = ctx.xer.ca;
 		if (uint32_t(hasEvilAddition & 0xFF) != 0) {
@@ -376,7 +378,7 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 			cr[7] = ctx.cr7;
 			xer.ca = ctx.xer.ca;
 		}
-		const uint32_t hasHolyAddition = n_sub_8223D5E0(ctx, base, augment, 6);
+		const uint32_t hasHolyAddition = BalancingAugmentations_HasEntry(ctx, base, augment, 6);
 		cr[0] = ctx.cr0;
 		xer.ca = ctx.xer.ca;
 		if (uint32_t(hasHolyAddition & 0xFF) != 0) {
@@ -439,10 +441,10 @@ uint64_t n_sub_8223D308(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	ctx.xer.ca = xer.ca;
 	return upperLtIndex;
 }
-PROMOTED_ENTRY(7, sub_8223D308, 0x8223D308) { ctx.r3.u64 = n_sub_8223D308(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(7, sub_8223D308, 0x8223D308) { ctx.r3.u64 = Lua_Stats_GetMorality(ctx, base, ctx.r3.u64); }
 
 // Lua_Stats_GetPurity: the purity value is returned in f1.
-uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
+uint64_t Lua_Stats_GetPurity(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr int32_t str_TXT_820B5BBC_B_ = int32_t(0x820B5BBC);
 	constexpr int32_t str_TXT_820B5BD0_B_ = int32_t(0x820B5BD0);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
@@ -451,7 +453,7 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	uint32_t stack = ctx.r1.u64;
 	CECStats* stats = GameObject<CECStats>(base, statsAddr);
 
-	// Register state of the original code: handed to n_sub_8223D5E0 and left for callers.
+	// Register state of the original code: handed to BalancingAugmentations_HasEntry and left for callers.
 	uint64_t r6Value = ctx.r6.u64;
 	uint32_t r7Value = ctx.r7.u32;
 	PPCCRRegister cr[8] = {ctx.cr0, ctx.cr1, ctx.cr2, ctx.cr3, ctx.cr4, ctx.cr5, {}, ctx.cr7};
@@ -468,7 +470,7 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 
 	double purity = double(stats->m_24);
 	ctx.r1.u64 = stack;
-	const uint32_t bonusActive = n_sub_822385C0(ctx, base, statsAddr, 12);  // Lua_Stats_IsBonusActive
+	const uint32_t bonusActive = CECStats_IsBonusActive(ctx, base, statsAddr, 12);  // Lua_Stats_IsBonusActive
 	uint32_t r8Value = ctx.r8.u32;
 	if (uint32_t(bonusActive & 0xFF) != 0) {
 		CECStats_GetStatValue(ctx, base, uint32_t(statsAddr), 12);
@@ -532,7 +534,7 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 		// state the callee may pass on
 		ctx.cr0 = cr[0];
 		ctx.xer.ca = xer.ca;
-		const uint32_t hasEvilAddition = n_sub_8223D5E0(ctx, base, augment, 7);
+		const uint32_t hasEvilAddition = BalancingAugmentations_HasEntry(ctx, base, augment, 7);
 		cr[0] = ctx.cr0;
 		xer.ca = ctx.xer.ca;
 		if (uint32_t(hasEvilAddition & 0xFF) != 0) {
@@ -547,7 +549,7 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 			cr[7] = ctx.cr7;
 			xer.ca = ctx.xer.ca;
 		}
-		const uint32_t hasHolyAddition = n_sub_8223D5E0(ctx, base, augment, 6);
+		const uint32_t hasHolyAddition = BalancingAugmentations_HasEntry(ctx, base, augment, 6);
 		cr[0] = ctx.cr0;
 		xer.ca = ctx.xer.ca;
 		if (uint32_t(hasHolyAddition & 0xFF) != 0) {
@@ -604,7 +606,7 @@ uint64_t n_sub_8223D8F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	ctx.xer.ca = xer.ca;
 	return upperLtIndex;
 }
-PROMOTED_ENTRY(7, sub_8223D8F8, 0x8223D8F8) { ctx.r3.u64 = n_sub_8223D8F8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(7, sub_8223D8F8, 0x8223D8F8) { ctx.r3.u64 = Lua_Stats_GetPurity(ctx, base, ctx.r3.u64); }
 
 uint64_t CECStats_ApplyPurityBalancing(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr int32_t str_TXT_82001440_B_ = int32_t(0x82001440);
@@ -642,14 +644,21 @@ uint64_t CECStats_ApplyPurityBalancing(CpuState& ctx, uint8_t* base, uint64_t st
 			const uint64_t recordRef = uint64_t(stack) + 88;
 			// state the callee may pass on
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = record;
+			ctx.f7.f64 = total;
+			ctx.f8.f64 = recordIntAsFloat;
+			ctx.f9.f64 = recordIntAsDouble;
 			ctx.f10 = recordIntBits;
+			ctx.f11.f64 = newValue;
+			ctx.f12.f64 = threshold;
+			ctx.f13.f64 = offsetConstant;
 			CCharString_ConstructFromCStr(ctx, base, nameString, uint64_t(str_TXT_82001440_B_), -1);
 			GameDBRecordRef_Construct(ctx, base, recordRef, uint32_t(stack) + 80);
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameString);
 			if (LOAD32(stack + 88) != 0) {
 				const uint64_t id = IdRef_Get(ctx, base, recordRef);
 				GameDB_GetFloatByName(ctx, base, id, uint64_t(int64_t(-2113184140)));
-				result = n_sub_8249DD50(ctx, base, statsAddr, ctx.f1.f64);  // Lua_Stats_ModifyPurity
+				result = Lua_Stats_ModifyPurity(ctx, base, statsAddr, ctx.f1.f64);  // Lua_Stats_ModifyPurity
 			}
 		}
 	}
@@ -661,7 +670,7 @@ uint64_t CECStats_ApplyPurityBalancing(CpuState& ctx, uint8_t* base, uint64_t st
 PROMOTED_ENTRY(12, sub_822BCDD0, 0x822BCDD0) { ctx.r3.u64 = CECStats_ApplyPurityBalancing(ctx, base, ctx.r3.u64); }
 
 // sub_822D9508 = Lua_Stats_ModifyTrackedStat (Lua Stats.ModifyTrackedStat)  [388 bytes]
-uint64_t n_sub_822D9508(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t statId, uint64_t amountDelta) {
+uint64_t Lua_Stats_ModifyTrackedStat(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t statId, uint64_t amountDelta) {
 	constexpr int32_t str_TXT_820B5C84_B_ = int32_t(0x820B5C84);
 	constexpr int32_t str_TXT_820B5DCC_B_ = int32_t(0x820B5DCC);
 	constexpr int32_t str_TXT_820B5DEC_B_ = int32_t(0x820B5DEC);
@@ -708,7 +717,7 @@ uint64_t n_sub_822D9508(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 				// state the callee may pass on
 				ctx.r0.u64 = savedR0;
 				ctx.r7.u64 = savedR7;
-				const uint64_t setResult = n_sub_824A0030(ctx, base, statsAddr, statId, amountDelta);  // Lua_Stats_SetTrackedStat
+				const uint64_t setResult = Lua_Stats_SetTrackedStat(ctx, base, statsAddr, statId, amountDelta);  // Lua_Stats_SetTrackedStat
 				stack = PopStackFrame(stack, 144);
 				ctx.r1.u64 = stack;
 				return setResult;
@@ -731,7 +740,7 @@ uint64_t n_sub_822D9508(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 					ctx.r3.u64 = trackedStatIndex;
 					ctx.r7.u64 = savedR7;
 					ctx.r10.u64 = savedR10;
-					const uint64_t trackedStats = n_sub_8217E3F8(ctx, base);
+					const uint64_t trackedStats = TrackedStats_GetSingleton(ctx, base);
 					savedF13 = ctx.f13.f64;
 					result = TrackedStats_AddValue(ctx, base, trackedStats, trackedStatIndex, amountDelta);
 					savedR0 = ctx.r0.u64;
@@ -778,11 +787,11 @@ uint64_t n_sub_822D9508(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 							ctx.r6.u64 = savedR6;  // state the callee may pass on
 							CCharString_ConstructFromCStr(ctx, base, nameAddr, str_TXT_820B5DEC_B_, -1);
 							savedF13 = ctx.f13.f64;
-							const uint64_t isFreeToBuy = n_sub_8249FB20(ctx, base, statsAddr, nameAddr) & 0xFF;  // Lua_Stats_IsTitleFreeToBuy
+							const uint64_t isFreeToBuy = Lua_Stats_IsTitleFreeToBuy(ctx, base, statsAddr, nameAddr) & 0xFF;  // Lua_Stats_IsTitleFreeToBuy
 							savedR10 = isFreeToBuy;
 							if (isFreeToBuy == 0) {
 								ctx.r10.u64 = savedR10;  // state the callee may pass on
-								n_sub_8249F8A0(ctx, base, statsAddr, nameAddr, ctx.r8.u64);  // Lua_Stats_SetTitleAsFreeToBuy
+								Lua_Stats_SetTitleAsFreeToBuy(ctx, base, statsAddr, nameAddr, ctx.r8.u64);  // Lua_Stats_SetTitleAsFreeToBuy
 								savedR10 = ctx.r10.u64;
 								savedF13 = ctx.f13.f64;
 							}
@@ -810,7 +819,7 @@ uint64_t n_sub_822D9508(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	ctx.f13.f64 = savedF13;
 	return result;
 }
-PROMOTED_ENTRY(13, sub_822D9508, 0x822D9508) { ctx.r3.u64 = n_sub_822D9508(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(13, sub_822D9508, 0x822D9508) { ctx.r3.u64 = Lua_Stats_ModifyTrackedStat(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_8249C528  [60 bytes]
 uint64_t CECStats_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outClassName) {
@@ -824,14 +833,14 @@ uint64_t CECStats_GetClassName(CpuState& ctx, uint8_t* base, uint64_t outClassNa
 PROMOTED_ENTRY(28, sub_8249C528, 0x8249C528) { ctx.r3.u64 = CECStats_GetClassName(ctx, base, ctx.r3.u64); }
 
 // Deleting destructor: destroys the stats object and frees its memory when bit 0 of the flags is set.
-uint64_t n_sub_8249CAC8(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t deleteFlags) {
+uint64_t CECStats_Delete(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(28, 0x8249CAC8)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8249CAC8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8249CAC8);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_8249CB18(ctx, base, statsAddr);
+	CECStats_Destructor(ctx, base, statsAddr);
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, statsAddr);
 	}
@@ -839,10 +848,10 @@ uint64_t n_sub_8249CAC8(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	ctx.r1.u64 = stack;
 	return statsAddr;
 }
-PROMOTED_ENTRY(28, sub_8249CAC8, 0x8249CAC8) { ctx.r3.u64 = n_sub_8249CAC8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(28, sub_8249CAC8, 0x8249CAC8) { ctx.r3.u64 = CECStats_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Destructor: releases the members of the stats object and resets its vtables to the base classes' ones.
-uint32_t n_sub_8249CB18(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
+uint32_t CECStats_Destructor(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	if (!UseLiftedCode(28, 0x8249CB18)) { ctx.r3.u64 = statsAddr; __imp__sub_8249CB18(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8249CB18);
 	uint32_t stack = ctx.r1.u64;
@@ -852,9 +861,9 @@ uint32_t n_sub_8249CB18(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	stack = PushStackFrame(base, stack, 128);
 
 	ctx.r1.u64 = stack;
-	n_sub_8233DD70(ctx, base, statsAddr + 2176);
+	StdMap_DestroyGlobal_8233DD70(ctx, base, statsAddr + 2176);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, statsAddr + 2160);
-	n_sub_82EE1CA8(ctx, base, statsAddr + 1280, ctx.r7.u64, ctx.r8.u64);
+	D3DResource_Destroy(ctx, base, statsAddr + 1280, ctx.r7.u64, ctx.r8.u64);
 
 	// Each handle slot: free the handle it holds, if any, then clear it and the two words after it.
 	auto releaseHandleSlot = [&](uint32_t handle, uint32_t slotAddr) {
@@ -871,12 +880,12 @@ uint32_t n_sub_8249CB18(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	releaseHandleSlot(stats->m_E0, stats32 + 0xE0);
 	releaseHandleSlot(stats->m_D0, stats32 + 0xD0);
 
-	n_sub_8233DD70(ctx, base, statsAddr + 192);
-	n_sub_824AEB00(ctx, base, statsAddr + 180);
-	n_sub_823FB150(ctx, base, statsAddr + 168);
-	n_sub_824AE560(ctx, base, statsAddr + 156);
-	n_sub_82308D08(ctx, base, statsAddr + 144);
-	n_sub_823FB150(ctx, base, statsAddr + 132);
+	StdMap_DestroyGlobal_8233DD70(ctx, base, statsAddr + 192);
+	IntrusiveList_Clear_824AEB00(ctx, base, statsAddr + 180);
+	ReleaseContainer_823FB150(ctx, base, statsAddr + 168);
+	IntrusiveList_DestroyC(ctx, base, statsAddr + 156);
+	StdMap_DestroyGlobal_82308D08(ctx, base, statsAddr + 144);
+	ReleaseContainer_823FB150(ctx, base, statsAddr + 132);
 	Vector_DestroyAndFree(ctx, base, statsAddr + 116);
 	const uint32_t result = Vector_DestroyAndFree(ctx, base, statsAddr + 100);
 
@@ -889,10 +898,10 @@ uint32_t n_sub_8249CB18(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249CB18, 0x8249CB18) { ctx.r3.u64 = n_sub_8249CB18(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(28, sub_8249CB18, 0x8249CB18) { ctx.r3.u64 = CECStats_Destructor(ctx, base, ctx.r3.u64); }
 
 // sub_8249EBE0 = Lua_Stats_TXT_820B5CE4_B_ (Lua Stats.TXT_820B5CE4_B_)  [332 bytes]
-uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double delta) {
+uint64_t Lua_Stats_ModifyHeight(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double delta) {
 	constexpr int32_t g_8209BE60 = int32_t(0x8209BE60);
 	constexpr int32_t str_TXT_820B5CE4_B_ = int32_t(0x820B5CE4);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
@@ -935,7 +944,16 @@ uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = lowIndex;
+	ctx.r7.u64 = lowSoBit;
 	ctx.f1.f64 = delta;
+	ctx.f6.f64 = clampedHeight;
+	ctx.f7.f64 = highSelector;
+	ctx.f8.f64 = aboveMax;
+	ctx.f9.f64 = atLeastMin;
+	ctx.f10.f64 = lowSelector;
+	ctx.f11.f64 = aboveMin;
+	ctx.f12.f64 = newHeight.f64;
 	ctx.f13 = newHeight;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, statsAddr);
 
@@ -972,7 +990,7 @@ uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 			const uint32_t ownerEntity = LOAD32(stats32 + 4);
 			const uint32_t globalsEntry = LOAD32(LOAD32(statsGlobals + 32) + 28);
 			ctx.f13 = scaledDeltaInt;  // state the callee may pass on
-			const uint64_t modifierValue = n_sub_82303F98(ctx, base, valueString, scaledDeltaLow);
+			const uint64_t modifierValue = CCharString_ConstructFromInt(ctx, base, valueString, scaledDeltaLow);
 
 			Stats_ApplyModifierIfAllowed(ctx, base, globalsEntry, modifierName, ownerEntity, modifierValue, modifierType);
 
@@ -985,7 +1003,7 @@ uint64_t n_sub_8249EBE0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249EBE0, 0x8249EBE0) { ctx.r3.u64 = n_sub_8249EBE0(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(28, sub_8249EBE0, 0x8249EBE0) { ctx.r3.u64 = Lua_Stats_ModifyHeight(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // Sets m_3C (the field Lua Stats.TXT_820B5CE4_B_ adds to) to the value clamped to [-1, 1] and notifies the stat system.
 uint64_t CECStats_ModifyStat(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double statValue) {
@@ -1022,14 +1040,24 @@ uint64_t CECStats_ModifyStat(CpuState& ctx, uint8_t* base, uint64_t statsAddr, d
 	stats->m_3C = float(clamped);
 
 	// state the callee may pass on
+	ctx.r6.u64 = highIndex;
 	ctx.r7.u64 = uint64_t(int64_t(g_82100170));  // the table address as the original's lis leaves it (sign-extended)
 	ctx.f1.f64 = statValue;
+	ctx.f5.f64 = clamped;
+	ctx.f6.f64 = highSelector;
+	ctx.f7.f64 = aboveMax;
+	ctx.f8.f64 = atLeastMin;
+	ctx.f9.f64 = lowSelector;
+	ctx.f10.f64 = aboveMin;
+	ctx.f11.f64 = statValue;
+	ctx.f12.f64 = maxValue;
+	ctx.f13.f64 = zero;
 	return HeroStats_NotifyStatModified(ctx, base, statsAddr);
 }
 PROMOTED_ENTRY(28, sub_8249ED38, 0x8249ED38) { ctx.r3.u64 = CECStats_ModifyStat(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // sub_8249EDA8 = Lua_Stats_TXT_820B5CF4_B_ (Lua Stats.TXT_820B5CF4_B_)  [320 bytes]
-uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double delta) {
+uint64_t Lua_Stats_ModifyStrength(CpuState& ctx, uint8_t* base, uint64_t heroStats, double delta) {
 	constexpr int32_t g_8209BE60 = int32_t(0x8209BE60);
 	constexpr int32_t str_TXT_820B5CF4_B_ = int32_t(0x820B5CF4);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
@@ -1071,7 +1099,15 @@ uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = lowIndex;
+	ctx.r7.u64 = lowSoBit;
 	ctx.f1.f64 = delta;
+	ctx.f7.f64 = clampedStrength;
+	ctx.f8.f64 = highSelector;
+	ctx.f9.f64 = aboveOne;
+	ctx.f10.f64 = atLeastZero;
+	ctx.f11.f64 = lowSelector;
+	ctx.f12.f64 = newStrength.f64;
 	ctx.f13 = newStrength;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, heroStats);
 	// Registers callers read after the call.
@@ -1113,7 +1149,7 @@ uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double
 			const uint32_t ownerEntity = LOAD32(stats32 + 4);
 			const uint32_t globalsEntry = LOAD32(LOAD32(statsGlobals + 32) + 28);
 			ctx.f13 = scaledDeltaInt;  // state the callee may pass on
-			const uint64_t modifierValue = n_sub_82303F98(ctx, base, valueString, scaledDeltaLow);
+			const uint64_t modifierValue = CCharString_ConstructFromInt(ctx, base, valueString, scaledDeltaLow);
 
 			Stats_ApplyModifierIfAllowed(ctx, base, globalsEntry, modifierName, ownerEntity, modifierValue, modifierType);
 
@@ -1131,10 +1167,10 @@ uint64_t n_sub_8249EDA8(CpuState& ctx, uint8_t* base, uint64_t heroStats, double
 	ctx.f13 = savedF13;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249EDA8, 0x8249EDA8) { ctx.r3.u64 = n_sub_8249EDA8(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(28, sub_8249EDA8, 0x8249EDA8) { ctx.r3.u64 = Lua_Stats_ModifyStrength(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // sub_8249EEF0 = Lua_Stats_ModifySkill (Lua Stats.ModifySkill)  [512 bytes]
-uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double delta) {
+uint64_t Lua_Stats_ModifySkill(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double delta) {
 	constexpr int32_t g_82100170 = int32_t(0x82100170);  // select table { 1.0f, -1.0f }
 	if (!UseLiftedCode(28, 0x8249EEF0)) { ctx.r3.u64 = statsAddr; ctx.f1.f64 = delta; __imp__sub_8249EEF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8249EEF0);
@@ -1169,8 +1205,17 @@ uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = lowLtBit;
+	ctx.r7.u64 = highIndex;
 	ctx.r8.u64 = uint64_t(int64_t(g_82100170));  // the table address as the original's lis leaves it (sign-extended)
 	ctx.f1.f64 = delta;
+	ctx.f7.f64 = clampedSkill;
+	ctx.f8.f64 = highSelector;
+	ctx.f9.f64 = aboveOne;
+	ctx.f10.f64 = atLeastZero;
+	ctx.f11.f64 = lowSelector;
+	ctx.f12.f64 = newSkill;
+	ctx.f13.f64 = newSkill;
 	uint64_t result = HeroStats_NotifyStatModified(ctx, base, statsAddr);
 
 	// Registers handed on to the later calls and back to callers.
@@ -1245,8 +1290,9 @@ uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 		const uint32_t component = LOAD32(entry + 20);
 		if (component != 0) {
 			// state the callee may pass on
+			ctx.r5.u64 = hasKey33;
 			handOverState();
-			result = n_sub_821E8870(ctx, base, component, 9);
+			result = List_ContainsKey(ctx, base, component, 9);
 			takeBackState();
 		} else {
 			result = 0;
@@ -1265,11 +1311,11 @@ uint64_t n_sub_8249EEF0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 	handOverState();  // callers read r6, r7, r8, cr0 and xer.ca after the call
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249EEF0, 0x8249EEF0) { ctx.r3.u64 = n_sub_8249EEF0(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(28, sub_8249EEF0, 0x8249EEF0) { ctx.r3.u64 = Lua_Stats_ModifySkill(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // Lua Stats.ModifyWill: adds the delta to the will value (m_48), clamps it between the two global
 // bounds and notifies the stats object.
-uint64_t n_sub_8249F0F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double willDelta) {
+uint64_t Lua_Stats_ModifyWill(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double willDelta) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
 	if (!UseLiftedCode(28, 0x8249F0F8)) { ctx.r3.u64 = statsAddr; ctx.f1.f64 = willDelta; __imp__sub_8249F0F8(ctx, base); return ctx.r3.u64; }
@@ -1323,13 +1369,13 @@ uint64_t n_sub_8249F0F8(CpuState& ctx, uint8_t* base, uint64_t statsAddr, double
 	ctx.f13.f64 = upperBound;
 	return HeroStats_NotifyStatModified(ctx, base, statsAddr);
 }
-PROMOTED_ENTRY(28, sub_8249F0F8, 0x8249F0F8) { ctx.r3.u64 = n_sub_8249F0F8(ctx, base, ctx.r3.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(28, sub_8249F0F8, 0x8249F0F8) { ctx.r3.u64 = Lua_Stats_ModifyWill(ctx, base, ctx.r3.u64, ctx.f1.f64); }
 
 // Lua Stats.SetAsBerserk: when set, stores in m_4C the time counter advanced by the record's
 // multiplier in time-scale units, and raises strength and height by the bonuses (m_50, m_54) that
 // bring them to the target constant; when cleared, zeroes m_4C and takes the stored bonuses back
 // off. Both paths then store a constant into m_874.
-uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t isBerserk) {
+uint64_t Lua_Stats_SetAsBerserk(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t isBerserk) {
 	constexpr int32_t str_TXT_820B5D04_B_ = int32_t(0x820B5D04);
 	constexpr int32_t str_TXT_820B5D14_B_ = int32_t(0x820B5D14);
 	constexpr uint32_t kResetValueAddr = 0x820994B4;   // stored into m_874 on both paths
@@ -1378,12 +1424,12 @@ uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		stats->m_4C = uint32_t(berserkEndWord);
 
 		// State the callee may pass on (r4 still holds the offset of m_4C).
-		n_sub_8249EDA8(ctx, base, statsAddr, strengthBonus);
+		Lua_Stats_ModifyStrength(ctx, base, statsAddr, strengthBonus);
 		ctx.fpscr.disableFlushMode();
 
 		const double heightBonus = double(float(statTarget - double(stats->m_3C)));
 		stats->m_54 = float(heightBonus);
-		result = n_sub_8249EBE0(ctx, base, statsAddr, heightBonus);
+		result = Lua_Stats_ModifyHeight(ctx, base, statsAddr, heightBonus);
 		ctx.fpscr.disableFlushMode();
 		resetValue = double(LOAD_F32(kResetValueAddr));
 	} else {
@@ -1392,11 +1438,11 @@ uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		stats->m_4C = 0u;
 		// State the callee may pass on.
 		ctx.r1.u64 = stack;
-		n_sub_8249EDA8(ctx, base, statsAddr, -strengthBonus);
+		Lua_Stats_ModifyStrength(ctx, base, statsAddr, -strengthBonus);
 		ctx.fpscr.disableFlushMode();
 
 		const double heightBonus = double(stats->m_54);
-		result = n_sub_8249EBE0(ctx, base, statsAddr, -heightBonus);
+		result = Lua_Stats_ModifyHeight(ctx, base, statsAddr, -heightBonus);
 		ctx.fpscr.disableFlushMode();
 		resetValue = double(LOAD_F32(kResetValueAddr));
 	}
@@ -1407,13 +1453,13 @@ uint64_t n_sub_8249F170(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249F170, 0x8249F170) { ctx.r3.u64 = n_sub_8249F170(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(28, sub_8249F170, 0x8249F170) { ctx.r3.u64 = Lua_Stats_SetAsBerserk(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Lua Stats.SetTitleAsFreeToBuy: when m_58 is not below the global threshold and the stats owner
 // (m_4) is not the entity stored under key 2, adds the title to the free-to-buy list (vector at
 // +0x74, begin m_78, end m_7C) unless it is listed already, checks the completionist achievement
 // and, when the title record has message text, shows it in a message box.
-uint64_t n_sub_8249F8A0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t titleRecordName, uint64_t callerR8) {
+uint64_t Lua_Stats_SetTitleAsFreeToBuy(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t titleRecordName, uint64_t callerR8) {
 	constexpr int32_t str_TXT_820B2E78_B_ = int32_t(0x820B2E78);
 	constexpr int32_t str_TXT_820B5D84_B_ = int32_t(0x820B5D84);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -1442,6 +1488,7 @@ uint64_t n_sub_8249F8A0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 			r8Out = ctx.r8.u64;
 			if (uint32_t(handle) != 0) {
 				// State the callee may pass on: r4 still holds the key.
+				ctx.f13.f64 = f13Out;
 				result = EntityHandle_GetEntity(ctx, base, handle);
 				r4Out = ctx.r4.u64;
 				r8Out = ctx.r8.u64;
@@ -1497,7 +1544,7 @@ uint64_t n_sub_8249F8A0(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 		r8Out = ctx.r8.u64;
 		if (uint32_t(result) == 0) goto done;
 
-		const uint64_t textKey = n_sub_82345978(ctx, base, result, str_TXT_820B5D84_B_);
+		const uint64_t textKey = GameDB_GetStringField(ctx, base, result, str_TXT_820B5D84_B_);
 		CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, textKey, -1);
 		const uint32_t textData = LOAD32(stack + 80);
 		if (textData != 0 && int32_t(LOAD32(textData + 4)) != 0) {
@@ -1531,10 +1578,10 @@ done:
 	ctx.f13.f64 = f13Out;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_8249F8A0, 0x8249F8A0) { ctx.r3.u64 = n_sub_8249F8A0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(28, sub_8249F8A0, 0x8249F8A0) { ctx.r3.u64 = Lua_Stats_SetTitleAsFreeToBuy(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 // Lua Stats.IsTitleFreeToBuy: 1 when the title is in the free-to-buy list (m_78..m_7C), else 0.
-uint64_t n_sub_8249FB20(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint32_t titleName) {
+uint64_t Lua_Stats_IsTitleFreeToBuy(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint32_t titleName) {
 	if (!UseLiftedCode(28, 0x8249FB20)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = titleName; __imp__sub_8249FB20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8249FB20);
 	uint32_t stack = ctx.r1.u32;
@@ -1569,12 +1616,12 @@ uint64_t n_sub_8249FB20(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint32
 	ctx.r8.u64 = endMinusFound;
 	return isFreeToBuy;
 }
-PROMOTED_ENTRY(28, sub_8249FB20, 0x8249FB20) { ctx.r3.u64 = n_sub_8249FB20(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(28, sub_8249FB20, 0x8249FB20) { ctx.r3.u64 = Lua_Stats_IsTitleFreeToBuy(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 // Lua Stats.SetTrackedStat: when the stats owner (m_4) is one of the players, stores the value in
 // the tracked-stat array at +0x15C and, for indices up to 122 that map to a positive tracked-stat
 // id, also sets it in the tracked stats.
-uint64_t n_sub_824A0030(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint64_t trackedStatIndex, uint64_t statValue) {
+uint64_t Lua_Stats_SetTrackedStat(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint64_t trackedStatIndex, uint64_t statValue) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(28, 0x824A0030)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = trackedStatIndex; ctx.r5.u64 = statValue; __imp__sub_824A0030(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824A0030);
@@ -1606,7 +1653,7 @@ uint64_t n_sub_824A0030(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint64
 				// State the callee may pass on.
 				ctx.r3.u64 = trackedStatId;
 				ctx.r7.u64 = r7Out;
-				const uint64_t trackedStats = n_sub_8217E3F8(ctx, base);
+				const uint64_t trackedStats = TrackedStats_GetSingleton(ctx, base);
 				result = TrackedStats_SetValue(ctx, base, trackedStats, trackedStatId, statValue, 1);
 				r7Out = ctx.r7.u64;
 			}
@@ -1618,12 +1665,12 @@ uint64_t n_sub_824A0030(CpuState& ctx, uint8_t* base, uint32_t statsAddr, uint64
 	ctx.r7.u64 = r7Out;   // callers read r7 after the call
 	return result;
 }
-PROMOTED_ENTRY(28, sub_824A0030, 0x824A0030) { ctx.r3.u64 = n_sub_824A0030(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(28, sub_824A0030, 0x824A0030) { ctx.r3.u64 = Lua_Stats_SetTrackedStat(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
 // Lua Stats.UnlockAchievement: for ids 1-50, when the stats owner (m_4) is one of the players and
 // the byte at +2091 of the world's +148 object is set, unlocks the achievement on the key-57
 // component of each player entity (handles at players+104 and players+112) whose flags allow it.
-uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t achievementId) {
+uint64_t Lua_Stats_UnlockAchievement(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t achievementId) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(28, 0x824A0100)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = achievementId; __imp__sub_824A0100(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824A0100);
@@ -1709,6 +1756,7 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	uint32_t playersSlot = LOAD32(playersRef + 4);
 	// State the callee may pass on.
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = playersSlot;
 	const uint64_t isPlayerResult = Players_IsPlayer(ctx, base, LOAD32(playersSlot), ownerEntity);
 	const uint32_t isPlayer = uint32_t(isPlayerResult) & 0xFF;
 	if (isPlayer == 0) {
@@ -1738,10 +1786,14 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	// First player: the handle at players+104.
 	playersSlot = LOAD32(LOAD32(world + 88) + 4);
 	// State the callee may pass on.
+	ctx.r8.u64 = isPlayer;
+	ctx.r9.u64 = unlocksAllowed;
 	const uint32_t firstPlayer = uint32_t(EntityHandle_Get(ctx, base, LOAD32(playersSlot)));
 	if (firstPlayer != 0 && (LOAD8(firstPlayer + 144) & 64) != 0 && ((LOAD32(firstPlayer + 40) >> 25) & 1) != 0) {
 		const ComponentSearch search = findComponent57(firstPlayer);
 		// State the callee may pass on; this search keeps 32-bit values.
+		ctx.r7.u64 = search.r7;
+		ctx.r8.u64 = search.r8;
 		ctx.cr0 = search.cr0;
 		ctx.xer.ca = search.ca;
 		Achievements_UnlockForHero(ctx, base, search.component, achievementId, achievementIndex, 0);
@@ -1752,6 +1804,7 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	playersRef = LOAD32(world + 88);
 	playersSlot = LOAD32(playersRef + 4);
 	// State the callee may pass on.
+	ctx.r9.u64 = playersSlot;
 	const uint64_t secondPlayerResult = SpellShot_GetOwner(ctx, base, LOAD32(playersSlot));
 	const uint32_t secondPlayer = uint32_t(secondPlayerResult);
 	if (secondPlayer == 0 || (LOAD8(secondPlayer + 144) & 64) == 0) {
@@ -1773,6 +1826,8 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	}
 	const ComponentSearch search = findComponent57(secondPlayer);
 	// State the callee may pass on.
+	ctx.r7.u64 = search.r7;
+	ctx.r8.u64 = search.r8;
 	ctx.cr0 = search.cr0;
 	ctx.xer.ca = search.ca;
 	const uint64_t result = Achievements_UnlockForHero(ctx, base, search.component, achievementId, achievementIndex, 0);
@@ -1780,7 +1835,7 @@ uint64_t n_sub_824A0100(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_824A0100, 0x824A0100) { ctx.r3.u64 = n_sub_824A0100(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(28, sub_824A0100, 0x824A0100) { ctx.r3.u64 = Lua_Stats_UnlockAchievement(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // When the owner entity (word at +4) has bit 12 of its word at +36 set, finds its component with
 // key 12 (through its sparse index, else by binary search of its sorted 8-byte {key, component}
@@ -1855,7 +1910,7 @@ PROMOTED_ENTRY(28, sub_824A5638, 0x824A5638) { ctx.r3.u64 = n_sub_824A5638(ctx, 
 // n_sub_82389100 on the owner's key-91 component when that component's byte at +107 is clear.
 // When the value is below m_424, the current m_424 goes to that call instead, if the component's
 // byte at +107 is set and two world flag bytes are set.
-uint32_t n_sub_824A6E00(CpuState& ctx, uint8_t* base, uint32_t statsAddr, double value) {
+uint32_t CECStats_UpdateStatValue(CpuState& ctx, uint8_t* base, uint32_t statsAddr, double value) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(28, 0x824A6E00)) { ctx.r3.u64 = statsAddr; ctx.f1.f64 = value; __imp__sub_824A6E00(ctx, base); return ctx.r3.u32; }
@@ -1968,13 +2023,13 @@ uint32_t n_sub_824A6E00(CpuState& ctx, uint8_t* base, uint32_t statsAddr, double
 	ctx.xer.ca = xerValue.ca;
 	return statsAddr;
 }
-PROMOTED_ENTRY(28, sub_824A6E00, 0x824A6E00) { ctx.r3.u64 = n_sub_824A6E00(ctx, base, ctx.r3.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(28, sub_824A6E00, 0x824A6E00) { ctx.r3.u64 = CECStats_UpdateStatValue(ctx, base, ctx.r3.u32, ctx.f1.f64); }
 
 // Scans the levels in order until one's minimum minutes exceeds the scaled m_424 and adds the
 // gold-per-minute value of the last level passed to the running total in m_428; passes the whole
-// part with the owner's key-81 entry data to n_sub_8239E698, keeps the fraction in m_428 and
+// part with the owner's key-81 entry data to Player_ModifyMoney, keeps the fraction in m_428 and
 // copies m_424 to m_42C.
-uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
+uint32_t CECStats_UpdateGoldPerMinute(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820B0000 = int32_t(0x820B0000);
 	constexpr int32_t str_TXT_820B64E0_B_ = int32_t(0x820B64E0);
@@ -2002,12 +2057,12 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
 	const uint64_t levelListHash = String_HashFnv1(ctx, base, uint64_t(int64_t(g_820B0000) + 25804), hashSeed);
-	const uint64_t levelList = n_sub_829FB108(ctx, base, LOAD32(uint32_t(g_83490000 + 27600)), levelListHash);
+	const uint64_t levelList = HashMap_FindByHash(ctx, base, LOAD32(uint32_t(g_83490000 + 27600)), levelListHash);
 	// f13 holds m_424 for the calls below, as in the original
 	ctx.f13.f64 = playTime;
 	if ((uint32_t)levelList != 0) {
 		// leaves the 12-byte level entries at +80, the end index at +84 and the first index at +88
-		n_sub_829FBC40(ctx, base, scratch, levelList, ctx.r8.u64);
+		GameDB_GetArrayField(ctx, base, scratch, levelList, ctx.r8.u64);
 		uint32_t index = LOAD32(stack + 88);
 		const uint32_t endIndex = LOAD32(stack + 84);
 		const uint32_t levels = LOAD32(stack + 80);
@@ -2033,7 +2088,7 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 					ctx.fpscr.disableFlushMode();
 					double minMinutes = defaultValue;
 					const uint64_t minMinutesHash = String_HashFnv1(ctx, base, uint64_t(int64_t(str_TXT_820B64E0_B_)), hashSeed);
-					const uint32_t minMinutesAddr = n_sub_821E55C8(ctx, base, record, minMinutesHash, scratch);
+					const uint32_t minMinutesAddr = GameDB_FindFieldValueByKey(ctx, base, record, minMinutesHash, scratch);
 					if (minMinutesAddr != 0) {
 						ctx.fpscr.disableFlushMode();
 						minMinutes = double(LOAD_F32(minMinutesAddr));
@@ -2051,7 +2106,7 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 		HandleTarget_Free(ctx, base, levels);
 	}
 
-	// r6-r8, cr0 and xer.ca as the last call above leaves them; n_sub_8239E698 receives r8, cr0 and
+	// r6-r8, cr0 and xer.ca as the last call above leaves them; Player_ModifyMoney receives r8, cr0 and
 	// xer.ca (after the key-81 lookup changes some) and callers read all of them after the call
 	uint64_t r6State = ctx.r6.u64;
 	uint64_t r7State = ctx.r7.u64;
@@ -2119,9 +2174,10 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 		ctx.r8.u64 = r8State;
 		ctx.f1.f64 = flooredGold;
 		ctx.f12 = wholeGoldBits;
+		ctx.f13.f64 = flooredGoldSingle;
 		ctx.cr0 = cr0State;
 		ctx.xer.ca = caState;
-		result = n_sub_8239E698(ctx, base, entryData, wholeGold, 1, 1, 0);
+		result = Player_ModifyMoney(ctx, base, entryData, wholeGold, 1, 1, 0);
 		r6State = ctx.r6.u64;
 		r7State = ctx.r7.u64;
 		r8State = ctx.r8.u64;
@@ -2153,7 +2209,7 @@ uint32_t n_sub_824A6FD8(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 	ctx.xer.ca = caState;
 	return result;
 }
-PROMOTED_ENTRY(28, sub_824A6FD8, 0x824A6FD8) { ctx.r3.u64 = n_sub_824A6FD8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(28, sub_824A6FD8, 0x824A6FD8) { ctx.r3.u64 = CECStats_UpdateGoldPerMinute(ctx, base, ctx.r3.u32); }
 
 uint64_t HeroStats_NotifyStatModified(CpuState& ctx, uint8_t* base, uint32_t statsAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -2264,9 +2320,13 @@ uint64_t HeroStats_NotifyStatModified(CpuState& ctx, uint8_t* base, uint32_t sta
 		}
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6State;
+		ctx.r7.u64 = r7State;
+		ctx.r8.u64 = r8State;
+		ctx.r9.u64 = r9State;
 		ctx.cr0 = cr0State;
 		ctx.xer.ca = caState;
-		result = n_sub_823F23B0(ctx, base, key21Data);
+		result = CECEntityModeManager_ReenableAllModes(ctx, base, key21Data);
 		r7State = ctx.r7.u64;
 		r8State = ctx.r8.u64;
 		cr0State = ctx.cr0;
@@ -2286,7 +2346,7 @@ PROMOTED_ENTRY(28, sub_824A72B0, 0x824A72B0) { ctx.r3.u64 = HeroStats_NotifyStat
 
 // For a player owner: stores the level (2 down to 0, -1 for none) reached by the summed xp floats at
 // +420 of the owner's key-56 entry and, when it changed and the key-91 network check allows it,
-// calls n_sub_821B5478 with 238.
+// calls Player_IsActionActive with 238.
 uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t statsAddr) {
 	constexpr uint32_t levelThresholds = 0x83319238;
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -2299,7 +2359,7 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 	const uint32_t owner = stats->m_4;
 
 	// r4-r8, f6-f13 and xer.ca as the original leaves them: the caller's, then what Players_IsPlayer
-	// and the code below leave; n_sub_821B5478 receives r5-r8, f6-f13 and xer.ca, and callers read
+	// and the code below leave; Player_IsActionActive receives r5-r8, f6-f13 and xer.ca, and callers read
 	// r4-r7, f6-f13 and xer.ca after the call
 	uint64_t r4State = owner;
 	uint64_t r5State = ctx.r5.u64;
@@ -2316,7 +2376,7 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 	double f13State = ctx.f13.f64;
 	uint8_t caState = ctx.xer.ca;
 
-	// after Players_IsPlayer and n_sub_821B5478 the original keeps what they leave in r4-r7,
+	// after Players_IsPlayer and Player_IsActionActive the original keeps what they leave in r4-r7,
 	// f6-f13 and xer.ca
 	auto keepCalleeRegisters = [&]() {
 		r4State = ctx.r4.u64;
@@ -2375,6 +2435,7 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 		const uint32_t players = LOAD32(LOAD32(LOAD32(LOAD32(globals + 26912) + 12) + 88) + 4);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r9.u64 = players;
 		result = Players_IsPlayer(ctx, base, LOAD32(players), owner);
 		keepCalleeRegisters();
 	}
@@ -2505,9 +2566,19 @@ uint64_t Stats_RecomputeMagicXPLevel(CpuState& ctx, uint8_t* base, uint64_t stat
 				const uint32_t notifyTarget = LOAD32(LOAD32(globalState + 168) + 4);
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
+				ctx.r5.u64 = r5State;
+				ctx.r6.u64 = r6State;
 				ctx.r8.u64 = r8State;
+				ctx.f6.f64 = f6State;
+				ctx.f7.f64 = f7State;
+				ctx.f8.f64 = f8State;
+				ctx.f9.f64 = f9State;
+				ctx.f10.f64 = f10State;
+				ctx.f11.f64 = f11State;
+				ctx.f12.f64 = f12State;
+				ctx.f13.f64 = f13State;
 				ctx.xer.ca = caState;
-				result = n_sub_821B5478(ctx, base, notifyTarget, 238);
+				result = Player_IsActionActive(ctx, base, notifyTarget, 238);
 				keepCalleeRegisters();
 			}
 		}
@@ -2782,7 +2853,7 @@ uint32_t CECStats_ClearBonus(CpuState& ctx, uint8_t* base, uint32_t statsAddr, u
 			ctx.cr0.eq = compare0.eq;
 			ctx.cr0.so = compare0.so;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_8268F5B8(ctx, base, record, reducedValue);  // Lua_Health_SetMax
+			result = Lua_Health_SetMax(ctx, base, record, reducedValue);  // Lua_Health_SetMax
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
 			return result;
@@ -2852,7 +2923,7 @@ uint32_t CECStats_ClearBonus(CpuState& ctx, uint8_t* base, uint32_t statsAddr, u
 }
 PROMOTED_ENTRY(28, sub_824A9080, 0x824A9080) { ctx.r3.u64 = CECStats_ClearBonus(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.f1.f64); }
 
-uint64_t n_sub_824A94B0(CpuState& ctx, uint8_t* base, uint64_t stats, uint64_t abilityIndex, uint64_t incomingR8) {
+uint64_t Lua_Stats_GetHeroAbilityMaximumLevel(CpuState& ctx, uint8_t* base, uint64_t stats, uint64_t abilityIndex, uint64_t incomingR8) {
 	if (!UseLiftedCode(28, 0x824A94B0)) { ctx.r3.u64 = stats; ctx.r4.u64 = abilityIndex; ctx.r8.u64 = incomingR8; __imp__sub_824A94B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824A94B0);
 	uint32_t stack = ctx.r1.u64;
@@ -2867,7 +2938,7 @@ uint64_t n_sub_824A94B0(CpuState& ctx, uint8_t* base, uint64_t stats, uint64_t a
 		uint64_t idRef = IdRef_Get(ctx, base, abilityKey);
 		uint64_t fieldValue = GameDB_ReadU32Field(ctx, base, idRef, (uint64_t)(int64_t)-2113182264);
 		if ((uint32_t)fieldValue != 0) {
-			n_sub_829FBC40(ctx, base, abilityKey, fieldValue, ctx.r8.u64);
+			GameDB_GetArrayField(ctx, base, abilityKey, fieldValue, ctx.r8.u64);
 			HandleTarget_Free(ctx, base, LOAD32(stack + 80));
 			uint32_t maximumLevel = LOAD32(stack + 84);
 			stack = PopStackFrame(stack, 112);
@@ -2882,7 +2953,7 @@ uint64_t n_sub_824A94B0(CpuState& ctx, uint8_t* base, uint64_t stats, uint64_t a
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(28, sub_824A94B0, 0x824A94B0) { ctx.r3.u64 = n_sub_824A94B0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(28, sub_824A94B0, 0x824A94B0) { ctx.r3.u64 = Lua_Stats_GetHeroAbilityMaximumLevel(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t incomingR8) {
 	constexpr int32_t str_TXT_820B6AB8_B_ = int32_t(0x820B6AB8);
@@ -2904,7 +2975,7 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 		uint32_t abilityLevelAddr = (uint32_t)statsAddr + 276;
 		do {
 			ctx.r1.u64 = stack;
-			result = n_sub_824A94B0(ctx, base, statsAddr, abilityIndex, r8Value);  // Lua_Stats_GetHeroAbilityMaximumLevel
+			result = Lua_Stats_GetHeroAbilityMaximumLevel(ctx, base, statsAddr, abilityIndex, r8Value);  // Lua_Stats_GetHeroAbilityMaximumLevel
 			r8Value = ctx.r8.u64;
 			compare0.lt = ctx.cr0.lt;
 			compare0.gt = ctx.cr0.gt;
@@ -2964,6 +3035,7 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 
 		uint64_t balancingKey = (uint64_t)stack + 80;  // a CCharString on the stack
 		// state the callee may pass on
+		ctx.r6.u64 = r6Value;
 		ctx.cr0.lt = compare0.lt;
 		ctx.cr0.gt = compare0.gt;
 		ctx.cr0.eq = compare0.eq;
@@ -2981,6 +3053,8 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 		double stepCountDouble = double(stepCountBits.s64);
 		double stepCountSingle = double(float(stepCountDouble));
 		// state the callee may pass on
+		ctx.r6.u64 = (uint32_t)stepCount;
+		ctx.f13.f64 = stepCountDouble;
 		Achievements_GetBalancingValue(ctx, base, balancingKey);
 		double requiredCount = ctx.f1.f64;
 		ctx.fpscr.disableFlushMode();
@@ -2993,7 +3067,7 @@ uint64_t Stats_CheckCompletionistAchievement(CpuState& ctx, uint8_t* base, uint6
 		compare0.so = ctx.cr0.so;
 		flags.ca = ctx.xer.ca;
 		if (belowRequired) goto finished;
-		result = n_sub_824A0100(ctx, base, statsAddr, 12);  // Lua_Stats_UnlockAchievement
+		result = Lua_Stats_UnlockAchievement(ctx, base, statsAddr, 12);  // Lua_Stats_UnlockAchievement
 		r8Value = ctx.r8.u64;
 		compare0.lt = ctx.cr0.lt;
 		compare0.gt = ctx.cr0.gt;

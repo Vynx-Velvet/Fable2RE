@@ -1,9 +1,9 @@
 // CECBird (vtable 0x82003690): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821C7E18(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t eventData) {
+uint64_t CECBird_OnDeath(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t eventData) {
 	if (!UseLiftedCode(3, 0x821C7E18)) { ctx.r3.u64 = birdAddr; ctx.r4.u64 = eventData; __imp__sub_821C7E18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821C7E18);
 	uint32_t stack = ctx.r1.u64;
@@ -27,15 +27,15 @@ uint64_t n_sub_821C7E18(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_
 	REX_CALL_INDIRECT_FUNC(callTarget);
 	result = ctx.r3.u64;
 	if ((int32_t)result == 8 && LOAD8((uint32_t)birdAddr + 104) != 0) {
-		result = n_sub_8299D8B0(ctx, base, birdAddr);
+		result = CECBird_SpawnDeathEffects(ctx, base, birdAddr);
 	}
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821C7E18, 0x821C7E18) { ctx.r3.u64 = n_sub_821C7E18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(3, sub_821C7E18, 0x821C7E18) { ctx.r3.u64 = CECBird_OnDeath(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_821D7E98(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
+uint64_t CECBird_Update(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	if (!UseLiftedCode(3, 0x821D7E98)) { ctx.r3.u64 = birdAddr; __imp__sub_821D7E98(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821D7E98);
 	uint32_t stack = ctx.r1.u64;
@@ -107,32 +107,34 @@ uint64_t n_sub_821D7E98(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	double distance = double(LOAD_F32(statPtr + 40));
 	ctx.fpscr.disableFlushMode();
 	ctx.r1.u64 = stack;
+	ctx.r6.u64 = reg6Value;
+	ctx.r7.u64 = reg7Value;
 	ctx.xer.ca = carry;
 	uint64_t result = CECBird_IsPlayerWithinDistance(ctx, base, birdPtr, distance);
 
 	if ((result & 0xFF) != 0) {
 		uint32_t state = bird->m_C;
 		if (state == 0) {
-			result = n_sub_821BAD38(ctx, base, birdPtr);
+			result = CECBird_UpdateWalkState(ctx, base, birdPtr);
 		} else if (state == 1) {
-			result = n_sub_8299CF70(ctx, base, birdPtr);
+			result = CECBird_UpdateIdle(ctx, base, birdPtr);
 		} else if (state == 2) {
-			result = n_sub_8299D1B0(ctx, base, birdPtr);
+			result = CECBird_UpdateFlying(ctx, base, birdPtr);
 		}
 	}
 
 	uint32_t state2 = bird->m_C;
 	if (state2 == 3) {
-		result = n_sub_821A83D8(ctx, base, birdPtr);
+		result = CECBird_UpdateGliding(ctx, base, birdPtr);
 	} else if (state2 == 2) {
-		result = n_sub_8299D1B0(ctx, base, birdPtr);
+		result = CECBird_UpdateFlying(ctx, base, birdPtr);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821D7E98, 0x821D7E98) { ctx.r3.u64 = n_sub_821D7E98(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(3, sub_821D7E98, 0x821D7E98) { ctx.r3.u64 = CECBird_Update(ctx, base, ctx.r3.u64); }
 
 uint64_t CECBird_IsPlayerWithinDistance(CpuState& ctx, uint8_t* base, uint32_t birdAddr, double maxDistance) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -247,7 +249,7 @@ uint64_t CECBird_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameRe
 }
 PROMOTED_ENTRY(69, sub_8299C520, 0x8299C520) { ctx.r3.u64 = CECBird_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8299C988(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t definition) {
+uint64_t CECBird_ApplyDefinition(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_t definition) {
 	constexpr int32_t str_TXT_82000EB4_B_ = int32_t(0x82000EB4);
 	constexpr int32_t g_8209B650 = int32_t(0x8209B650);
 	constexpr int32_t str_TXT_820EEE14_B_ = int32_t(0x820EEE14);
@@ -386,9 +388,9 @@ uint64_t n_sub_8299C988(CpuState& ctx, uint8_t* base, uint64_t birdAddr, uint64_
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(69, sub_8299C988, 0x8299C988) { ctx.r3.u64 = n_sub_8299C988(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(69, sub_8299C988, 0x8299C988) { ctx.r3.u64 = CECBird_ApplyDefinition(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8299CB90(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
+uint64_t CECBird_SetupSpline(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	constexpr int32_t str_TXT_820D9104_B_ = int32_t(0x820D9104);
 	constexpr int32_t str_TXT_820EEE58_B_ = int32_t(0x820EEE58);
 	if (!UseLiftedCode(69, 0x8299CB90)) { ctx.r3.u64 = birdAddr; __imp__sub_8299CB90(ctx, base); return ctx.r3.u64; }
@@ -434,7 +436,7 @@ uint64_t n_sub_8299CB90(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 		}
 		if (hasModeValue && (CECEntityModeManager_HasMode(ctx, base, modeValue, 32) & 0xFF) == 0) {
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820D9104_B_, -1);
-			n_sub_823F20A8(ctx, base, modeValue, 32, stack + 80);
+			CECEntityModeManager_AddMode(ctx, base, modeValue, 32, stack + 80);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		}
 	}
@@ -456,7 +458,7 @@ uint64_t n_sub_8299CB90(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 			uint32_t manager = LOAD32(LOAD32(LOAD32(0x83496920u) + 12) + 88);
 			uint32_t subObj = LOAD32(manager + 4);
 			uint32_t entityId = LOAD32(subObj);
-			uint64_t splineEntity = n_sub_82264448(ctx, base, entityId, stack + 80);
+			uint64_t splineEntity = EntityManager_LookupEntity(ctx, base, entityId, stack + 80);
 			result = splineEntity;
 			uint32_t splinePtr = (uint32_t)splineEntity;
 			if (splinePtr != 0 &&
@@ -505,7 +507,7 @@ uint64_t n_sub_8299CB90(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 				}
 				SharedHandle_Release(ctx, base, stack + 80);
 				uint32_t currentObj = LOAD32(birdHandle);
-				result = n_sub_821985B8(ctx, base, currentObj);
+				result = Spline_GetLength(ctx, base, currentObj);
 				double value = ctx.f1.f64;
 				ctx.fpscr.disableFlushMode();
 				bird->m_78 = (float)value;
@@ -517,9 +519,9 @@ uint64_t n_sub_8299CB90(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(69, sub_8299CB90, 0x8299CB90) { ctx.r3.u64 = n_sub_8299CB90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(69, sub_8299CB90, 0x8299CB90) { ctx.r3.u64 = CECBird_SetupSpline(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
+uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	constexpr int32_t g_82005430 = int32_t(0x82005430);
 	constexpr int32_t str_TXT_820AE654_B_ = int32_t(0x820AE654);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -542,7 +544,7 @@ uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	// Make sure the bird is initialised before anything else touches it.
 	if (LOAD32(entityAddr + 16) != 1) {
 		ctx.r1.u64 = stack;
-		result = n_sub_821BB738(ctx, base, entity);
+		result = CECBird_Initialize(ctx, base, entity);
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
 		reg8 = ctx.r8.u64;
@@ -551,7 +553,7 @@ uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 
 	if (LOAD32(entityAddr + 16) == 1) {
 		ctx.r1.u64 = stack;
-		result = n_sub_8299D4F8(ctx, base, entity);
+		result = CECBird_TakeOff(ctx, base, entity);
 		stack = PopStackFrame(stack, 272);
 		ctx.r1.u64 = stack;
 		return result;
@@ -644,13 +646,17 @@ uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 				const uint64_t idleString = uint64_t(int64_t(str_TXT_820AE654_B_));
 				CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, idleString, -1);
 				flags.ca = ctx.xer.ca;
-				n_sub_827F05D0(ctx, base, uint64_t(stack) + 112, 1, uint64_t(stack) + 80, 0);
+				C_820F0D08_Construct(ctx, base, uint64_t(stack) + 112, 1, uint64_t(stack) + 80, 0);
 				flags.ca = ctx.xer.ca;
 
 				STORE32(stack + 112, uint32_t(g_82005430));
 				const uint32_t action = LOAD32(LOAD32(element) + 64);
 				callTarget.u64 = uint64_t(action);
 				ctx.r3.u64 = uint64_t(stack) + 88;
+				ctx.r4.u64 = element;
+				ctx.r5.u64 = uint64_t(stack) + 112;
+				ctx.r6.u64 = 0;
+				ctx.r10.u64 = uint64_t(action);
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				flags.ca = ctx.xer.ca;
 
@@ -673,9 +679,9 @@ uint64_t n_sub_8299CF70(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(69, sub_8299CF70, 0x8299CF70) { ctx.r3.u64 = n_sub_8299CF70(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(69, sub_8299CF70, 0x8299CF70) { ctx.r3.u64 = CECBird_UpdateIdle(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8299D4F8(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
+uint64_t CECBird_TakeOff(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	constexpr int32_t str_TXT_820C8324_B_ = int32_t(0x820C8324);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -770,7 +776,7 @@ uint64_t n_sub_8299D4F8(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 			}
 
 			CCharString_ConstructFromCStr(ctx, base, stack + 80, (uint32_t)str_TXT_820C8324_B_, -1);
-			n_sub_827F05D0(ctx, base, stack + 112, 1, stack + 80, 0);
+			C_820F0D08_Construct(ctx, base, stack + 112, 1, stack + 80, 0);
 
 			STORE32(stack + 232, 0);
 			STORE32(stack + 112, 0x820EEE80u);
@@ -821,9 +827,9 @@ uint64_t n_sub_8299D4F8(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	ctx.r1.u64 = stack;
 	return birdAddr;
 }
-PROMOTED_ENTRY(69, sub_8299D4F8, 0x8299D4F8) { ctx.r3.u64 = n_sub_8299D4F8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(69, sub_8299D4F8, 0x8299D4F8) { ctx.r3.u64 = CECBird_TakeOff(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8299D720(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
+uint64_t CECBird_UpdateFlightPosition(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	if (!UseLiftedCode(69, 0x8299D720)) { ctx.r3.u64 = birdAddr; __imp__sub_8299D720(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8299D720);
@@ -936,9 +942,9 @@ uint64_t n_sub_8299D720(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 	ctx.f11.f64 = (double)(float)sinResult;
 	return 64;
 }
-PROMOTED_ENTRY(69, sub_8299D720, 0x8299D720) { ctx.r3.u64 = n_sub_8299D720(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(69, sub_8299D720, 0x8299D720) { ctx.r3.u64 = CECBird_UpdateFlightPosition(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8299D8B0(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
+uint64_t CECBird_SpawnDeathEffects(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 	constexpr int32_t str_TXT_820ECB54_B_ = int32_t(0x820ECB54);
 	constexpr int32_t str_TXT_820ECB5C_B_ = int32_t(0x820ECB5C);
 	constexpr int32_t str_TXT_820EEE6C_B_ = int32_t(0x820EEE6C);
@@ -1012,7 +1018,7 @@ uint64_t n_sub_8299D8B0(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 
 	if (haveBone) {
 		uint64_t shadowHipBone = TXT_8349B390_G_;
-		uint32_t placement = n_sub_825490A8(ctx, base, stack + 96, boneValue, shadowHipBone, 0);
+		uint32_t placement = CECTroll_GetWeakSpotPosition(ctx, base, stack + 96, boneValue, shadowHipBone, 0);
 		reg6 = ctx.r6.u64;
 		reg8 = ctx.r8.u64;
 		SET_V8(vec, VLOAD(placement & ~0xF));
@@ -1050,4 +1056,4 @@ uint64_t n_sub_8299D8B0(CpuState& ctx, uint8_t* base, uint32_t birdAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(69, sub_8299D8B0, 0x8299D8B0) { ctx.r3.u64 = n_sub_8299D8B0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(69, sub_8299D8B0, 0x8299D8B0) { ctx.r3.u64 = CECBird_SpawnDeathEffects(ctx, base, ctx.r3.u32); }

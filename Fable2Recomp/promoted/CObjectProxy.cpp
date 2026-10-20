@@ -1,9 +1,9 @@
 // CObjectProxy (vtable 0x8200ACA0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -12,7 +12,7 @@
 #include "lifted/readable_support.h"
 
 // sub_82C0B590  [44 bytes]
-uint64_t n_sub_82C0B590(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr) {
+uint64_t CObjectProxy_GetEmbeddedInterface(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr) {
 	if (!UseLiftedCode(89, 0x82C0B590)) { ctx.r3.u64 = objectProxyAddr; __imp__sub_82C0B590(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0B590);
 	CObjectProxy* objectProxy = GameObject<CObjectProxy>(base, objectProxyAddr);
@@ -30,10 +30,10 @@ uint64_t n_sub_82C0B590(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr) 
 	REX_CALL_INDIRECT_FUNC(method);
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(89, sub_82C0B590, 0x82C0B590) { ctx.r3.u64 = n_sub_82C0B590(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(89, sub_82C0B590, 0x82C0B590) { ctx.r3.u64 = CObjectProxy_GetEmbeddedInterface(ctx, base, ctx.r3.u32); }
 
 // sub_82C0B5C0  [20 bytes]
-uint64_t n_sub_82C0B5C0(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
+uint64_t CObjectProxy_DispatchToTarget(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
 	if (!UseLiftedCode(89, 0x82C0B5C0)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_82C0B5C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0B5C0);
 	CObjectProxy* objectProxy = GameObject<CObjectProxy>(base, objectProxyAddr);
@@ -42,9 +42,9 @@ uint64_t n_sub_82C0B5C0(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 		ctx.r4.u64 = arg2; // callers read r4 after the call
 		return 0;
 	}
-	return n_sub_82C14D58(ctx, base, target, arg2, arg3, arg4);
+	return Target_DispatchToHandler(ctx, base, target, arg2, arg3, arg4);
 }
-PROMOTED_ENTRY(89, sub_82C0B5C0, 0x82C0B5C0) { ctx.r3.u64 = n_sub_82C0B5C0(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(89, sub_82C0B5C0, 0x82C0B5C0) { ctx.r3.u64 = CObjectProxy_DispatchToTarget(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_82C0C990  [20 bytes]
 void CObjectProxy_SetFieldA0(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint32_t value) {
@@ -139,7 +139,7 @@ uint64_t n_sub_82C0E108(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 		if (proxyTarget != 0) {
 			// Temporary copy (at stack + 80) of the reference the target holds at +120, released by OwnedPtr_Reset.
 			ctx.r1.u64 = stack;
-			n_sub_82C0CF68(ctx, base, stack + 80, proxyTarget);
+			Reference_ConstructFrom(ctx, base, stack + 80, proxyTarget);
 			uint32_t referenced = LOAD32(stack + 80);
 			if (referenced != 0) {
 				if (mode == 2) {
@@ -164,7 +164,7 @@ uint64_t n_sub_82C0E108(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 PROMOTED_ENTRY(89, sub_82C0E108, 0x82C0E108) { ctx.r3.u64 = n_sub_82C0E108(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_82C0E1C0  [76 bytes]
-uint64_t n_sub_82C0E1C0(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t CObjectProxy_CreateDerived(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
 	if (!UseLiftedCode(89, 0x82C0E1C0)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; __imp__sub_82C0E1C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0E1C0);
 	uint32_t stack = ctx.r1.u64;
@@ -192,10 +192,10 @@ uint64_t n_sub_82C0E1C0(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(89, sub_82C0E1C0, 0x82C0E1C0) { ctx.r3.u64 = n_sub_82C0E1C0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(89, sub_82C0E1C0, 0x82C0E1C0) { ctx.r3.u64 = CObjectProxy_CreateDerived(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 
 // sub_82C0E210  [108 bytes]
-uint64_t n_sub_82C0E210(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t sourceObject) {
+uint64_t CObjectProxy_AssignFromReference(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t sourceObject) {
 	if (!UseLiftedCode(89, 0x82C0E210)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = sourceObject; __imp__sub_82C0E210(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0E210);
 	uint32_t stack = ctx.r1.u64;
@@ -232,7 +232,7 @@ uint64_t n_sub_82C0E210(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	ctx.r4.u64 = r4Out;
 	return objectProxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C0E210, 0x82C0E210) { ctx.r3.u64 = n_sub_82C0E210(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(89, sub_82C0E210, 0x82C0E210) { ctx.r3.u64 = CObjectProxy_AssignFromReference(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82C0E280  [8 bytes]
 uint64_t n_sub_82C0E280(CpuState& ctx, uint8_t* base, uint64_t objectProxy, uint32_t arg2, uint32_t arg3, uint32_t arg4) {
@@ -244,7 +244,7 @@ uint64_t n_sub_82C0E280(CpuState& ctx, uint8_t* base, uint64_t objectProxy, uint
 }
 PROMOTED_ENTRY(89, sub_82C0E280, 0x82C0E280) { ctx.r3.u64 = n_sub_82C0E280(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u32, ctx.r6.u32); }
 
-uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t owner, uint64_t target, uint64_t key, uint64_t sourceObject, uint64_t nameString, uint64_t context) {
+uint32_t CObjectProxy_Initialize(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t owner, uint64_t target, uint64_t key, uint64_t sourceObject, uint64_t nameString, uint64_t context) {
 	constexpr int32_t g_8200AAE0 = int32_t(0x8200AAE0);
 	if (!UseLiftedCode(89, 0x82C0EEC8)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = owner; ctx.r5.u64 = target; ctx.r6.u64 = key; ctx.r7.u64 = sourceObject; ctx.r8.u64 = nameString; ctx.r9.u64 = context; __imp__sub_82C0EEC8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C0EEC8);
@@ -271,7 +271,7 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	ctx.r6.u64 = key;
 	ctx.r8.u64 = nameString;
 	uint64_t raw = operator_new(ctx, base, 80);
-	uint64_t impl = (uint32_t)raw != 0 ? n_sub_82C0D738(ctx, base, raw) : 0;
+	uint64_t impl = (uint32_t)raw != 0 ? CObjectProxyImpl_Construct(ctx, base, raw) : 0;
 
 	// Store {sourceObject, sourceObject + 108} at impl+72/+76: the new reference's first virtual
 	// function is called, then the old reference's second one.
@@ -300,16 +300,16 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	STORE32(sourceSlot + 4, (uint32_t)sourceRef);
 	STORE32(sourceSlot, (uint32_t)sourceObject);
 
-	// n_sub_82C0DEA8 fills the two words at stack+88/+84 that n_sub_82C0D8B8 receives.
+	// Owner_LookupKeyedValues fills the two words at stack+88/+84 that CObjectProxyImpl_Initialize receives.
 	uint32_t outB = stack + 88;
 	uint32_t outA = stack + 84;
 	STORE32(outB, 0);
 	STORE32(outA, 0);
 	ctx.xer.ca = carry;
-	n_sub_82C0DEA8(ctx, base, (uint32_t)owner, (uint32_t)key, outB, outA);
+	Owner_LookupKeyedValues(ctx, base, (uint32_t)owner, (uint32_t)key, outB, outA);
 	uint32_t valueB = LOAD32(outB);
 	uint32_t valueA = LOAD32(outA);
-	n_sub_82C0D8B8(ctx, base, impl, (uint32_t)target, valueB, valueA);
+	CObjectProxyImpl_Initialize(ctx, base, impl, (uint32_t)target, valueB, valueA);
 
 	uint32_t contextValue = LOAD32((uint32_t)context + 648);
 	uint32_t ownerValue = LOAD32((uint32_t)owner + 8);
@@ -328,10 +328,10 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	}
 
 	CCharString_Assign(ctx, base, impl + 68, nameString);
-	n_sub_82C0B850(ctx, base, (uint32_t)owner + 20, (uint32_t)impl);
+	LinkedList_Insert(ctx, base, (uint32_t)owner + 20, (uint32_t)impl);
 
 	// The object at stack+96 (vtable 0x8200AAE0, then target, context, owner) is handed to every
-	// entry that matches key; n_sub_82C175E8 writes the index of the first one to stack+92 and
+	// entry that matches key; MatchingEntryList_Find writes the index of the first one to stack+92 and
 	// returns how many there are.
 	uint32_t firstIndexSlot = stack + 92;
 	uint32_t entryCallArg = stack + 96;
@@ -340,7 +340,7 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	STORE32(stack + 104, (uint32_t)context);
 	STORE32(entryCallArg, uint32_t(g_8200AAE0));
 	STORE32(firstIndexSlot, 0);
-	uint32_t count = n_sub_82C175E8(ctx, base, LOAD32((uint32_t)owner + 4), (uint32_t)key, firstIndexSlot);
+	uint32_t count = MatchingEntryList_Find(ctx, base, LOAD32((uint32_t)owner + 4), (uint32_t)key, firstIndexSlot);
 
 	// r4, r5 and r7-r9 as the original leaves them; handed to the two calls after the loop
 	uint64_t r4 = key;
@@ -359,7 +359,7 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 		STORE32(stack + 88, entryValue);
 
 		// state the callee may pass on
-		uint32_t foundIndex = n_sub_82C0BC08(ctx, base, lookup, stack + 88, stack + 80);
+		uint32_t foundIndex = IndexMap_Find(ctx, base, lookup, stack + 88, stack + 80);
 		uint32_t element = LOAD8(stack + 80) == 0 ? 0 : LOAD32((foundIndex << 2) + LOAD32(lookup));
 
 		uint32_t handler = LOAD32(element + 4);
@@ -477,10 +477,10 @@ uint32_t n_sub_82C0EEC8(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	ctx.xer.ca = carry;
 	return objectProxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C0EEC8, 0x82C0EEC8) { ctx.r3.u64 = n_sub_82C0EEC8(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64); }
+PROMOTED_ENTRY(89, sub_82C0EEC8, 0x82C0EEC8) { ctx.r3.u64 = CObjectProxy_Initialize(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64, ctx.r9.u64); }
 
 // sub_82C0F200  [56 bytes]
-uint64_t n_sub_82C0F200(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t proxyDescriptor, uint64_t target, uint64_t key, uint64_t sourceObject, uint64_t nameString) {
+uint64_t CObjectProxy_CreateFromDescriptor(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t proxyDescriptor, uint64_t target, uint64_t key, uint64_t sourceObject, uint64_t nameString) {
 	if (!UseLiftedCode(89, 0x82C0F200)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = proxyDescriptor; ctx.r5.u64 = target; ctx.r6.u64 = key; ctx.r7.u64 = sourceObject; ctx.r8.u64 = nameString; __imp__sub_82C0F200(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0F200);
 	uint32_t stack = ctx.r1.u64;
@@ -488,14 +488,14 @@ uint64_t n_sub_82C0F200(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	uint32_t payload = LOAD32((uint32_t)proxyDescriptor + 4);
 	uint32_t extra = LOAD32((uint32_t)proxyDescriptor + 8);
 	ctx.r1.u64 = stack;
-	n_sub_82C0EEC8(ctx, base, objectProxyAddr, payload, target, key, sourceObject, nameString, extra);
+	CObjectProxy_Initialize(ctx, base, objectProxyAddr, payload, target, key, sourceObject, nameString, extra);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return objectProxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C0F200, 0x82C0F200) { ctx.r3.u64 = n_sub_82C0F200(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(89, sub_82C0F200, 0x82C0F200) { ctx.r3.u64 = CObjectProxy_CreateFromDescriptor(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82C0F238(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t nameString, uint64_t value, uint64_t arg4) {
+uint64_t CObjectProxy_FindByName(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t nameString, uint64_t value, uint64_t arg4) {
 	if (!UseLiftedCode(89, 0x82C0F238)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = nameString; ctx.r5.u64 = value; ctx.r6.u64 = arg4; __imp__sub_82C0F238(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0F238);
 	uint32_t stack = ctx.r1.u64;
@@ -513,13 +513,13 @@ uint64_t n_sub_82C0F238(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	uint64_t result = ctx.r3.u64;
 	if ((uint32_t)result != 0) {
-		result = n_sub_82C0E548(ctx, base, result, nameString, value);
+		result = CObjectProxy_ConstructNamed(ctx, base, result, nameString, value);
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(89, sub_82C0F238, 0x82C0F238) { ctx.r3.u64 = n_sub_82C0F238(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(89, sub_82C0F238, 0x82C0F238) { ctx.r3.u64 = CObjectProxy_FindByName(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 uint64_t n_sub_82C0F298(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t nameString, uint64_t value, uint64_t arg4) {
 	if (!UseLiftedCode(89, 0x82C0F298)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = nameString; ctx.r5.u64 = value; ctx.r6.u64 = arg4; __imp__sub_82C0F298(ctx, base); return ctx.r3.u64; }
@@ -547,16 +547,16 @@ uint64_t n_sub_82C0F298(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 }
 PROMOTED_ENTRY(89, sub_82C0F298, 0x82C0F298) { ctx.r3.u64 = n_sub_82C0F298(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint64_t n_sub_82C0F2F8(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint32_t arg2) {
+uint64_t CObjectProxy_GetDistanceTo(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint32_t arg2) {
 	if (!UseLiftedCode(89, 0x82C0F2F8)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = arg2; __imp__sub_82C0F2F8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C0F2F8);
 	uint32_t targetObject = LOAD32((uint32_t)objectProxyAddr + 8);
-	ctx.f1.f64 = n_sub_82C0E288(ctx, base, targetObject, arg2);
+	ctx.f1.f64 = ComputeDistanceToObject(ctx, base, targetObject, arg2);
 	return targetObject;
 }
-PROMOTED_ENTRY(89, sub_82C0F2F8, 0x82C0F2F8) { ctx.r3.u64 = n_sub_82C0F2F8(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(89, sub_82C0F2F8, 0x82C0F2F8) { ctx.r3.u64 = CObjectProxy_GetDistanceTo(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint32_t n_sub_82C0F998(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t objectRecord, uint64_t owner, uint64_t source, uint64_t keyHolder) {
+uint32_t CObjectProxy_CreateFromEntityComponent(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, uint64_t objectRecord, uint64_t owner, uint64_t source, uint64_t keyHolder) {
 	if (!UseLiftedCode(89, 0x82C0F998)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = objectRecord; ctx.r5.u64 = owner; ctx.r6.u64 = source; ctx.r7.u64 = keyHolder; __imp__sub_82C0F998(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C0F998);
 	uint32_t stack = ctx.r1.u64;
@@ -571,11 +571,11 @@ uint32_t n_sub_82C0F998(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 		STORE32(filterKey, filterValue);
 
 		ctx.r1.u64 = stack;
-		uint32_t foundComponent = n_sub_82C0CC38(ctx, base, entity + 52, filterKey);
+		uint32_t foundComponent = IndexMap_Get(ctx, base, entity + 52, filterKey);
 		if (foundComponent != 0) {
 			uint32_t tempProxyAddr = stack + 96;
 			ctx.r1.u64 = stack;
-			n_sub_82C0E010(ctx, base, tempProxyAddr, source, objectRecord, owner);
+			CObjectProxy_ConstructFrom(ctx, base, tempProxyAddr, source, objectRecord, owner);
 
 			uint32_t factory = LOAD32(foundComponent + 4);
 			uint32_t createFn = LOAD32(LOAD32(factory) + 24);
@@ -600,7 +600,7 @@ uint32_t n_sub_82C0F998(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 
 			uint32_t nameHolder = stack + 88;
 			ctx.r1.u64 = stack;
-			n_sub_82BFF710(ctx, base, nameHolder);
+			CharStringHolder_Construct(ctx, base, nameHolder);
 
 			uint32_t factory2 = LOAD32(foundComponent + 4);
 			uint32_t nameFn = LOAD32(LOAD32(factory2) + 4);
@@ -620,7 +620,7 @@ uint32_t n_sub_82C0F998(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 			uint32_t tempRefObject = LOAD32(stack + 100);
 			uint32_t tempExtra = LOAD32(stack + 104);
 			ctx.r1.u64 = stack;
-			n_sub_82C0EEC8(ctx, base, objectProxyAddr, tempRefObject, created, (uint64_t)filterValue, source, memberValue, tempExtra);
+			CObjectProxy_Initialize(ctx, base, objectProxyAddr, tempRefObject, created, (uint64_t)filterValue, source, memberValue, tempExtra);
 
 			ctx.r1.u64 = stack;
 			CharStringHolder_Destructor(ctx, base, nameHolder);
@@ -639,9 +639,9 @@ uint32_t n_sub_82C0F998(CpuState& ctx, uint8_t* base, uint32_t objectProxyAddr, 
 	ctx.r1.u64 = stack;
 	return objectProxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C0F998, 0x82C0F998) { ctx.r3.u64 = n_sub_82C0F998(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(89, sub_82C0F998, 0x82C0F998) { ctx.r3.u64 = CObjectProxy_CreateFromEntityComponent(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 
-uint32_t n_sub_82C10A10(CpuState& ctx, uint8_t* base, uint32_t proxyAddr, uint64_t owner, uint64_t arg3, uint64_t keyHolder) {
+uint32_t CObjectProxy_ConstructFromOwnerKey(CpuState& ctx, uint8_t* base, uint32_t proxyAddr, uint64_t owner, uint64_t arg3, uint64_t keyHolder) {
 	if (!UseLiftedCode(89, 0x82C10A10)) { ctx.r3.u64 = proxyAddr; ctx.r4.u64 = owner; ctx.r5.u64 = arg3; ctx.r6.u64 = keyHolder; __imp__sub_82C10A10(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C10A10);
 	uint32_t stack = ctx.r1.u64;
@@ -677,7 +677,7 @@ uint32_t n_sub_82C10A10(CpuState& ctx, uint8_t* base, uint32_t proxyAddr, uint64
 			if (node == sentinel) {
 				ppc_trap(ctx, base, 22);
 			}
-			n_sub_82C0F998(ctx, base, proxyAddr, mappedValue, owner, arg3, keyHolder);
+			CObjectProxy_CreateFromEntityComponent(ctx, base, proxyAddr, mappedValue, owner, arg3, keyHolder);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
 			return proxyAddr;
@@ -692,9 +692,9 @@ uint32_t n_sub_82C10A10(CpuState& ctx, uint8_t* base, uint32_t proxyAddr, uint64
 	ctx.r4.u64 = node == endNode ? mapAddr : 0;
 	return proxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C10A10, 0x82C10A10) { ctx.r3.u64 = n_sub_82C10A10(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(89, sub_82C10A10, 0x82C10A10) { ctx.r3.u64 = CObjectProxy_ConstructFromOwnerKey(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-uint64_t n_sub_82C10AE0(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t arg2, uint64_t keyHolder) {
+uint64_t CObjectProxy_ConstructFromRequest(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, uint64_t arg2, uint64_t keyHolder) {
 	if (!UseLiftedCode(89, 0x82C10AE0)) { ctx.r3.u64 = objectProxyAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = keyHolder; __imp__sub_82C10AE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C10AE0);
 	uint32_t stack = ctx.r1.u64;
@@ -715,13 +715,13 @@ uint64_t n_sub_82C10AE0(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	// proxy built on the game stack, released before returning
 	uint32_t tempProxyAddr = stack + 80;
 	ctx.r1.u64 = stack;
-	n_sub_82C0F998(ctx, base, tempProxyAddr, LOAD32(request + 4), LOAD32(request + 8), source, keyHolder);
+	CObjectProxy_CreateFromEntityComponent(ctx, base, tempProxyAddr, LOAD32(request + 4), LOAD32(request + 8), source, keyHolder);
 
 	if (LOAD32(tempProxyAddr) != 0) {
-		n_sub_82C0B7F8(ctx, base, objectProxyAddr, tempProxyAddr);
+		ObjectProxy_Assign(ctx, base, objectProxyAddr, tempProxyAddr);
 	} else {
 		// both fields are read again after the call, as the original does
-		n_sub_82C10A10(ctx, base, objectProxyAddr, LOAD32(request + 8), LOAD32(request + 12), keyHolder);
+		CObjectProxy_ConstructFromOwnerKey(ctx, base, objectProxyAddr, LOAD32(request + 8), LOAD32(request + 12), keyHolder);
 	}
 	OwnedPtr_Reset(ctx, base, tempProxyAddr);
 
@@ -729,21 +729,21 @@ uint64_t n_sub_82C10AE0(CpuState& ctx, uint8_t* base, uint64_t objectProxyAddr, 
 	ctx.r1.u64 = stack;
 	return objectProxyAddr;
 }
-PROMOTED_ENTRY(89, sub_82C10AE0, 0x82C10AE0) { ctx.r3.u64 = n_sub_82C10AE0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(89, sub_82C10AE0, 0x82C10AE0) { ctx.r3.u64 = CObjectProxy_ConstructFromRequest(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82C10B80(CpuState& ctx, uint8_t* base, uint64_t proxy, uint64_t arg2, uint32_t arg3) {
+uint64_t CObjectProxy_FindMapValue(CpuState& ctx, uint8_t* base, uint64_t proxy, uint64_t arg2, uint32_t arg3) {
 	if (!UseLiftedCode(89, 0x82C10B80)) { ctx.r3.u64 = proxy; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_82C10B80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C10B80);
 	uint32_t entity = LOAD32((uint32_t)proxy + 8);
-	return n_sub_82C10770(ctx, base, entity, arg2, arg3);
+	return Map_FindUIntKey(ctx, base, entity, arg2, arg3);
 }
-PROMOTED_ENTRY(89, sub_82C10B80, 0x82C10B80) { ctx.r3.u64 = n_sub_82C10B80(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
+PROMOTED_ENTRY(89, sub_82C10B80, 0x82C10B80) { ctx.r3.u64 = CObjectProxy_FindMapValue(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82C10B88(CpuState& ctx, uint8_t* base, uint64_t objectProxy, uint64_t arg2, uint32_t arg3, uint32_t arg4) {
+uint64_t CObjectProxy_FindMapValueWithArgs(CpuState& ctx, uint8_t* base, uint64_t objectProxy, uint64_t arg2, uint32_t arg3, uint32_t arg4) {
 	if (!UseLiftedCode(89, 0x82C10B88)) { ctx.r3.u64 = objectProxy; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_82C10B88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C10B88);
 
 	uint64_t proxiedObject = LOAD32((uint32_t)objectProxy + 8);
-	return n_sub_82C10868(ctx, base, proxiedObject, arg2, arg3, arg4);
+	return Map_FindUIntKeyWithArgs(ctx, base, proxiedObject, arg2, arg3, arg4);
 }
-PROMOTED_ENTRY(89, sub_82C10B88, 0x82C10B88) { ctx.r3.u64 = n_sub_82C10B88(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u32); }
+PROMOTED_ENTRY(89, sub_82C10B88, 0x82C10B88) { ctx.r3.u64 = CObjectProxy_FindMapValueWithArgs(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u32); }

@@ -1,9 +1,9 @@
 // CPerformAction (vtable 0x82005248): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -40,9 +40,9 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 	if (performNow) {
 		ctx.r1.u64 = stack;
 		uint32_t actionRef = n_sub_821C68D0(ctx, base, performAction->m_5C, performAction->m_60, performAction->m_64);
-		n_sub_827F0528(ctx, base, stack + 88, actionRef);
+		AnimationHandle_AssignFromAction(ctx, base, stack + 88, actionRef);
 		ctx.r1.u64 = stack;
-		uint64_t result = n_sub_827F0358(ctx, base, performActionAddr + 88);
+		uint64_t result = TreeMap_ContainsOrInsertKey(ctx, base, performActionAddr + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
 		return result;
@@ -50,7 +50,7 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 
 	if (LOAD32((uint32_t)performActionAddr + 88) > 0) {
 		ctx.r1.u64 = stack;
-		uint64_t result = n_sub_827F0358(ctx, base, performActionAddr + 88);
+		uint64_t result = TreeMap_ContainsOrInsertKey(ctx, base, performActionAddr + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
 		return result;
@@ -116,9 +116,10 @@ uint64_t n_sub_8218C228(CpuState& ctx, uint8_t* base, uint64_t performActionAddr
 	if (hasFoundValue) {
 		STORE32(stack + 80, 0);
 		ctx.xer.ca = flags.ca;
-		uint32_t handle = n_sub_821D8EC0(ctx, base, foundValue, actionNameAddr, 1, stack + 80);
-		n_sub_827F0528(ctx, base, stack + 88, handle);
-		uint64_t result = n_sub_827F0358(ctx, base, stack + 88);
+		ctx.r7.u64 = scratchR7;
+		uint32_t handle = EntityModeManager_FindPose(ctx, base, foundValue, actionNameAddr, 1, stack + 80);
+		AnimationHandle_AssignFromAction(ctx, base, stack + 88, handle);
+		uint64_t result = TreeMap_ContainsOrInsertKey(ctx, base, stack + 88);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
 		return result;
@@ -242,7 +243,7 @@ uint64_t CPerformAction_Clone(CpuState& ctx, uint8_t* base, uint64_t performActi
 
 	uint32_t vtable = performAction->vtable;
 	if (vtable != 0) {
-		n_sub_82180B28(ctx, base, vtable);
+		Vector_Clear12(ctx, base, vtable);
 	}
 	return performActionAddr;
 }
@@ -435,7 +436,7 @@ PROMOTED_ENTRY(46, sub_826DFA48, 0x826DFA48) { ctx.r3.u64 = CPerformAction_FindA
 
 // sub_826DFB58  [40 bytes]
 // Releases the shared handle whose address arrives in r4 (r3 is not used) and returns 0.
-uint64_t n_sub_826DFB58(CpuState& ctx, uint8_t* base, uint64_t handleAddr) {
+uint64_t SharedHandle_ReleaseAndReturnNull(CpuState& ctx, uint8_t* base, uint64_t handleAddr) {
 	if (!UseLiftedCode(46, 0x826DFB58)) { ctx.r4.u64 = handleAddr; __imp__sub_826DFB58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826DFB58);
 	GameStackFrame stackFrame(ctx, base, 96);
@@ -443,13 +444,13 @@ uint64_t n_sub_826DFB58(CpuState& ctx, uint8_t* base, uint64_t handleAddr) {
 	SharedHandle_Release(ctx, base, handleAddr);
 	return 0;
 }
-PROMOTED_ENTRY(46, sub_826DFB58, 0x826DFB58) { ctx.r3.u64 = n_sub_826DFB58(ctx, base, ctx.r4.u64); }
+PROMOTED_ENTRY(46, sub_826DFB58, 0x826DFB58) { ctx.r3.u64 = SharedHandle_ReleaseAndReturnNull(ctx, base, ctx.r4.u64); }
 
 // sub_827F0358  [152 bytes]
 // Looks the 32-bit key stored at keyAddr up in the tree map at 0x834A5C38 (sub_82B5D548 writes a checked
 // iterator: owning map, node). Returns 1 when the key is present; otherwise passes keyAddr to sub_82B5D3A0
 // and returns 0.
-uint64_t n_sub_827F0358(CpuState& ctx, uint8_t* base, uint32_t keyAddr) {
+uint64_t TreeMap_ContainsOrInsertKey(CpuState& ctx, uint8_t* base, uint32_t keyAddr) {
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(55, 0x827F0358)) { ctx.r4.u64 = keyAddr; __imp__sub_827F0358(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827F0358);
@@ -488,7 +489,7 @@ uint64_t n_sub_827F0358(CpuState& ctx, uint8_t* base, uint32_t keyAddr) {
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(55, sub_827F0358, 0x827F0358) { ctx.r3.u64 = n_sub_827F0358(ctx, base, ctx.r4.u32); }
+PROMOTED_ENTRY(55, sub_827F0358, 0x827F0358) { ctx.r3.u64 = TreeMap_ContainsOrInsertKey(ctx, base, ctx.r4.u32); }
 
 // sub_827F06A0  [100 bytes]
 // Constructor: after the parent constructor sub_827F02C0 it installs the CAnimMovementDef vtable (0x820ADCC8)
@@ -514,7 +515,7 @@ uint32_t CActionBase_ConstructWithDefaults(CpuState& ctx, uint8_t* base, uint64_
 	value = double(LOAD_F32(defaultFloatsAddr + 12));
 	movementDef->m_disablePhysics = 0;
 	movementDef->m_speedMultiplier = float(value);
-	movementDef->m_looping = 0;
+	movementDef->vtable = 0;
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
@@ -527,11 +528,11 @@ uint32_t CActionBase_ConstructWithDefaults(CpuState& ctx, uint8_t* base, uint64_
 PROMOTED_ENTRY(55, sub_827F06A0, 0x827F06A0) { ctx.r3.u64 = CActionBase_ConstructWithDefaults(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_827F07F8  [8 bytes]
-void n_sub_827F07F8(CpuState& ctx, uint8_t* base, uint32_t performActionAddr, uint32_t value) {
+void CPerformAction_SetByteValue(CpuState& ctx, uint8_t* base, uint32_t performActionAddr, uint32_t value) {
 	if (!UseLiftedCode(55, 0x827F07F8)) { ctx.r3.u64 = performActionAddr; ctx.r4.u64 = value; __imp__sub_827F07F8(ctx, base); return; }
 	LiftedFrame frame(0x827F07F8);
 	CPerformAction* performAction = GameObject<CPerformAction>(base, performActionAddr);
 	performAction->m_76 = (uint8_t)value;
 	return;
 }
-PROMOTED_ENTRY(55, sub_827F07F8, 0x827F07F8) { n_sub_827F07F8(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(55, sub_827F07F8, 0x827F07F8) { CPerformAction_SetByteValue(ctx, base, ctx.r3.u32, ctx.r4.u32); }

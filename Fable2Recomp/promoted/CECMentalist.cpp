@@ -1,9 +1,9 @@
 // CECMentalist (vtable 0x820DE1A8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -24,7 +24,7 @@ uint64_t CECMentalist_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classN
 }
 PROMOTED_ENTRY(59, sub_828606C8, 0x828606C8) { ctx.r3.u64 = CECMentalist_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82860708(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t deleteFlags) {
+uint64_t Mentalist_Destructor(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t deleteFlags) {
     constexpr int32_t g_820F1664 = int32_t(0x820F1664);
     if (!UseLiftedCode(59, 0x82860708)) { ctx.r3.u64 = mentalistAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82860708(ctx, base); return ctx.r3.u64; }
     LiftedFrame frame(0x82860708);
@@ -57,9 +57,9 @@ uint64_t n_sub_82860708(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
     ctx.r1.u64 = stack;
     return result;
 }
-PROMOTED_ENTRY(59, sub_82860708, 0x82860708) { ctx.r3.u64 = n_sub_82860708(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(59, sub_82860708, 0x82860708) { ctx.r3.u64 = Mentalist_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_828607A8(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t sourceEntity) {
+uint64_t Mentalist_InitFromEntity(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t sourceEntity) {
 	constexpr int32_t str_TXT_820DE114_B_ = int32_t(0x820DE114);
 	constexpr int32_t str_TXT_820DE120_B_ = int32_t(0x820DE120);
 	constexpr int32_t g_820E0000 = int32_t(0x820E0000);
@@ -92,7 +92,7 @@ uint64_t n_sub_828607A8(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
 		int32_t gValue = g_820E0000;
 		uint64_t fuseDummyAddr = (int64_t)gValue - 7888;
 		STORE64((uint32_t)mentalistAddr + 36, idRefValue);
-		uint64_t charString = n_sub_82345978(ctx, base, entity, fuseDummyAddr);
+		uint64_t charString = GameDB_GetStringField(ctx, base, entity, fuseDummyAddr);
 		CCharString_AssignFromCStr(ctx, base, (int64_t)mentalistAddr + 24, charString);
 
 		sourceEntity = ctx.r4.u64;
@@ -157,6 +157,7 @@ uint64_t n_sub_828607A8(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
 		uint64_t addr1 = (int64_t)mentalistAddr + 52;
 		uint64_t addr2 = (int64_t)mentalistAddr + 12;
 		ctx.r1.u64 = stack;
+		ctx.r7.u64 = finalR7;
 		ctx.r8.u64 = finalR8;
 		ctx.xer.ca = flags.ca;
 		resultValue = n_sub_82483858(ctx, base, resultValue, addr1, addr2, size);
@@ -168,9 +169,9 @@ uint64_t n_sub_828607A8(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
 	ctx.r4.u64 = sourceEntity;
 	return resultValue;
 }
-PROMOTED_ENTRY(59, sub_828607A8, 0x828607A8) { ctx.r3.u64 = n_sub_828607A8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(59, sub_828607A8, 0x828607A8) { ctx.r3.u64 = Mentalist_InitFromEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82860970(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t serialiser, uint64_t flags) {
+uint64_t Mentalist_Serialize(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, uint64_t serialiser, uint64_t flags) {
 	constexpr int32_t str_TXT_820DE13C_B_ = int32_t(0x820DE13C);
 	constexpr int32_t str_TXT_820DE148_B_ = int32_t(0x820DE148);
 	constexpr int32_t strTable = int32_t(0x820E0000);
@@ -186,10 +187,10 @@ uint64_t n_sub_82860970(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
 
 
 	CCharString_ConstructFromCStr(ctx, base, stack + 84, str_TXT_820DE13C_B_, -1);
-	n_sub_827D63A8(ctx, base, mentalistAddr + 44, serialiser, stack + 84);
+	Timer_Serialize(ctx, base, mentalistAddr + 44, serialiser, stack + 84);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
 
-	uint32_t TXT_820DE148_L_ = n_sub_82860D90(ctx, base, mentalistAddr);  // Lua_Mentalist_IsLit
+	uint32_t TXT_820DE148_L_ = Lua_Mentalist_IsLit(ctx, base, mentalistAddr);  // Lua_Mentalist_IsLit
 	uint32_t isSploded = mentalist->m_30;
 	STORE8(stack + 80, (uint8_t)TXT_820DE148_L_);
 	STORE8(stack + 81, (uint8_t)isSploded);
@@ -224,7 +225,7 @@ uint64_t n_sub_82860970(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr, ui
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82860970, 0x82860970) { ctx.r3.u64 = n_sub_82860970(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(59, sub_82860970, 0x82860970) { ctx.r3.u64 = Mentalist_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
 uint64_t Mentalist_LightFuseImpl(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	constexpr int32_t str_TXT_820DE158_B_ = int32_t(0x820DE158);
@@ -241,7 +242,7 @@ uint64_t Mentalist_LightFuseImpl(CpuState& ctx, uint8_t* base, uint64_t mentalis
 	stack = PushStackFrame(base, stack, 224);
 	ctx.r1.u64 = stack;
 
-	uint64_t result = n_sub_82860D90(ctx, base, mentalistAddr);  // Lua_Mentalist_IsLit
+	uint64_t result = Lua_Mentalist_IsLit(ctx, base, mentalistAddr);  // Lua_Mentalist_IsLit
 
 	if ((uint32_t)(result & 0xFF) == 0) {
 		if (LOAD32(mentalistBase + 28) != 0) {
@@ -255,6 +256,9 @@ uint64_t Mentalist_LightFuseImpl(CpuState& ctx, uint8_t* base, uint64_t mentalis
 			uint32_t callTarget = LOAD32(nameProviderVtable + 64);
 			ctx.r3.u64 = nameBuf;
 			ctx.r4.u64 = nameProvider;
+			ctx.r8.u64 = callTarget;
+			ctx.r9.u64 = nameProviderVtable;
+			ctx.r10.u64 = v4;
 			REX_CALL_INDIRECT_FUNC(callTarget);
 
 			uint32_t entityType = LOAD32(mentalistBase + 28);
@@ -377,7 +381,11 @@ uint64_t Mentalist_LightFuseImpl(CpuState& ctx, uint8_t* base, uint64_t mentalis
 				}
 
 				uint32_t v43 = (uint32_t)mentalist->m_4;
-				result = n_sub_82392C88(ctx, base, v43, mentalistBase);
+				ctx.r6.u64 = reg6;
+				ctx.r7.u64 = reg7;
+				ctx.r8.u64 = reg8;
+				ctx.r9.u64 = reg9;
+				result = CECDoor_UpdateOpenStateForEntity(ctx, base, v43, mentalistBase);
 			}
 		}
 	}
@@ -388,7 +396,7 @@ uint64_t Mentalist_LightFuseImpl(CpuState& ctx, uint8_t* base, uint64_t mentalis
 }
 PROMOTED_ENTRY(59, sub_82860A60, 0x82860A60) { ctx.r3.u64 = Mentalist_LightFuseImpl(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82860D90(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
+uint64_t Lua_Mentalist_IsLit(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	if (!UseLiftedCode(59, 0x82860D90)) { ctx.r3.u64 = mentalistAddr; __imp__sub_82860D90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82860D90);
 	uint32_t stack = ctx.r1.u64;
@@ -430,26 +438,26 @@ uint64_t n_sub_82860D90(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	ctx.r10.u64 = isLitFlag;
 	return 0;
 }
-PROMOTED_ENTRY(59, sub_82860D90, 0x82860D90) { ctx.r3.u64 = n_sub_82860D90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82860D90, 0x82860D90) { ctx.r3.u64 = Lua_Mentalist_IsLit(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82860E00(CpuState& ctx, uint8_t* base, uint64_t mentalist) {
+uint64_t Lua_Mentalist_Update(CpuState& ctx, uint8_t* base, uint64_t mentalist) {
 	if (!UseLiftedCode(59, 0x82860E00)) { ctx.r3.u64 = mentalist; __imp__sub_82860E00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82860E00);
 	GameStackFrame stackFrame(ctx, base, 96);
 
-	uint64_t result = n_sub_82860D90(ctx, base, mentalist);  // Lua_Mentalist_IsLit
+	uint64_t result = Lua_Mentalist_IsLit(ctx, base, mentalist);  // Lua_Mentalist_IsLit
 	if ((static_cast<uint32_t>(result) & 0xFF) != 0) {
 		uint64_t fuseAddress = mentalist + 44;
 		result = Dog_CalculateExpressionStep(ctx, base, fuseAddress);
 		if (static_cast<int32_t>(result) == 0) {
-			result = n_sub_82860F38(ctx, base, mentalist);  // Lua_Mentalist_GoBoom
+			result = Lua_Mentalist_GoBoom(ctx, base, mentalist);  // Lua_Mentalist_GoBoom
 		}
 	}
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82860E00, 0x82860E00) { ctx.r3.u64 = n_sub_82860E00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82860E00, 0x82860E00) { ctx.r3.u64 = Lua_Mentalist_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82860E50(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
+uint64_t Lua_Mentalist_ExtinguishFuse(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(59, 0x82860E50)) { ctx.r3.u64 = mentalistAddr; __imp__sub_82860E50(ctx, base); return ctx.r3.u64; }
@@ -497,9 +505,9 @@ uint64_t n_sub_82860E50(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	ctx.r1.u64 = stack;
 	return removeResult;
 }
-PROMOTED_ENTRY(59, sub_82860E50, 0x82860E50) { ctx.r3.u64 = n_sub_82860E50(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82860E50, 0x82860E50) { ctx.r3.u64 = Lua_Mentalist_ExtinguishFuse(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82860F38(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
+uint64_t Lua_Mentalist_GoBoom(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	constexpr int32_t str_TXT_820DE160_B_ = int32_t(0x820DE160);
 	if (!UseLiftedCode(59, 0x82860F38)) { ctx.r3.u64 = mentalistAddr; __imp__sub_82860F38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82860F38);
@@ -508,7 +516,7 @@ uint64_t n_sub_82860F38(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	stack = PushStackFrame(base, stack, 144);
 	ctx.r1.u64 = stack;
 
-	uint32_t TXT_820DE148_L_ = n_sub_82860D90(ctx, base, mentalistAddr);
+	uint32_t TXT_820DE148_L_ = Lua_Mentalist_IsLit(ctx, base, mentalistAddr);
 	uint32_t valueForExplode = ctx.r10.u32;
 	PPCVRegister savedV1 = ctx.v1;
 
@@ -606,6 +614,8 @@ uint64_t n_sub_82860F38(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 						}
 					}
 
+					ctx.r6.u64 = local26;
+					ctx.r7.u64 = local28;
 					ctx.r8.u64 = local31;
 					Mentalist_SetTarget(ctx, base, targetEntity, mentalist->m_4);
 					EntityHandleList_AddUnique(ctx, base, targetEntity, mentalist->m_4);
@@ -614,6 +624,7 @@ uint64_t n_sub_82860F38(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 			}
 		}
 
+		ctx.r10.u64 = valueForExplode;
 		Mentalist_Explode(ctx, base, mentalistAddr);
 	}
 
@@ -622,7 +633,7 @@ uint64_t n_sub_82860F38(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	ctx.r1.u64 = stack;
 	return returnValue;
 }
-PROMOTED_ENTRY(59, sub_82860F38, 0x82860F38) { ctx.r3.u64 = n_sub_82860F38(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82860F38, 0x82860F38) { ctx.r3.u64 = Lua_Mentalist_GoBoom(ctx, base, ctx.r3.u64); }
 
 uint64_t Mentalist_Explode(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr) {
 	constexpr int32_t str_TXT_820DE16C_B_ = int32_t(0x820DE16C);
@@ -698,7 +709,7 @@ uint64_t Mentalist_Explode(CpuState& ctx, uint8_t* base, uint64_t mentalistAddr)
 	CECMentalist* mentalist = GameObject<CECMentalist>(base, mentalistAddr);
 	stack = PushStackFrame(base, stack, 176);
 	ctx.r1.u64 = stack;
-	local18 = n_sub_82860E50(ctx, base, mentalistAddr);  // Lua_Mentalist_ExtinguishFuse
+	local18 = Lua_Mentalist_ExtinguishFuse(ctx, base, mentalistAddr);  // Lua_Mentalist_ExtinguishFuse
 	local39 = ctx.r6.u64;
 	local40 = ctx.r7.u64;
 	local41 = ctx.r8.u64;
@@ -770,7 +781,7 @@ loc_82861250:
 	if (local55 != 0) {
 		local31 = (uint64_t)graphicAppearanceMorph;
 		idRefOut = (uint64_t)stack + 80;
-		entityIdRef = n_sub_821D9F40(ctx, base, idRefOut, local31);
+		entityIdRef = Component_GetId(ctx, base, idRefOut, local31);
 		TXT_820DE16C_L_ = str_TXT_820DE16C_B_;
 		idRef = IdRef_Get(ctx, base, entityIdRef);
 		burntHobbePropertyName = TXT_820DE16C_L_;
@@ -849,6 +860,10 @@ loc_82861394:
 			morphLink = (uint64_t)local71;
 		}
 		local22 = (uint64_t)graphicAppearance;
+		ctx.r4.u64 = burntHobbePropertyId;
+		ctx.r6.u64 = local39;
+		ctx.r7.u64 = local40;
+		ctx.r8.u64 = local41;
 		CECGraphicAppearance_ForEach(ctx, base, local22);
 		STORE32(stack + 80, morphLink);
 		local77 = (int64_t)(uint64_t)graphicAppearance + 12;
@@ -868,7 +883,7 @@ loc_82861394:
 		ctx.r10.u64 = local51;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		local26 = (uint64_t)graphicAppearanceMorph;
-		n_sub_8246B3C0(ctx, base, local26);
+		CECGraphicAppearanceMorph_Clear(ctx, base, local26);
 		modelDefinitionIdRef = local69;
 		local27 = (uint64_t)graphicAppearanceMorph;
 		Character_LoadModelDefinition(ctx, base, local27, modelDefinitionIdRef, ctx.r6.u64, ctx.r8.u64);
@@ -953,6 +968,8 @@ loc_82861534:
 	if (local53 != 0) {
 		if (LOAD8(local65 + 24) != 0) {
 			local30 = (uint64_t)local65;
+			ctx.r6.u64 = local39;
+			ctx.r7.u64 = local40;
 			local18 = n_sub_82433400(ctx, base, local30, v4, local41);
 		}
 	}

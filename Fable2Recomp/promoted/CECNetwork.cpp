@@ -1,9 +1,9 @@
 // CECNetwork (vtable 0x82004E58): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -37,7 +37,7 @@ uint64_t CECNetwork_ShouldReplicateEntity(CpuState& ctx, uint8_t* base, uint32_t
 }
 PROMOTED_ENTRY(5, sub_82214C28, 0x82214C28) { ctx.r3.u64 = CECNetwork_ShouldReplicateEntity(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82238290(CpuState& ctx, uint8_t* base, uint64_t networkAddr, uint64_t obj) {
+uint64_t CECNetwork_TryReplicateEntity(CpuState& ctx, uint8_t* base, uint64_t networkAddr, uint64_t obj) {
 	if (!UseLiftedCode(7, 0x82238290)) { ctx.r3.u64 = networkAddr; ctx.r4.u64 = obj; __imp__sub_82238290(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82238290);
 	uint32_t stack = ctx.r1.u64;
@@ -54,16 +54,16 @@ uint64_t n_sub_82238290(CpuState& ctx, uint8_t* base, uint64_t networkAddr, uint
 		result = CECNetwork_ShouldReplicateEntity(ctx, base, networkAddr);
 		if ((uint32_t(result) & 0xFF) != 0) {
 			uint32_t entity = network->m_4;
-			result = n_sub_82392C88(ctx, base, entity, networkAddr);
+			result = CECDoor_UpdateOpenStateForEntity(ctx, base, entity, networkAddr);
 		}
 	}
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(7, sub_82238290, 0x82238290) { ctx.r3.u64 = n_sub_82238290(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(7, sub_82238290, 0x82238290) { ctx.r3.u64 = CECNetwork_TryReplicateEntity(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_822BCC90(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
+uint32_t CECNetwork_SendPositionUpdate(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(12, 0x822BCC90)) { ctx.r3.u64 = networkAddr; __imp__sub_822BCC90(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x822BCC90);
@@ -134,7 +134,7 @@ uint32_t n_sub_822BCC90(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 		ctx.v12 = from4;
 		ctx.v13 = vecAt64;
 		uint32_t result = flag834BE6DC
-			? n_sub_8238ACA0(ctx, base, messageQueue, message, uniqueId)
+			? NetworkMessageQueue_EnqueueMessage(ctx, base, messageQueue, message, uniqueId)
 			: n_sub_822D6C78(ctx, base, messageQueue, message, uniqueId);
 
 		network->m_60 = uint8_t(0);
@@ -148,7 +148,7 @@ uint32_t n_sub_822BCC90(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 	ctx.r1.u64 = stack;
 	return 0x820991F0u;  // r3 still holds the third mask's address on this path
 }
-PROMOTED_ENTRY(12, sub_822BCC90, 0x822BCC90) { ctx.r3.u64 = n_sub_822BCC90(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(12, sub_822BCC90, 0x822BCC90) { ctx.r3.u64 = CECNetwork_SendPositionUpdate(ctx, base, ctx.r3.u32); }
 
 uint64_t CECNetwork_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820A2F30_B_ = int32_t(0x820A2F30);
@@ -161,21 +161,21 @@ uint64_t CECNetwork_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNam
 PROMOTED_ENTRY(18, sub_8237D278, 0x8237D278) { ctx.r3.u64 = CECNetwork_GetClassName(ctx, base, ctx.r3.u64); }
 
 // sub_8237DBF0  [4 bytes]
-uint64_t n_sub_8237DBF0(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
+uint64_t CECNetwork_ResetThunk(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
 	if (!UseLiftedCode(18, 0x8237DBF0)) { ctx.r3.u64 = networkAddr; __imp__sub_8237DBF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8237DBF0);
 	return CECNetwork_Reset(ctx, base, networkAddr);
 }
-PROMOTED_ENTRY(18, sub_8237DBF0, 0x8237DBF0) { ctx.r3.u64 = n_sub_8237DBF0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(18, sub_8237DBF0, 0x8237DBF0) { ctx.r3.u64 = CECNetwork_ResetThunk(ctx, base, ctx.r3.u64); }
 
 // sub_8237DBF8  [108 bytes]
-uint64_t n_sub_8237DBF8(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
+uint64_t CECNetwork_ReplicateDirtyEntity(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
 	if (!UseLiftedCode(18, 0x8237DBF8)) { ctx.r3.u64 = networkAddr; __imp__sub_8237DBF8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8237DBF8);
 	CECNetwork* network = GameObject<CECNetwork>(base, networkAddr);
 	uint32_t entity = network->m_4;
 
-	// Forwards to n_sub_82392C88 when any of six flag bits of the entity is set. lastTested / lastBit
+	// Forwards to CECDoor_UpdateOpenStateForEntity when any of six flag bits of the entity is set. lastTested / lastBit
 	// hold what the original leaves in r9 / r8 for that callee: the last tested bit or word, and the
 	// last extracted bit (r8 keeps the caller's value through the first two tests).
 	uint64_t lastBit = ctx.r8.u64;
@@ -201,11 +201,13 @@ uint64_t n_sub_8237DBF8(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
 		}
 	}
 	// state the callee may pass on
-	return n_sub_82392C88(ctx, base, entity, networkAddr);
+	ctx.r8.u64 = lastBit;
+	ctx.r9.u64 = lastTested;
+	return CECDoor_UpdateOpenStateForEntity(ctx, base, entity, networkAddr);
 }
-PROMOTED_ENTRY(18, sub_8237DBF8, 0x8237DBF8) { ctx.r3.u64 = n_sub_8237DBF8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(18, sub_8237DBF8, 0x8237DBF8) { ctx.r3.u64 = CECNetwork_ReplicateDirtyEntity(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_823885C8(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
+uint32_t CECNetwork_SendMicrophonePosition(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(19, 0x823885C8)) { ctx.r3.u64 = networkAddr; __imp__sub_823885C8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x823885C8);
@@ -228,14 +230,15 @@ uint32_t n_sub_823885C8(CpuState& ctx, uint8_t* base, uint32_t networkAddr) {
 		uint32_t manager = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 		uint32_t messageQueue = LOAD32(manager + 140);
 		// state the callee may pass on
-		result = n_sub_8238ACA0(ctx, base, messageQueue, message, uniqueId);
+		ctx.r6.u64 = manager;
+		result = NetworkMessageQueue_EnqueueMessage(ctx, base, messageQueue, message, uniqueId);
 		network->m_60 = uint8_t(1);
 	}
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(19, sub_823885C8, 0x823885C8) { ctx.r3.u64 = n_sub_823885C8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(19, sub_823885C8, 0x823885C8) { ctx.r3.u64 = CECNetwork_SendMicrophonePosition(ctx, base, ctx.r3.u32); }
 
 // sub_82389190  [84 bytes]
 uint64_t CECNetwork_Reset(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
@@ -275,7 +278,7 @@ uint64_t CECNetwork_Reset(CpuState& ctx, uint8_t* base, uint64_t networkAddr) {
 }
 PROMOTED_ENTRY(19, sub_82389190, 0x82389190) { ctx.r3.u64 = CECNetwork_Reset(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint64_t postEvent) {
+uint32_t CECNetwork_HandleEntityDeath(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint64_t postEvent) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(19, 0x82389730)) { ctx.r3.u64 = networkObj; ctx.r4.u64 = postEvent; __imp__sub_82389730(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82389730);
@@ -368,8 +371,8 @@ uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint6
 		found33 = true;
 	}
 
-	// Repeat until the node at entry+20 is gone or n_sub_821E8870 fails on it; after each success the
-	// node's +36 value goes to n_sub_8233A810 when the pointer at 0x83496920 is non-null and the byte at
+	// Repeat until the node at entry+20 is gone or List_ContainsKey fails on it; after each success the
+	// node's +36 value goes to List_RemoveFirstKey when the pointer at 0x83496920 is non-null and the byte at
 	// 0x834968C5 is set.
 	if (found33) {
 		for (;;) {
@@ -383,7 +386,7 @@ uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint6
 			ctx.r6.u64 = r6; ctx.r7.u64 = r7; ctx.r8.u64 = r8; ctx.r9.u64 = r9;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_821E8870(ctx, base, head, 25);
+			result = List_ContainsKey(ctx, base, head, 25);
 			r4 = ctx.r4.u64;
 			r6 = ctx.r6.u64; r7 = ctx.r7.u64; r8 = ctx.r8.u64;
 			r9 = ctx.r9.u32;
@@ -400,7 +403,7 @@ uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint6
 			ctx.r6.u64 = r6; ctx.r7.u64 = r7; ctx.r8.u64 = r8; ctx.r9.u64 = r9;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
-			n_sub_8233A810(ctx, base, target, nodeValue, 25);
+			List_RemoveFirstKey(ctx, base, target, nodeValue, 25);
 			r4 = ctx.r4.u64;
 			r6 = ctx.r6.u64; r7 = ctx.r7.u64; r8 = ctx.r8.u64;
 			r9 = ctx.r9.u32;
@@ -465,7 +468,7 @@ uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint6
 		ctx.r6.u64 = r6; ctx.r7.u64 = r7; ctx.r8.u64 = r8; ctx.r9.u64 = r9;
 		ctx.cr0 = compare0;
 		ctx.xer.ca = flags.ca;
-		n_sub_82435E30(ctx, base, entry20, 0);
+		Creature_HandleDeath(ctx, base, entry20, 0);
 		compare0 = ctx.cr0;
 		flags.ca = ctx.xer.ca;
 		result = n_sub_82432A88(ctx, base, entry20, 0);
@@ -485,7 +488,7 @@ uint32_t n_sub_82389730(CpuState& ctx, uint8_t* base, uint32_t networkObj, uint6
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(19, sub_82389730, 0x82389730) { ctx.r3.u64 = n_sub_82389730(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(19, sub_82389730, 0x82389730) { ctx.r3.u64 = CECNetwork_HandleEntityDeath(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 uint32_t CECNetwork_EnqueueEvent(CpuState& ctx, uint8_t* base, uint32_t networkAddr, uint64_t payloadA, uint64_t payloadB, uint32_t orderKey, uint32_t entryByte) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);

@@ -1,9 +1,9 @@
 // CChainedEntityEffectCurve (vtable 0x820F1780): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821D9D28(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr) {
+uint64_t CChainedEntityEffectCurve_GetMatrix(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr) {
 	if (!UseLiftedCode(3, 0x821D9D28)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; __imp__sub_821D9D28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821D9D28);
 	PPCRegister callTarget{};
@@ -73,7 +73,7 @@ uint64_t n_sub_821D9D28(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(3, sub_821D9D28, 0x821D9D28) { ctx.r3.u64 = n_sub_821D9D28(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(3, sub_821D9D28, 0x821D9D28) { ctx.r3.u64 = CChainedEntityEffectCurve_GetMatrix(ctx, base, ctx.r3.u64); }
 
 uint64_t CChainedEntityEffectCurve_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t object, uint64_t deleteFlagsArg) {
 	if (!UseLiftedCode(72, 0x82A09F10)) { ctx.r3.u64 = object; ctx.r4.u64 = deleteFlagsArg; __imp__sub_82A09F10(ctx, base); return ctx.r3.u64; }
@@ -83,7 +83,7 @@ uint64_t CChainedEntityEffectCurve_DeletingDestructor(CpuState& ctx, uint8_t* ba
 	uint32_t deleteFlags = static_cast<uint32_t>(deleteFlagsArg);
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_83238858(ctx, base, object);
+	CChainedEntityEffect_DestroyChildAndMembers(ctx, base, object);
 	result = object;
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, result);
@@ -95,14 +95,14 @@ uint64_t CChainedEntityEffectCurve_DeletingDestructor(CpuState& ctx, uint8_t* ba
 }
 PROMOTED_ENTRY(72, sub_82A09F10, 0x82A09F10) { ctx.r3.u64 = CChainedEntityEffectCurve_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_83238850(CpuState& ctx, uint8_t* base, uint64_t arg1) {
+uint64_t CChainedEntityEffectCurve_AdjustThis304Call(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	if (!UseLiftedCode(142, 0x83238850)) { ctx.r3.u64 = arg1; __imp__sub_83238850(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83238850);
-	return n_sub_832179C0(ctx, base, arg1 + 304);
+	return CChainedEntityEffectCurve_InvokeActiveCallback(ctx, base, arg1 + 304);
 }
-PROMOTED_ENTRY(142, sub_83238850, 0x83238850) { ctx.r3.u64 = n_sub_83238850(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(142, sub_83238850, 0x83238850) { ctx.r3.u64 = CChainedEntityEffectCurve_AdjustThis304Call(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_832388D0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t sourceEffect) {
+uint64_t CChainedEntityEffectCurve_InitializeFromEffect(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t sourceEffect) {
 	if (!UseLiftedCode(142, 0x832388D0)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; ctx.r4.u64 = sourceEffect; __imp__sub_832388D0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x832388D0);
 	uint32_t stack = ctx.r1.u64;
@@ -113,7 +113,7 @@ uint64_t n_sub_832388D0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	stack = PushStackFrame(base, stack, 240);
 	curveParamsAddr = (int64_t)(uint64_t)stack + 160;
 	ctx.r1.u64 = stack;
-	n_sub_83222D78(ctx, base, sourceEffect, curveParamsAddr);
+	CChainedEntityEffect_GetCombinedMatrix(ctx, base, sourceEffect, curveParamsAddr);
 
 	SET_V8(curveParams, VLOAD(uint32_t((int64_t)(uint64_t)stack + 208) & ~0xF));
 	VSTORE(uint32_t((int64_t)(uint64_t)stack + 80) & ~0xF, V8(curveParams));
@@ -145,9 +145,9 @@ uint64_t n_sub_832388D0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	ctx.r1.u64 = stack;
 	return chainedEntityEffectCurveAddr;
 }
-PROMOTED_ENTRY(142, sub_832388D0, 0x832388D0) { ctx.r3.u64 = n_sub_832388D0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(142, sub_832388D0, 0x832388D0) { ctx.r3.u64 = CChainedEntityEffectCurve_InitializeFromEffect(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_83238970(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effectSlot) {
+uint64_t CChainedEntityEffectCurve_HandleEffectEvent(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effectSlot) {
 	if (!UseLiftedCode(142, 0x83238970)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; ctx.r4.u64 = effectSlot; __imp__sub_83238970(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83238970);
 	uint32_t stack = ctx.r1.u64;
@@ -167,17 +167,17 @@ uint64_t n_sub_83238970(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	uint64_t result = ctx.r3.u64;
 
 	if ((int32_t)result == 8) {
-		n_sub_8323A3A0(ctx, base, chainedEntityEffectCurveAddr, effectSlot);
+		CChainedEntityEffect_TryAttachObjectFromSlot(ctx, base, chainedEntityEffectCurveAddr, effectSlot);
 		uint32_t effectAddr2 = LOAD32((uint32_t)effectSlot);
 		uint32_t v140 = chainedEntityEffectCurve->m_140;
-		result = n_sub_83216568(ctx, base, v140, effectAddr2);
+		result = CChainedEntityEffect_CopyData(ctx, base, v140, effectAddr2);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_83238970, 0x83238970) { ctx.r3.u64 = n_sub_83238970(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(142, sub_83238970, 0x83238970) { ctx.r3.u64 = CChainedEntityEffectCurve_HandleEffectEvent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CChainedEntityEffectCurve_Update(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr) {
 	if (!UseLiftedCode(142, 0x832389D8)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; __imp__sub_832389D8(ctx, base); return ctx.r3.u64; }
@@ -223,7 +223,7 @@ uint64_t CChainedEntityEffectCurve_Update(CpuState& ctx, uint8_t* base, uint64_t
 		ctx.fpscr.disableFlushMode();
 
 		uint64_t stack208 = (uint64_t)stack + 208;
-		n_sub_8321F598(ctx, base, stack208, effectAddr, 3, frameIndex);
+		CChainedEntityEffect_EvaluateVector(ctx, base, stack208, effectAddr, 3, frameIndex);
 
 		CChainedEntityEffectCurve_Evaluate(ctx, base, effectAddr, 16, frameIndex);
 		double eval16 = ctx.f1.f64;
@@ -248,9 +248,12 @@ uint64_t CChainedEntityEffectCurve_Update(CpuState& ctx, uint8_t* base, uint64_t
 		SET_V8(source, VLOAD((stack + 208) & ~0xF));
 		ctx.fpscr.enableFlushModeUnconditional();
 		SET_VF(scaledVector, simde_mm_mul_ps(VF(source), VF(broadcast)));
+		ctx.f1.f64 = ratio;
+		ctx.f7.f64 = scaledValue;
+		ctx.f8.f64 = eval16;
 		ctx.v12 = source;
 		ctx.v13 = broadcast;
-		n_sub_83222D78(ctx, base, chainedEntityEffectCurveAddr, stack224);
+		CChainedEntityEffect_GetCombinedMatrix(ctx, base, chainedEntityEffectCurveAddr, stack224);
 
 		ctx.fpscr.disableFlushMode();
 		float defaultComponent = LOAD_F32(0x820994B4u);
@@ -295,7 +298,9 @@ uint64_t CChainedEntityEffectCurve_Update(CpuState& ctx, uint8_t* base, uint64_t
 		STORE32(stack + 200, LOAD32(effectData + 196));
 		uint32_t globalValue = LOAD32((uint32_t)globalOffset + 44);
 		uint8_t effectByte = LOAD8(effectData + 204);
-		n_sub_83222D78(ctx, base, chainedEntityEffectCurveAddr, stack288);
+		ctx.r5.u64 = (uint64_t)globalOffset;
+		ctx.r7.u64 = effectData;
+		CChainedEntityEffect_GetCombinedMatrix(ctx, base, chainedEntityEffectCurveAddr, stack288);
 
 		uint32_t callbackObj = curve->m_13C;
 		uint64_t stack176 = (uint64_t)stack + 176;
@@ -343,7 +348,7 @@ uint64_t CChainedEntityEffectCurve_Update(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(142, sub_832389D8, 0x832389D8) { ctx.r3.u64 = CChainedEntityEffectCurve_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_83238BF0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effectA, uint64_t effectB, double blendWeight) {
+uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effectA, uint64_t effectB, double blendWeight) {
 	if (!UseLiftedCode(142, 0x83238BF0)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; ctx.r5.u64 = effectA; ctx.r6.u64 = effectB; ctx.f1.f64 = blendWeight; __imp__sub_83238BF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83238BF0);
 	uint32_t stack = ctx.r1.u64;
@@ -405,7 +410,7 @@ uint64_t n_sub_83238BF0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	ctx.fpscr.disableFlushMode();
 	blendWeight = originalFloatArg1;
 	ctx.r1.u64 = stack;
-	uint32_t newPair = n_sub_832168D8(ctx, base, curveOut, handleA, handleB, blendWeight);
+	uint32_t newPair = CChainedEntityEffectCurve_BlendHandles(ctx, base, curveOut, handleA, handleB, blendWeight);
 	uint32_t savedLockState = ctx.r9.u64;
 
 	STORE32(resultHandle, LOAD32(newPair));
@@ -457,20 +462,19 @@ uint64_t n_sub_83238BF0(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_83238BF0, 0x83238BF0) { ctx.r3.u64 = n_sub_83238BF0(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(142, sub_83238BF0, 0x83238BF0) { ctx.r3.u64 = CChainedEntityEffectCurve_BlendEffects(ctx, base, ctx.r3.u64, ctx.r5.u64, ctx.r6.u64, ctx.f1.f64); }
 
-uint64_t n_sub_83238D08(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t CChainedEntityEffectCurve_ForwardCall(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
 	if (!UseLiftedCode(142, 0x83238D08)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r8.u64 = arg5; __imp__sub_83238D08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83238D08);
 	return n_sub_83223408(ctx, base, arg1, arg2, arg3, arg4, arg5);
 }
-PROMOTED_ENTRY(142, sub_83238D08, 0x83238D08) { ctx.r3.u64 = n_sub_83238D08(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(142, sub_83238D08, 0x83238D08) { ctx.r3.u64 = CChainedEntityEffectCurve_ForwardCall(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
 
-uint64_t n_sub_83238D10(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
+uint64_t CChainedEntityEffectCurve_TryApplyEffect(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
     if (!UseLiftedCode(142, 0x83238D10)) { ctx.r3.u64 = curve; ctx.r4.u64 = effect; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r8.u64 = arg5; __imp__sub_83238D10(ctx, base); return ctx.r3.u64; }
     LiftedFrame frame(0x83238D10);
-    uint32_t stack = ctx.r1.u64;
-    stack = PushStackFrame(base, stack, 128);
+    GameStackFrame stackFrame(ctx, base, 128);
 
     constexpr int32_t kDefaultEffectValue = int32_t(0x8209003F);
     uint32_t effectValuePtr = LOAD32(0x834A0000u - 7136u);
@@ -481,8 +485,6 @@ uint64_t n_sub_83238D10(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t e
 
     PPCRegister callTarget{};
     callTarget.u64 = firstVirtual;
-
-    ctx.r1.u64 = stack;
     ctx.r3.u64 = effect;
     ctx.r4.u64 = effectValue;
     ctx.r5.u64 = arg3;
@@ -493,7 +495,8 @@ uint64_t n_sub_83238D10(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t e
 
     uint32_t handled = (uint32_t)(ctx.r3.u64 & 0xFF);
     if (handled != 0) {
-        n_sub_8323A658(ctx, base, curve, effect, arg3, arg4, ctx.r8.u64);
+        ctx.r9.u64 = handled;
+        CChainedEntityEffect_ApplyToObject(ctx, base, curve, effect, arg3, arg4, ctx.r8.u64);
 
         uint32_t secondVirtual = LOAD32(LOAD32(effectObject) + 12);
         callTarget.u64 = secondVirtual;
@@ -501,34 +504,31 @@ uint64_t n_sub_83238D10(CpuState& ctx, uint8_t* base, uint64_t curve, uint64_t e
         ctx.r10.u64 = secondVirtual;
         REX_CALL_INDIRECT_FUNC(callTarget.u32);
     }
-
-    stack = PopStackFrame(stack, 128);
-    ctx.r1.u64 = stack;
     return ctx.r3.u64;
 }
-PROMOTED_ENTRY(142, sub_83238D10, 0x83238D10) { ctx.r3.u64 = n_sub_83238D10(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(142, sub_83238D10, 0x83238D10) { ctx.r3.u64 = CChainedEntityEffectCurve_TryApplyEffect(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r8.u64); }
 
-uint64_t n_sub_83238F48(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+uint64_t CChainedEntityEffectCurve_AttachEffect(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t effect, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
 	if (!UseLiftedCode(142, 0x83238F48)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; ctx.r4.u64 = effect; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_83238F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x83238F48);
 	uint32_t stack = ctx.r1.u64;
 	CChainedEntityEffectCurve* chainedEntityEffectCurve = GameObject<CChainedEntityEffectCurve>(base, chainedEntityEffectCurveAddr);
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
-	n_sub_83224818(ctx, base, chainedEntityEffectCurveAddr, effect, arg3, arg4, arg5, arg6);
+	CChainedEntityEffectCurve_AddEffect(ctx, base, chainedEntityEffectCurveAddr, effect, arg3, arg4, arg5, arg6);
 	uint32_t curveSource = chainedEntityEffectCurve->m_D0;
 	uint32_t chainedCurve = chainedEntityEffectCurve->m_120;
 	n_sub_8321F668(ctx, base, chainedCurve, curveSource);
 	uint32_t curveSource2 = chainedEntityEffectCurve->m_D0;
 	uint32_t curveDest = chainedEntityEffectCurve->m_140;
-	uint64_t result = n_sub_83216568(ctx, base, curveDest, curveSource2);
+	uint64_t result = CChainedEntityEffect_CopyData(ctx, base, curveDest, curveSource2);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_83238F48, 0x83238F48) { ctx.r3.u64 = n_sub_83238F48(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(142, sub_83238F48, 0x83238F48) { ctx.r3.u64 = CChainedEntityEffectCurve_AttachEffect(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint64_t n_sub_83238F90(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+uint64_t CChainedEntityEffectCurve_DetachEffect(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffectCurveAddr, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(142, 0x83238F90)) { ctx.r3.u64 = chainedEntityEffectCurveAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; ctx.r7.u64 = arg5; ctx.r8.u64 = arg6; __imp__sub_83238F90(ctx, base); return ctx.r3.u64; }
@@ -560,11 +560,12 @@ uint64_t n_sub_83238F90(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	uint32_t didBegin = uint32_t(ctx.r3.u64) & 0xFF;
 
 	if (didBegin != 0) {
-		n_sub_8323A7C0(ctx, base, chainedEntityEffectCurveAddr, arg2, arg3, arg4, arg5, arg6);
+		ctx.r9.u64 = didBegin;
+		CChainedEntityEffect_ApplyToObjectAndAttachChild(ctx, base, chainedEntityEffectCurveAddr, arg2, arg3, arg4, arg5, arg6);
 
 		uint32_t curveD0 = chainedEntityEffectCurve->m_D0;
 		uint32_t curve140 = chainedEntityEffectCurve->m_140;
-		n_sub_83216568(ctx, base, curve140, curveD0);
+		CChainedEntityEffect_CopyData(ctx, base, curve140, curveD0);
 
 		uint32_t endFn = LOAD32(LOAD32(uint32_t(arg2)) + 12);
 		ctx.r3.u64 = arg2;
@@ -575,4 +576,4 @@ uint64_t n_sub_83238F90(CpuState& ctx, uint8_t* base, uint64_t chainedEntityEffe
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(142, sub_83238F90, 0x83238F90) { ctx.r3.u64 = n_sub_83238F90(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(142, sub_83238F90, 0x83238F90) { ctx.r3.u64 = CChainedEntityEffectCurve_DetachEffect(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }

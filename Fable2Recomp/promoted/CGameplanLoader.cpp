@@ -1,9 +1,9 @@
 // CGameplanLoader (vtable 0x82002F88): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -138,9 +138,9 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 	ctx.r4.u64 = object208;
 	ctx.r5.u64 = presentationSourceArg;
 	ctx.r7.u64 = r7Value;
-	n_sub_82BBB1C8(ctx, base, gameplanLoaderAddr + 8);
+	Timer_Init(ctx, base, gameplanLoaderAddr + 8);
 
-	uint64_t result28 = n_sub_82BE7460(ctx, base, gameplanLoaderAddr + 40, ctx.r7.u64, ctx.r8.u64);
+	uint64_t result28 = CGameplanManager_Construct(ctx, base, gameplanLoaderAddr + 40, ctx.r7.u64, ctx.r8.u64);
 
 	gameplanLoader->m_208 = uint32_t(object208);
 	gameplanLoader->m_20C = 0u;
@@ -149,7 +149,7 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 	// state the callee may pass on
 	uint64_t allocator = Allocator_GetInstance(ctx, base);
 
-	uint64_t block210 = n_sub_82BA8F18(ctx, base, allocator, 160,
+	uint64_t block210 = Allocator_Allocate_82BA8F18(ctx, base, allocator, 160,
 	                                   uint64_t(int64_t(str_TXT_82100000_B_) - 7568),
 	                                   uint64_t(int64_t(-2112888328)), 63);
 	flags.ca = (uint32_t)block210 > 4294967279u;
@@ -159,7 +159,7 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 	uint32_t gameplanHandler = 0;
 	if ((int32_t)object210Addr != 0) {
 		ctx.xer.ca = flags.ca;
-		gameplanHandler = n_sub_82BC0E68(ctx, base, object210Addr, block210);
+		gameplanHandler = C_820FE9E0_Construct(ctx, base, object210Addr, block210);
 		flags.ca = ctx.xer.ca;
 	}
 	gameplanLoader->m_210 = gameplanHandler;
@@ -175,12 +175,12 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 
 	uint64_t scriptBindingData = scriptBinding + 4;
 	ctx.xer.ca = flags.ca;
-	n_sub_82CA3EB8(ctx, base, scriptBindingData, 32,
+	String_Format(ctx, base, scriptBindingData, 32,
 	               uint64_t(int64_t(str_TXT_820B0000_B_) - 6332),
 	               uint64_t(int64_t(str_TXT_82100000_B_) - 7544),
 	               str_TXT_820B0000_B_, str_TXT_82100000_B_, g_820FE3BC, g_820A0000);
 	flags.ca = ctx.xer.ca;
-	n_sub_82BBF648(ctx, base, scriptBindingData, 0);
+	Vector_Reserve(ctx, base, scriptBindingData, 0);
 	flags.ca = ctx.xer.ca;
 
 	gameplanLoader->m_248 = 0u;
@@ -198,7 +198,7 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 
 	uint64_t allocator2 = Allocator_GetInstance(ctx, base);
 	flags.ca = ctx.xer.ca;
-	uint64_t block248 = n_sub_82BA8F18(ctx, base, allocator2, 172,
+	uint64_t block248 = Allocator_Allocate_82BA8F18(ctx, base, allocator2, 172,
 	                                   uint64_t(int64_t(str_TXT_82100000_B_) - 10316),
 	                                   uint64_t(str_TXT_820FD748_B_), 57);
 	flags.ca = (uint32_t)block248 > 4294967279u;
@@ -208,7 +208,7 @@ uint32_t CGameplanLoader_Construct(CpuState& ctx, uint8_t* base, uint64_t gamepl
 	uint32_t akGameplan = 0;
 	if ((int32_t)object248Addr != 0) {
 		ctx.xer.ca = flags.ca;
-		akGameplan = n_sub_82BBDE60(ctx, base, object248Addr, uint32_t(gameplanLoaderAddr), uint32_t(scriptBinding), ctx.r7.u64, ctx.r8.u64);
+		akGameplan = AKGameplan_Construct(ctx, base, object248Addr, uint32_t(gameplanLoaderAddr), uint32_t(scriptBinding), ctx.r7.u64, ctx.r8.u64);
 		flags.ca = ctx.xer.ca;
 	}
 
@@ -252,8 +252,8 @@ uint32_t CGameplanLoader_Destruct(CpuState& ctx, uint8_t* base, uint64_t gamepla
 	gameplanLoader->vtable = 0x82002F88u;
 	if (akGameplan != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82BBDF38(ctx, base, akGameplan);
-		n_sub_82BAA458(ctx, base, gameplanLoader->m_248);
+		AKGameplan_Destruct(ctx, base, akGameplan);
+		Allocator_FreeBlock(ctx, base, gameplanLoader->m_248);
 	}
 
 	uint32_t presentationSource = gameplanLoader->m_20C;
@@ -264,13 +264,13 @@ uint32_t CGameplanLoader_Destruct(CpuState& ctx, uint8_t* base, uint64_t gamepla
 		ctx.r4.u64 = 0;
 		ctx.r10.u64 = callTarget.u64;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		n_sub_82BAA458(ctx, base, gameplanLoader->m_20C);
+		Allocator_FreeBlock(ctx, base, gameplanLoader->m_20C);
 	}
 
 	ctx.r1.u64 = stack;
-	n_sub_82BBCA68(ctx, base, gameplanLoaderAddr + 532);
-	n_sub_82BBC8B8(ctx, base, gameplanLoaderAddr + 528);
-	uint32_t result = n_sub_82BE7530(ctx, base, gameplanLoaderAddr + 40);
+	CDataTableSet_Destructor(ctx, base, gameplanLoaderAddr + 532);
+	ObjectPtr_Release(ctx, base, gameplanLoaderAddr + 528);
+	uint32_t result = CGameplanManager_Destruct(ctx, base, gameplanLoaderAddr + 40);
 
 	gameplanLoader->m_8 = 0x820FD050u;
 	gameplanLoader->vtable = 0x820B0BACu;
@@ -300,7 +300,7 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 	STORE16(stack + 86, 0);
 	if ((uint32_t)gameplanName != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82BA8850(ctx, base, stack + 80, gameplanName, -1);
+		CCharString_AssignCStr(ctx, base, stack + 80, gameplanName, -1);
 		nameData = LOAD32(stack + 80);
 	}
 
@@ -308,9 +308,9 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 	STORE16(stack + 92, 0);
 	STORE16(stack + 94, 0);
 	ctx.r1.u64 = stack;
-	n_sub_82BA8850(ctx, base, stack + 88, str_TXT_820FD7C4_B_, -1);
+	CCharString_AssignCStr(ctx, base, stack + 88, str_TXT_820FD7C4_B_, -1);
 
-	uint64_t extension = n_sub_82BAA310(ctx, base, stack + 96, stack + 80);
+	uint64_t extension = CCharString_GetExtension(ctx, base, stack + 96, stack + 80);
 	uint64_t isBgf = CCharString_Equal(ctx, base, extension, stack + 88);
 
 	// What r3/r4 hold at each free below in the original (the last result, and stack+88 or what the
@@ -321,7 +321,7 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 	if (extensionData != 0) {
 		uint64_t extensionSize = (uint64_t)LOAD16(stack + 102) + 1;
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		liveR3 = n_sub_82BA9068(ctx, base, allocator, extensionData, extensionSize);
+		liveR3 = Allocator_Free_82BA9068(ctx, base, allocator, extensionData, extensionSize);
 		liveR4 = ctx.r4.u32;
 		STORE32(stack + 96, 0);
 		STORE16(stack + 100, 0);
@@ -331,7 +331,7 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 	if (bgfData != 0) {
 		uint64_t bgfSize = (uint64_t)LOAD16(stack + 94) + 1;
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		n_sub_82BA9068(ctx, base, allocator, bgfData, bgfSize);
+		Allocator_Free_82BA9068(ctx, base, allocator, bgfData, bgfSize);
 	}
 
 	uint64_t result = 0;
@@ -349,18 +349,18 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 		STORE32(stack + 88, 0);
 		STORE16(stack + 92, 0);
 		STORE16(stack + 94, 0);
-		n_sub_82BA8850(ctx, base, stack + 88, str_TXT_820FD7C8_B_, -1);
+		CCharString_AssignCStr(ctx, base, stack + 88, str_TXT_820FD7C8_B_, -1);
 
-		uint32_t bgpExtension = n_sub_82BAA310(ctx, base, stack + 104, stack + 80);
+		uint32_t bgpExtension = CCharString_GetExtension(ctx, base, stack + 104, stack + 80);
 		uint32_t isBgp = CCharString_Equal(ctx, base, bgpExtension, stack + 88);
 
 		// state the callee may pass on
-		n_sub_82BA8800(ctx, base, stack + 104);
-		liveR3 = n_sub_82BA8800(ctx, base, stack + 88);
+		CCharString_Destructor(ctx, base, stack + 104);
+		liveR3 = CCharString_Destructor(ctx, base, stack + 88);
 
 		if ((isBgp & 0xFF) != 0) {
 			uint64_t nameArg = (nameData == 0) ? (uint64_t)g_82000C98 : nameData;
-			liveR3 = n_sub_82BBE220(ctx, base, gameplanLoader->m_248, nameArg);
+			liveR3 = GameplanAsset_Load(ctx, base, gameplanLoader->m_248, nameArg);
 			STORE8(outIsBgf, uint8_t(0));
 		}
 	}
@@ -369,7 +369,7 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 	if (nameData != 0) {
 		uint64_t nameSize = (uint64_t)LOAD16(stack + 86) + 1;
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		n_sub_82BA9068(ctx, base, allocator, nameData, nameSize);
+		Allocator_Free_82BA9068(ctx, base, allocator, nameData, nameSize);
 	}
 
 	stack = PopStackFrame(stack, 176);
@@ -378,17 +378,18 @@ uint64_t CGameplanLoader_LoadGameplanFile(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(87, sub_82BB3C70, 0x82BB3C70) { ctx.r3.u64 = CGameplanLoader_LoadGameplanFile(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82BB3E38(CpuState& ctx, uint8_t* base, uint64_t gameplanLoader, uint64_t arg2) {
+uint64_t CGameplanLoader_LoadGameplanAsset(CpuState& ctx, uint8_t* base, uint64_t gameplanLoader, uint64_t arg2) {
 	if (!UseLiftedCode(87, 0x82BB3E38)) { ctx.r3.u64 = gameplanLoader; ctx.r4.u64 = arg2; __imp__sub_82BB3E38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BB3E38);
 	uint32_t gameplanAsset = LOAD32((uint32_t)gameplanLoader + 584);
-	return n_sub_82BBE220(ctx, base, gameplanAsset, arg2);
+	return GameplanAsset_Load(ctx, base, gameplanAsset, arg2);
 }
-PROMOTED_ENTRY(87, sub_82BB3E38, 0x82BB3E38) { ctx.r3.u64 = n_sub_82BB3E38(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(87, sub_82BB3E38, 0x82BB3E38) { ctx.r3.u64 = CGameplanLoader_LoadGameplanAsset(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// Appends the hash of the string at stringAddr to the growable u32 array at m_248 + 104 (n_sub_82BAE368 grows it
+
+// Appends the hash of the string at stringAddr to the growable u32 array at m_248 + 104 (Vector_PushBack grows it
 // when full and takes the element by address); returns the address of the new element.
-uint64_t n_sub_82BB3E40(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAddr, uint32_t stringAddr) {
+uint64_t CGameplanLoader_AddStringHash(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAddr, uint32_t stringAddr) {
 	if (!UseLiftedCode(87, 0x82BB3E40)) { ctx.r3.u64 = gameplanLoaderAddr; ctx.r4.u64 = stringAddr; __imp__sub_82BB3E40(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BB3E40);
 	uint32_t stack = ctx.r1.u64;
@@ -398,18 +399,19 @@ uint64_t n_sub_82BB3E40(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAdd
 	uint32_t stringHash = String_HashLimited100(ctx, base, stringAddr);
 	STORE32(stack + 80, stringHash);
 	uint64_t hashArray = (uint64_t)gameplanLoader->m_248 + 104;
-	uint64_t newElement = n_sub_82BAE368(ctx, base, hashArray, stack + 80);
+	uint64_t newElement = Vector_PushBack(ctx, base, hashArray, stack + 80);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return newElement;
 }
-PROMOTED_ENTRY(87, sub_82BB3E40, 0x82BB3E40) { ctx.r3.u64 = n_sub_82BB3E40(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(87, sub_82BB3E40, 0x82BB3E40) { ctx.r3.u64 = CGameplanLoader_AddStringHash(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+
 
 // Gets the gameplanInstance for `gameplanName` from the object at gameplanLoader + 40, publishes m_248 and two C functions as Lua
 // globals, then lets the gameplanHandler in m_210 and the presentation source in m_20C take the gameplanInstance. Returns the
 // gameplanInstance, or 0 when the gameplanHandler declines it or no presentation is made (the loader's virtual at vtable + 32
 // then receives the gameplanInstance).
-uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAddr, uint64_t gameplanName) {
+uint64_t CGameplanLoader_LoadGameplan(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAddr, uint64_t gameplanName) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t str_TXT_820FE5E8_B_ = int32_t(0x820FE5E8);
 	constexpr int32_t str_TXT_820FE608_B_ = int32_t(0x820FE608);
@@ -435,14 +437,14 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 	uint32_t nameData = 0;
 	if ((uint32_t)gameplanName != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82BA8850(ctx, base, (uint64_t)stack + 88, gameplanName, -1);
+		CCharString_AssignCStr(ctx, base, (uint64_t)stack + 88, gameplanName, -1);
 		nameData = LOAD32(stack + 88);
 	}
 	// the copied characters, or the empty string at 0x82000C98: never zero
 	const uint64_t nameOrEmpty = (nameData != 0) ? (uint64_t)nameData : (uint64_t)g_82000C98;
 
 	ctx.r1.u64 = stack;
-	uint64_t gameplanInstance = n_sub_82BE75D8(ctx, base, gameplanLoaderAddr + 40, nameOrEmpty, (uint32_t)gameplanLoaderAddr);
+	uint64_t gameplanInstance = CGameplanManager_GetInstance(ctx, base, gameplanLoaderAddr + 40, nameOrEmpty, (uint32_t)gameplanLoaderAddr);
 	// r3 as the last call of each path leaves it; Allocator_GetInstance receives it at the end
 	uint64_t lastR3 = gameplanInstance;
 
@@ -481,7 +483,7 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 			REX_CALL_INDIRECT_FUNC(eventCallback);
 		}
 
-		n_sub_82BBF6D8(ctx, base, (uint32_t)gameplanLoaderAddr + 532, LOAD32((uint32_t)scriptContext + 4));
+		CGameplanLoader_RegisterLuaFunctions(ctx, base, (uint32_t)gameplanLoaderAddr + 532, LOAD32((uint32_t)scriptContext + 4));
 
 		// m_248 pushed as a light userdata (value, type tag 2, top += 8), then stored as a Lua global; the two C
 		// functions are pushed and stored as globals the same way
@@ -496,13 +498,13 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 		ctx.r7.u64 = newTop;
 		ctx.r8.u64 = top;
 		ctx.r9.u64 = gameplanValue;
-		n_sub_82BC5EB0(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE5E8_B_);
+		Lua_SetGlobal(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE5E8_B_);
 
 		// r6-r8 carry the register values the original passed along
-		n_sub_8227B7E0(ctx, base, luaState, TXT_820FE5F4_R_Fn, 0, g_82BC0000, ctx.r7.u64, ctx.r8.u64);
-		n_sub_82BC5EB0(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE5F4_B_);
-		n_sub_8227B7E0(ctx, base, luaState, TXT_820FE608_R_Fn, 0, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64);
-		n_sub_82BC5EB0(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE608_B_);
+		Lua_PushCFunction(ctx, base, luaState, TXT_820FE5F4_R_Fn, 0, g_82BC0000, ctx.r7.u64, ctx.r8.u64);
+		Lua_SetGlobal(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE5F4_B_);
+		Lua_PushCFunction(ctx, base, luaState, TXT_820FE608_R_Fn, 0, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64);
+		Lua_SetGlobal(ctx, base, luaState, kLuaGlobalsIndex, (uint64_t)str_TXT_820FE608_B_);
 
 		uint32_t fnAt83314984 = LOAD32(0x83314984u);
 		ctx.r3.u64 = gameplanInstance;
@@ -514,14 +516,14 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 		STORE32(stack + 80, 0);
 		STORE16(stack + 84, 0);
 		STORE16(stack + 86, 0);
-		n_sub_82BA8850(ctx, base, (uint64_t)stack + 80, nameOrEmpty, -1);
-		// r4 as the last call leaves it; n_sub_82BA8800 receives it below
+		CCharString_AssignCStr(ctx, base, (uint64_t)stack + 80, nameOrEmpty, -1);
+		// r4 as the last call leaves it; CCharString_Destructor receives it below
 		uint64_t lastR4 = ctx.r4.u64;
 
 		uint32_t handled = 0;
 		uint32_t gameplanHandler = gameplanLoader->m_210;
 		if (gameplanHandler != 0) {
-			uint32_t matched = n_sub_82BBC920(ctx, base, gameplanHandler, (uint64_t)stack + 80);
+			uint32_t matched = CGameplanHandler_CanHandle(ctx, base, gameplanHandler, (uint64_t)stack + 80);
 			lastR4 = ctx.r4.u64;
 			if ((matched & 0xFF) != 0) {
 				// read again after the match call
@@ -540,7 +542,7 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 		}
 
 		// state the callee may pass on
-		n_sub_82BA8800(ctx, base, (uint64_t)stack + 80);
+		CCharString_Destructor(ctx, base, (uint64_t)stack + 80);
 
 		if ((handled & 0xFF) != 0) {
 			uint32_t presentationSource = gameplanLoader->m_20C;
@@ -611,14 +613,14 @@ uint64_t n_sub_82BB3E88(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAdd
 		uint64_t nameBufferSize = (uint64_t)LOAD16(stack + 94) + 1;
 		// state the callee may pass on
 		uint64_t allocator = Allocator_GetInstance(ctx, base);
-		n_sub_82BA9068(ctx, base, allocator, nameData, nameBufferSize);
+		Allocator_Free_82BA9068(ctx, base, allocator, nameData, nameBufferSize);
 	}
 
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
 	return gameplanInstance;
 }
-PROMOTED_ENTRY(87, sub_82BB3E88, 0x82BB3E88) { ctx.r3.u64 = n_sub_82BB3E88(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(87, sub_82BB3E88, 0x82BB3E88) { ctx.r3.u64 = CGameplanLoader_LoadGameplan(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 void CGameplanLoader_SetEventCallback(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAddr, uint32_t eventCallback, uint32_t callbackContext) {
 	if (!UseLiftedCode(87, 0x82BB4268)) { ctx.r3.u64 = gameplanLoaderAddr; ctx.r4.u64 = eventCallback; ctx.r5.u64 = callbackContext; __imp__sub_82BB4268(ctx, base); return; }
@@ -631,30 +633,30 @@ void CGameplanLoader_SetEventCallback(CpuState& ctx, uint8_t* base, uint32_t gam
 PROMOTED_ENTRY(87, sub_82BB4268, 0x82BB4268) { CGameplanLoader_SetEventCallback(ctx, base, ctx.r3.u32, ctx.r4.u32, ctx.r5.u32); }
 
 // sub_82BB4278  [8 bytes]
-uint64_t n_sub_82BB4278(CpuState& ctx, uint8_t* base, uint64_t loaderAddress) {
+uint64_t CGameplanLoader_GetGameplanAssetSize(CpuState& ctx, uint8_t* base, uint64_t loaderAddress) {
 	if (!UseLiftedCode(87, 0x82BB4278)) { ctx.r3.u64 = loaderAddress; __imp__sub_82BB4278(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BB4278);
 	uint32_t loader = (uint32_t)loaderAddress;
 	return LOAD32(loader + 0x20C);
 }
-PROMOTED_ENTRY(87, sub_82BB4278, 0x82BB4278) { ctx.r3.u64 = n_sub_82BB4278(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(87, sub_82BB4278, 0x82BB4278) { ctx.r3.u64 = CGameplanLoader_GetGameplanAssetSize(ctx, base, ctx.r3.u64); }
 
 // sub_82BB4280  [8 bytes]
-uint64_t n_sub_82BB4280(CpuState& ctx, uint8_t* base, uint64_t gameplanLoader) {
+uint64_t CGameplanLoader_GetGameplanState(CpuState& ctx, uint8_t* base, uint64_t gameplanLoader) {
 	if (!UseLiftedCode(87, 0x82BB4280)) { ctx.r3.u64 = gameplanLoader; __imp__sub_82BB4280(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BB4280);
 	// address of the CGameplanLoader sub-object at offset 0x214
 	return gameplanLoader + 0x214;
 }
-PROMOTED_ENTRY(87, sub_82BB4280, 0x82BB4280) { ctx.r3.u64 = n_sub_82BB4280(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(87, sub_82BB4280, 0x82BB4280) { ctx.r3.u64 = CGameplanLoader_GetGameplanState(ctx, base, ctx.r3.u64); }
 
 // sub_82BB4288  [8 bytes]
-uint64_t n_sub_82BB4288(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAddr) {
+uint64_t CGameplanLoader_GetGameplanAssetData(CpuState& ctx, uint8_t* base, uint64_t gameplanLoaderAddr) {
 	if (!UseLiftedCode(87, 0x82BB4288)) { ctx.r3.u64 = gameplanLoaderAddr; __imp__sub_82BB4288(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82BB4288);
 	return GameObject<CGameplanLoader>(base, gameplanLoaderAddr)->m_208;
 }
-PROMOTED_ENTRY(87, sub_82BB4288, 0x82BB4288) { ctx.r3.u64 = n_sub_82BB4288(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(87, sub_82BB4288, 0x82BB4288) { ctx.r3.u64 = CGameplanLoader_GetGameplanAssetData(ctx, base, ctx.r3.u64); }
 
 // sub_82BB4290  [8 bytes]
 void n_sub_82BB4290(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAddr, uint32_t arg2) {
@@ -665,6 +667,7 @@ void n_sub_82BB4290(CpuState& ctx, uint8_t* base, uint32_t gameplanLoaderAddr, u
 	return;
 }
 PROMOTED_ENTRY(87, sub_82BB4290, 0x82BB4290) { n_sub_82BB4290(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+
 
 // sub_82BB4298  [8 bytes]
 // Returns the value n_sub_82BB4290 stores.

@@ -1,9 +1,9 @@
 // CRandomNameVariant (vtable 0x82005A88): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -33,7 +33,7 @@ uint64_t n_sub_821966A8(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 PROMOTED_ENTRY(1, sub_821966A8, 0x821966A8) { ctx.r3.u64 = n_sub_821966A8(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_821E1A28  [88 bytes]
-uint64_t n_sub_821E1A28(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameSource, uint64_t variantFilter) {
+uint64_t CRandomNameVariant_ResolveVariantName(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameSource, uint64_t variantFilter) {
 	if (!UseLiftedCode(4, 0x821E1A28)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = nameSource; ctx.r5.u64 = variantFilter; __imp__sub_821E1A28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821E1A28);
 	uint32_t stack = ctx.r1.u64;
@@ -61,9 +61,9 @@ uint64_t n_sub_821E1A28(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(4, sub_821E1A28, 0x821E1A28) { ctx.r3.u64 = n_sub_821E1A28(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(4, sub_821E1A28, 0x821E1A28) { ctx.r3.u64 = CRandomNameVariant_ResolveVariantName(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_8228C238(CpuState& ctx, uint8_t* base, uint32_t randomNameVariantAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t CRandomNameVariant_GetCachedNameValue(CpuState& ctx, uint8_t* base, uint32_t randomNameVariantAddr, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(10, 0x8228C238)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; __imp__sub_8228C238(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8228C238);
 	uint32_t stack = ctx.r1.u64;
@@ -80,9 +80,9 @@ uint64_t n_sub_8228C238(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(10, sub_8228C238, 0x8228C238) { ctx.r3.u64 = n_sub_8228C238(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(10, sub_8228C238, 0x8228C238) { ctx.r3.u64 = CRandomNameVariant_GetCachedNameValue(ctx, base, ctx.r3.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_827FF4B0(CpuState& ctx, uint8_t* base, uint32_t randomNameVariantAddr) {
+uint64_t CRandomNameVariant_ShouldReplicate(CpuState& ctx, uint8_t* base, uint32_t randomNameVariantAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(56, 0x827FF4B0)) { ctx.r3.u64 = randomNameVariantAddr; __imp__sub_827FF4B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827FF4B0);
@@ -159,9 +159,9 @@ uint64_t n_sub_827FF4B0(CpuState& ctx, uint8_t* base, uint32_t randomNameVariant
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(56, sub_827FF4B0, 0x827FF4B0) { ctx.r3.u64 = n_sub_827FF4B0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(56, sub_827FF4B0, 0x827FF4B0) { ctx.r3.u64 = CRandomNameVariant_ShouldReplicate(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameString) {
+uint64_t CRandomNameVariant_SetName(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameString) {
 	if (!UseLiftedCode(56, 0x827FF870)) { ctx.r3.u64 = randomNameVariantAddr; ctx.r4.u64 = nameString; __imp__sub_827FF870(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827FF870);
 	uint32_t stack = ctx.r1.u64;
@@ -230,7 +230,7 @@ uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 
 	if (hasMatch) {
 		ctx.xer.ca = flags.ca;
-		matchingName = n_sub_825174C8(ctx, base, matchingName, nameStringAddr);
+		matchingName = NameTable_FindNameByString(ctx, base, matchingName, nameStringAddr);
 		flags.ca = ctx.xer.ca;
 	}
 	stack = PopStackFrame(stack, 112);
@@ -238,9 +238,9 @@ uint64_t n_sub_827FF870(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	ctx.xer.ca = flags.ca;
 	return matchingName;
 }
-PROMOTED_ENTRY(56, sub_827FF870, 0x827FF870) { ctx.r3.u64 = n_sub_827FF870(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(56, sub_827FF870, 0x827FF870) { ctx.r3.u64 = CRandomNameVariant_SetName(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827FF9D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameSource, uint32_t nameRef, uint64_t nameId, uint64_t variantFilter) {
+uint64_t CRandomNameVariant_InitializeVariant(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr, uint64_t nameSource, uint32_t nameRef, uint64_t nameId, uint64_t variantFilter) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_834C35D4 = int32_t(0x834C35D4);
@@ -281,7 +281,7 @@ uint64_t n_sub_827FF9D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 
 			uint32_t mappedNameId = LOAD32(stack + 80);
 			if (mappedNameId != 0) {
-				uint32_t matchCount = n_sub_821C9EE0(ctx, base, mappedNameId, nameHash);
+				uint32_t matchCount = NameId_GetMatchingVariantCount(ctx, base, mappedNameId, nameHash);
 				r9Value = ctx.r9.u64;
 				if (matchCount != 0) {
 					variantNameId = mappedNameId;
@@ -301,7 +301,7 @@ uint64_t n_sub_827FF9D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	}
 
 	if (!variantLookupFailed) {
-		uint32_t numVariants = n_sub_821C9EE0(ctx, base, variantNameId, nameHash);
+		uint32_t numVariants = NameId_GetMatchingVariantCount(ctx, base, variantNameId, nameHash);
 		r9Value = ctx.r9.u64;
 
 		if (numVariants != 0) {
@@ -379,9 +379,9 @@ uint64_t n_sub_827FF9D0(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	ctx.r1.u64 = stack;
 	return randomNameVariantAddr;
 }
-PROMOTED_ENTRY(56, sub_827FF9D0, 0x827FF9D0) { ctx.r3.u64 = n_sub_827FF9D0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(56, sub_827FF9D0, 0x827FF9D0) { ctx.r3.u64 = CRandomNameVariant_InitializeVariant(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_827FFD38(CpuState& ctx, uint8_t* base, uint32_t self, uint64_t nameRef, uint64_t gameDB) {
+uint64_t CRandomNameVariant_MatchesName(CpuState& ctx, uint8_t* base, uint32_t self, uint64_t nameRef, uint64_t gameDB) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	if (!UseLiftedCode(56, 0x827FFD38)) { ctx.r3.u64 = self; ctx.r4.u64 = nameRef; ctx.r5.u64 = gameDB; __imp__sub_827FFD38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827FFD38);
@@ -411,7 +411,7 @@ uint64_t n_sub_827FFD38(CpuState& ctx, uint8_t* base, uint32_t self, uint64_t na
 			r4AtReturn = ctx.r4.u64;
 			uint32_t mappedId = LOAD32(stack + 80);
 			if (mappedId != 0) {
-				uint32_t matchCount = n_sub_821C9EE0(ctx, base, mappedId, referencedNameHash);
+				uint32_t matchCount = NameId_GetMatchingVariantCount(ctx, base, mappedId, referencedNameHash);
 				r4AtReturn = ctx.r4.u64;
 				if (matchCount != 0) {
 					isMatch = 1;
@@ -424,9 +424,9 @@ uint64_t n_sub_827FFD38(CpuState& ctx, uint8_t* base, uint32_t self, uint64_t na
 	ctx.r4.u64 = r4AtReturn;
 	return isMatch;
 }
-PROMOTED_ENTRY(56, sub_827FFD38, 0x827FFD38) { ctx.r3.u64 = n_sub_827FFD38(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(56, sub_827FFD38, 0x827FFD38) { ctx.r3.u64 = CRandomNameVariant_MatchesName(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_827FFE08(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr) {
+uint64_t CRandomNameVariant_GenerateName(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(56, 0x827FFE08)) { ctx.r3.u64 = randomNameVariantAddr; __imp__sub_827FFE08(ctx, base); return ctx.r3.u64; }
@@ -548,6 +548,8 @@ uint64_t n_sub_827FFE08(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 				uint64_t uniqueId = Entity_GetUniqueId(ctx, base, LOAD32(entity + 4));
 				int32_t networkGlobal = g_83490000;
 				uint32_t network = LOAD32(LOAD32((uint32_t)networkGlobal + 26912) + 12);
+				ctx.r8.u64 = network;
+				ctx.r9.u64 = (uint64_t)(int64_t)networkGlobal;
 				result = n_sub_8238AD80(ctx, base, LOAD32(network + 140), stack + 88, uniqueId);
 			}
 		}
@@ -557,13 +559,13 @@ uint64_t n_sub_827FFE08(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(56, sub_827FFE08, 0x827FFE08) { ctx.r3.u64 = n_sub_827FFE08(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(56, sub_827FFE08, 0x827FFE08) { ctx.r3.u64 = CRandomNameVariant_GenerateName(ctx, base, ctx.r3.u64); }
 
 // sub_82803380  [4 bytes]
 uint64_t n_sub_82803380(CpuState& ctx, uint8_t* base, uint64_t randomNameVariantAddr) {
 	if (!UseLiftedCode(56, 0x82803380)) { ctx.r3.u64 = randomNameVariantAddr; __imp__sub_82803380(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82803380);
-	uint64_t result = n_sub_827FFE08(ctx, base, randomNameVariantAddr);
+	uint64_t result = CRandomNameVariant_GenerateName(ctx, base, randomNameVariantAddr);
 	return result;
 }
 PROMOTED_ENTRY(56, sub_82803380, 0x82803380) { ctx.r3.u64 = n_sub_82803380(ctx, base, ctx.r3.u64); }
@@ -622,7 +624,7 @@ uint64_t n_sub_82805F40(CpuState& ctx, uint8_t* base, uint64_t randomNameVariant
 PROMOTED_ENTRY(56, sub_82805F40, 0x82805F40) { ctx.r3.u64 = n_sub_82805F40(ctx, base, ctx.r3.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_82805F48  [56 bytes]
-uint64_t n_sub_82805F48(CpuState& ctx, uint8_t* base, uint64_t destinationString, uint32_t sourceVariant) {
+uint64_t CRandomNameVariant_CopyNameString(CpuState& ctx, uint8_t* base, uint64_t destinationString, uint32_t sourceVariant) {
 	if (!UseLiftedCode(56, 0x82805F48)) { ctx.r3.u64 = destinationString; ctx.r4.u64 = sourceVariant; __imp__sub_82805F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82805F48);
 	uint32_t stack = ctx.r1.u64;
@@ -635,4 +637,4 @@ uint64_t n_sub_82805F48(CpuState& ctx, uint8_t* base, uint64_t destinationString
 	ctx.r1.u64 = stack;
 	return destinationString;
 }
-PROMOTED_ENTRY(56, sub_82805F48, 0x82805F48) { ctx.r3.u64 = n_sub_82805F48(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(56, sub_82805F48, 0x82805F48) { ctx.r3.u64 = CRandomNameVariant_CopyNameString(ctx, base, ctx.r3.u64, ctx.r4.u32); }

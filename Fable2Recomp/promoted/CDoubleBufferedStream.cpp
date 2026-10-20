@@ -1,9 +1,9 @@
 // CDoubleBufferedStream (vtable 0x820F8F0C): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -235,6 +235,9 @@ uint64_t CDoubleBufferedStream_Read(CpuState& ctx, uint8_t* base, uint64_t doubl
 		uint32_t seekFn = LOAD32(streamVtablePtr + 20);
 		ctx.r3.u64 = doubleBufferedStreamAddr;
 		ctx.r4.u64 = seekTarget;
+		ctx.r5.u64 = 0;
+		ctx.r9.u64 = seekFn;
+		ctx.r10.u64 = streamVtablePtr;
 		REX_CALL_INDIRECT_FUNC(seekFn);
 
 		stack = PopStackFrame(stack, 176);

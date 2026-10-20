@@ -1,9 +1,9 @@
 // CECVillager (vtable 0x82004258): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
+uint64_t CECVillager_UpdateJobPhases(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (!UseLiftedCode(2, 0x821B1F00)) { ctx.r3.u64 = villagerAddr; __imp__sub_821B1F00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821B1F00);
 	uint32_t stack = ctx.r1.u64;
@@ -98,7 +98,7 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 			if (entry != 0) {
 				// The lists at +0xC0, +0xD0, +0xE0 and +0xF0 (begin at +4, end at +8) are walked with the (list,
 				// position) iterator at stack + 80. An element for which n_sub_828513B8 returns false goes to
-				// n_sub_82637B40, which writes the iterator to continue from at stack + 88 and returns its address.
+				// Vector_EraseElement, which writes the iterator to continue from at stack + 88 and returns its address.
 				constexpr uint32_t kListOffsets[] = {0xC0, 0xD0, 0xE0, 0xF0};
 				const uint32_t iterAddr = stack + 80;
 				const uint64_t nextIterAddr = (uint64_t)stack + 88;
@@ -131,7 +131,7 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 						stateR8 = ctx.r8.u64;
 						if (!passes) {
 							const uint32_t nextIter =
-							    (uint32_t)n_sub_82637B40(ctx, base, nextIterAddr, listAddr, LOAD64(iterAddr), ctx.r8.u64);
+							    (uint32_t)Vector_EraseElement(ctx, base, nextIterAddr, listAddr, LOAD64(iterAddr), ctx.r8.u64);
 							stateR6 = ctx.r6.u64;
 							stateR7 = ctx.r7.u64;
 							stateR8 = ctx.r8.u64;
@@ -148,6 +148,9 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 				}
 
 				// state the callee may pass on
+				ctx.r5.u64 = position;
+				ctx.r6.u64 = stateR6;
+				ctx.r7.u64 = stateR7;
 				ctx.xer.ca = carry;
 				result = n_sub_82193AD8(ctx, base, entry, villager->m_4);
 			}
@@ -158,9 +161,9 @@ uint64_t n_sub_821B1F00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(2, sub_821B1F00, 0x821B1F00) { ctx.r3.u64 = n_sub_821B1F00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(2, sub_821B1F00, 0x821B1F00) { ctx.r3.u64 = CECVillager_UpdateJobPhases(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_821FE988(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t objectAddr) {
+uint64_t CECVillager_InteractWithObject(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t objectAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(5, 0x821FE988)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = objectAddr; __imp__sub_821FE988(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FE988);
@@ -169,7 +172,7 @@ uint64_t n_sub_821FE988(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	uint64_t result{};
 	stack = PushStackFrame(base, stack, 112);
 
-	// virtual slot 1 of the object, asked twice: 8 the first time hands the object to n_sub_827A0220
+	// virtual slot 1 of the object, asked twice: 8 the first time hands the object to CECVillager_CheckObjectReference
 	uint32_t vtableEntry = LOAD32(LOAD32((uint32_t)objectAddr) + 4);
 	callTarget.u64 = (uint64_t)vtableEntry;
 	ctx.r1.u64 = stack;
@@ -180,7 +183,7 @@ uint64_t n_sub_821FE988(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	uint32_t status = ctx.r3.u32;
 
 	if ((int32_t)status == 8) {
-		result = n_sub_827A0220(ctx, base, villagerAddr, objectAddr);
+		result = CECVillager_CheckObjectReference(ctx, base, villagerAddr, objectAddr);
 	} else {
 		vtableEntry = LOAD32(LOAD32((uint32_t)objectAddr) + 4);
 		callTarget.u64 = (uint64_t)vtableEntry;
@@ -194,7 +197,7 @@ uint64_t n_sub_821FE988(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 		    && LOAD8((uint32_t)villagerAddr + 172) == 0) {
 			uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
 			if (LOAD8(LOAD32(globalRoot + 12) + 256) == 0) {
-				result = n_sub_827A0318(ctx, base, villagerAddr, 0);
+				result = CECVillager_ReactToObject(ctx, base, villagerAddr, 0);
 			}
 		}
 	}
@@ -203,7 +206,7 @@ uint64_t n_sub_821FE988(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(5, sub_821FE988, 0x821FE988) { ctx.r3.u64 = n_sub_821FE988(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(5, sub_821FE988, 0x821FE988) { ctx.r3.u64 = CECVillager_InteractWithObject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CECVillager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820C8E00_B_ = int32_t(0x820C8E00);
@@ -222,14 +225,14 @@ uint64_t CECVillager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNa
 }
 PROMOTED_ENTRY(52, sub_8279DE48, 0x8279DE48) { ctx.r3.u64 = CECVillager_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8279E038(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t deleteFlags) {
+uint64_t CECVillager_Delete(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(52, 0x8279E038)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8279E038(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8279E038);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_8279E088(ctx, base, villagerAddr);
+	CECVillager_Cleanup(ctx, base, villagerAddr);
 	// bit 0: also free the object
 	if ((deleteFlags & 1) != 0) {
 		HandleTarget_Free(ctx, base, villagerAddr);
@@ -238,9 +241,9 @@ uint64_t n_sub_8279E038(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	ctx.r1.u64 = stack;
 	return villagerAddr;
 }
-PROMOTED_ENTRY(52, sub_8279E038, 0x8279E038) { ctx.r3.u64 = n_sub_8279E038(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(52, sub_8279E038, 0x8279E038) { ctx.r3.u64 = CECVillager_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8279E260(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t dbRecord) {
+uint64_t CECVillager_LoadJobFromRecord(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t dbRecord) {
 	constexpr int32_t str_TXT_820C4790_B_ = int32_t(0x820C4790);
 	constexpr int32_t str_TXT_820C48F4_B_ = int32_t(0x820C48F4);
 	constexpr int32_t str_TXT_820D0000_B_ = int32_t(0x820D0000);
@@ -277,7 +280,7 @@ uint64_t n_sub_8279E260(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 
 		const uint64_t jobTagHash = String_HashFnv1(ctx, base, str_TXT_820D55A4_B_, kHashSeed);
 		// the field's address as a 64-bit sum, as the original register held it
-		n_sub_8239E0D8(ctx, base, dbRecord, jobTagHash, villagerAddr + 0xA0);
+		GameDB_ReadStringFieldByHash(ctx, base, dbRecord, jobTagHash, villagerAddr + 0xA0);
 
 		STORE32(valueAddr, 0u);
 		const uint64_t routineHash = String_HashFnv1(ctx, base, str_TXT_820D55AC_B_, kHashSeed);
@@ -292,7 +295,7 @@ uint64_t n_sub_8279E260(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 			r4Value = TXT_820C48F4_L_;
 			if (TXT_820C48F4_L_ != 0) {
 				villager->m_A9 = 1;
-				result = n_sub_827A1AB8(ctx, base, villagerAddr, TXT_820C48F4_L_);
+				result = CECVillager_BuildJobSchedule(ctx, base, villagerAddr, TXT_820C48F4_L_);
 				r4Value = ctx.r4.u64;
 			}
 		}
@@ -308,9 +311,9 @@ uint64_t n_sub_8279E260(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_8279E260, 0x8279E260) { ctx.r3.u64 = n_sub_8279E260(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(52, sub_8279E260, 0x8279E260) { ctx.r3.u64 = CECVillager_LoadJobFromRecord(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
+uint64_t CECVillager_LoadLocations(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	constexpr int32_t str_TXT_820D56B8_B_ = int32_t(0x820D56B8);
 	constexpr int32_t str_TXT_820D56C4_B_ = int32_t(0x820D56C4);
 	constexpr int32_t str_TXT_820D56CC_B_ = int32_t(0x820D56CC);
@@ -325,10 +328,10 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 144);
 	const uint32_t idRefAddr = stack + 80;
-	const uint32_t idKeyAddr = stack + 88;  // the (0, id) pair handed to n_sub_82264448
+	const uint32_t idKeyAddr = stack + 88;  // the (0, id) pair handed to EntityManager_LookupEntity
 
 	ctx.r1.u64 = stack;
-	n_sub_821D9F40(ctx, base, idRefAddr, villagerAddr);
+	Component_GetId(ctx, base, idRefAddr, villagerAddr);
 
 	// The address of the value of the field with this name (hashed) in the record the IdRef at stack + 80 refers
 	// to; 0 when it has none.
@@ -338,7 +341,7 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 		const uint64_t record = IdRef_Get(ctx, base, idRefAddr);
 		return GameDB_FindFieldValue(ctx, base, record, nameHash, kFieldType);
 	};
-	// The entity n_sub_82264448 finds for an id, asked of the first object of the list reached from the
+	// The entity EntityManager_LookupEntity finds for an id, asked of the first object of the list reached from the
 	// global at 0x83496920.
 	auto findEntity = [&](uint32_t id) -> uint64_t {
 		const uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
@@ -347,7 +350,7 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 		const uint32_t list = LOAD32(LOAD32(globalRoot + 12) + 88);
 		const uint32_t firstObject = LOAD32(LOAD32(list + 4));
 		// state the callee may pass on
-		return n_sub_82264448(ctx, base, firstObject, idKeyAddr);
+		return EntityManager_LookupEntity(ctx, base, firstObject, idKeyAddr);
 	};
 	// a found entity is used only when bit 0x40 of its byte +0x90 is set
 	auto isUsable = [&](uint64_t entity) {
@@ -359,7 +362,7 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (villageId != 0) {
 		const uint64_t village = findEntity(villageId);
 		if (isUsable(village)) {
-			n_sub_827A0E00(ctx, base, villagerAddr, village);
+			CECVillager_SetVillage(ctx, base, villagerAddr, village);
 		}
 	}
 
@@ -368,11 +371,11 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (homeId != 0 && villager->m_A5 == 0) {
 		const uint64_t home = findEntity(homeId);
 		if (isUsable(home)) {
-			n_sub_827A0738(ctx, base, villagerAddr, home);
+			CECVillager_SetHome(ctx, base, villagerAddr, home);
 		}
 	}
 
-	// The result is what the last of the calls below returned. r4 for callers (and for n_sub_8279F5C0) is what
+	// The result is what the last of the calls below returned. r4 for callers (and for CECVillager_RefreshJob) is what
 	// the field lookup left in it, then the entity the workplace lookup found, then what a later call leaves.
 	uint64_t result = findField(str_TXT_820D56CC_B_);
 	uint64_t r4Value = ctx.r4.u64;
@@ -381,14 +384,14 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 		result = findEntity(workplaceId);
 		r4Value = result;
 		if (isUsable(result)) {
-			result = n_sub_827A1170(ctx, base, villagerAddr, result);
+			result = CECVillager_SetWorkplace(ctx, base, villagerAddr, result);
 			r4Value = ctx.r4.u64;
 		}
 	}
 
 	if (villager->m_AE != 0) {
 		// state the callee may pass on
-		result = n_sub_8279F5C0(ctx, base, villagerAddr);
+		result = CECVillager_RefreshJob(ctx, base, villagerAddr);
 		r4Value = ctx.r4.u64;
 	}
 
@@ -399,9 +402,9 @@ uint64_t n_sub_8279F158(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_8279F158, 0x8279F158) { ctx.r3.u64 = n_sub_8279F158(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_8279F158, 0x8279F158) { ctx.r3.u64 = CECVillager_LoadLocations(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
+uint64_t CECVillager_UpdateJob(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	if (!UseLiftedCode(52, 0x8279F398)) { ctx.r3.u64 = villagerAddr; __imp__sub_8279F398(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8279F398);
 	uint32_t stack = ctx.r1.u64;
@@ -412,7 +415,7 @@ uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	uint64_t result = villagerAddr;
 	if (villager->m_AF == 0) {
 		ctx.r1.u64 = stack;
-		result = n_sub_8279F5C0(ctx, base, villagerAddr);
+		result = CECVillager_RefreshJob(ctx, base, villagerAddr);
 
 		// An entity handle counts only when it resolves to an entity with bit 0x40 of byte +0x90 set; a handle
 		// whose target word is zero is released instead. The second handle is looked at only when the first counts.
@@ -497,6 +500,10 @@ uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 				}
 
 				// state the callee may pass on
+				ctx.r6.u64 = stateR6;
+				ctx.r7.u64 = stateR7;
+				ctx.r8.u64 = stateR8;
+				ctx.r9.u64 = stateR9;
 				ctx.xer.ca = carry;
 				const uint32_t secondEntity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, secondHandleAddr);
 				const uint32_t TXT_820C4790_L_ = villager->m_9C;
@@ -510,14 +517,14 @@ uint64_t n_sub_8279F398(CpuState& ctx, uint8_t* base, uint64_t villagerAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_8279F398, 0x8279F398) { ctx.r3.u64 = n_sub_8279F398(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(52, sub_8279F398, 0x8279F398) { ctx.r3.u64 = CECVillager_UpdateJob(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t objectAddr) {
+uint64_t CECVillager_CheckObjectReference(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t objectAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x827A0220)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = objectAddr; __imp__sub_827A0220(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A0220);
 	uint32_t stack = ctx.r1.u64;
-	// r7 handed to n_sub_827A0318: the caller's value unless a step below replaces it
+	// r7 handed to CECVillager_ReactToObject: the caller's value unless a step below replaces it
 	uint64_t r7Value = ctx.r7.u64;
 	stack = PushStackFrame(base, stack, 128);
 
@@ -552,6 +559,8 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
 		ctx.r4.u64 = objectAddr;
+		ctx.r8.u64 = listBegin;
+		ctx.r9.u64 = listBeginAgain;
 		const uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, firstObjectAgain);
 		const uint32_t referenced = LOAD32((uint32_t)objectAddr + 4);
 		r7Value = LOAD32(entity + 20);
@@ -562,14 +571,15 @@ uint64_t n_sub_827A0220(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	const uint64_t result = n_sub_827A0318(ctx, base, villagerAddr, sameEntity);
+	ctx.r7.u64 = r7Value;
+	const uint64_t result = CECVillager_ReactToObject(ctx, base, villagerAddr, sameEntity);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_827A0220, 0x827A0220) { ctx.r3.u64 = n_sub_827A0220(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(52, sub_827A0220, 0x827A0220) { ctx.r3.u64 = CECVillager_CheckObjectReference(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
+uint64_t CECVillager_SetVillage(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(52, 0x827A0E00)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = target; __imp__sub_827A0E00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A0E00);
@@ -698,6 +708,7 @@ uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	const uint32_t entityWord24 = LOAD32(newEntity + 24);
 	villager->m_30 = entityWord24;
 	// state the callee may pass on
+	ctx.r9.u64 = entityWord24;
 	const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, targetHandle);
 	const uint32_t entityFlags = LOAD32(entity + 44);
 	const uint32_t lookupEnabled = (entityFlags >> 1) & 1;
@@ -710,17 +721,17 @@ uint64_t n_sub_827A0E00(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	}
 	result = n_sub_825DCE70(ctx, base, newValue, villager->m_4);
 	if (villager->m_A9 == 0) {
-		const uint64_t scheduleArg = n_sub_825DE450(ctx, base, newValue, villager->m_9C);
-		result = n_sub_827A1AB8(ctx, base, villagerAddr, scheduleArg);
+		const uint64_t scheduleArg = FindJobSchedule(ctx, base, newValue, villager->m_9C);
+		result = CECVillager_BuildJobSchedule(ctx, base, villagerAddr, scheduleArg);
 	}
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(52, sub_827A0E00, 0x827A0E00) { ctx.r3.u64 = n_sub_827A0E00(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(52, sub_827A0E00, 0x827A0E00) { ctx.r3.u64 = CECVillager_SetVillage(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827A1AB8  [624 bytes]
-uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t jobSchedule) {
+uint64_t CECVillager_BuildJobSchedule(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t jobSchedule) {
 	constexpr int32_t str_TXT_820D56D8_B_ = int32_t(0x820D56D8);
 	constexpr int32_t str_TXT_820D56E4_B_ = int32_t(0x820D56E4);
 	constexpr int32_t str_TXT_820D56F0_B_ = int32_t(0x820D56F0);
@@ -744,9 +755,9 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 
 	if ((uint32_t)jobSchedule != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_829FBC40(ctx, base, stack + 96, jobSchedule, scheduleBegin);
+		GameDB_GetArrayField(ctx, base, stack + 96, jobSchedule, scheduleBegin);
 		double f13 = ctx.f13.f64;  // f13 as the calls below are handed it
-		// the words n_sub_829FBC40 left at +96: entry array, end index, first index
+		// the words GameDB_GetArrayField left at +96: entry array, end index, first index
 		const uint32_t entries = LOAD32(stack + 96);
 		const uint32_t endIndex = LOAD32(stack + 100);
 		uint32_t index = LOAD32(stack + 104);
@@ -800,6 +811,7 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 							STORE32(stack + 92, vecEnd);
 							STORE32(stack + 88, 0);
 							// state the callee may pass on
+							ctx.f13.f64 = f13;
 							n_sub_823955A8(ctx, base, schedule, LOAD64(stack + 88), stack + 96);
 							f13 = ctx.f13.f64;
 						}
@@ -815,9 +827,9 @@ uint64_t n_sub_827A1AB8(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(53, sub_827A1AB8, 0x827A1AB8) { ctx.r3.u64 = n_sub_827A1AB8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(53, sub_827A1AB8, 0x827A1AB8) { ctx.r3.u64 = CECVillager_BuildJobSchedule(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_827A1D28(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
+uint64_t CECVillager_SetHomeTarget(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t target) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(53, 0x827A1D28)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = target; __imp__sub_827A1D28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A1D28);
@@ -862,4 +874,4 @@ uint64_t n_sub_827A1D28(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(53, sub_827A1D28, 0x827A1D28) { ctx.r3.u64 = n_sub_827A1D28(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(53, sub_827A1D28, 0x827A1D28) { ctx.r3.u64 = CECVillager_SetHomeTarget(ctx, base, ctx.r3.u64, ctx.r4.u64); }

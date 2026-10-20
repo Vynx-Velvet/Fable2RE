@@ -1,9 +1,9 @@
 // CObjectBase (vtable 0x820F3A24): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -55,7 +55,7 @@ uint32_t CObjectBase_ReleaseHandles(CpuState& ctx, uint8_t* base, uint32_t objec
 }
 PROMOTED_ENTRY(7, sub_8223CF20, 0x8223CF20) { ctx.r3.u64 = CObjectBase_ReleaseHandles(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8241E5A0(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
+uint64_t CObjectBase_DestructorWithList(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(24, 0x8241E5A0)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8241E5A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8241E5A0);
 	uint32_t stack = ctx.r1.u64;
@@ -63,7 +63,7 @@ uint64_t n_sub_8241E5A0(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_82517EF0(ctx, base, objectBaseAddr + 8);
+	LinkedList_Destroy_82517EF0(ctx, base, objectBaseAddr + 8);
 	objectBase->vtable = 0x820F3A24u;
 	// bit 0: also free the object itself
 	if ((deleteFlags & 0x1) != 0) {
@@ -73,9 +73,9 @@ uint64_t n_sub_8241E5A0(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return objectBaseAddr;
 }
-PROMOTED_ENTRY(24, sub_8241E5A0, 0x8241E5A0) { ctx.r3.u64 = n_sub_8241E5A0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_8241E5A0, 0x8241E5A0) { ctx.r3.u64 = CObjectBase_DestructorWithList(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82514430(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
+uint32_t CObjectBase_DestroyRangeStorage(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(31, 0x82514430)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82514430(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82514430);
 	uint32_t stack = ctx.r1.u64;
@@ -83,7 +83,7 @@ uint32_t n_sub_82514430(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	stack = PushStackFrame(base, stack, 112);
 
 	// the block at +40 holds a range: its start pointer at +4 (m_2C, an allocation) and its end at +8.
-	// Hand the range to n_sub_8243B230, free the allocation, then clear the words at +4..+12.
+	// Hand the range to Range_DestroyElements, free the allocation, then clear the words at +4..+12.
 	uint32_t rangeRecordAddr = objectBaseAddr + 40;
 	uint32_t result = objectBaseAddr;
 	uint32_t rangeBegin = objectBase->m_2C;
@@ -91,7 +91,7 @@ uint32_t n_sub_82514430(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 		uint32_t rangeEnd = LOAD32(rangeRecordAddr + 8);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
-		n_sub_8243B230(ctx, base, rangeBegin, rangeEnd);
+		Range_DestroyElements(ctx, base, rangeBegin, rangeEnd);
 		result = HandleTarget_Free(ctx, base, LOAD32(rangeRecordAddr + 4));
 	}
 	STORE32(rangeRecordAddr + 4, 0);
@@ -102,9 +102,9 @@ uint32_t n_sub_82514430(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_82514430, 0x82514430) { ctx.r3.u64 = n_sub_82514430(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(31, sub_82514430, 0x82514430) { ctx.r3.u64 = CObjectBase_DestroyRangeStorage(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82514598(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
+uint32_t CObjectBase_ReleaseRefCountedObjects(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(31, 0x82514598)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82514598(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82514598);
 	uint32_t stack = ctx.r1.u64;
@@ -172,9 +172,9 @@ uint32_t n_sub_82514598(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(31, sub_82514598, 0x82514598) { ctx.r3.u64 = n_sub_82514598(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(31, sub_82514598, 0x82514598) { ctx.r3.u64 = CObjectBase_ReleaseRefCountedObjects(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82515C60(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t sourceAddr) {
+uint64_t CObjectBase_CopyConstructor(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t sourceAddr) {
 	if (!UseLiftedCode(31, 0x82515C60)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = sourceAddr; __imp__sub_82515C60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82515C60);
 	uint32_t stack = ctx.r1.u64;
@@ -201,15 +201,18 @@ uint64_t n_sub_82515C60(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_82517FC0(ctx, base, objectBaseAddr + 40, sourceAddr + 40, source10);
+	ctx.r5.u64 = source1C;
+	ctx.r6.u64 = source18;
+	ctx.r7.u64 = source14;
+	Vector_CopyConstruct(ctx, base, objectBaseAddr + 40, sourceAddr + 40, source10);
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return objectBaseAddr;
 }
-PROMOTED_ENTRY(31, sub_82515C60, 0x82515C60) { ctx.r3.u64 = n_sub_82515C60(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(31, sub_82515C60, 0x82515C60) { ctx.r3.u64 = CObjectBase_CopyConstructor(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_8272C918(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
+uint64_t CObjectBase_DestructorWithSubobject(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(49, 0x8272C918)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8272C918(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8272C918);
 	uint32_t stack = ctx.r1.u64;
@@ -217,7 +220,7 @@ uint64_t n_sub_8272C918(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	stack = PushStackFrame(base, stack, 112);
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	n_sub_82A773E0(ctx, base, objectBaseAddr + 24);
+	PointerVector_Destroy(ctx, base, objectBaseAddr + 24);
 	objectBase->vtable = 0x820F3A24u;
 	// bit 0: also free the object itself
 	if ((deleteFlags & 0x1) != 0) {
@@ -227,9 +230,9 @@ uint64_t n_sub_8272C918(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return objectBaseAddr;
 }
-PROMOTED_ENTRY(49, sub_8272C918, 0x8272C918) { ctx.r3.u64 = n_sub_8272C918(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_8272C918, 0x8272C918) { ctx.r3.u64 = CObjectBase_DestructorWithSubobject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8272C978(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
+uint64_t CObjectBase_DestructorWithBufferAndRef(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(49, 0x8272C978)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = deleteFlags; __imp__sub_8272C978(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8272C978);
 	uint32_t stack = ctx.r1.u64;
@@ -300,9 +303,9 @@ uint64_t n_sub_8272C978(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r4.u64 = passR4;
 	return objectBaseAddr;
 }
-PROMOTED_ENTRY(49, sub_8272C978, 0x8272C978) { ctx.r3.u64 = n_sub_8272C978(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(49, sub_8272C978, 0x8272C978) { ctx.r3.u64 = CObjectBase_DestructorWithBufferAndRef(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82A39648(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
+uint32_t CObjectBase_FreeOffsetBuffer(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(74, 0x82A39648)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82A39648(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82A39648);
 	uint32_t stack = ctx.r1.u64;
@@ -323,7 +326,7 @@ uint32_t n_sub_82A39648(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(74, sub_82A39648, 0x82A39648) { ctx.r3.u64 = n_sub_82A39648(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(74, sub_82A39648, 0x82A39648) { ctx.r3.u64 = CObjectBase_FreeOffsetBuffer(ctx, base, ctx.r3.u32); }
 
 uint64_t CObjectBase_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t flags) {
 	if (!UseLiftedCode(74, 0x82A44E08)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = flags; __imp__sub_82A44E08(ctx, base); return ctx.r3.u64; }
@@ -347,7 +350,7 @@ uint64_t CObjectBase_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t o
 }
 PROMOTED_ENTRY(74, sub_82A44E08, 0x82A44E08) { ctx.r3.u64 = CObjectBase_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_82A49DE8(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
+uint32_t CObjectBase_ReleaseHandlePairs(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(74, 0x82A49DE8)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82A49DE8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82A49DE8);
 	uint32_t stack = ctx.r1.u64;
@@ -379,9 +382,9 @@ uint32_t n_sub_82A49DE8(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return (uint32_t)handle1C;
 }
-PROMOTED_ENTRY(74, sub_82A49DE8, 0x82A49DE8) { ctx.r3.u64 = n_sub_82A49DE8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(74, sub_82A49DE8, 0x82A49DE8) { ctx.r3.u64 = CObjectBase_ReleaseHandlePairs(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82A4EE10(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2, uint64_t arg3) {
+uint32_t CObjectBase_DestructLargeObject(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(75, 0x82A4EE10)) { ctx.r3.u64 = objectBaseAddr; ctx.r7.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82A4EE10(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82A4EE10);
 	uint32_t stack = ctx.r1.u64;
@@ -392,7 +395,7 @@ uint32_t n_sub_82A4EE10(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	STORE32(objectAddr, 0x820F5F04u); // vtable
 
 	ctx.r1.u64 = stack;
-	n_sub_82A4EF80(ctx, base, objectBaseAddr, arg2, arg3);
+	CObjectBase_ResetManagedSubobjects(ctx, base, objectBaseAddr, arg2, arg3);
 
 	uint32_t handle = LOAD32(objectAddr + 0xE64);
 	if (handle != 0) {
@@ -413,7 +416,7 @@ uint32_t n_sub_82A4EE10(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		uint32_t element = handle + 0x1C40;
 		for (int32_t i = 15; i >= 0; --i) {
 			element -= 0x1C0;
-			n_sub_82AAF558(ctx, base, element);
+			FixedArray6_Destroy(ctx, base, element);
 		}
 		uint32_t nested = LOAD32(handle + 28);
 		if (nested != 0) {
@@ -423,8 +426,8 @@ uint32_t n_sub_82A4EE10(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	}
 	STORE32(objectAddr + 0xE5C, 0);
 
-	n_sub_82A4F758(ctx, base, objectAddr + 0xD54 + 20);
-	n_sub_82A4F758(ctx, base, objectAddr + 0xD54);
+	Vector_ClearElements(ctx, base, objectAddr + 0xD54 + 20);
+	Vector_ClearElements(ctx, base, objectAddr + 0xD54);
 
 	handle = LOAD32(objectAddr + 0xD50);
 	if (handle != 0) {
@@ -467,9 +470,9 @@ uint32_t n_sub_82A4EE10(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return (uint32_t)freedHandle;
 }
-PROMOTED_ENTRY(75, sub_82A4EE10, 0x82A4EE10) { ctx.r3.u64 = n_sub_82A4EE10(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(75, sub_82A4EE10, 0x82A4EE10) { ctx.r3.u64 = CObjectBase_DestructLargeObject(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
 
-uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2, uint64_t arg3) {
+uint32_t CObjectBase_ResetManagedSubobjects(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t g_82090000 = int32_t(0x82090000);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(75, 0x82A4EF80)) { ctx.r3.u64 = objectBaseAddr; ctx.r7.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_82A4EF80(ctx, base); return ctx.r3.u32; }
@@ -505,6 +508,7 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		PPCVRegister vec;
 		SET_V8(vec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 		SET_V8(vec, simde_mm_shuffle_epi32(V8(vec), 0xFF));
+		ctx.f1.f64 = constructorValue;
 		ctx.v1 = vec;
 		newE5C = n_sub_82AAF5A0(ctx, base, newObject);
 	}
@@ -516,7 +520,7 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		int32_t remaining = 15;
 		do {
 			element -= 448;
-			n_sub_82AAF558(ctx, base, element);
+			FixedArray6_Destroy(ctx, base, element);
 			remaining -= 1;
 		} while (remaining >= 0);
 		uint32_t allocated = LOAD32(oldE5C + 28);
@@ -560,6 +564,7 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		}
 	}
 
+	ctx.r4.u64 = loopValue;
 	uint32_t newTarget = Heap_Alloc(ctx, base, 4416);
 
 	uint32_t target;
@@ -575,6 +580,8 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 			newTarget = ctx.r3.u64;
 			badAllocHandler = ctx.r10.u64;
 		}
+		ctx.r3.u64 = newTarget;
+		ctx.r10.u64 = badAllocHandler;
 		ThrowBadAlloc(ctx, base);
 		target = 0;
 	}
@@ -585,7 +592,7 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 		HandleTarget_Free(ctx, base, oldE64);
 	}
 	objectBase->m_E64 = target;
-	n_sub_82A7F580(ctx, base, arrayAddr);
+	SortedArray_Clear(ctx, base, arrayAddr);
 
 	STORE32(stack + 80, uint32_t(objectBase->m_8));
 	uint32_t mapRoot = LOAD32((uint32_t)g_834A0000 - 2364);
@@ -614,10 +621,10 @@ uint32_t n_sub_82A4EF80(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r9.u64 = key;
 	return result;
 }
-PROMOTED_ENTRY(75, sub_82A4EF80, 0x82A4EF80) { ctx.r3.u64 = n_sub_82A4EF80(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(75, sub_82A4EF80, 0x82A4EF80) { ctx.r3.u64 = CObjectBase_ResetManagedSubobjects(ctx, base, ctx.r3.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // sub_82A76470  [96 bytes]
-uint32_t n_sub_82A76470(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
+uint32_t CObjectBase_ReleaseHandleAt14(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	if (!UseLiftedCode(76, 0x82A76470)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82A76470(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82A76470);
 	uint32_t stack = ctx.r1.u64;
@@ -638,9 +645,9 @@ uint32_t n_sub_82A76470(CpuState& ctx, uint8_t* base, uint32_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return handle;
 }
-PROMOTED_ENTRY(76, sub_82A76470, 0x82A76470) { ctx.r3.u64 = n_sub_82A76470(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(76, sub_82A76470, 0x82A76470) { ctx.r3.u64 = CObjectBase_ReleaseHandleAt14(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82B1F1D8(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2) {
+uint64_t CObjectBase_DestructorWithVectorAndSubobject(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t arg2) {
 	if (!UseLiftedCode(82, 0x82B1F1D8)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = arg2; __imp__sub_82B1F1D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B1F1D8);
 	uint32_t stack = ctx.r1.u64;
@@ -653,7 +660,7 @@ uint64_t n_sub_82B1F1D8(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = arg2;
-	n_sub_82A99C70(ctx, base, subObjectAddr);
+	DynamicArray_Destroy(ctx, base, subObjectAddr);
 	SharedHandleVector_Clear(ctx, base, handleVectorAddr);
 	objectBase->vtable = 0x820F3A24u;
 
@@ -667,9 +674,9 @@ uint64_t n_sub_82B1F1D8(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(82, sub_82B1F1D8, 0x82B1F1D8) { ctx.r3.u64 = n_sub_82B1F1D8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(82, sub_82B1F1D8, 0x82B1F1D8) { ctx.r3.u64 = CObjectBase_DestructorWithVectorAndSubobject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t deleteFlags) {
+uint64_t CObjectBase_Destructor_TrackedSubobjects(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint32_t deleteFlags) {
 	if (!UseLiftedCode(82, 0x82B22600)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82B22600(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B22600);
 	uint32_t stack = ctx.r1.u64;
@@ -702,7 +709,7 @@ uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	STORE32(tailAddr + 12, 0);
 
 	ctx.r1.u64 = stack;
-	n_sub_8246D1F0(ctx, base, (uint32_t)objectBaseAddr + 8);
+	StdMap_DestroyGlobal_8246D1F0(ctx, base, (uint32_t)objectBaseAddr + 8);
 	objectBase->vtable = 0x820F3A24u;
 
 	uint64_t result = objectBaseAddr;
@@ -715,9 +722,9 @@ uint64_t n_sub_82B22600(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(82, sub_82B22600, 0x82B22600) { ctx.r3.u64 = n_sub_82B22600(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(82, sub_82B22600, 0x82B22600) { ctx.r3.u64 = CObjectBase_Destructor_TrackedSubobjects(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82B68378(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t flags, uint64_t arg3) {
+uint64_t CObjectBase_Destructor_ListMember(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, uint64_t flags, uint64_t arg3) {
 	if (!UseLiftedCode(84, 0x82B68378)) { ctx.r3.u64 = objectBaseAddr; ctx.r4.u64 = flags; ctx.r7.u64 = arg3; __imp__sub_82B68378(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82B68378);
 	uint32_t stack = ctx.r1.u64;
@@ -727,7 +734,7 @@ uint64_t n_sub_82B68378(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	uint32_t memberSubobject = (uint32_t)(objectBaseAddr + 8);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = flags;
-	n_sub_82B5BCC0(ctx, base, memberSubobject, arg3);
+	LinkedList_Clear_82B5BCC0(ctx, base, memberSubobject, arg3);
 
 	HandleTarget_Free(ctx, base, objectBase->m_C);
 	objectBase->m_C = 0u;
@@ -741,9 +748,9 @@ uint64_t n_sub_82B68378(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr, u
 	ctx.r1.u64 = stack;
 	return objectBaseAddr;
 }
-PROMOTED_ENTRY(84, sub_82B68378, 0x82B68378) { ctx.r3.u64 = n_sub_82B68378(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(84, sub_82B68378, 0x82B68378) { ctx.r3.u64 = CObjectBase_Destructor_ListMember(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r7.u64); }
 
-uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
+uint32_t CObjectBase_Destructor_SharedHandle(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 	constexpr int32_t g_834A601C = int32_t(0x834A601C);
 	constexpr int32_t g_834A6028 = int32_t(0x834A6028);
 	if (!UseLiftedCode(84, 0x82B6A810)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82B6A810(ctx, base); return ctx.r3.u32; }
@@ -762,7 +769,7 @@ uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 	// a global word read under a lock, compared with a word of the current thread block (r13 + 256 -> +332)
 	uint32_t globalWord = n_sub_82B69040(ctx, base);
 	uint64_t r9Value = ctx.r9.u64;
-	uint32_t threadWord = n_sub_8221EE38(ctx, base);
+	uint32_t threadWord = GetCurrentThreadId(ctx, base);
 
 	if (threadWord != globalWord) {
 		// local copy of the shared handle m_3C/m_40 at stack + 80
@@ -789,6 +796,7 @@ uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 		}
 		// lock guard at stack + 88 (String_Construct enters critical section g_834A6028; byte at +4 = held)
 		ctx.r9.u64 = r9Value; // state the callee may pass on
+		ctx.r10.u64 = r10Value;
 		String_Construct(ctx, base, stack + 88, g_834A6028, 0);
 		ctx.r4.u64 = g_834A601C; // the callee reads r4 from the state
 		n_sub_82B6BF20(ctx, base, stack + 96, stack + 80, ctx.r8.u64);
@@ -827,4 +835,4 @@ uint32_t n_sub_82B6A810(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 };
-PROMOTED_ENTRY(84, sub_82B6A810, 0x82B6A810) { ctx.r3.u64 = n_sub_82B6A810(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(84, sub_82B6A810, 0x82B6A810) { ctx.r3.u64 = CObjectBase_Destructor_SharedHandle(ctx, base, ctx.r3.u64); }

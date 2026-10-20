@@ -1,9 +1,9 @@
 // CBoneDriverGroup (vtable 0x82006438): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -12,12 +12,12 @@
 #include "lifted/readable_support.h"
 
 // sub_821B3258  [8 bytes]
-uint64_t n_sub_821B3258(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroup, uint64_t transformAddr) {
+uint64_t CBoneDriverGroup_ApplyTransform(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroup, uint64_t transformAddr) {
 	if (!UseLiftedCode(2, 0x821B3258)) { ctx.r3.u64 = boneDriverGroup; ctx.r5.u64 = transformAddr; __imp__sub_821B3258(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821B3258);
-	return n_sub_82272E28(ctx, base, boneDriverGroup, transformAddr);
+	return CBoneDriverGroup_ApplyTransformToBoneDrivers(ctx, base, boneDriverGroup, transformAddr);
 }
-PROMOTED_ENTRY(2, sub_821B3258, 0x821B3258) { ctx.r3.u64 = n_sub_821B3258(ctx, base, ctx.r3.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(2, sub_821B3258, 0x821B3258) { ctx.r3.u64 = CBoneDriverGroup_ApplyTransform(ctx, base, ctx.r3.u64, ctx.r5.u64); }
 
 // Copies the 16 bytes at sourceAddr + 0x60 (where a CBoneDriverGroup keeps m_rotation) to the buffer
 // at destAddr, as two 8-byte halves.
@@ -33,9 +33,9 @@ PROMOTED_ENTRY(7, sub_82242518, 0x82242518) { CBoneDriverGroup_SetQuaternion(ctx
 // sub_82272E28  [480 bytes]
 // For each bone driver of the group: combines the transform at transformAddr (translation +0, rotation
 // quaternion +16, scale +32) with the bone's 48-byte transform of the same layout (from the array that
-// n_sub_82D5DB78 provides) and hands the combined parts, with the object at +0x2C of the driver, to
-// n_sub_82D7B8A8. Then calls n_sub_82E66200 on m_98 when it is set.
-uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAddr, uint64_t transformAddr) {
+// BoneData_GetTransforms provides) and hands the combined parts, with the object at +0x2C of the driver, to
+// BoneDriver_Update. Then calls Skeleton_UpdateBones on m_98 when it is set.
+uint64_t CBoneDriverGroup_ApplyTransformToBoneDrivers(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAddr, uint64_t transformAddr) {
 	constexpr int32_t g_82024280 = int32_t(0x82024280);
 	if (!UseLiftedCode(9, 0x82272E28)) { ctx.r3.u64 = boneDriverGroupAddr; ctx.r4.u64 = transformAddr; __imp__sub_82272E28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82272E28);
@@ -109,7 +109,7 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 	}
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
-	uint32_t animData = n_sub_82D5DB78(ctx, base, driverData);
+	uint32_t animData = BoneData_GetTransforms(ctx, base, driverData);
 	uint64_t handleAddr = (int64_t)(uint64_t)stack + 80;
 	SharedHandle_Release(ctx, base, handleAddr);
 	r9Value = ctx.r9.u64;
@@ -203,6 +203,11 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 		// state the callee may pass on
 		hkRotation_SetFromQuaternion(ctx, base, (uint32_t)rotationMatrixAddr, (uint32_t)rotationOutAddr);
 		// state the callee may pass on
+		ctx.r4.u64 = rotationMatrixAddr;
+		ctx.r5.u64 = scaleOutAddr;
+		ctx.r6.u64 = rotationOutAddr;
+		ctx.r7.u64 = translationOutAddr;
+		ctx.r8.u64 = children;
 		ctx.v1 = local50;
 		ctx.v2 = local51;
 		ctx.v3 = local52;
@@ -215,7 +220,7 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 		ctx.v10 = local59;
 		ctx.v11 = local60;
 		ctx.xer.ca = flags.ca;
-		n_sub_82D7B8A8(ctx, base, driverObject);
+		BoneDriver_Update(ctx, base, driverObject);
 		r9Value = ctx.r9.u64;
 		local50 = ctx.v1;
 		local51 = ctx.v2;
@@ -229,7 +234,7 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 	if ((uint32_t)result != 0) {
 		// state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		result = n_sub_82E66200(ctx, base, result);
+		result = Skeleton_UpdateBones(ctx, base, result);
 		r9Value = ctx.r9.u64;
 	}
 	stack = PopStackFrame(stack, 304);
@@ -256,9 +261,9 @@ uint64_t n_sub_82272E28(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroupAd
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82272E28, 0x82272E28) { ctx.r3.u64 = n_sub_82272E28(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(9, sub_82272E28, 0x82272E28) { ctx.r3.u64 = CBoneDriverGroup_ApplyTransformToBoneDrivers(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-void n_sub_822D3F78(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
+void CBoneDriverGroup_SetScaleVector(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t source) {
 	if (!UseLiftedCode(13, 0x822D3F78)) { ctx.r3.u64 = destination; ctx.r4.u64 = source; __imp__sub_822D3F78(ctx, base); return; }
 	LiftedFrame frame(0x822D3F78);
 	PPCVRegister value{};
@@ -266,7 +271,7 @@ void n_sub_822D3F78(CpuState& ctx, uint8_t* base, uint32_t destination, uint32_t
 	VSTORE(destination & ~0xF, V8(value));
 	return;
 }
-PROMOTED_ENTRY(13, sub_822D3F78, 0x822D3F78) { n_sub_822D3F78(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(13, sub_822D3F78, 0x822D3F78) { CBoneDriverGroup_SetScaleVector(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 uint64_t CBoneDriverGroup_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(61, 0x828A16F0)) { ctx.r3.u64 = boneDriverGroupAddr; ctx.r4.u64 = deleteFlags; __imp__sub_828A16F0(ctx, base); return ctx.r3.u64; }
@@ -276,7 +281,7 @@ uint64_t CBoneDriverGroup_ScalarDeletingDtor(CpuState& ctx, uint8_t* base, uint6
 	// state the callee may pass on
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = deleteFlags;
-	n_sub_828A1740(ctx, base, boneDriverGroupAddr);
+	CBoneDriverGroup_Destructor(ctx, base, boneDriverGroupAddr);
 	if ((deleteFlags & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, boneDriverGroupAddr);
 	}
@@ -362,12 +367,12 @@ uint64_t CBoneDriverGroup_Attach(CpuState& ctx, uint8_t* base, uint64_t boneDriv
 PROMOTED_ENTRY(61, sub_828A25A0, 0x828A25A0) { ctx.r3.u64 = CBoneDriverGroup_Attach(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_828A2880  [4 bytes]
-uint64_t n_sub_828A2880(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroup) {
+uint64_t CBoneDriverGroup_ResetAllDriversThunk(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroup) {
 	if (!UseLiftedCode(61, 0x828A2880)) { ctx.r3.u64 = boneDriverGroup; __imp__sub_828A2880(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A2880);
 	return CBoneDriverGroup_ResetAllDrivers(ctx, base, boneDriverGroup);
 }
-PROMOTED_ENTRY(61, sub_828A2880, 0x828A2880) { ctx.r3.u64 = n_sub_828A2880(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_828A2880, 0x828A2880) { ctx.r3.u64 = CBoneDriverGroup_ResetAllDriversThunk(ctx, base, ctx.r3.u64); }
 
 // sub_828A2888  [204 bytes]
 // For each 8-byte driver entry of [m_children, m_childrenEnd), calls the driver's virtual methods at vtable
@@ -495,7 +500,7 @@ uint64_t CBoneDriverGroup_ForEachChildVirtual44(CpuState& ctx, uint8_t* base, ui
 PROMOTED_ENTRY(61, sub_828A2C28, 0x828A2C28) { ctx.r3.u64 = CBoneDriverGroup_ForEachChildVirtual44(ctx, base, ctx.r3.u64); }
 
 // sub_828A2F68  [116 bytes]
-uint64_t n_sub_828A2F68(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr, uint64_t boneData, uint64_t arg3, double floatArg1) {
+uint64_t CBoneDriverGroup_SetBoneAnimation(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr, uint64_t boneData, uint64_t arg3, double floatArg1) {
 	if (!UseLiftedCode(61, 0x828A2F68)) { ctx.r3.u64 = boneDriverGroupAddr; ctx.r4.u64 = boneData; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_828A2F68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A2F68);
 	uint32_t stack = ctx.r1.u64;
@@ -512,7 +517,7 @@ uint64_t n_sub_828A2F68(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAd
 		uint32_t value98 = boneDriverGroup->m_98;
 		ctx.fpscr.disableFlushMode();
 		uint32_t sourceValue = LOAD32(sourceAddr);
-		result = n_sub_82E66680(ctx, base, value98, sourceValue, arg3, 0, floatArg1);
+		result = Skeleton_ApplyBoneAnimation(ctx, base, value98, sourceValue, arg3, 0, floatArg1);
 		callerR4 = ctx.r4.u64;
 		callerF1 = ctx.f1.f64;
 	}
@@ -523,10 +528,10 @@ uint64_t n_sub_828A2F68(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAd
 	ctx.f1.f64 = callerF1;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A2F68, 0x828A2F68) { ctx.r3.u64 = n_sub_828A2F68(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(61, sub_828A2F68, 0x828A2F68) { ctx.r3.u64 = CBoneDriverGroup_SetBoneAnimation(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
 
 // sub_828A2FE0  [148 bytes]
-uint64_t n_sub_828A2FE0(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr) {
+uint64_t CBoneDriverGroup_UpdateTransform(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAddr) {
 	if (!UseLiftedCode(61, 0x828A2FE0)) { ctx.r3.u64 = boneDriverGroupAddr; __imp__sub_828A2FE0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A2FE0);
 	uint32_t stack = ctx.r1.u64;
@@ -565,19 +570,19 @@ uint64_t n_sub_828A2FE0(CpuState& ctx, uint8_t* base, uint64_t boneDriverGroupAd
 	double matrixF1 = Quat_ToMatrix4x4(ctx, base, matrix, quatLo, quatHi);
 
 	// state the callee may pass on
-	uint64_t converted = n_sub_8227D720(ctx, base, (uint64_t)stack + 176, matrix);
-	uint64_t result = n_sub_82272E28(ctx, base, boneDriverGroupAddr, converted);
+	uint64_t converted = Matrix_ToTransform(ctx, base, (uint64_t)stack + 176, matrix);
+	uint64_t result = CBoneDriverGroup_ApplyTransformToBoneDrivers(ctx, base, boneDriverGroupAddr, converted);
 
 	stack = PopStackFrame(stack, 256);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A2FE0, 0x828A2FE0) { ctx.r3.u64 = n_sub_828A2FE0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(61, sub_828A2FE0, 0x828A2FE0) { ctx.r3.u64 = CBoneDriverGroup_UpdateTransform(ctx, base, ctx.r3.u64); }
 
 // For each child (8-byte entries from the pointer at boneDriverGroup+0x3C to the one at boneDriverGroup+0x40) composes the parent
-// transform that n_sub_82D54C38 writes at stack+112 from arg3 (translation, rotation quaternion, a third
+// transform that Transform_BuildFromSource writes at stack+112 from arg3 (translation, rotation quaternion, a third
 // vector) with the child's rotation (virtual function at vtable offset 0x18) and position (offset 0x14), and
-// writes a 48-byte record per child into the array whose address is the first word of what n_sub_82D5CE60
+// writes a 48-byte record per child into the array whose address is the first word of what TransformBuffer_Initialize
 // returns:
 //   +0   parent translation + child position rotated by the parent quaternion
 //        (2((q.v)q + (w*w - 0.5)v + w(q x v)); the vector at 0x82024280 holds -0.5 in every lane)
@@ -585,16 +590,16 @@ PROMOTED_ENTRY(61, sub_828A2FE0, 0x828A2FE0) { ctx.r3.u64 = n_sub_828A2FE0(ctx, 
 //   +32  the parent's third vector times the float at 0x820994C0 (1.0)
 // The vector and float locals that start from ctx double as registers, as in the original: v1-v13 and
 // f11-f13 are handed to the first virtual call on every pass, and r4, v1-v3, v16, v18-v23 and v25-v31 are
-// left for callers. Returns what n_sub_82D5CE60 returned when there are no children, otherwise stack+128
+// left for callers. Returns what TransformBuffer_Initialize returned when there are no children, otherwise stack+128
 // (the parent rotation in the released frame), as the original leaves r3.
-uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, uint64_t transformBuffer, uint64_t arg3) {
+uint64_t CBoneDriverGroup_ComposeChildTransforms(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, uint64_t transformBuffer, uint64_t arg3) {
 	constexpr int32_t g_82024280 = int32_t(0x82024280);
 	if (!UseLiftedCode(61, 0x828A3078)) { ctx.r3.u64 = boneDriverGroup; ctx.r4.u64 = transformBuffer; ctx.r5.u64 = arg3; __imp__sub_828A3078(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828A3078);
 	uint32_t stack = ctx.r1.u64;
 	uint64_t result{};
 	// values the first virtual call receives in r5, r6, r7 and r9; the original keeps them in those registers, so a
-	// pass gets what the setup before the loop (r5 and r6 as received, r7 and r9 as n_sub_82D5CE60 left them),
+	// pass gets what the setup before the loop (r5 and r6 as received, r7 and r9 as TransformBuffer_Initialize left them),
 	// the count check (r9) or the previous pass left there
 	uint64_t passR5 = arg3;
 	uint64_t passR6 = ctx.r6.u64;
@@ -649,7 +654,7 @@ uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, 
 	stack = PushStackFrame(base, stack, 384);
 	uint32_t parentSource = arg3;
 	ctx.r1.u64 = stack;
-	result = n_sub_82D5CE60(ctx, base, transformBuffer);
+	result = TransformBuffer_Initialize(ctx, base, transformBuffer);
 	passR7 = ctx.r7.u64;
 	passR9 = ctx.r9.u64;
 	uint32_t recordsHolder = result;
@@ -752,7 +757,7 @@ uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, 
 		uint32_t record = recordOffset + LOAD32(recordsHolder);
 		VSTORE((stack + 176) & ~0xF, V8(childRotation));
 		VSTORE((stack + 192) & ~0xF, V8(thirdFactorSplat));
-		n_sub_82D54C38(ctx, base, parentTransform, parentSource);
+		Transform_BuildFromSource(ctx, base, parentTransform, parentSource);
 
 		// record +0: parent translation + child position rotated by the parent quaternion
 		passR5 = (int64_t)(uint64_t)stack + 128;
@@ -841,4 +846,4 @@ uint64_t n_sub_828A3078(CpuState& ctx, uint8_t* base, uint32_t boneDriverGroup, 
 	ctx.v31 = parentTranslation;
 	return result;
 }
-PROMOTED_ENTRY(61, sub_828A3078, 0x828A3078) { ctx.r3.u64 = n_sub_828A3078(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(61, sub_828A3078, 0x828A3078) { ctx.r3.u64 = CBoneDriverGroup_ComposeChildTransforms(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }

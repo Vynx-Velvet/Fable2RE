@@ -1,9 +1,9 @@
 // CECCreatureGenerator (vtable 0x820DF288): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -26,7 +26,7 @@ uint64_t CECCreatureGenerator_GetClassName(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(59, sub_8286FD80, 0x8286FD80) { ctx.r3.u64 = CECCreatureGenerator_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82870A20(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t deleteFlags) {
+uint64_t CECCreatureGenerator_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t deleteFlags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(59, 0x82870A20)) { ctx.r3.u64 = creatureGeneratorAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82870A20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82870A20);
@@ -69,9 +69,9 @@ uint64_t n_sub_82870A20(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82870A20, 0x82870A20) { ctx.r3.u64 = n_sub_82870A20(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(59, sub_82870A20, 0x82870A20) { ctx.r3.u64 = CECCreatureGenerator_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t definition) {
+uint64_t CECCreatureGenerator_LoadFromGameDB(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t definition) {
 	constexpr int32_t str_TXT_820D4C90_B_ = int32_t(0x820D4C90);
 	constexpr int32_t str_TXT_820D4C9C_B_ = int32_t(0x820D4C9C);
 	constexpr int32_t str_TXT_820DEEE8_B_ = int32_t(0x820DEEE8);
@@ -96,7 +96,7 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	stack = PushStackFrame(base, stack, 192);
 	ctx.r1.u64 = stack;
 
-	uint64_t spawnedName = n_sub_82345978(ctx, base, definition, str_TXT_820DEEE8_B_);
+	uint64_t spawnedName = GameDB_GetStringField(ctx, base, definition, str_TXT_820DEEE8_B_);
 	CCharString_AssignFromCStr(ctx, base, creatureGeneratorAddr + 56, spawnedName);
 
 	uint32_t TXT_820DEEFC_L_ = GameDB_ReadBoolField_82303F38(ctx, base, definition, str_TXT_820DEEFC_B_);
@@ -158,7 +158,7 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	}
 
 	uint64_t familiesValue = GameDB_ReadU32Field(ctx, base, definition, str_TXT_820DF004_B_);
-	n_sub_829FBC40(ctx, base, stack + 88, familiesValue, ctx.r8.u64);
+	GameDB_GetArrayField(ctx, base, stack + 88, familiesValue, ctx.r8.u64);
 
 	uint32_t idx = LOAD32(stack + 96);
 	uint32_t endCount = LOAD32(stack + 92);
@@ -186,7 +186,7 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	HandleTarget_Free(ctx, base, arrayBase);
 
 	uint64_t disableLevelSavingKey = String_HashFnv1(ctx, base, str_TXT_820DF010_B_, hashSeed);
-	uint64_t disableLevelSavingField = n_sub_821E55C8(ctx, base, definition, disableLevelSavingKey, stack + 80);
+	uint64_t disableLevelSavingField = GameDB_FindFieldValueByKey(ctx, base, definition, disableLevelSavingKey, stack + 80);
 	uint32_t levelSavingDisabled = 0;
 	if ((uint32_t)disableLevelSavingField != 0) {
 		uint32_t fieldValue = LOAD32((uint32_t)disableLevelSavingField);
@@ -201,9 +201,9 @@ uint64_t n_sub_82870AB8(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.r1.u64 = stack;
 	return disableLevelSavingField;
 }
-PROMOTED_ENTRY(59, sub_82870AB8, 0x82870AB8) { ctx.r3.u64 = n_sub_82870AB8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(59, sub_82870AB8, 0x82870AB8) { ctx.r3.u64 = CECCreatureGenerator_LoadFromGameDB(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t arg2) {
+uint64_t CECCreatureGenerator_ProcessSpawnTargets(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr, uint64_t arg2) {
 	if (!UseLiftedCode(59, 0x82872D70)) { ctx.r3.u64 = creatureGeneratorAddr; ctx.r4.u64 = arg2; __imp__sub_82872D70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82872D70);
 	uint32_t stack = ctx.r1.u64;
@@ -216,9 +216,9 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 
 	if (LOAD32(generatorAddr + 20) != 0 && LOAD32(generatorAddr + 32) != 0) {
 		ctx.r1.u64 = stack;
-		result = n_sub_82871AF8(ctx, base, stack + 88, generatorAddr, arg2);
+		result = CECCreatureGenerator_BuildSpawnEntryList(ctx, base, stack + 88, generatorAddr, arg2);
 		if (LOAD32(stack + 88) != 0) {
-			n_sub_828702E0(ctx, base, stack + 128, stack + 88);
+			CECCreatureGenerator_SpawnEntryList_Init(ctx, base, stack + 128, stack + 88);
 			const uint32_t entryValid = n_sub_82870460(ctx, base, stack + 128, ctx.r8.u64);
 			reg7 = ctx.r7.u64;
 			reg8 = ctx.r8.u64;
@@ -237,7 +237,7 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 					if (node == LOAD32(container + 4))
 						break;
 					ctx.r7.u64 = reg7; ctx.r8.u64 = reg8; ctx.r9.u64 = reg9;
-					const uint32_t found = n_sub_828705E0(ctx, base, stack + 128, stack + 88, stack + 80);
+					const uint32_t found = ListIterator_Next(ctx, base, stack + 128, stack + 88, stack + 80);
 					reg7 = ctx.r7.u64; reg8 = ctx.r8.u64; reg9 = ctx.r9.u64;
 					if ((found & 0xFF) == 0)
 						break;
@@ -282,7 +282,7 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 							}
 						}
 						if (allowed) {
-							const uint32_t check = n_sub_828736C0(ctx, base, generatorAddr);
+							const uint32_t check = CECCreatureGenerator_CanSpawnMoreCreatures(ctx, base, generatorAddr);
 							if ((check & 0xFF) == 0) {
 								ctx.r7.u64 = reg7; ctx.r8.u64 = reg8; ctx.r9.u64 = reg9;
 								const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
@@ -295,7 +295,7 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 								STORE32(stack + 112, entryKey);
 								STORE32(stack + 96, mapAddr);
 								STORE64(stack + 116, entityData);
-								n_sub_82874570(ctx, base, mapAddr, LOAD64(stack + 96), stack + 112);
+								Map_Insert_82874570(ctx, base, mapAddr, LOAD64(stack + 96), stack + 112);
 								reg7 = ctx.r7.u64;
 								reg9 = ctx.r9.u64;
 								const uint32_t newCount = creatureGenerator->m_5C + 1;
@@ -304,7 +304,7 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 							} else {
 								ctx.r7.u64 = reg7; ctx.r8.u64 = reg8; ctx.r9.u64 = reg9;
 								const uint32_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
-								n_sub_82871DD8(ctx, base, generatorAddr, entity, LOAD32(stack + 80), arg2);
+								CECCreatureGenerator_CreateGeneratedCreature(ctx, base, generatorAddr, entity, LOAD32(stack + 80), arg2);
 								reg7 = ctx.r7.u64; reg8 = ctx.r8.u64; reg9 = ctx.r9.u64;
 							}
 						}
@@ -314,7 +314,7 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 
 				if (!ranOffListEnd && LOAD32(generatorAddr + 52) != 0) {
 					ctx.r7.u64 = reg7; ctx.r8.u64 = reg8; ctx.r9.u64 = reg9;
-					n_sub_82392C88(ctx, base, creatureGenerator->m_4, generatorAddr);
+					CECDoor_UpdateOpenStateForEntity(ctx, base, creatureGenerator->m_4, generatorAddr);
 				}
 			}
 
@@ -327,9 +327,9 @@ uint64_t n_sub_82872D70(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82872D70, 0x82872D70) { ctx.r3.u64 = n_sub_82872D70(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(59, sub_82872D70, 0x82872D70) { ctx.r3.u64 = CECCreatureGenerator_ProcessSpawnTargets(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82873060(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
+uint64_t CECCreatureGenerator_UpdateSelectedCreatureSpawn(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(59, 0x82873060)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_82873060(ctx, base); return ctx.r3.u64; }
@@ -355,6 +355,8 @@ uint64_t n_sub_82873060(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 		uint32_t handle = LOAD32(selectionData);
 
 		ctx.r1.u64 = stack;
+		ctx.r8.u64 = selectionData;
+		ctx.r9.u64 = selection;
 		result = EntityHandle_Get(ctx, base, handle);
 		flags.ca = ctx.xer.ca;
 		uint32_t targetEntity = (uint32_t)result;
@@ -410,7 +412,7 @@ uint64_t n_sub_82873060(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 
 			ctx.r8.s64 = g_820A0000;
 			ctx.xer.ca = flags.ca;
-			result = n_sub_82872D70(ctx, base, generatorAddr, amount);
+			result = CECCreatureGenerator_ProcessSpawnTargets(ctx, base, generatorAddr, amount);
 			flags.ca = ctx.xer.ca;
 		}
 	}
@@ -421,7 +423,7 @@ uint64_t n_sub_82873060(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82873060, 0x82873060) { ctx.r3.u64 = n_sub_82873060(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82873060, 0x82873060) { ctx.r3.u64 = CECCreatureGenerator_UpdateSelectedCreatureSpawn(ctx, base, ctx.r3.u64); }
 
 uint64_t n_sub_82873658(CpuState& ctx, uint8_t* base, uint32_t creatureGeneratorAddr) {
 	if (!UseLiftedCode(59, 0x82873658)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_82873658(ctx, base); return ctx.r3.u64; }
@@ -433,7 +435,7 @@ uint64_t n_sub_82873658(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 }
 PROMOTED_ENTRY(59, sub_82873658, 0x82873658) { ctx.r3.u64 = n_sub_82873658(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_828736C0(CpuState& ctx, uint8_t* base, uint32_t creatureGeneratorAddr) {
+uint64_t CECCreatureGenerator_CanSpawnMoreCreatures(CpuState& ctx, uint8_t* base, uint32_t creatureGeneratorAddr) {
 	if (!UseLiftedCode(59, 0x828736C0)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_828736C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828736C0);
 	CECCreatureGenerator* creatureGenerator = GameObject<CECCreatureGenerator>(base, creatureGeneratorAddr);
@@ -449,9 +451,9 @@ uint64_t n_sub_828736C0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 	}
 	return 0;
 }
-PROMOTED_ENTRY(59, sub_828736C0, 0x828736C0) { ctx.r3.u64 = n_sub_828736C0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(59, sub_828736C0, 0x828736C0) { ctx.r3.u64 = CECCreatureGenerator_CanSpawnMoreCreatures(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGeneratorAddr) {
+uint64_t CECCreatureGenerator_IsPlayerWithinCreateRadius(CpuState& ctx, uint8_t* base, uint32_t creatureGeneratorAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(59, 0x828736F0)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_828736F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828736F0);
@@ -471,6 +473,8 @@ uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 			uint32_t handle = LOAD32(handleOwner);
 
 			ctx.r1.u64 = stack;
+			ctx.r8.u64 = handleOwner;
+			ctx.r9.u64 = registry;
 			uint32_t entity = (uint32_t)EntityHandle_Get(ctx, base, handle);
 			r4Out = ctx.r4.u64;
 			v12 = ctx.v12;
@@ -486,6 +490,8 @@ uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 				uint32_t generatorPos = stack + 96;
 
 				uint32_t readEntityPos = LOAD32(LOAD32(entityComponent) + 64);
+				ctx.r3.u64 = entityPos;
+				ctx.r4.u64 = entityComponent;
 				ctx.r10.u64 = readEntityPos;
 				REX_CALL_INDIRECT_FUNC(readEntityPos);
 
@@ -525,9 +531,9 @@ uint64_t n_sub_828736F0(CpuState& ctx, uint8_t* base, uint32_t creatureGenerator
 	ctx.v12 = v12;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_828736F0, 0x828736F0) { ctx.r3.u64 = n_sub_828736F0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(59, sub_828736F0, 0x828736F0) { ctx.r3.u64 = CECCreatureGenerator_IsPlayerWithinCreateRadius(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82873918(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
+uint64_t CECCreatureGenerator_Update(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
 	if (!UseLiftedCode(59, 0x82873918)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_82873918(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82873918);
 	uint32_t stack = ctx.r1.u64;
@@ -535,12 +541,12 @@ uint64_t n_sub_82873918(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	stack = PushStackFrame(base, stack, 96);
 	ctx.r1.u64 = stack;
 
-	uint64_t result = n_sub_828736F0(ctx, base, creatureGeneratorAddr);
+	uint64_t result = CECCreatureGenerator_IsPlayerWithinCreateRadius(ctx, base, creatureGeneratorAddr);
 	if (((uint32_t)result & 0xFF) != 0) {
 		if (creatureGenerator->m_3E != 0) {
-			result = n_sub_82873988(ctx, base, creatureGeneratorAddr);
+			result = CECCreatureGenerator_ProcessPendingSpawns(ctx, base, creatureGeneratorAddr);
 		} else {
-			result = n_sub_82873060(ctx, base, creatureGeneratorAddr);
+			result = CECCreatureGenerator_UpdateSelectedCreatureSpawn(ctx, base, creatureGeneratorAddr);
 		}
 		if (creatureGenerator->m_34 == 0) {
 			uint32_t generatorList = creatureGenerator->m_4;
@@ -552,9 +558,9 @@ uint64_t n_sub_82873918(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82873918, 0x82873918) { ctx.r3.u64 = n_sub_82873918(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82873918, 0x82873918) { ctx.r3.u64 = CECCreatureGenerator_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82873988(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
+uint64_t CECCreatureGenerator_ProcessPendingSpawns(CpuState& ctx, uint8_t* base, uint64_t creatureGeneratorAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(59, 0x82873988)) { ctx.r3.u64 = creatureGeneratorAddr; __imp__sub_82873988(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82873988);
@@ -566,7 +572,7 @@ uint64_t n_sub_82873988(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 
 	while (LOAD32((uint32_t)creatureGeneratorAddr + 52) != 0) {
 		ctx.r1.u64 = stack;
-		result = n_sub_828736C0(ctx, base, creatureGeneratorAddr);
+		result = CECCreatureGenerator_CanSpawnMoreCreatures(ctx, base, creatureGeneratorAddr);
 		if (((uint32_t)result & 0xFF) == 0) break;
 
 		// front node of the pending-target list (sentinel lives at m_30)
@@ -586,12 +592,12 @@ uint64_t n_sub_82873988(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 		lookup = LOAD32(lookup + 4);
 		uint32_t manager = LOAD32(lookup);
 
-		result = n_sub_82264448(ctx, base, manager, targetKeyAddr);
+		result = EntityManager_LookupEntity(ctx, base, manager, targetKeyAddr);
 		uint64_t targetEntity = result;
 		if ((uint32_t)targetEntity != 0 && (LOAD8((uint32_t)targetEntity + 144) & 64) != 0) {
 			uint32_t targetId = LOAD32((uint32_t)nodeDataAddr);
 			uint32_t targetSubId = LOAD32((uint32_t)nodeDataAddr + 12);
-			result = n_sub_82871DD8(ctx, base, creatureGeneratorAddr, targetEntity, targetId, targetSubId);
+			result = CECCreatureGenerator_CreateGeneratedCreature(ctx, base, creatureGeneratorAddr, targetEntity, targetId, targetSubId);
 		}
 
 		uint32_t sentinel2 = creatureGenerator->m_30;
@@ -612,4 +618,4 @@ uint64_t n_sub_82873988(CpuState& ctx, uint8_t* base, uint64_t creatureGenerator
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(59, sub_82873988, 0x82873988) { ctx.r3.u64 = n_sub_82873988(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(59, sub_82873988, 0x82873988) { ctx.r3.u64 = CECCreatureGenerator_ProcessPendingSpawns(ctx, base, ctx.r3.u64); }

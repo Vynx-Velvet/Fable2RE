@@ -1,9 +1,9 @@
 // CVirtualFile (vtable 0x8200DE20): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -12,7 +12,7 @@
 #include "lifted/readable_support.h"
 
 // sub_82B482A0  [36 bytes]
-void n_sub_82B482A0(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr) {
+void CVirtualFile_Clear(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr) {
 	if (!UseLiftedCode(83, 0x82B482A0)) { ctx.r3.u64 = virtualFileAddr; __imp__sub_82B482A0(ctx, base); return; }
 	LiftedFrame frame(0x82B482A0);
 	CVirtualFile* virtualFile = GameObject<CVirtualFile>(base, virtualFileAddr);
@@ -25,9 +25,9 @@ void n_sub_82B482A0(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr) {
 	virtualFile->m_18 = 0;
 	return;
 }
-PROMOTED_ENTRY(83, sub_82B482A0, 0x82B482A0) { n_sub_82B482A0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(83, sub_82B482A0, 0x82B482A0) { CVirtualFile_Clear(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C62888(CpuState& ctx, uint8_t* base, uint64_t dest, uint64_t source) {
+uint64_t CVirtualFile_CopyPath(CpuState& ctx, uint8_t* base, uint64_t dest, uint64_t source) {
 	if (!UseLiftedCode(92, 0x82C62888)) { ctx.r3.u64 = dest; ctx.r4.u64 = source; __imp__sub_82C62888(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62888);
 	GameStackFrame stackFrame(ctx, base, 96);
@@ -35,9 +35,9 @@ uint64_t n_sub_82C62888(CpuState& ctx, uint8_t* base, uint64_t dest, uint64_t so
 	CCharString_CopyConstruct(ctx, base, dest, source + 4);
 	return dest;
 }
-PROMOTED_ENTRY(92, sub_82C62888, 0x82C62888) { ctx.r3.u64 = n_sub_82C62888(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(92, sub_82C62888, 0x82C62888) { ctx.r3.u64 = CVirtualFile_CopyPath(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C628C0(CpuState& ctx, uint8_t* base, uint64_t file) {
+uint64_t CVirtualFile_ClearAll(CpuState& ctx, uint8_t* base, uint64_t file) {
 	if (!UseLiftedCode(92, 0x82C628C0)) { ctx.r3.u64 = file; __imp__sub_82C628C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C628C0);
 	uint32_t stack = ctx.r1.u32;
@@ -47,15 +47,15 @@ uint64_t n_sub_82C628C0(CpuState& ctx, uint8_t* base, uint64_t file) {
 	uint32_t secondPart = (uint32_t)(file + 0x1C);
 	uint32_t thirdPart = (uint32_t)(file + 0x38);
 
-	n_sub_82B482A0(ctx, base, file);
-	n_sub_82B482A0(ctx, base, secondPart);
-	n_sub_82B482A0(ctx, base, thirdPart);
+	CVirtualFile_Clear(ctx, base, file);
+	CVirtualFile_Clear(ctx, base, secondPart);
+	CVirtualFile_Clear(ctx, base, thirdPart);
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return file;
 }
-PROMOTED_ENTRY(92, sub_82C628C0, 0x82C628C0) { ctx.r3.u64 = n_sub_82C628C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(92, sub_82C628C0, 0x82C628C0) { ctx.r3.u64 = CVirtualFile_ClearAll(ctx, base, ctx.r3.u64); }
 
 uint32_t CVirtualFile_Constructor(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t stream) {
 	if (!UseLiftedCode(92, 0x82C62990)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = stream; __imp__sub_82C62990(ctx, base); return ctx.r3.u32; }
@@ -110,7 +110,7 @@ uint64_t CVirtualFile_CloseStream(CpuState& ctx, uint8_t* base, uint32_t virtual
 }
 PROMOTED_ENTRY(92, sub_82C62A88, 0x82C62A88) { ctx.r3.u64 = CVirtualFile_CloseStream(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
+uint64_t CVirtualFile_ReadAt(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
 	if (!UseLiftedCode(92, 0x82C62AD8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; ctx.r5.u64 = buffer; __imp__sub_82C62AD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62AD8);
 	uint32_t stack = ctx.r1.u64;
@@ -126,7 +126,7 @@ uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	if (LOAD32(readerFieldAddr) == 0) {
 		uint32_t source = virtualFile->m_Source;
 		ctx.r1.u64 = stack;
-		uint64_t newReader = n_sub_82B48E30(ctx, base, stack + 80, source, 0, 65536);
+		uint64_t newReader = CreateFileReader(ctx, base, stack + 80, source, 0, 65536);
 		IntrusivePtr_Assign(ctx, base, readerFieldAddr, newReader);
 		r4Value = ctx.r4.u64;
 
@@ -164,9 +164,9 @@ uint64_t n_sub_82C62AD8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C62AD8, 0x82C62AD8) { ctx.r3.u64 = n_sub_82C62AD8(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(92, sub_82C62AD8, 0x82C62AD8) { ctx.r3.u64 = CVirtualFile_ReadAt(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
+uint64_t CVirtualFile_WriteAt(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset, uint64_t buffer) {
 	if (!UseLiftedCode(92, 0x82C62B70)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; ctx.r5.u64 = buffer; __imp__sub_82C62B70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62B70);
 	uint32_t stack = ctx.r1.u64;
@@ -183,7 +183,7 @@ uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 		uint32_t source = virtualFile->m_Source;
 		uint32_t holderAddr = stack + 80;
 		ctx.r1.u64 = stack;
-		uint32_t created = n_sub_82B48E30(ctx, base, holderAddr, source, 0, 65536);
+		uint32_t created = CreateFileReader(ctx, base, holderAddr, source, 0, 65536);
 		IntrusivePtr_Assign(ctx, base, fileDataAddr, created);
 		r4Value = ctx.r4.u64;
 		uint32_t holder = LOAD32(stack + 80);
@@ -218,9 +218,9 @@ uint64_t n_sub_82C62B70(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C62B70, 0x82C62B70) { ctx.r3.u64 = n_sub_82C62B70(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(92, sub_82C62B70, 0x82C62B70) { ctx.r3.u64 = CVirtualFile_WriteAt(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t position) {
+uint64_t CVirtualFile_Seek(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t position) {
 	if (!UseLiftedCode(92, 0x82C62C08)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = position; __imp__sub_82C62C08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62C08);
 	uint32_t stack = ctx.r1.u64;
@@ -236,7 +236,7 @@ uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 		uint32_t source = virtualFile->m_Source;
 		uint32_t tempObjectAddr = stack + 80;
 		ctx.r1.u64 = stack;
-		uint64_t createdObject = n_sub_82B48E30(ctx, base, tempObjectAddr, source, 0, 65536);
+		uint64_t createdObject = CreateFileReader(ctx, base, tempObjectAddr, source, 0, 65536);
 		IntrusivePtr_Assign(ctx, base, cachedObjectAddr, createdObject);
 		r4Value = ctx.r4.u64;
 
@@ -270,9 +270,9 @@ uint64_t n_sub_82C62C08(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	ctx.r4.u64 = r4Value;
 	return cachedObject;
 }
-PROMOTED_ENTRY(92, sub_82C62C08, 0x82C62C08) { ctx.r3.u64 = n_sub_82C62C08(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(92, sub_82C62C08, 0x82C62C08) { ctx.r3.u64 = CVirtualFile_Seek(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset) {
+uint64_t CVirtualFile_SeekRelative(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, uint64_t offset) {
 	if (!UseLiftedCode(92, 0x82C62CA8)) { ctx.r3.u64 = virtualFileAddr; ctx.r4.u64 = offset; __imp__sub_82C62CA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62CA8);
 	uint32_t stack = ctx.r1.u64;
@@ -290,7 +290,7 @@ uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 		uint32_t source = virtualFile->m_Source;
 		uint32_t tempHolder = stack + 80;
 		ctx.r1.u64 = stack;
-		uint64_t newBuffer = n_sub_82B48E30(ctx, base, tempHolder, source, 0, 65536);
+		uint64_t newBuffer = CreateFileReader(ctx, base, tempHolder, source, 0, 65536);
 		IntrusivePtr_Assign(ctx, base, bufferSlot, newBuffer);
 		r4Value = ctx.r4.u64;
 
@@ -323,10 +323,10 @@ uint64_t n_sub_82C62CA8(CpuState& ctx, uint8_t* base, uint32_t virtualFileAddr, 
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C62CA8, 0x82C62CA8) { ctx.r3.u64 = n_sub_82C62CA8(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(92, sub_82C62CA8, 0x82C62CA8) { ctx.r3.u64 = CVirtualFile_SeekRelative(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_82C62D48  [80 bytes]
-uint64_t n_sub_82C62D48(CpuState& ctx, uint8_t* base, uint64_t virtualFile) {
+uint64_t CVirtualFile_Tell(CpuState& ctx, uint8_t* base, uint64_t virtualFile) {
 	if (!UseLiftedCode(92, 0x82C62D48)) { ctx.r3.u64 = virtualFile; __imp__sub_82C62D48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C62D48);
 	uint32_t stack = ctx.r1.u64;
@@ -348,7 +348,7 @@ uint64_t n_sub_82C62D48(CpuState& ctx, uint8_t* base, uint64_t virtualFile) {
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(92, sub_82C62D48, 0x82C62D48) { ctx.r3.u64 = n_sub_82C62D48(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(92, sub_82C62D48, 0x82C62D48) { ctx.r3.u64 = CVirtualFile_Tell(ctx, base, ctx.r3.u64); }
 
 uint64_t CVirtualFile_GetSize(CpuState& ctx, uint8_t* base, uint64_t virtualFile) {
 	if (!UseLiftedCode(92, 0x82C62D98)) { ctx.r3.u64 = virtualFile; __imp__sub_82C62D98(ctx, base); return ctx.r3.u64; }
@@ -499,7 +499,8 @@ uint64_t CVirtualFile_SetPath(CpuState& ctx, uint8_t* base, uint64_t virtualFile
 		mappedAccess = LOAD32(resultSlot);
 	}
 
-	uint32_t container = n_sub_82C63258(ctx, base);
+	ctx.r5.u64 = savedR5;
+	uint32_t container = GetFileSystemSingleton(ctx, base);
 	if (LOAD32(container) == 0) {
 		uint64_t newObject = n_sub_82B3E0A8(ctx, base, newObjectSlot, ctx.r8.u64);
 		IntrusivePtr_Assign(ctx, base, container, newObject);
@@ -513,7 +514,7 @@ uint64_t CVirtualFile_SetPath(CpuState& ctx, uint8_t* base, uint64_t virtualFile
 		}
 	}
 
-	n_sub_8217AB58(ctx, base, queryString, charStringData(pathString));
+	CCharString_ConstructFromData(ctx, base, queryString, charStringData(pathString));
 	uint32_t fileSystem = LOAD32(container);
 	uint64_t openFn = LOAD32(LOAD32(fileSystem) + 16);
 	callTarget.u64 = openFn;

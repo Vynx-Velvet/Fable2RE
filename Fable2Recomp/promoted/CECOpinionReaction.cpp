@@ -1,9 +1,11 @@
+
+
 // CECOpinionReaction (vtable 0x82004098): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -125,7 +127,7 @@ uint32_t CECOpinionReaction_HasReaction(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(3, sub_821DDFC0, 0x821DDFC0) { ctx.r3.u64 = CECOpinionReaction_HasReaction(ctx, base); }
 
-uint64_t n_sub_822329E0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t reactionEvent) {
+uint64_t CECOpinionReaction_HandleOpinionEvent(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t reactionEvent) {
 	if (!UseLiftedCode(7, 0x822329E0)) { ctx.r3.u64 = opinionReactionAddr; ctx.r4.u64 = reactionEvent; __imp__sub_822329E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822329E0);
 	uint32_t stack = ctx.r1.u64;
@@ -143,7 +145,7 @@ uint64_t n_sub_822329E0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 
 	uint64_t result;
 	if ((int32_t)firstResult == 8) {
-		result = n_sub_82762F98(ctx, base, opinionReactionAddr);
+		result = CECOpinionReaction_TriggerLightningTrapZap(ctx, base, opinionReactionAddr);
 	} else {
 		callTarget.u64 = LOAD32(LOAD32((uint32_t)reactionEvent) + 4);
 		ctx.r3.u64 = reactionEvent;
@@ -151,7 +153,7 @@ uint64_t n_sub_822329E0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		result = ctx.r3.u64;
 		if ((int32_t)result == 9 && LOAD8((uint32_t)reactionEvent + 4) == 0) {
-			result = n_sub_82762F98(ctx, base, opinionReactionAddr);
+			result = CECOpinionReaction_TriggerLightningTrapZap(ctx, base, opinionReactionAddr);
 		}
 	}
 
@@ -159,10 +161,10 @@ uint64_t n_sub_822329E0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(7, sub_822329E0, 0x822329E0) { ctx.r3.u64 = n_sub_822329E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(7, sub_822329E0, 0x822329E0) { ctx.r3.u64 = CECOpinionReaction_HandleOpinionEvent(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_82261710  [876 bytes]
-uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_Tick(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_8209C198 = int32_t(0x8209C198);
 	constexpr int32_t str_TXT_820D19B8_B_ = int32_t(0x820D19B8);
@@ -175,7 +177,7 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r1.u64 = stack;
 
 	// When m_30E and m_364 are both set: clears m_30E and hands the word that the table at 0x8209C198 holds for
-	// m_364 to Stats_ApplyModifierIfAllowed and n_sub_82771DB0, with strings built from the owner entity's 64-bit
+	// m_364 to Stats_ApplyModifierIfAllowed and Stats_SendModifierEvent, with strings built from the owner entity's 64-bit
 	// id (m_4 +20/+24).
 	if (opinionReaction->m_30E != 0 && opinionReaction->m_364 != 0) {
 		opinionReaction->m_30E = 0;
@@ -202,7 +204,7 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 
 		uint32_t statModifierAgain = LOAD32((uint32_t)g_8209C198 + (opinionReaction->m_364 << 2));
 		ctx.r3.u64 = opinionReactionAddr;  // state the callee may pass on
-		n_sub_82771DB0(ctx, base, stack + 80, opinionReaction->m_4, 32767, statModifierAgain, ctx.r8.u64);
+		Stats_SendModifierEvent(ctx, base, stack + 80, opinionReaction->m_4, 32767, statModifierAgain, ctx.r8.u64);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	}
 
@@ -213,9 +215,9 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	if (hasReaction != 0) {
 		n_sub_821F7CB0(ctx, base, opinionReactionAddr);
 	}
-	n_sub_8226B858(ctx, base, opinionReactionAddr);
-	n_sub_8275DC90(ctx, base, opinionReactionAddr);
-	n_sub_8275DE40(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_ApplyEntries(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_ClampBeliefs(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_RemoveExpiredEntries(ctx, base, opinionReactionAddr);
 	n_sub_8275DF58(ctx, base, opinionReactionAddr);
 	CECOpinionReaction_Update(ctx, base, opinionReactionAddr);
 
@@ -227,7 +229,7 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		n_sub_82266740(ctx, base, opinionReactionAddr);
 	}
 	if (LOAD8(0x83318EA2u) != 0 && hasReaction == 0) {
-		n_sub_82764410(ctx, base, opinionReactionAddr);
+		CECOpinionReaction_UpdateOpinions(ctx, base, opinionReactionAddr);
 	}
 
 	// 0x83496B61, 0x83496B62 and 0x83496B64 are the DrawOpinions, DrawSpouse and DrawChild debug switches
@@ -235,14 +237,14 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	if (LOAD32(opinionReactionAddr + 20) == 0 && LOAD8(0x83496B61u) == 0) {
 		bool skip = false;
 		if (LOAD8(0x83496B62u) != 0) {
-			skip = (n_sub_82268468(ctx, base, opinionReactionAddr) & 0xFF) != 0;
+			skip = (CECOpinionReaction_IsSpouse(ctx, base, opinionReactionAddr) & 0xFF) != 0;
 		}
 		if (!skip && LOAD8(0x83496B64u) != 0) {
-			n_sub_82268638(ctx, base, opinionReactionAddr);
+			CECOpinionReaction_IsChild(ctx, base, opinionReactionAddr);
 		}
 	}
 
-	uint64_t result = n_sub_82268808(ctx, base, opinionReactionAddr, ctx.r8.u64);
+	uint64_t result = CECOpinionReaction_CheckHeroTitleUnlock(ctx, base, opinionReactionAddr, ctx.r8.u64);
 	uint64_t r4Out = ctx.r4.u64;
 
 	if (hasReaction == 0) {
@@ -328,14 +330,14 @@ uint64_t n_sub_82261710(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r4.u64 = r4Out;  // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82261710, 0x82261710) { ctx.r3.u64 = n_sub_82261710(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(9, sub_82261710, 0x82261710) { ctx.r3.u64 = CECOpinionReaction_Tick(ctx, base, ctx.r3.u64); }
 
 // sub_82268468  [460 bytes]
 // Follows the entity handle at +104 of the first element of the array reached from the object 0x83496920 points to
 // (+12, +88, +4) and releases the handle when its entity is gone. When that entity has flag 0x40 at +144 and a
 // component under key 136, returns 1 if IntrusiveList_ContainsKey finds the owner entity (m_4) in that component,
 // otherwise 0.
-uint64_t n_sub_82268468(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_IsSpouse(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(9, 0x82268468)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_82268468(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82268468);
@@ -467,14 +469,14 @@ uint64_t n_sub_82268468(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	ctx.r10.u64 = r10Out;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82268468, 0x82268468) { ctx.r3.u64 = n_sub_82268468(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(9, sub_82268468, 0x82268468) { ctx.r3.u64 = CECOpinionReaction_IsSpouse(ctx, base, ctx.r3.u32); }
 
 // sub_82268638  [460 bytes]
 // Follows the entity handle at +104 of the first element of the array reached from the object 0x83496920 points to
 // (+12, +88, +4) and releases the handle when its entity is gone. When that entity has flag 0x40 at +144 and a
-// component under key 136, returns 1 if n_sub_82285670 accepts that component with the owner entity (m_4),
+// component under key 136, returns 1 if IntrusiveList_ContainsEntity accepts that component with the owner entity (m_4),
 // otherwise 0.
-uint32_t n_sub_82268638(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint32_t CECOpinionReaction_IsChild(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	if (!UseLiftedCode(9, 0x82268638)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_82268638(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82268638);
 	uint32_t stack = ctx.r1.u64;
@@ -581,7 +583,7 @@ uint32_t n_sub_82268638(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 
 					uint32_t ownerEntity = opinionReaction->m_4;
 					ctx.r1.u64 = stack;
-					uint32_t accepted = n_sub_82285670(ctx, base, component, ownerEntity);
+					uint32_t accepted = IntrusiveList_ContainsEntity(ctx, base, component, ownerEntity);
 					if ((accepted & 0xFF) != 0) {
 						result = 1;
 					}
@@ -604,18 +606,18 @@ uint32_t n_sub_82268638(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	ctx.r10.u64 = r10Out;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82268638, 0x82268638) { ctx.r3.u64 = n_sub_82268638(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(9, sub_82268638, 0x82268638) { ctx.r3.u64 = CECOpinionReaction_IsChild(ctx, base, ctx.r3.u32); }
 
 // sub_8226B098  [1316 bytes]
 // Compares the owner entity (m_4) with the entity behind the handle at +104 of the first element of the root
 // object's array (the handle is released when its entity is gone; a missing entity reads from address 0).
 // Component keys: bit (key % 32) of word (key / 32) of an entity's bitset at +36 says it has that component.
-//  - entity with flag 0x40 at +144, and both have a key-122 component: 0 when n_sub_821C2C18 returns 1 for
+//  - entity with flag 0x40 at +144, and both have a key-122 component: 0 when LockComponent_GetLockState returns 1 for
 //    either component;
 //  - owner without a key-12 component: m_309 != 0;
 //  - m_200 == 3: 0; m_200 == 0: 0 when the words at +12 of the two key-12 components are equal; m_200 == 1: 0 when
 //    they differ; any other case: m_309 != 0.
-uint64_t n_sub_8226B098(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_ShouldApply(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(9, 0x8226B098)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_8226B098(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8226B098);
@@ -772,10 +774,10 @@ uint64_t n_sub_8226B098(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 				r5Out = entityComponent122;
 
 				ctx.r1.u64 = stack;
-				if ((int32_t)n_sub_821C2C18(ctx, base, ownerComponent122) == 1) {
+				if ((int32_t)LockComponent_GetLockState(ctx, base, ownerComponent122) == 1) {
 					return finish(0);
 				}
-				if ((int32_t)n_sub_821C2C18(ctx, base, entityComponent122) == 1) {
+				if ((int32_t)LockComponent_GetLockState(ctx, base, entityComponent122) == 1) {
 					return finish(0);
 				}
 			}
@@ -849,13 +851,13 @@ uint64_t n_sub_8226B098(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	}
 	return finishWithFlag309();
 }
-PROMOTED_ENTRY(9, sub_8226B098, 0x8226B098) { ctx.r3.u64 = n_sub_8226B098(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(9, sub_8226B098, 0x8226B098) { ctx.r3.u64 = CECOpinionReaction_ShouldApply(ctx, base, ctx.r3.u32); }
 
 // sub_8226B858  [204 bytes]
-// Has n_sub_8229C288 fill a vector on the stack from element 7 of the root object's array and
-// opinionReactionAddr + 496, calls n_sub_82759570 for each word in it (with the first element of that array), then
+// Has CollectEntriesAboveThreshold fill a vector on the stack from element 7 of the root object's array and
+// opinionReactionAddr + 496, calls CECOpinionReaction_ApplyEntry for each word in it (with the first element of that array), then
 // frees the vector's buffer.
-uint32_t n_sub_8226B858(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
+uint32_t CECOpinionReaction_ApplyEntries(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(9, 0x8226B858)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_8226B858(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8226B858);
@@ -871,7 +873,7 @@ uint32_t n_sub_8226B858(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	uint32_t rootData = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 	uint32_t element7 = LOAD32(LOAD32(LOAD32(rootData + 88) + 4) + 28);
 	ctx.r1.u64 = stack;
-	n_sub_8229C288(ctx, base, element7, opinionReactionAddr + 496, vectorAddr);
+	CollectEntriesAboveThreshold(ctx, base, element7, opinionReactionAddr + 496, vectorAddr);
 
 	uint32_t rootDataNow = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
 	uint32_t begin = LOAD32(stack + 84);
@@ -880,7 +882,7 @@ uint32_t n_sub_8226B858(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	uint32_t arrayBegin = LOAD32(arrayHolder + 4);
 	uint32_t firstElement = LOAD32(arrayBegin);
 
-	// r6-r8 handed to n_sub_82759570: the array chain at first, then what the previous call left there;
+	// r6-r8 handed to CECOpinionReaction_ApplyEntry: the array chain at first, then what the previous call left there;
 	// r8 is also left for callers
 	uint64_t r6State = arrayBegin;
 	uint64_t r7State = arrayHolder;
@@ -901,8 +903,10 @@ uint32_t n_sub_8226B858(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		}
 		uint32_t entry = LOAD32(it);
 		// state the callee may pass on
+		ctx.r6.u64 = r6State;
+		ctx.r7.u64 = r7State;
 		ctx.r8.u64 = r8State;
-		n_sub_82759570(ctx, base, opinionReactionAddr, entry, firstElement);
+		CECOpinionReaction_ApplyEntry(ctx, base, opinionReactionAddr, entry, firstElement);
 		r6State = ctx.r6.u64;
 		r7State = ctx.r7.u64;
 		r8State = ctx.r8.u64;
@@ -925,7 +929,7 @@ uint32_t n_sub_8226B858(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r8.u64 = r8State;  // callers read r8 after the call
 	return result;
 }
-PROMOTED_ENTRY(9, sub_8226B858, 0x8226B858) { ctx.r3.u64 = n_sub_8226B858(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(9, sub_8226B858, 0x8226B858) { ctx.r3.u64 = CECOpinionReaction_ApplyEntries(ctx, base, ctx.r3.u64); }
 
 uint64_t CECOpinionReaction_Update(CpuState& ctx, uint8_t* base, uint64_t objectAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -1042,6 +1046,13 @@ uint64_t CECOpinionReaction_Update(CpuState& ctx, uint8_t* base, uint64_t object
 			// Decayed to the floor: erase the node; the erase hands back the next iterator.
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
+			ctx.r6.u64 = endBeforeStamp;
+			ctx.r7.u64 = highIndex;
+			ctx.f9.f64 = clamped;
+			ctx.f10.f64 = selectHigh;
+			ctx.f11.f64 = excess;
+			ctx.f12.f64 = clampedLow;
+			ctx.f13.f64 = selectLow;
 			result = SharedHandleList_Erase(ctx, base, eraseOutSlot, listArg, LOAD64(iterator));
 			callerR4 = ctx.r4.u64;
 			callerR8 = ctx.r8.u64;
@@ -1088,7 +1099,7 @@ uint64_t CECOpinionReaction_GetClassName(CpuState& ctx, uint8_t* base, uint64_t 
 }
 PROMOTED_ENTRY(50, sub_82755E50, 0x82755E50) { ctx.r3.u64 = CECOpinionReaction_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_827563F0(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t freeFlags) {
+uint64_t CECOpinionReaction_Delete(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t freeFlags) {
 	if (!UseLiftedCode(50, 0x827563F0)) { ctx.r3.u64 = objectAddr; ctx.r4.u64 = freeFlags; __imp__sub_827563F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827563F0);
 	uint32_t stack = ctx.r1.u64;
@@ -1096,7 +1107,7 @@ uint64_t n_sub_827563F0(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint6
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = freeFlags;  // state the callee may pass on
-	n_sub_82756440(ctx, base, objectAddr);
+	CECOpinionReaction_Destructor(ctx, base, objectAddr);
 	if (freeObject) {
 		HandleTarget_Free(ctx, base, objectAddr);
 	}
@@ -1104,9 +1115,9 @@ uint64_t n_sub_827563F0(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint6
 	ctx.r1.u64 = stack;
 	return objectAddr;
 }
-PROMOTED_ENTRY(50, sub_827563F0, 0x827563F0) { ctx.r3.u64 = n_sub_827563F0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(50, sub_827563F0, 0x827563F0) { ctx.r3.u64 = CECOpinionReaction_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_8275D050(CpuState& ctx, uint8_t* base, uint64_t reaction, uint64_t changeKind, double changeAmount) {
+uint32_t CECOpinionReaction_NotifyAppearanceChange(CpuState& ctx, uint8_t* base, uint64_t reaction, uint64_t changeKind, double changeAmount) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t str_TXT_820D2560_B_ = int32_t(0x820D2560);
 	constexpr int32_t str_TXT_820D257C_B_ = int32_t(0x820D257C);
@@ -1127,7 +1138,7 @@ uint32_t n_sub_8275D050(CpuState& ctx, uint8_t* base, uint64_t reaction, uint64_
 	const uint32_t recordRef = stack + 88;
 	const uint32_t eventData = stack + 96;
 
-	const uint32_t changeValue = n_sub_8275D1B8(ctx, base, reaction, changeKind, changeAmount);
+	const uint32_t changeValue = CECOpinionReaction_GetAppearanceChangeValue(ctx, base, reaction, changeKind, changeAmount);
 	CCharString_ConstructFromCStr(ctx, base, nameString, g_82000C98, -1);
 	r10Live = ctx.r10.u32;
 
@@ -1151,6 +1162,7 @@ uint32_t n_sub_8275D050(CpuState& ctx, uint8_t* base, uint64_t reaction, uint64_
 			const uint32_t entitySlot = LOAD32(entityList + 4);
 			const uint32_t handleOwner = LOAD32(entitySlot);
 			// state the callee may pass on
+			ctx.r9.u64 = entitySlot;
 			const uint64_t entity = EntityHandle_Get(ctx, base, handleOwner);
 			r10Live = ctx.r10.u32;
 
@@ -1186,9 +1198,9 @@ uint32_t n_sub_8275D050(CpuState& ctx, uint8_t* base, uint64_t reaction, uint64_
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(50, sub_8275D050, 0x8275D050) { ctx.r3.u64 = n_sub_8275D050(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(50, sub_8275D050, 0x8275D050) { ctx.r3.u64 = CECOpinionReaction_NotifyAppearanceChange(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
-uint32_t n_sub_8275DC90(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
+uint32_t CECOpinionReaction_ClampBeliefs(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_82100170 = int32_t(0x82100170);
 	if (!UseLiftedCode(50, 0x8275DC90)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_8275DC90(ctx, base); return ctx.r3.u32; }
@@ -1278,6 +1290,17 @@ uint32_t n_sub_8275DC90(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				STORE_F32(beliefAddr, float(newBelief));
 				ctx.r1.u64 = stack;
 				// state the callee may pass on
+				ctx.r6.s64 = requiredOpinion;
+				ctx.r7.u64 = iterContainer;
+				ctx.f5.f64 = f5;
+				ctx.f6.f64 = f6;
+				ctx.f7.f64 = f7;
+				ctx.f8.f64 = combinedWeight;
+				ctx.f9.f64 = reactionOpinionExact;
+				ctx.f10.s64 = (int64_t)reactionOpinion;
+				ctx.f11.f64 = newBelief;
+				ctx.f12.f64 = oldBelief;
+				ctx.f13.f64 = reactionInfluence;
 				ctx.cr0 = cr0;
 				ctx.xer.ca = flags.ca;
 				result = SharedHandleList_Erase(ctx, base, (uint64_t)stack + 104, listAddr, iteratorValue);
@@ -1344,9 +1367,9 @@ uint32_t n_sub_8275DC90(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(50, sub_8275DC90, 0x8275DC90) { ctx.r3.u64 = n_sub_8275DC90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(50, sub_8275DC90, 0x8275DC90) { ctx.r3.u64 = CECOpinionReaction_ClampBeliefs(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8275DE40(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint32_t CECOpinionReaction_RemoveExpiredEntries(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
 	if (!UseLiftedCode(50, 0x8275DE40)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_8275DE40(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8275DE40);
@@ -1445,9 +1468,9 @@ uint32_t n_sub_8275DE40(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	ctx.r4.u64 = callerR4;
 	return result;
 }
-PROMOTED_ENTRY(50, sub_8275DE40, 0x8275DE40) { ctx.r3.u64 = n_sub_8275DE40(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(50, sub_8275DE40, 0x8275DE40) { ctx.r3.u64 = CECOpinionReaction_RemoveExpiredEntries(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82762F98(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_TriggerLightningTrapZap(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
 	constexpr int32_t str_TXT_820D0000_B_ = int32_t(0x820D0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t str_TXT_820D19B8_B_ = int32_t(0x820D19B8);
@@ -1480,10 +1503,10 @@ uint64_t n_sub_82762F98(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 
 	const uint32_t reactionManager = LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26788) + 32) + 28);
 	ctx.r6.s64 = g_83490000;  // state the callee may pass on
-	n_sub_821BD998(ctx, base, reactionManager, opinionReaction->m_4, nameString);
+	InteractionManager_RemoveText(ctx, base, reactionManager, opinionReaction->m_4, nameString);
 
 	ctx.r3.u64 = opinionReactionAddr;  // state the callee may pass on
-	n_sub_82771E68(ctx, base, opinionReaction->m_4, nameString, ctx.r8.u64);
+	Entity_SendTextRecord(ctx, base, opinionReaction->m_4, nameString, ctx.r8.u64);
 
 	// r4, r6-r9, cr0 and xer.ca as the later calls receive them.
 	uint64_t r4 = ctx.r4.u64;
@@ -1552,6 +1575,10 @@ uint64_t n_sub_82762F98(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			const uint32_t entitySlot = LOAD32(entityList + 4);
 			const uint32_t handleOwner = LOAD32(entitySlot);
 			// state the callee may pass on
+			ctx.r6.u64 = r6;
+			ctx.r7.u64 = r7;
+			ctx.r8.u64 = entitySlot;
+			ctx.r9.u64 = entityList;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
 			const uint32_t entity = EntityHandle_Get(ctx, base, handleOwner);
@@ -1584,7 +1611,7 @@ uint64_t n_sub_82762F98(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 					if ((present & 0xFF) == 0) {
 						const uint64_t ownerValueAddr = (int64_t)(uint64_t)opinionReaction->m_4 + 20;
 						ctx.cr0 = compare0;  // state the callee may pass on
-						n_sub_8282BB08(ctx, base, entityComponent, ownerValueAddr);
+						IntrusiveList_Remove(ctx, base, entityComponent, ownerValueAddr);
 						r4 = ctx.r4.u64;
 						r6 = ctx.r6.u64;
 						r7 = ctx.r7.u64;
@@ -1618,9 +1645,9 @@ uint64_t n_sub_82762F98(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(50, sub_82762F98, 0x82762F98) { ctx.r3.u64 = n_sub_82762F98(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(50, sub_82762F98, 0x82762F98) { ctx.r3.u64 = CECOpinionReaction_TriggerLightningTrapZap(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82764410(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_UpdateOpinions(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(50, 0x82764410)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_82764410(ctx, base); return ctx.r3.u64; }
@@ -1690,17 +1717,17 @@ uint64_t n_sub_82764410(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	ctx.r8.u64 = callerR8;
 	return result;
 }
-PROMOTED_ENTRY(50, sub_82764410, 0x82764410) { ctx.r3.u64 = n_sub_82764410(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(50, sub_82764410, 0x82764410) { ctx.r3.u64 = CECOpinionReaction_UpdateOpinions(ctx, base, ctx.r3.u32); }
 
 // sub_827657D0  [972 bytes]
 // Looks up the owner's (m_4) value for key 94 when bit 30 of the owner's +44 word is set. After a lookup, unless
-// the value's +12 word is 1 and n_sub_82457310 gives the same handle as EntityHandle_Get for the global entity
+// the value's +12 word is 1 and IdRef_GetEntityHandle gives the same handle as EntityHandle_Get for the global entity
 // slot, it clears the handle lists at +176 (five, 12 bytes apart) and +316, copies a word into m_1F0 and passes a
-// string built from the owner's 64-bit value plus the str_TXT_820D19B8_B_ suffix to n_sub_821BD998 and n_sub_82771E68.
+// string built from the owner's 64-bit value plus the str_TXT_820D19B8_B_ suffix to InteractionManager_RemoveText and Entity_SendTextRecord.
 // Otherwise, when the value is 0 (or no lookup was made), it passes the same string without the clearing.
 // Then it inserts each handle (other than -1) of the vector at +752 into the list at entity slot + 192 and
 // empties the vector.
-uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t r8Value) {
+uint64_t CECOpinionReaction_RefreshOpinion(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t r8Value) {
 	constexpr int32_t str_TXT_820D0000_B_ = int32_t(0x820D0000);
 	constexpr int32_t str_TXT_820D19B8_B_ = int32_t(0x820D19B8);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -1775,10 +1802,14 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			const uint32_t entitySlot = loadEntitySlot();
 			ctx.r1.u64 = stack;
 			// state the callees may pass on
+			ctx.r6.u64 = r6Value;
+			ctx.r7.u64 = r7Value;
+			ctx.r8.u64 = r8Value;
+			ctx.r9.u64 = entitySlot;
 			ctx.xer.ca = flags.ca;
 			const uint32_t entityHandle = EntityHandle_Get(ctx, base, LOAD32(entitySlot));
 			flags.ca = ctx.xer.ca;
-			const uint32_t targetHandle = n_sub_82457310(ctx, base, targetPtr);
+			const uint32_t targetHandle = IdRef_GetEntityHandle(ctx, base, targetPtr);
 			r6Value = ctx.r6.u64;
 			r7Value = ctx.r7.u64;
 			r8Value = ctx.r8.u64;
@@ -1790,6 +1821,8 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			uint32_t listsLeft = 5;
 			do {
 				ctx.r1.u64 = stack;
+				ctx.r6.u64 = r6Value;
+				ctx.r7.u64 = r7Value;
 				ctx.xer.ca = flags.ca;
 				SharedHandleList_Clear(ctx, base, listAddr);
 				r6Value = ctx.r6.u64;
@@ -1799,7 +1832,7 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				listAddr = listAddr + 12;
 			} while (listsLeft != 0);
 			ctx.xer.ca = flags.ca;
-			n_sub_82773388(ctx, base, opinionReactionAddr + 12);
+			LinkedList_Clear(ctx, base, opinionReactionAddr + 12);
 			flags.ca = ctx.xer.ca;
 			SharedHandleList_Clear(ctx, base, opinionReactionAddr + 316);
 			flags.ca = ctx.xer.ca;
@@ -1841,10 +1874,10 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			const uint32_t ownerAgain = opinionReaction->m_4;
 			const uint32_t registry = LOAD32(LOAD32(LOAD32(0x834968A4u) + 32) + 28);
 			// state the callee may pass on
-			n_sub_821BD998(ctx, base, registry, ownerAgain, stack + 80);
+			InteractionManager_RemoveText(ctx, base, registry, ownerAgain, stack + 80);
 			flags.ca = ctx.xer.ca;
 			ctx.r3.u64 = opinionReactionAddr;  // state the callee may pass on
-			n_sub_82771E68(ctx, base, opinionReaction->m_4, stack + 80, ctx.r8.u64);
+			Entity_SendTextRecord(ctx, base, opinionReaction->m_4, stack + 80, ctx.r8.u64);
 			flags.ca = ctx.xer.ca;
 			CCharString_Release(ctx, base, stack + 80);
 			r6Value = ctx.r6.u64;
@@ -1892,10 +1925,10 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		const uint32_t ownerAgain = opinionReaction->m_4;
 		const uint32_t registry = LOAD32(LOAD32(LOAD32(0x834968A4u) + 32) + 28);
 		ctx.r6.s64 = g_83490000;  // state the callee may pass on
-		n_sub_821BD998(ctx, base, registry, ownerAgain, stack + 80);
+		InteractionManager_RemoveText(ctx, base, registry, ownerAgain, stack + 80);
 		flags.ca = ctx.xer.ca;
 		ctx.r3.u64 = opinionReactionAddr;  // state the callee may pass on
-		n_sub_82771E68(ctx, base, opinionReaction->m_4, stack + 80, ctx.r8.u64);
+		Entity_SendTextRecord(ctx, base, opinionReaction->m_4, stack + 80, ctx.r8.u64);
 		flags.ca = ctx.xer.ca;
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		r6Value = ctx.r6.u64;
@@ -1933,6 +1966,7 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			const uint64_t position = LOAD64(stack + 80);
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
+			ctx.r6.u64 = r6Value;
 			ctx.r8.u64 = r8Value;
 			ctx.xer.ca = flags.ca;
 			List_InsertNodeCopyWord(ctx, base, listAddr, position, stack + 88);
@@ -1964,9 +1998,9 @@ uint64_t n_sub_827657D0(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r1.u64 = stack;
 	return vectorBegin;
 }
-PROMOTED_ENTRY(51, sub_827657D0, 0x827657D0) { ctx.r3.u64 = n_sub_827657D0(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(51, sub_827657D0, 0x827657D0) { ctx.r3.u64 = CECOpinionReaction_RefreshOpinion(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82767B08(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
+uint64_t CECOpinionReaction_UpdateAll(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr) {
 	if (!UseLiftedCode(51, 0x82767B08)) { ctx.r3.u64 = opinionReactionAddr; __imp__sub_82767B08(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82767B08);
 	uint32_t stack = ctx.r1.u64;
@@ -1975,10 +2009,10 @@ uint64_t n_sub_82767B08(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_82767DF8(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_LoadPersonality(ctx, base, opinionReactionAddr);
 
 	// Both 8-byte-element vectors (begin/end m_37C/m_380 and m_36C/m_370) empty:
-	// hand what IdRef_Get returns for an IdRef of m_2E0 to n_sub_82768B70.
+	// hand what IdRef_Get returns for an IdRef of m_2E0 to CECOpinionReaction_LoadLikesDislikes.
 	const uint32_t effectBytes = (uint32_t)opinionReaction->m_380 - (uint32_t)opinionReaction->m_37C;
 	if ((effectBytes & 0xFFFFFFF8) == 0) {
 		const uint32_t entryBytes = ((uint32_t)opinionReaction->m_370 - (uint32_t)opinionReaction->m_36C) & 0xFFFFFFF8;
@@ -1988,7 +2022,7 @@ uint64_t n_sub_82767B08(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 			IdRef_ConstructFromId(ctx, base, stack + 80, id);
 			ctx.r4.u64 = id;  // state the callee may pass on
 			const uint64_t idRef = IdRef_Get(ctx, base, stack + 80);
-			n_sub_82768B70(ctx, base, opinionReactionAddr, idRef, ctx.r8.u64);
+			CECOpinionReaction_LoadLikesDislikes(ctx, base, opinionReactionAddr, idRef, ctx.r8.u64);
 		}
 	}
 
@@ -2021,9 +2055,9 @@ uint64_t n_sub_82767B08(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		opinionReaction->m_30E = uint8_t(1);
 	}
 
-	n_sub_8226B858(ctx, base, opinionReactionAddr);
-	n_sub_8275DC90(ctx, base, opinionReactionAddr);
-	n_sub_8275DE40(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_ApplyEntries(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_ClampBeliefs(ctx, base, opinionReactionAddr);
+	CECOpinionReaction_RemoveExpiredEntries(ctx, base, opinionReactionAddr);
 	n_sub_8275DF58(ctx, base, opinionReactionAddr);
 	uint64_t result = CECOpinionReaction_Update(ctx, base, opinionReactionAddr);
 
@@ -2035,19 +2069,19 @@ uint64_t n_sub_82767B08(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		result = n_sub_82266740(ctx, base, opinionReactionAddr);
 	}
 	if (LOAD8(0x83318EA2u) != 0) {
-		result = n_sub_82764410(ctx, base, opinionReactionAddr);
+		result = CECOpinionReaction_UpdateOpinions(ctx, base, opinionReactionAddr);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_82767B08, 0x82767B08) { ctx.r3.u64 = n_sub_82767B08(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(51, sub_82767B08, 0x82767B08) { ctx.r3.u64 = CECOpinionReaction_UpdateAll(ctx, base, ctx.r3.u64); }
 
 // Reads the opinion-reaction settings from the owner's game-database record into this object; when the record
 // leads through the personality-pools and pool references to a resolvable pool, stores that pool id in m_2E0.
 // Returns the last object looked up (0 when a step fails).
-uint32_t n_sub_82767C88(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
+uint32_t CECOpinionReaction_LoadFromGameDB(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAddr) {
 	constexpr int32_t str_TXT_820D0000_B_ = int32_t(0x820D0000);
 	constexpr int32_t str_TXT_820D2B4C_B_ = int32_t(0x820D2B4C);
 	constexpr int32_t str_TXT_820D2C44_B_ = int32_t(0x820D2C44);
@@ -2128,13 +2162,13 @@ uint32_t n_sub_82767C88(CpuState& ctx, uint8_t* base, uint32_t opinionReactionAd
 	ctx.r1.u64 = stack;
 	return (uint32_t)dbObject;
 }
-PROMOTED_ENTRY(51, sub_82767C88, 0x82767C88) { ctx.r3.u64 = n_sub_82767C88(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(51, sub_82767C88, 0x82767C88) { ctx.r3.u64 = CECOpinionReaction_LoadFromGameDB(ctx, base, ctx.r3.u32); }
 
-// Resolves the record recordId names and, by its TXT_820D2E70_B_ field, hands a new object to n_sub_829FD7B8 for the
+// Resolves the record recordId names and, by its TXT_820D2E70_B_ field, hands a new object to PtrList_PushBack for the
 // vector at +872 (begin/end m_36C/m_370): types 0 and 1 a 76-byte object built from the Place field, type 2 a
 // 64-byte object holding the hash of the record's TXT_820A6304_B_/TXT_820A6310_B_ path. Returns byte +12 of the object in the
 // vector's last entry, or 0 when recordId is 0 or its IdRef is empty.
-uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t recordId) {
+uint32_t CECOpinionReaction_AddPlaceReaction(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t recordId) {
 	constexpr int32_t str_TXT_820A6304_B_ = int32_t(0x820A6304);
 	constexpr int32_t str_TXT_820D2E70_B_ = int32_t(0x820D2E70);
 	constexpr int32_t str_TXT_820D2E7C_B_ = int32_t(0x820D2E7C);
@@ -2169,15 +2203,15 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				const uint64_t memory = operator_new(ctx, base, 76);
 				uint32_t object = 0;
 				if ((uint32_t)memory != 0) {
-					object = n_sub_827E1478(ctx, base, memory, recordId, 0, TXT_820D2E7C_L_);
+					object = OpinionReactionPlace_Construct(ctx, base, memory, recordId, 0, TXT_820D2E7C_L_);
 				}
 				STORE32(stack + 96, object);
 				if (object != 0) {
-					const uint64_t entry = n_sub_82773418(ctx, base, stack + 96);
-					n_sub_829FD7B8(ctx, base, opinionReactionAddr + 872, entry);
+					const uint64_t entry = SharedHandle_Construct(ctx, base, stack + 96);
+					PtrList_PushBack(ctx, base, opinionReactionAddr + 872, entry);
 				} else {
 					STORE32(stack + 100, 0);
-					n_sub_829FD7B8(ctx, base, opinionReactionAddr + 872, stack + 96);
+					PtrList_PushBack(ctx, base, opinionReactionAddr + 872, stack + 96);
 				}
 				SharedHandle_Release(ctx, base, stack + 96);
 			} else if (TXT_820D2E70_L_ == 1) {
@@ -2190,7 +2224,7 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				uint32_t r9Value = ctx.r9.u32;
 				uint32_t object = 0;
 				if ((uint32_t)memory != 0) {
-					n_sub_827E1478(ctx, base, memory, recordId, 1, TXT_820D2E7C_L_);
+					OpinionReactionPlace_Construct(ctx, base, memory, recordId, 1, TXT_820D2E7C_L_);
 					object = (uint32_t)memory;
 					r9Value = uint32_t(g_820D8300);
 					STORE32(object, r9Value);
@@ -2198,21 +2232,21 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				STORE32(stack + 104, object);
 				if (object != 0) {
 					ctx.r9.u64 = r9Value;  // state the callee may pass on
-					const uint64_t entry = n_sub_82773418(ctx, base, stack + 104);
-					n_sub_829FD7B8(ctx, base, opinionReactionAddr + 872, entry);
+					const uint64_t entry = SharedHandle_Construct(ctx, base, stack + 104);
+					PtrList_PushBack(ctx, base, opinionReactionAddr + 872, entry);
 				} else {
 					STORE32(stack + 108, 0);
 					ctx.r9.u64 = r9Value;  // state the callee may pass on
-					n_sub_829FD7B8(ctx, base, opinionReactionAddr + 872, stack + 104);
+					PtrList_PushBack(ctx, base, opinionReactionAddr + 872, stack + 104);
 				}
 				SharedHandle_Release(ctx, base, stack + 104);
 			} else if (TXT_820D2E70_L_ == 2) {
-				const uint64_t TXT_820A6304_L_ = n_sub_82345978(ctx, base, record, str_TXT_820A6304_B_);
+				const uint64_t TXT_820A6304_L_ = GameDB_GetStringField(ctx, base, record, str_TXT_820A6304_B_);
 				CCharString_ConstructFromCStr(ctx, base, stack + 88, TXT_820A6304_L_, -1);
 
 				// The same IdRef resolved again.
 				const uint64_t recordAgain = IdRef_Get(ctx, base, stack + 80);
-				const uint64_t TXT_820A6310_L_ = n_sub_82345978(ctx, base, recordAgain, str_TXT_820A6310_B_);
+				const uint64_t TXT_820A6310_L_ = GameDB_GetStringField(ctx, base, recordAgain, str_TXT_820A6310_B_);
 				CCharString_ConstructFromCStr(ctx, base, stack + 80, TXT_820A6310_L_, -1);
 
 				const uint32_t slotObject = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(0x83496920u) + 12) + 88) + 4) + 8);
@@ -2223,7 +2257,7 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				const uint64_t memory = operator_new(ctx, base, 64);
 				const uint32_t object = (uint32_t)memory;
 				if (object != 0) {
-					n_sub_827E11E0(ctx, base, memory, recordId, 2);
+					ReactionObject_ConstructBase(ctx, base, memory, recordId, 2);
 					STORE32(object + 60, pathHash);
 					const uint64_t vtable = g_820D82E8;
 					STORE32(object, (uint32_t)vtable);
@@ -2238,12 +2272,12 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 				STORE32(stack + 112, object);
 				uint64_t entry;
 				if (object != 0) {
-					entry = n_sub_82773418(ctx, base, stack + 112);
+					entry = SharedHandle_Construct(ctx, base, stack + 112);
 				} else {
 					entry = stack + 112;
 					STORE32(stack + 116, 0);
 				}
-				n_sub_829FD7B8(ctx, base, opinionReactionAddr + 872, entry);
+				PtrList_PushBack(ctx, base, opinionReactionAddr + 872, entry);
 				SharedHandle_Release(ctx, base, stack + 112);
 				CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 				CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
@@ -2265,12 +2299,12 @@ uint32_t n_sub_82769248(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r4.u64 = recordId;  // callers read r4 after the call
 	return 0;
 }
-PROMOTED_ENTRY(51, sub_82769248, 0x82769248) { ctx.r3.u64 = n_sub_82769248(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(51, sub_82769248, 0x82769248) { ctx.r3.u64 = CECOpinionReaction_AddPlaceReaction(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827696D8  [348 bytes]
 // Appends a new effect for itemId, with its reference-counted node, to the vector at +904 and returns the m_like
 // byte (+48) of the vector's last effect.
-uint32_t n_sub_827696D8(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t itemId) {
+uint32_t CECOpinionReaction_AddExpressionItemEffect(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAddr, uint64_t itemId) {
 	if (!UseLiftedCode(51, 0x827696D8)) { ctx.r3.u64 = opinionReactionAddr; ctx.r4.u64 = itemId; __imp__sub_827696D8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x827696D8);
 	uint32_t stack = ctx.r1.u64;
@@ -2364,7 +2398,7 @@ uint32_t n_sub_827696D8(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 		ctx.r7.u64 = elementCount;
 		ctx.r8.u64 = sharedHandle;
 		ctx.r9.u64 = capacityCount;
-		n_sub_8260B008(ctx, base, vectorAddr, insertPosition, (uint64_t)stack + 80);
+		Vector_Insert(ctx, base, vectorAddr, insertPosition, (uint64_t)stack + 80);
 		// the original passes only the low word of r9 on to the release below
 		ctx.r9.u64 = ctx.r9.u32;
 	}
@@ -2380,12 +2414,12 @@ uint32_t n_sub_827696D8(CpuState& ctx, uint8_t* base, uint64_t opinionReactionAd
 	ctx.r9.u64 = lastEffect;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_827696D8, 0x827696D8) { ctx.r3.u64 = n_sub_827696D8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(51, sub_827696D8, 0x827696D8) { ctx.r3.u64 = CECOpinionReaction_AddExpressionItemEffect(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Builds a record (entity unique id, two 16-bit values, copied text) on the game stack and hands it to
 // n_sub_82777058 of the object at global +26912 -> +12 -> +140 while that object's bytes +52 and +53 are set.
 // r8Value only travels on to the callees through r8.
-uint32_t n_sub_82771DB0(CpuState& ctx, uint8_t* base, uint64_t textObjectAddr, uint64_t entityAddr, uint64_t value18, uint64_t value16, uint64_t r8Value) {
+uint32_t Stats_SendModifierEvent(CpuState& ctx, uint8_t* base, uint64_t textObjectAddr, uint64_t entityAddr, uint64_t value18, uint64_t value16, uint64_t r8Value) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(51, 0x82771DB0)) { ctx.r4.u64 = textObjectAddr; ctx.r5.u64 = entityAddr; ctx.r6.u64 = value18; ctx.r7.u64 = value16; ctx.r8.u64 = r8Value; __imp__sub_82771DB0(ctx, base); return ctx.r3.u32; }
@@ -2426,12 +2460,12 @@ uint32_t n_sub_82771DB0(CpuState& ctx, uint8_t* base, uint64_t textObjectAddr, u
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_82771DB0, 0x82771DB0) { ctx.r3.u64 = n_sub_82771DB0(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(51, sub_82771DB0, 0x82771DB0) { ctx.r3.u64 = Stats_SendModifierEvent(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64, ctx.r8.u64); }
 
 // Builds a record (entity unique id, copied text) on the game stack and hands it to n_sub_827771A0 of the
 // object at global +26912 -> +12 -> +140 while that object's bytes +52 and +53 are set.
 // r8Value only travels on to strcpy_s, which passes it on through r8.
-uint32_t n_sub_82771E68(CpuState& ctx, uint8_t* base, uint64_t entityAddr, uint32_t textObjectAddr, uint64_t r8Value) {
+uint32_t Entity_SendTextRecord(CpuState& ctx, uint8_t* base, uint64_t entityAddr, uint32_t textObjectAddr, uint64_t r8Value) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -2454,6 +2488,7 @@ uint32_t n_sub_82771E68(CpuState& ctx, uint8_t* base, uint64_t entityAddr, uint3
 		uint64_t text = (textData == 0) ? uint64_t(g_8209003F) : LOAD32(textData);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r9.u64 = recordTypeTag;
 		strcpy_s(ctx, base, (uint64_t)stack + 96, -1, text, r8Value);
 
 		uint64_t entityUniqueId = Entity_GetUniqueId(ctx, base, entityAddr);
@@ -2472,4 +2507,4 @@ uint32_t n_sub_82771E68(CpuState& ctx, uint8_t* base, uint64_t entityAddr, uint3
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(51, sub_82771E68, 0x82771E68) { ctx.r3.u64 = n_sub_82771E68(ctx, base, ctx.r4.u64, ctx.r5.u32, ctx.r8.u64); }
+PROMOTED_ENTRY(51, sub_82771E68, 0x82771E68) { ctx.r3.u64 = Entity_SendTextRecord(ctx, base, ctx.r4.u64, ctx.r5.u32, ctx.r8.u64); }

@@ -1,9 +1,9 @@
 // CPhysicsRigidBodyEntity (vtable 0x82005BA0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -45,7 +45,7 @@ uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity, 
 PROMOTED_ENTRY(0, sub_82175EF8, 0x82175EF8) { ctx.r3.u64 = n_sub_82175EF8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82198D60  [224 bytes]
-uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint32_t rigidBodyEntity) {
+uint64_t CPhysicsRigidBodyEntity_UpdateBoundingSphere(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, uint32_t rigidBodyEntity) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(1, 0x82198D60)) { ctx.r3.u64 = boundingSphere; ctx.r4.u64 = rigidBodyEntity; __imp__sub_82198D60(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82198D60);
@@ -70,7 +70,7 @@ uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, u
 	stack = PushStackFrame(base, stack, 432);
 	const uint64_t cinfo = uint64_t(stack) + 208;
 	ctx.r1.u64 = stack;
-	n_sub_82D7AAA8(ctx, base, cinfo);
+	RigidBodyCinfo_Init(ctx, base, cinfo);
 
 	const uint32_t rigidBody = LOAD32(rigidBodyEntity + 44);
 	hkpRigidBody_GetRigidBodyCinfo(ctx, base, rigidBody, cinfo);
@@ -127,7 +127,7 @@ uint64_t n_sub_82198D60(CpuState& ctx, uint8_t* base, uint64_t boundingSphere, u
 	ctx.f1.f64 = radius;
 	return boundingSphere;
 }
-PROMOTED_ENTRY(1, sub_82198D60, 0x82198D60) { ctx.r3.u64 = n_sub_82198D60(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(1, sub_82198D60, 0x82198D60) { ctx.r3.u64 = CPhysicsRigidBodyEntity_UpdateBoundingSphere(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 uint64_t n_sub_821C0818(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity) {
 	if (!UseLiftedCode(2, 0x821C0818)) { ctx.r3.u64 = rigidBodyEntity; __imp__sub_821C0818(ctx, base); return ctx.r3.u64; }
@@ -191,7 +191,7 @@ void CPhysicsRigidBodyEntity_GetPosition_82232B08(CpuState& ctx, uint8_t* base, 
 }
 PROMOTED_ENTRY(7, sub_82232B08, 0x82232B08) { CPhysicsRigidBodyEntity_GetPosition_82232B08(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t n_sub_82265B58(CpuState& ctx, uint8_t* base, uint32_t physicsRigidBodyEntityAddr) {
+uint64_t CPhysicsRigidBodyEntity_HasMotion(CpuState& ctx, uint8_t* base, uint32_t physicsRigidBodyEntityAddr) {
 	if (!UseLiftedCode(9, 0x82265B58)) { ctx.r3.u64 = physicsRigidBodyEntityAddr; __imp__sub_82265B58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82265B58);
 	uint32_t stack = ctx.r1.u32;
@@ -200,14 +200,14 @@ uint64_t n_sub_82265B58(CpuState& ctx, uint8_t* base, uint32_t physicsRigidBodyE
 	uint32_t resultAddr = stack + 80;
 	uint32_t pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 	ctx.r1.u64 = stack;
-	n_sub_82D7C158(ctx, base, resultAddr, pRigidBody);
+	RigidBody_GetMotionType(ctx, base, resultAddr, pRigidBody);
 	uint8_t result = LOAD8(resultAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = pRigidBody;
 	return result != 0;
 }
-PROMOTED_ENTRY(9, sub_82265B58, 0x82265B58) { ctx.r3.u64 = n_sub_82265B58(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(9, sub_82265B58, 0x82265B58) { ctx.r3.u64 = CPhysicsRigidBodyEntity_HasMotion(ctx, base, ctx.r3.u32); }
 
 uint64_t CPhysicsRigidBodyEntity_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
 	if (!UseLiftedCode(43, 0x82687A50)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82687A50(ctx, base); return ctx.r3.u64; }
@@ -243,13 +243,15 @@ uint32_t CPhysicsRigidBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64
 		uint64_t stackTemp = (uint64_t)stack + 80;
 		uint32_t rigidBodyForWorldUpdate = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
-		n_sub_82D72550(ctx, base, stackTemp, world, rigidBodyForWorldUpdate);
+		ctx.r10.u64 = vtablePtr;
+		PhysicsWorld_RemoveRigidBody(ctx, base, stackTemp, world, rigidBodyForWorldUpdate);
 		world = ctx.r4.u64;
 		vtablePtr = ctx.r10.u64;
 	}
 
 	uint32_t rigidBody = physicsRigidBodyEntity->m_pRigidBody;
 	ctx.r1.u64 = stack;
+	ctx.r10.u64 = vtablePtr;
 	hkReferencedObject_RemoveReference(ctx, base, rigidBody);
 
 	uint32_t targetHandle = physicsRigidBodyEntity->m_34;
@@ -261,7 +263,7 @@ uint32_t CPhysicsRigidBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64
 	STORE32(handleSlot + 8, 0);
 	STORE32(handleSlot + 12, 0);
 
-	uint32_t result = n_sub_823EE4D0(ctx, base, physicsRigidBodyEntityAddr);
+	uint32_t result = C_820F06D0_Destructor(ctx, base, physicsRigidBodyEntityAddr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
@@ -283,7 +285,10 @@ uint64_t CPhysicsRigidBodyEntity_AddToWorld(CpuState& ctx, uint8_t* base, uint32
 
 	uint32_t pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 
-	return n_sub_82D723B0(ctx, base, physicsWorld, pRigidBody, addToWorldMode);
+	ctx.r7.u64 = flagIsZero;
+	ctx.r8.u64 = leadingZeros;
+	ctx.r9.u64 = globalFlagByte;
+	return HavokWorld_AddRigidBody(ctx, base, physicsWorld, pRigidBody, addToWorldMode);
 }
 PROMOTED_ENTRY(43, sub_82687B28, 0x82687B28) { ctx.r3.u64 = CPhysicsRigidBodyEntity_AddToWorld(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
@@ -298,7 +303,7 @@ uint64_t CPhysicsRigidBodyEntity_RemoveFromWorld(CpuState& ctx, uint8_t* base, u
 	physicsRigidBodyEntity->m_pWorld = 0u;
 	uint32_t scratchAddr = stack + 80;
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_82D72550(ctx, base, scratchAddr, arg2, pRigidBody);
+	uint64_t result = PhysicsWorld_RemoveRigidBody(ctx, base, scratchAddr, arg2, pRigidBody);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
@@ -323,7 +328,8 @@ uint64_t CPhysicsRigidBodyEntity_SetCollisionFilterInfo(CpuState& ctx, uint8_t* 
 		return 0;
 	}
 
-	return n_sub_82D76CC8(ctx, base, pWorld, pRigidBody, 0, 1);
+	ctx.r10.u64 = pRigidBody;
+	return PhysicsWorld_UpdateRigidBodyCollisionFilter(ctx, base, pWorld, pRigidBody, 0, 1);
 }
 PROMOTED_ENTRY(43, sub_82687B80, 0x82687B80) { ctx.r3.u64 = CPhysicsRigidBodyEntity_SetCollisionFilterInfo(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
@@ -351,7 +357,7 @@ uint64_t CPhysicsRigidBodyEntity_SetMotionType(CpuState& ctx, uint8_t* base, uin
 	uint32_t havokRigidBody = LOAD32((uint32_t)rigidBodyEntity + 44);
 	uint32_t updateFlags = 1;
 	uint32_t activateFlags = 0;
-	return n_sub_82D7B398(ctx, base, havokRigidBody, havokMotionType, updateFlags, activateFlags);
+	return HavokRigidBody_SetMotionType(ctx, base, havokRigidBody, havokMotionType, updateFlags, activateFlags);
 }
 PROMOTED_ENTRY(43, sub_82687BB8, 0x82687BB8) { ctx.r3.u64 = CPhysicsRigidBodyEntity_SetMotionType(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
@@ -381,7 +387,7 @@ uint64_t CPhysicsRigidBodyEntity_ClearOwner(CpuState& ctx, uint8_t* base, uint64
 PROMOTED_ENTRY(43, sub_82687C10, 0x82687C10) { ctx.r3.u64 = CPhysicsRigidBodyEntity_ClearOwner(ctx, base, ctx.r3.u64); }
 
 // sub_82687C28  [60 bytes]
-uint64_t n_sub_82687C28(CpuState& ctx, uint8_t* base, uint64_t nameString, uint32_t rigidBodyEntity) {
+uint64_t CPhysicsRigidBodyEntity_GetName(CpuState& ctx, uint8_t* base, uint64_t nameString, uint32_t rigidBodyEntity) {
 	if (!UseLiftedCode(43, 0x82687C28)) { ctx.r3.u64 = nameString; ctx.r4.u64 = rigidBodyEntity; __imp__sub_82687C28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C28);
 	uint32_t stack = ctx.r1.u64;
@@ -394,17 +400,17 @@ uint64_t n_sub_82687C28(CpuState& ctx, uint8_t* base, uint64_t nameString, uint3
 	ctx.r1.u64 = stack;
 	return nameString;
 }
-PROMOTED_ENTRY(43, sub_82687C28, 0x82687C28) { ctx.r3.u64 = n_sub_82687C28(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(43, sub_82687C28, 0x82687C28) { ctx.r3.u64 = CPhysicsRigidBodyEntity_GetName(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82687C68(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint64_t linkedObjectId) {
+uint64_t CPhysicsRigidBodyEntity_AddLinkedObject(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint64_t linkedObjectId) {
 	if (!UseLiftedCode(43, 0x82687C68)) { ctx.r3.u64 = physicsRigidBodyEntity; ctx.r4.u64 = linkedObjectId; __imp__sub_82687C68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C68);
 	uint32_t linkedObject = LOAD32((uint32_t)physicsRigidBodyEntity + 44);
-	return n_sub_82D7C860(ctx, base, linkedObject, linkedObjectId);
+	return HavokRigidBody_AddLinkedObject(ctx, base, linkedObject, linkedObjectId);
 }
-PROMOTED_ENTRY(43, sub_82687C68, 0x82687C68) { ctx.r3.u64 = n_sub_82687C68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(43, sub_82687C68, 0x82687C68) { ctx.r3.u64 = CPhysicsRigidBodyEntity_AddLinkedObject(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint32_t linkedObjectId) {
+uint64_t CPhysicsRigidBodyEntity_RemoveLinkedObject(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyEntity, uint32_t linkedObjectId) {
 	if (!UseLiftedCode(43, 0x82687C70)) { ctx.r3.u64 = physicsRigidBodyEntity; ctx.r4.u64 = linkedObjectId; __imp__sub_82687C70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687C70);
 
@@ -415,7 +421,7 @@ uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 		uint32_t entries = LOAD32(rig + 0x1F0);
 		for (uint32_t i = 0; (int32_t)i < (int32_t)entryCount; i++) {
 			if (LOAD32(entries + i * 4) == linkedObjectId) {
-				n_sub_82D7C310(ctx, base, rig, linkedObjectId);
+				HavokRigidBody_RemoveLinkedObject(ctx, base, rig, linkedObjectId);
 				break;
 			}
 		}
@@ -423,7 +429,7 @@ uint64_t n_sub_82687C70(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 
 	return rig;
 }
-PROMOTED_ENTRY(43, sub_82687C70, 0x82687C70) { ctx.r3.u64 = n_sub_82687C70(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(43, sub_82687C70, 0x82687C70) { ctx.r3.u64 = CPhysicsRigidBodyEntity_RemoveLinkedObject(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // sub_82687D30  [20 bytes]
 void n_sub_82687D30(CpuState& ctx, uint8_t* base, uint32_t outVector, uint32_t physicsRigidBodyEntity) {
@@ -485,6 +491,9 @@ uint64_t n_sub_82687D48(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (!compare6.lt) {
 		pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = arg6Value;
+		ctx.r7.u64 = arg7Value;
+		ctx.r8.u64 = arg8Value;
 		ctx.v6 = eqMask;
 		ctx.v7 = orMask;
 		ctx.v8 = geMask;
@@ -613,6 +622,9 @@ uint64_t n_sub_82687E60(CpuState& ctx, uint8_t* base, uint64_t physicsRigidBodyE
 	if (!compare6.lt) {
 		uint32_t pRigidBody = physicsRigidBodyEntity->m_pRigidBody;
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
+		ctx.r8.u64 = r8Value;
 		ctx.v6 = eqMask;
 		ctx.v7 = orMask;
 		ctx.v8 = geMask;

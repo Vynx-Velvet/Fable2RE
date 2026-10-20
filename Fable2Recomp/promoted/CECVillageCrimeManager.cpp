@@ -1,9 +1,9 @@
 // CECVillageCrimeManager (vtable 0x820DDFA8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -29,7 +29,7 @@ uint64_t CECVillageCrimeManager_GetClassName(CpuState& ctx, uint8_t* base, uint6
 }
 PROMOTED_ENTRY(58, sub_8284BA90, 0x8284BA90) { ctx.r3.u64 = CECVillageCrimeManager_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8284D4E8(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t arg2) {
+uint64_t CECVillageCrimeManager_Constructor(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t arg2) {
 	if (!UseLiftedCode(58, 0x8284D4E8)) { ctx.r3.u64 = villageCrimeManagerAddr; ctx.r4.u64 = arg2; __imp__sub_8284D4E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284D4E8);
 	uint32_t stack = ctx.r1.u64;
@@ -84,31 +84,31 @@ uint64_t n_sub_8284D4E8(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 	STORE32(manager + 156, 0);
 
 	uint32_t ownerId = LOAD32(manager + 4);
-	n_sub_82392C88(ctx, base, ownerId, villageCrimeManagerAddr);
+	CECDoor_UpdateOpenStateForEntity(ctx, base, ownerId, villageCrimeManagerAddr);
 	STORE8(0x83496B77u, 0);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return villageCrimeManagerAddr;
 }
-PROMOTED_ENTRY(58, sub_8284D4E8, 0x8284D4E8) { ctx.r3.u64 = n_sub_8284D4E8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(58, sub_8284D4E8, 0x8284D4E8) { ctx.r3.u64 = CECVillageCrimeManager_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8284D608(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManager, uint64_t deleteFlags) {
+uint64_t CECVillageCrimeManager_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManager, uint64_t deleteFlags) {
 	if (!UseLiftedCode(58, 0x8284D608)) { ctx.r3.u64 = villageCrimeManager; ctx.r4.u64 = deleteFlags; __imp__sub_8284D608(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284D608);
 	GameStackFrame stackFrame(ctx, base, 112);
 
 	ctx.r4.u64 = deleteFlags;
-	n_sub_8284D658(ctx, base, villageCrimeManager);
+	CECVillageCrimeManager_Destructor(ctx, base, villageCrimeManager);
 
 	if ((static_cast<uint32_t>(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, villageCrimeManager);
 	}
 	return villageCrimeManager;
 }
-PROMOTED_ENTRY(58, sub_8284D608, 0x8284D608) { ctx.r3.u64 = n_sub_8284D608(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(58, sub_8284D608, 0x8284D608) { ctx.r3.u64 = CECVillageCrimeManager_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t villageRecord) {
+uint64_t CECVillageCrimeManager_InitializeFromVillage(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr, uint64_t villageRecord) {
 	constexpr int32_t str_TXT_820C47A8_B_ = int32_t(0x820C47A8);
 	constexpr int32_t str_TXT_820DD954_B_ = int32_t(0x820DD954);
 	constexpr int32_t str_TXT_820DD964_B_ = int32_t(0x820DD964);
@@ -161,7 +161,7 @@ uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 	uint64_t TXT_820C47A8_L_ = str_TXT_820C47A8_B_;
 	uint64_t economyHash = String_HashFnv1(ctx, base, TXT_820C47A8_L_, 0xFFFFFFFF811C9DC5ULL);
 	uint32_t economyGlobalsId = LOAD32(0x83496BD0u);
-	uint64_t result = n_sub_829FB108(ctx, base, economyGlobalsId, economyHash);
+	uint64_t result = HashMap_FindByHash(ctx, base, economyGlobalsId, economyHash);
 
 	if ((uint32_t)result != 0) {
 		uint64_t pubDebtAddr = (int64_t)villageCrimeManagerAddr + 148;
@@ -175,9 +175,9 @@ uint64_t n_sub_8284D740(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(58, sub_8284D740, 0x8284D740) { ctx.r3.u64 = n_sub_8284D740(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(58, sub_8284D740, 0x8284D740) { ctx.r3.u64 = CECVillageCrimeManager_InitializeFromVillage(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8284D888(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr) {
+uint64_t CECVillageCrimeManager_ClearCrimeLists(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr) {
 	if (!UseLiftedCode(58, 0x8284D888)) { ctx.r3.u64 = villageCrimeManagerAddr; __imp__sub_8284D888(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284D888);
 	uint32_t stack = ctx.r1.u64;
@@ -219,9 +219,9 @@ uint64_t n_sub_8284D888(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 	ctx.r1.u64 = stack;
 	return lastCalleeResult;
 }
-PROMOTED_ENTRY(58, sub_8284D888, 0x8284D888) { ctx.r3.u64 = n_sub_8284D888(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(58, sub_8284D888, 0x8284D888) { ctx.r3.u64 = CECVillageCrimeManager_ClearCrimeLists(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8284F058(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr) {
+uint64_t CECVillageCrimeManager_Update(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManagerAddr) {
 	if (!UseLiftedCode(58, 0x8284F058)) { ctx.r3.u64 = villageCrimeManagerAddr; __imp__sub_8284F058(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8284F058);
 	uint32_t stack = ctx.r1.u64;
@@ -233,7 +233,7 @@ uint64_t n_sub_8284F058(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 
 	if (villageCrimeManager->m_80 != 0) {
 		villageCrimeManager->m_80 = 0;
-		n_sub_828564B0(ctx, base, villageCrimeManagerAddr, 1);
+		CECVillageCrimeManager_SetTownAlarm(ctx, base, villageCrimeManagerAddr, 1);
 	}
 
 	uint64_t result = n_sub_82856F80(ctx, base, villageCrimeManagerAddr);
@@ -242,9 +242,9 @@ uint64_t n_sub_8284F058(CpuState& ctx, uint8_t* base, uint64_t villageCrimeManag
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(58, sub_8284F058, 0x8284F058) { ctx.r3.u64 = n_sub_8284F058(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(58, sub_8284F058, 0x8284F058) { ctx.r3.u64 = CECVillageCrimeManager_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82856338(CpuState& ctx, uint8_t* base, uint32_t villageCrimeManagerAddr) {
+uint64_t CECVillageCrimeManager_ProcessActiveCrime(CpuState& ctx, uint8_t* base, uint32_t villageCrimeManagerAddr) {
 	if (!UseLiftedCode(58, 0x82856338)) { ctx.r3.u64 = villageCrimeManagerAddr; __imp__sub_82856338(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82856338);
 	uint32_t stack = ctx.r1.u64;
@@ -316,7 +316,7 @@ uint64_t n_sub_82856338(CpuState& ctx, uint8_t* base, uint32_t villageCrimeManag
 			}
 			if (hasEntry != 0) {
 				ctx.xer.ca = flags.ca;
-				result = n_sub_82388D90(ctx, base, result);
+				result = CECNetwork_ReplicateEntityEvent(ctx, base, result);
 			}
 		}
 	}
@@ -324,4 +324,4 @@ uint64_t n_sub_82856338(CpuState& ctx, uint8_t* base, uint32_t villageCrimeManag
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(58, sub_82856338, 0x82856338) { ctx.r3.u64 = n_sub_82856338(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(58, sub_82856338, 0x82856338) { ctx.r3.u64 = CECVillageCrimeManager_ProcessActiveCrime(ctx, base, ctx.r3.u32); }

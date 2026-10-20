@@ -1,9 +1,9 @@
 // CECBreadcrumber (vtable 0x82003C98): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -52,7 +52,7 @@ uint64_t CECBreadcrumber_HasMovedBeyondThreshold(CpuState& ctx, uint8_t* base, u
 }
 PROMOTED_ENTRY(0, sub_82174C18, 0x82174C18) { ctx.r3.u64 = CECBreadcrumber_HasMovedBeyondThreshold(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82189B58(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr, double floatArg1) {
+uint32_t CECBreadcrumber_UpdateStatus(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr, double floatArg1) {
 	if (!UseLiftedCode(0, 0x82189B58)) { ctx.r3.u64 = breadcrumberAddr; ctx.f1.f64 = floatArg1; __imp__sub_82189B58(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82189B58);
 	uint32_t stack = ctx.r1.u64;
@@ -187,9 +187,9 @@ uint32_t n_sub_82189B58(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr,
 		return aboveThreshold;
 	}
 
-	// Status 1 when the word at +608 of the component is 1 and the f1 value n_sub_826758D0 leaves is below the
+	// Status 1 when the word at +608 of the component is 1 and the f1 value Navigation_GetChildValue leaves is below the
 	// scaled m_1A0; otherwise 0.
-	const uint32_t result = n_sub_826758D0(ctx, base, component);
+	const uint32_t result = Navigation_GetChildValue(ctx, base, component);
 	const double f1FromCall = ctx.f1.f64;
 	uint32_t status = 0;
 	if (LOAD32(component + 608) == 1) {
@@ -206,7 +206,7 @@ uint32_t n_sub_82189B58(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(0, sub_82189B58, 0x82189B58) { ctx.r3.u64 = n_sub_82189B58(ctx, base, ctx.r3.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(0, sub_82189B58, 0x82189B58) { ctx.r3.u64 = CECBreadcrumber_UpdateStatus(ctx, base, ctx.r3.u32, ctx.f1.f64); }
 
 void CECBreadcrumber_Update(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
 	if (!UseLiftedCode(1, 0x82192480)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_82192480(ctx, base); return; }
@@ -263,7 +263,7 @@ void CECBreadcrumber_Update(CpuState& ctx, uint8_t* base, uint32_t breadcrumberA
 }
 PROMOTED_ENTRY(1, sub_82192480, 0x82192480) { CECBreadcrumber_Update(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_82192D88(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+uint32_t CECBreadcrumber_UpdateQuestValue(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	if (!UseLiftedCode(1, 0x82192D88)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_82192D88(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82192D88);
 	uint32_t stack = ctx.r1.u64;
@@ -383,6 +383,7 @@ uint32_t n_sub_82192D88(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 				}
 			}
 			// state the callee may pass on
+			ctx.f13.f64 = f13ForRelease;
 			result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchAddr);
 		}
 	}
@@ -397,9 +398,9 @@ uint32_t n_sub_82192D88(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	// r6-r8, cr0 and xer.ca, which callers read, are as the last call left them (the caller's when none is made)
 	return result;
 }
-PROMOTED_ENTRY(1, sub_82192D88, 0x82192D88) { ctx.r3.u64 = n_sub_82192D88(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(1, sub_82192D88, 0x82192D88) { ctx.r3.u64 = CECBreadcrumber_UpdateQuestValue(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
+uint32_t CECBreadcrumber_UpdateScale(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
 	if (!UseLiftedCode(2, 0x821AA1E8)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_821AA1E8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821AA1E8);
 	uint32_t stack = ctx.r1.u64;
@@ -490,6 +491,9 @@ uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr)
 
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = passR6;
+		ctx.r7.u64 = passR7;
+		ctx.r8.u64 = passR8;
 		ctx.cr0 = passCr0;
 		ctx.xer.ca = passXer.ca;
 		result = n_sub_821D81C0(ctx, base, component, 0);
@@ -536,9 +540,9 @@ uint32_t n_sub_821AA1E8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr)
 	ctx.cr0 = cr0BeforeSine;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(2, sub_821AA1E8, 0x821AA1E8) { ctx.r3.u64 = n_sub_821AA1E8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(2, sub_821AA1E8, 0x821AA1E8) { ctx.r3.u64 = CECBreadcrumber_UpdateScale(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+uint64_t CECBreadcrumber_DestroyBreadcrumbs(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	if (!UseLiftedCode(4, 0x821E8EB8)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_821E8EB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821E8EB8);
 	uint32_t stack = ctx.r1.u64;
@@ -547,7 +551,7 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	const PPCXERRegister callerXer = ctx.xer;
 	stack = PushStackFrame(base, stack, 192);
 
-	// For index 0 .. m_EC-1, n_sub_821E9150 (given +228 and the index's address, stack + 80) returns a list; every
+	// For index 0 .. m_EC-1, CECBreadcrumber_GetBreadcrumbList (given +228 and the index's address, stack + 80) returns a list; every
 	// entity in it with bit 0x40 set in its byte at +144 is destroyed, its component 85 (when it has one) first
 	// going through the particle calls.
 	// The nodes are linked through +0 and end at the node that +4 of the list points to; a node keeps an entity
@@ -561,10 +565,10 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		const double fadeAlpha = double(LOAD_F32(0x820994B4u));
 		do {
 			ctx.r1.u64 = stack;
-			const uint32_t list = n_sub_821E9150(ctx, base, listsAddr, indexAddr);
+			const uint32_t list = CECBreadcrumber_GetBreadcrumbList(ctx, base, listsAddr, indexAddr);
 			uint32_t node = LOAD32(LOAD32(list + 4));
 			for (;;) {
-				const uint32_t listAgain = n_sub_821E9150(ctx, base, listsAddr, indexAddr);
+				const uint32_t listAgain = CECBreadcrumber_GetBreadcrumbList(ctx, base, listsAddr, indexAddr);
 				const uint32_t endNode = LOAD32(listAgain + 4);
 				if (list != listAgain) {
 					ppc_trap(ctx, base, 22);
@@ -655,7 +659,7 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 							}
 							emitter = LOAD32(particle + 16);
 							if (emitter != 0) {
-								n_sub_8322B788(ctx, base, emitter);
+								Vector_DeletePointerElements(ctx, base, emitter);
 							}
 						} else {
 							ctx.fpscr.disableFlushMode();
@@ -676,7 +680,7 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	}
 
 	ctx.r1.u64 = stack;
-	n_sub_822C9E80(ctx, base, breadcrumberAddr);
+	CECBreadcrumber_KillTrailEffect(ctx, base, breadcrumberAddr);
 	breadcrumber->m_158 = 0;
 	List_ClearFreeNodes(ctx, base, (uint32_t)breadcrumberAddr + 240);
 	const uint64_t result = List_ClearFreeNodes(ctx, base, (uint32_t)breadcrumberAddr + 252);
@@ -686,12 +690,12 @@ uint64_t n_sub_821E8EB8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(4, sub_821E8EB8, 0x821E8EB8) { ctx.r3.u64 = n_sub_821E8EB8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(4, sub_821E8EB8, 0x821E8EB8) { ctx.r3.u64 = CECBreadcrumber_DestroyBreadcrumbs(ctx, base, ctx.r3.u64); }
 
 // Sets m_184 to the destination vertical offset: the breadcrumber tuning value at 0x83496A58
 // (DestinationVerticalOffset in research/catalog/tuning.tsv), or the non-zero value at +64 of the active quest
-// that the entity's quest tracker finds. When the value changed, refreshes through n_sub_824DCDA8.
-uint32_t n_sub_822A3728(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+// that the entity's quest tracker finds. When the value changed, refreshes through CECBreadcrumber_UpdateBreadcrumbPlacement.
+uint32_t CECBreadcrumber_UpdateDestinationVerticalOffset(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -716,7 +720,7 @@ uint32_t n_sub_822A3728(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		return (uint32_t)result;
 	}
 
-	// r9/r10 as the original code leaves them for n_sub_824DCDA8 at the end (it may pass them on)
+	// r9/r10 as the original code leaves them for CECBreadcrumber_UpdateBreadcrumbPlacement at the end (it may pass them on)
 	uint64_t r9State = stateFlag52;
 	uint64_t r10State = uint64_t(int64_t(g_83490000));
 
@@ -841,18 +845,20 @@ uint32_t n_sub_822A3728(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 		breadcrumber->m_184 = float(verticalOffset);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
-		result = n_sub_824DCDA8(ctx, base, breadcrumberAddr, 0u);
+		ctx.r9.u64 = r9State;
+		ctx.r10.u64 = r10State;
+		result = CECBreadcrumber_UpdateBreadcrumbPlacement(ctx, base, breadcrumberAddr, 0u);
 	}
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(11, sub_822A3728, 0x822A3728) { ctx.r3.u64 = n_sub_822A3728(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(11, sub_822A3728, 0x822A3728) { ctx.r3.u64 = CECBreadcrumber_UpdateDestinationVerticalOffset(ctx, base, ctx.r3.u64); }
 
-// Returns 1 when m_14A is set and the vector n_sub_824DA5B0 produces has a squared length above the
+// Returns 1 when m_14A is set and the vector CECBreadcrumber_GetPositionVector produces has a squared length above the
 // constant at 0x82099AE0, else 0.
-uint64_t n_sub_822D3508(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+uint64_t CECBreadcrumber_IsTrailDistanceAboveThreshold(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	if (!UseLiftedCode(13, 0x822D3508)) { ctx.r3.u64 = breadcrumberAddr; __imp__sub_822D3508(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822D3508);
 	uint32_t stack = ctx.r1.u32;
@@ -866,7 +872,7 @@ uint64_t n_sub_822D3508(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	if (breadcrumber->m_14A != 0) {
 		uint32_t vectorBuffer = (int32_t)stack + 80;
 		ctx.r1.u64 = stack;
-		n_sub_824DA5B0(ctx, base, vectorBuffer, breadcrumberAddr, 0);
+		CECBreadcrumber_GetPositionVector(ctx, base, vectorBuffer, breadcrumberAddr, 0);
 		PPCVRegister vec{};
 		SET_V8(vec, VLOAD(vectorBuffer & ~0xF));
 		PPCVRegister lengthSqVec{};
@@ -892,7 +898,7 @@ uint64_t n_sub_822D3508(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	ctx.v13 = v13Out;
 	return result;
 }
-PROMOTED_ENTRY(13, sub_822D3508, 0x822D3508) { ctx.r3.u64 = n_sub_822D3508(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(13, sub_822D3508, 0x822D3508) { ctx.r3.u64 = CECBreadcrumber_IsTrailDistanceAboveThreshold(ctx, base, ctx.r3.u64); }
 
 // Constructs the class name string into the CCharString at classNameString and returns its address.
 uint64_t CECBreadcrumber_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
@@ -905,21 +911,21 @@ uint64_t CECBreadcrumber_GetClassName(CpuState& ctx, uint8_t* base, uint64_t cla
 }
 PROMOTED_ENTRY(29, sub_824D4570, 0x824D4570) { ctx.r3.u64 = CECBreadcrumber_GetClassName(ctx, base, ctx.r3.u64); }
 
-// Runs n_sub_824D4AB8 on the object and, when bit 0 of flags is set, frees it; returns the object address.
-uint64_t n_sub_824D4A68(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t flags) {
+// Runs CECBreadcrumber_Destructor on the object and, when bit 0 of flags is set, frees it; returns the object address.
+uint64_t CECBreadcrumber_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t objectAddr, uint64_t flags) {
 	if (!UseLiftedCode(29, 0x824D4A68)) { ctx.r3.u64 = objectAddr; ctx.r4.u64 = flags; __imp__sub_824D4A68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824D4A68);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = flags;  // state the callee may pass on
-	n_sub_824D4AB8(ctx, base, objectAddr);
+	CECBreadcrumber_Destructor(ctx, base, objectAddr);
 	if ((uint32_t(flags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, objectAddr);
 	}
 	return objectAddr;
 }
-PROMOTED_ENTRY(29, sub_824D4A68, 0x824D4A68) { ctx.r3.u64 = n_sub_824D4A68(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(29, sub_824D4A68, 0x824D4A68) { ctx.r3.u64 = CECBreadcrumber_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+uint64_t CECBreadcrumber_Reset_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -944,8 +950,8 @@ uint64_t n_sub_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	}
 
 	ctx.r1.u64 = stack;
-	n_sub_824DCDA8(ctx, base, breadcrumberAddr, 0);
-	n_sub_821E8EB8(ctx, base, breadcrumberAddr);
+	CECBreadcrumber_UpdateBreadcrumbPlacement(ctx, base, breadcrumberAddr, 0);
+	CECBreadcrumber_DestroyBreadcrumbs(ctx, base, breadcrumberAddr);
 
 	List_ClearFreeNodes(ctx, base, (uint32_t)breadcrumber->m_140);
 	List_ClearFreeNodes(ctx, base, (uint32_t)breadcrumber->m_144);
@@ -976,13 +982,13 @@ uint64_t n_sub_824D4C00(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(29, sub_824D4C00, 0x824D4C00) { ctx.r3.u64 = n_sub_824D4C00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(29, sub_824D4C00, 0x824D4C00) { ctx.r3.u64 = CECBreadcrumber_Reset_824D4C00(ctx, base, ctx.r3.u64); }
 
 // When mode is 1, serializes three named values through the stream (the float at 0x83319040 and the bytes at
-// +330 and +331), then an 8-byte id through n_sub_8244DAE0: with saving set the id is taken from the entity
+// +330 and +331), then an 8-byte id through UID_Serialize: with saving set the id is taken from the entity
 // held by the handle at +128; otherwise the call fills it in and a non-zero id is stored in a new block held
 // by the shared handle at +488.
-uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t stream, uint32_t mode, uint64_t saving) {
+uint64_t CECBreadcrumber_Serialize(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t stream, uint32_t mode, uint64_t saving) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820B0000 = int32_t(0x820B0000);
 	constexpr int32_t str_TXT_820B7D30_B_ = int32_t(0x820B7D30);
@@ -1045,7 +1051,7 @@ uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 			STORE64(stack + 96, LOAD64(entity + 20));
 		}
 		CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B7D58_B_, -1);
-		n_sub_8244DAE0(ctx, base, stack + 96, stack + 80, stream);
+		UID_Serialize(ctx, base, stack + 96, stack + 80, stream);
 		uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		stack = PopStackFrame(stack, 144);
 		ctx.r1.u64 = stack;
@@ -1056,7 +1062,7 @@ uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	STORE32(stack + 92, 0);
 	ctx.r8.u64 = savingByte;  // state the callee may pass on (zero here)
 	CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B7D58_B_, -1);
-	n_sub_8244DAE0(ctx, base, stack + 88, stack + 80, stream);
+	UID_Serialize(ctx, base, stack + 88, stack + 80, stream);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 	if (LOAD32(stack + 88) != 0 || LOAD32(stack + 92) != 0) {
 		uint64_t idBlock = operator_new(ctx, base, 8);
@@ -1073,7 +1079,7 @@ uint64_t n_sub_824D4CE0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(29, sub_824D4CE0, 0x824D4CE0) { ctx.r3.u64 = n_sub_824D4CE0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
+PROMOTED_ENTRY(29, sub_824D4CE0, 0x824D4CE0) { ctx.r3.u64 = CECBreadcrumber_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
 
 // Sets m_1A4 to (double at 0x83319510) * (double at 0x83321560) + (int at 0x8331950C), truncated to an int.
 void n_sub_824D56C8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
@@ -1103,7 +1109,7 @@ void n_sub_824D56C8(CpuState& ctx, uint8_t* base, uint32_t breadcrumberAddr) {
 }
 PROMOTED_ENTRY(29, sub_824D56C8, 0x824D56C8) { n_sub_824D56C8(ctx, base, ctx.r3.u32); }
 
-// Returns 1 when n_sub_822734E8 gives a value above the threshold at 0x83319038 for every segment between
+// Returns 1 when Vector_DistanceToSegment gives a value above the threshold at 0x83319038 for every segment between
 // consecutive points of the list (this needs a positive threshold and at least two points). Otherwise, when the
 // breadcrumber tuning flag at 0x83496A1D is set, returns 1 if the vector from the entity's +124 object (the method
 // at vtable offset 76), masked by the vector at 0x82099150 (it keeps the first two components), has zero length;
@@ -1263,14 +1269,14 @@ uint32_t n_sub_824D6AD0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 			v60 = ctx.v12;
 			v61 = ctx.v13;
 
-			// n_sub_822734E8 takes that vector in v1 and the segment ends (prev in v2, cur in v3); result in f1
+			// Vector_DistanceToSegment takes that vector in v1 and the segment ends (prev in v2, cur in v3); result in f1
 			PPCVRegister entityVec{};
 			SET_V8(entityVec, VLOAD((uint32_t)outBufAddr & ~0xF));
 			ctx.r9.u64 = outBufAddr;
 			ctx.v1 = entityVec;
 			ctx.v2 = v63;
 			ctx.v3 = v62;
-			n_sub_822734E8(ctx, base, uint32_t((int64_t)(uint64_t)stack + 112));
+			Vector_DistanceToSegment(ctx, base, uint32_t((int64_t)(uint64_t)stack + 112));
 			reg4 = ctx.r4.u64;
 			reg6 = ctx.r6.u64;
 			reg7 = ctx.r7.u64;
@@ -1367,7 +1373,7 @@ PROMOTED_ENTRY(29, sub_824D6AD0, 0x824D6AD0) { ctx.r3.u64 = n_sub_824D6AD0(ctx, 
 
 // sub_824DA1E0  [972 bytes]
 // Lists here are linked lists: +4 holds the end node, +8 the size; a node is { next, prev, value }.
-uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t srcList) {
+uint32_t CECBreadcrumber_RemoveLastBreadcrumb(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t srcList) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(30, 0x824DA1E0)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = srcList; __imp__sub_824DA1E0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824DA1E0);
@@ -1434,7 +1440,7 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 			// r9 handed to the first fetch of each list: keptCount, later what the calls left there
 			uint32_t r9AtFetch = keptCount;
 			do {
-				const uint32_t handleList = (uint32_t)n_sub_821E9150(ctx, base, handleLists, stack + 80);
+				const uint32_t handleList = (uint32_t)CECBreadcrumber_GetBreadcrumbList(ctx, base, handleLists, stack + 80);
 				r9AtFetch = ctx.r9.u32;
 				result = handleList;
 				uint32_t entry = LOAD32(LOAD32(handleList + 4));
@@ -1447,7 +1453,7 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 							ppc_trap(ctx, base, 22);
 						}
 						entry = LOAD32(entry);
-						result = (uint32_t)n_sub_821E9150(ctx, base, handleLists, stack + 80);
+						result = (uint32_t)CECBreadcrumber_GetBreadcrumbList(ctx, base, handleLists, stack + 80);
 						r9AtFetch = ctx.r9.u32;
 						if (result != handleList) {
 							ppc_trap(ctx, base, 22);
@@ -1458,7 +1464,7 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 				}
 
 				for (int32_t applied = 0; applied < (int32_t)droppedCount; ++applied) {
-					result = (uint32_t)n_sub_821E9150(ctx, base, handleLists, stack + 80);
+					result = (uint32_t)CECBreadcrumber_GetBreadcrumbList(ctx, base, handleLists, stack + 80);
 					if (result != handleList) {
 						ppc_trap(ctx, base, 22);
 					}
@@ -1551,6 +1557,9 @@ uint32_t n_sub_824DA1E0(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 							if (emitter != 0) {
 								ctx.fpscr.disableFlushMode();
 								// state the callee may pass on
+								ctx.r6.u64 = r6Value;
+								ctx.r7.u64 = r7Value;
+								ctx.r8.u64 = r8Value;
 								ctx.xer.ca = carry;
 								ParticleEmitter_ApplyAlphaToChildren(ctx, base, emitter, alpha);
 								r6Value = ctx.r6.u64;
@@ -1589,9 +1598,9 @@ finished:
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(30, sub_824DA1E0, 0x824DA1E0) { ctx.r3.u64 = n_sub_824DA1E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(30, sub_824DA1E0, 0x824DA1E0) { ctx.r3.u64 = CECBreadcrumber_RemoveLastBreadcrumb(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t sourceString, uint64_t arg3) {
+uint64_t CECBreadcrumber_SetBreadcrumbText(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t sourceString, uint64_t arg3) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(30, 0x824DA7D8)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = sourceString; ctx.r5.u64 = arg3; __imp__sub_824DA7D8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824DA7D8);
@@ -1622,6 +1631,7 @@ uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint64_t textHash = Path_NormalizeAndHash(ctx, base, (uint64_t)subject + 20, textAddr);
 		if (storedHash == (uint32_t)textHash) {
 			// state the callee may pass on
+			ctx.r5.u64 = textHash;
 			const uint64_t resetResult = CECBreadcrumber_Reset(ctx, base, breadcrumberAddr);
 			stack = PopStackFrame(stack, 128);
 			ctx.r1.u64 = stack;
@@ -1635,7 +1645,7 @@ uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint32_t subject2 = LOAD32(nodeC2 + 4);
 		const uint32_t subjectTarget = LOAD32(subject2 + 8);
 		// state the callee may pass on
-		result = n_sub_825F6150(ctx, base, subjectTarget, storedHash, textHash);
+		result = BinarySearch_FindRecordByHashes(ctx, base, subjectTarget, storedHash, textHash);
 		r4Value = result;
 		if ((uint32_t)result != 0) {
 			result = n_sub_824DA8B8(ctx, base, breadcrumberAddr, (uint32_t)r4Value, arg3);
@@ -1652,7 +1662,7 @@ uint64_t n_sub_824DA7D8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	ctx.r4.u64 = r4Value;
 	return result;
 }
-PROMOTED_ENTRY(30, sub_824DA7D8, 0x824DA7D8) { ctx.r3.u64 = n_sub_824DA7D8(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(30, sub_824DA7D8, 0x824DA7D8) { ctx.r3.u64 = CECBreadcrumber_SetBreadcrumbText(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CECBreadcrumber_Reset(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
@@ -1688,7 +1698,7 @@ PROMOTED_ENTRY(30, sub_824DB7E0, 0x824DB7E0) { ctx.r3.u64 = CECBreadcrumber_Rese
 // Stores the value at 0x8331902C in m_E0 and a handle count derived from it in m_1B8, then resizes handle
 // list [i] at +0xE4 to m_1B8 entries for each i below the count at 0x834982B8 + 8.
 // Lists here are linked lists: +4 holds the end node, +8 the size; a node is { next, prev, value }.
-uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
+uint64_t CECBreadcrumber_Reset_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
@@ -1704,7 +1714,7 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 
 	const uint32_t rawValue = LOAD32(0x8331902Cu);
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_821E8EB8(ctx, base, breadcrumberAddr);
+	uint64_t result = CECBreadcrumber_DestroyBreadcrumbs(ctx, base, breadcrumberAddr);
 	PPCCRRegister cr0State = ctx.cr0;
 	xerState.ca = ctx.xer.ca;
 	breadcrumber->m_E0 = rawValue;
@@ -1742,6 +1752,10 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 			STORE32(stack + 92, 0);
 			// state the callee may pass on
 			ctx.f9 = breadcrumbCount;
+			ctx.f10.f64 = breadcrumbCountFloat;
+			ctx.f11.f64 = f11Value;
+			ctx.f12.f64 = scaledRawValueFloat;
+			ctx.f13.f64 = secondScaleFactor;
 			ctx.cr0 = cr0State;
 			ctx.xer.ca = xerState.ca;
 			EntityHandle_Release(ctx, base, stack + 88);
@@ -1754,7 +1768,7 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 			xerState.ca = ctx.xer.ca;
 
 			const uint32_t wanted = breadcrumber->m_1B8;
-			const uint64_t handleList = n_sub_821E9150(ctx, base, handleLists, stack + 80);
+			const uint64_t handleList = CECBreadcrumber_GetBreadcrumbList(ctx, base, handleLists, stack + 80);
 			r7Value = ctx.r7.u64;
 			scaledRawValue = ctx.r8.u64;
 			r9Value = ctx.r9.u32;
@@ -1871,13 +1885,13 @@ uint64_t n_sub_824DB8E8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr)
 	ctx.xer.ca = xerState.ca;
 	return result;
 }
-PROMOTED_ENTRY(30, sub_824DB8E8, 0x824DB8E8) { ctx.r3.u64 = n_sub_824DB8E8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(30, sub_824DB8E8, 0x824DB8E8) { ctx.r3.u64 = CECBreadcrumber_Reset_824DB8E8(ctx, base, ctx.r3.u64); }
 
 // Adds the values (f1) two calls give for objects reached from the global at 0x83496920, using the float at
 // 0x820994B4 (defaultValue) for a missing object; when the sum exceeds the float at byte 8 of the 16-byte
 // vector at vectorAddr by more than defaultValue, the sum is merged into the vector (permute mask at
 // 0x820991F0) and the function returns 1, otherwise what n_sub_8226AF00 returned.
-uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
+uint64_t CECBreadcrumber_UpdateBreadcrumbValue(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(30, 0x824DC890)) { ctx.r4.u64 = vectorAddr; __imp__sub_824DC890(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824DC890);
@@ -1989,13 +2003,13 @@ uint64_t n_sub_824DC890(CpuState& ctx, uint8_t* base, uint64_t vectorAddr) {
 	ctx.v13 = current;
 	return firstResult;
 }
-PROMOTED_ENTRY(30, sub_824DC890, 0x824DC890) { ctx.r3.u64 = n_sub_824DC890(ctx, base, ctx.r4.u64); }
+PROMOTED_ENTRY(30, sub_824DC890, 0x824DC890) { ctx.r3.u64 = CECBreadcrumber_UpdateBreadcrumbValue(ctx, base, ctx.r4.u64); }
 
 // Returns 0 unless the entity handle at +0xC points at an entity flagged 0x40 at +144 and, when the low byte
 // of ignoreNavigableCheck is 0, the point its +124 object gives (virtual +64) is navigable. Otherwise clears m_144's free
 // nodes, hands that point to the +124 object of the owner entity m_4 (virtual +100), sets the owner's facing
-// from n_sub_821F5A90, calls n_sub_821B01D0 with the owner's component 60, sets m_148 and returns 1.
-uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t ignoreNavigableCheck) {
+// from GetFacingDirection, calls CECNavigation_ResetState with the owner's component 60, sets m_148 and returns 1.
+uint64_t CECBreadcrumber_UpdateBreadcrumbPlacement(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr, uint64_t ignoreNavigableCheck) {
 	if (!UseLiftedCode(30, 0x824DCDA8)) { ctx.r3.u64 = breadcrumberAddr; ctx.r4.u64 = ignoreNavigableCheck; __imp__sub_824DCDA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824DCDA8);
 	uint32_t stack = ctx.r1.u64;
@@ -2046,6 +2060,7 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	if ((ignoreNavigableCheck & 0xFF) == 0) {
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r4.u64 = r4Value;
 		const uint32_t entity = (uint32_t)EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		// virtual +64 of the entity's +124 object writes its result to stack+96
 		const uint32_t object = LOAD32(entity + 124);
@@ -2053,9 +2068,13 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		const uint32_t method = LOAD32(vtable + 64);
 		callTarget.u64 = method;
 		ctx.r3.u64 = stack + 96;
+		ctx.r4.u64 = object;
+		ctx.r9.u64 = method;
+		ctx.r10.u64 = vtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		SET_V8(vector, VLOAD((stack + 96) & ~0xF));
 		// state the callee may pass on
+		ctx.r8.u64 = stack + 96;
 		ctx.v1 = vector;
 		const uint64_t navigable = n_sub_821EC948(ctx, base, 0);  // Lua_Kynapse_IsPointNavigable
 		r4Value = ctx.r4.u64;
@@ -2083,6 +2102,10 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	const uint32_t vtable = LOAD32(object);
 	const uint32_t method = LOAD32(vtable + 64);
 	callTarget.u64 = method;
+	ctx.r3.u64 = stack + 112;
+	ctx.r4.u64 = object;
+	ctx.r9.u64 = method;
+	ctx.r10.u64 = vtable;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 	// ... which virtual +100 of the owner's +124 object receives in v1
@@ -2094,18 +2117,22 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 	callTarget.u64 = ownerMethod;
 	// r3: the object; r5-r8 and v1 are state the callee may pass on
 	ctx.r3.u64 = ownerObject;
+	ctx.r5.u64 = ownerMethod;
+	ctx.r6.u64 = ownerVtable;
+	ctx.r7.u64 = owner;
+	ctx.r8.u64 = stack + 112;
 	ctx.v1 = vector;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	// the owner's +124 object takes the vector n_sub_821F5A90 gives for the handle entity's +124 object
+	// the owner's +124 object takes the vector GetFacingDirection gives for the handle entity's +124 object
 	const uint32_t entityAgain = (uint32_t)EntityHandle_Get_825575C8(ctx, base, handleAddr);
 	const uint32_t facingObject = LOAD32(breadcrumber->m_4 + 124);
-	const uint64_t direction = n_sub_821F5A90(ctx, base, stack + 80, LOAD32(entityAgain + 124));
+	const uint64_t direction = GetFacingDirection(ctx, base, stack + 80, LOAD32(entityAgain + 124));
 	SET_V8(vector, VLOAD((uint32_t)direction & ~0xF));
 	// state the callee may pass on
 	ctx.v1 = vector;
 	Entity_SetFacingDirectionNormalized(ctx, base, facingObject);
-	// r6-r10, CR0 and CA handed to n_sub_821B01D0: what the last call left, or the values of the lookup below
+	// r6-r10, CR0 and CA handed to CECNavigation_ResetState: what the last call left, or the values of the lookup below
 	uint64_t r6Value = ctx.r6.u64;
 	isNavigable = ctx.r7.u64;
 	r10Value = ctx.r10.u64;
@@ -2167,22 +2194,25 @@ uint64_t n_sub_824DCDA8(CpuState& ctx, uint8_t* base, uint64_t breadcrumberAddr,
 		}
 	}
 	// state the callee may pass on
+	ctx.r6.u64 = r6Value;
+	ctx.r7.u64 = isNavigable;
 	ctx.r8.u64 = r8Value;
+	ctx.r9.u64 = r9Value;
 	ctx.cr0 = cr0State;
 	ctx.xer.ca = carry;
-	n_sub_821B01D0(ctx, base, component);
+	CECNavigation_ResetState(ctx, base, component);
 
 	breadcrumber->m_148 = uint8_t(1);
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
 	return 1;
 }
-PROMOTED_ENTRY(30, sub_824DCDA8, 0x824DCDA8) { ctx.r3.u64 = n_sub_824DCDA8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(30, sub_824DCDA8, 0x824DCDA8) { ctx.r3.u64 = CECBreadcrumber_UpdateBreadcrumbPlacement(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Returns in f1 the float at +72 of the entity's active quest (found through its quest tracker, component
 // type 102) unless that value is below the threshold at 0x820994B4; otherwise the integer at 0x83496A5C
 // converted to float. r3 returns what the last call made here returned (the argument when none was made).
-uint32_t n_sub_824DDF30(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
+uint32_t CECBreadcrumber_GetActiveQuestValue(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -2299,6 +2329,7 @@ uint32_t n_sub_824DDF30(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
 				}
 			}
 			// state the callee may pass on
+			ctx.f13.f64 = f13Value;
 			returnValue = (uint32_t)CCharString_ReleaseAndDecGlobalCountA(ctx, base, questNameAddr);
 		}
 	}
@@ -2309,4 +2340,4 @@ uint32_t n_sub_824DDF30(CpuState& ctx, uint8_t* base, uint64_t breadcrumber) {
 	ctx.f1.f64 = result;
 	return returnValue;
 }
-PROMOTED_ENTRY(30, sub_824DDF30, 0x824DDF30) { ctx.r3.u64 = n_sub_824DDF30(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(30, sub_824DDF30, 0x824DDF30) { ctx.r3.u64 = CECBreadcrumber_GetActiveQuestValue(ctx, base, ctx.r3.u64); }

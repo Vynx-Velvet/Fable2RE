@@ -1,18 +1,21 @@
+
+
 // CEntityDef (vtable 0x82002660): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
 #include "lifted/classes.h"
 #include "lifted/native_decls.h"
+#include "lifted/readable_support.h"
 
 // Stores the rotation (four floats passed by value in r4/r5) in m_10/m_18 and rebuilds the matrix at +32
 // from that rotation, the position vector at +80 and a constant uniform scale.
-uint32_t n_sub_82A0B288(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t rotationLo, uint64_t rotationHi) {
+uint32_t CEntityDef_SetRotation(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t rotationLo, uint64_t rotationHi) {
 	if (!UseLiftedCode(72, 0x82A0B288)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = rotationLo; ctx.r5.u64 = rotationHi; __imp__sub_82A0B288(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82A0B288);
 	uint32_t stack = ctx.r1.u32;
@@ -57,7 +60,7 @@ uint32_t n_sub_82A0B288(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, ui
 	ctx.r6.u64 = storedRotationLo; // callers read r6 after the call
 	return transformAddr;
 }
-PROMOTED_ENTRY(72, sub_82A0B288, 0x82A0B288) { ctx.r3.u64 = n_sub_82A0B288(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(72, sub_82A0B288, 0x82A0B288) { ctx.r3.u64 = CEntityDef_SetRotation(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CEntityDef_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(73, 0x82A10950)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82A10950(ctx, base); return ctx.r3.u64; }
@@ -84,7 +87,7 @@ uint64_t CEntityDef_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t en
 }
 PROMOTED_ENTRY(73, sub_82A10950, 0x82A10950) { ctx.r3.u64 = CEntityDef_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_83216518(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(141, 0x83216518)) { ctx.r3.u64 = entityDefAddr; __imp__sub_83216518(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x83216518);
 	uint32_t stack = ctx.r1.u64;
@@ -101,9 +104,9 @@ uint32_t n_sub_83216518(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(141, sub_83216518, 0x83216518) { ctx.r3.u64 = n_sub_83216518(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(141, sub_83216518, 0x83216518) { ctx.r3.u64 = CEntityDef_Destructor(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_83217058(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destroy(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(141, 0x83217058)) { ctx.r3.u64 = entityDefAddr; __imp__sub_83217058(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x83217058);
 	uint32_t stack = ctx.r1.u64;
@@ -118,9 +121,9 @@ uint32_t n_sub_83217058(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(141, sub_83217058, 0x83217058) { ctx.r3.u64 = n_sub_83217058(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(141, sub_83217058, 0x83217058) { ctx.r3.u64 = CEntityDef_Destroy(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_8321E9E0(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream) {
+uint64_t CEntityDef_Write(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream) {
 	if (!UseLiftedCode(141, 0x8321E9E0)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; __imp__sub_8321E9E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8321E9E0);
 	uint32_t stack = ctx.r1.u64;
@@ -167,9 +170,9 @@ uint64_t n_sub_8321E9E0(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(141, sub_8321E9E0, 0x8321E9E0) { ctx.r3.u64 = n_sub_8321E9E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(141, sub_8321E9E0, 0x8321E9E0) { ctx.r3.u64 = CEntityDef_Write(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8321EA78(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t flags) {
+uint64_t CEntityDef_WriteBlock(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t flags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(141, 0x8321EA78)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; ctx.r5.u64 = flags; __imp__sub_8321EA78(ctx, base); return ctx.r3.u64; }
@@ -214,13 +217,13 @@ uint64_t n_sub_8321EA78(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint32_t state = ctx.r3.u32;
 
-		// three-word header for n_sub_8321E8E8: state, id, and the slot-15 value when state is zero
+		// three-word header for CEntityDef_WriteSerializationHeader: state, id, and the slot-15 value when state is zero
 		uint32_t headerAddr = stack + 80;
 		uint32_t entityId = entityDef->m_id;
 		STORE32(headerAddr, state);
 		STORE32(headerAddr + 4, entityId);
 
-		// r9 for n_sub_8321E8E8: the id, or what the slot-15 call left in r9
+		// r9 for CEntityDef_WriteSerializationHeader: the id, or what the slot-15 call left in r9
 		uint64_t liveR9 = entityId;
 		if ((int32_t)state == 0) {
 			uint32_t entityFn60 = LOAD32(uint32_t(entityDef->vtable) + 60);
@@ -237,7 +240,7 @@ uint64_t n_sub_8321EA78(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 		}
 
 		ctx.r9.u64 = liveR9; // state the callee may pass on
-		n_sub_8321E8E8(ctx, base, stream, headerAddr);
+		CEntityDef_WriteSerializationHeader(ctx, base, stream, headerAddr);
 
 		uint32_t entityFn40 = LOAD32(uint32_t(entityDef->vtable) + 40);
 		callTarget.u64 = entityFn40;
@@ -268,9 +271,9 @@ uint64_t n_sub_8321EA78(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	ctx.r4.u64 = liveR4; // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(141, sub_8321EA78, 0x8321EA78) { ctx.r3.u64 = n_sub_8321EA78(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(141, sub_8321EA78, 0x8321EA78) { ctx.r3.u64 = CEntityDef_WriteBlock(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-uint64_t n_sub_8321EB70(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t forwardedArg3, uint64_t forwardedArg4, uint64_t flags) {
+uint64_t CEntityDef_ReadBlock(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t forwardedArg3, uint64_t forwardedArg4, uint64_t flags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(141, 0x8321EB70)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; ctx.r5.u64 = forwardedArg3; ctx.r6.u64 = forwardedArg4; ctx.r7.u64 = flags; __imp__sub_8321EB70(ctx, base); return ctx.r3.u64; }
@@ -311,14 +314,14 @@ uint64_t n_sub_8321EB70(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	}
 
 	if (((uint32_t)result & 0xFF) != 0) {
-		// n_sub_8321E7F0 reads the three-word header from the stream into stack + 80
+		// CEntityDef_ReadSerializationHeader reads the three-word header from the stream into stack + 80
 		uint64_t headerAddr = (uint64_t)stack + 80;
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
 		ctx.r5.u64 = liveR5;
 		ctx.r6.u64 = liveR6;
 		ctx.r7.u64 = liveR7;
-		n_sub_8321E7F0(ctx, base, stream, headerAddr);
+		CEntityDef_ReadSerializationHeader(ctx, base, stream, headerAddr);
 
 		uint32_t entityFn36 = LOAD32(uint32_t(entityDef->vtable) + 36);
 		callTarget.u64 = entityFn36;
@@ -355,9 +358,9 @@ uint64_t n_sub_8321EB70(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	ctx.r4.u64 = liveR4; // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(141, sub_8321EB70, 0x8321EB70) { ctx.r3.u64 = n_sub_8321EB70(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
+PROMOTED_ENTRY(141, sub_8321EB70, 0x8321EB70) { ctx.r3.u64 = CEntityDef_ReadBlock(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 
-uint64_t n_sub_8321EC30(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t stream) {
+uint64_t CEntityDef_WriteData(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t stream) {
 	if (!UseLiftedCode(141, 0x8321EC30)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; __imp__sub_8321EC30(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8321EC30);
 	uint32_t stack = ctx.r1.u64;
@@ -417,18 +420,18 @@ uint64_t n_sub_8321EC30(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, ui
 	ctx.fpscr.disableFlushMode();
 	Stream_WriteFloat(ctx, base, stream, double(entityDef->m_A8));
 
-	uint64_t result = BinaryStream_WriteUInt32(ctx, base, stream, entityDef->m_id);
+	uint64_t result = BinaryStream_WriteUInt32(ctx, base, stream, entityDef->m_A4);
 
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(141, sub_8321EC30, 0x8321EC30) { ctx.r3.u64 = n_sub_8321EC30(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(141, sub_8321EC30, 0x8321EC30) { ctx.r3.u64 = CEntityDef_WriteData(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_8321ED18  [664 bytes]
 // Serializes the definition through a stream: id, the Position vector stored at +80, four floats for the
 // matrix built by sub_82A0B288, the UseLife flag (m_A0), a scaled count (m_A4) and a float (m_A8).
-uint64_t n_sub_8321ED18(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t stream, uint64_t arg3, uint64_t arg4) {
+uint64_t CEntityDef_ReadData(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t stream, uint64_t arg3, uint64_t arg4) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_8335EFF4 = int32_t(0x8335EFF4);
@@ -475,7 +478,7 @@ uint64_t n_sub_8321ED18(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, ui
 		PPCVRegister zeroVec{};
 		SET_V8(zeroVec, simde_mm_set1_epi32(0));
 		VSTORE((stack + 128) & ~0xF, V8(zeroVec));
-		n_sub_8322EC98(ctx, base, uint32_t(TXT_8349E468_G_), stream, (uint64_t)(stack + 128));
+		CProperty_SerializeVector3(ctx, base, uint32_t(TXT_8349E468_G_), stream, (uint64_t)(stack + 128));
 
 		// Permute the float constant at 0x820994C0 into the position vector (mask at 0x82099200)
 		// and store the result at entityDef+80.
@@ -543,7 +546,7 @@ uint64_t n_sub_8321ED18(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, ui
 		}
 
 		// matrix at entityDef+32 from the vector at +80 and the four floats
-		n_sub_82A0B288(ctx, base, entityDefAddr, LOAD64(stack + 112), LOAD64(stack + 120));
+		CEntityDef_SetRotation(ctx, base, entityDefAddr, LOAD64(stack + 112), LOAD64(stack + 120));
 
 		CProperty_ProcessValue(ctx, base, uint32_t(TXT_8349E470_G_), stream, (uint64_t)(stack + 80));
 		uint32_t useLife = LOAD8(stack + 80);
@@ -621,12 +624,12 @@ uint64_t n_sub_8321ED18(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, ui
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(141, sub_8321ED18, 0x8321ED18) { ctx.r3.u64 = n_sub_8321ED18(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(141, sub_8321ED18, 0x8321ED18) { ctx.r3.u64 = CEntityDef_ReadData(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_8321F548  [80 bytes]
 // Reads one record from the stream into a local buffer that is not used afterwards, then calls
 // entityDef->vtbl[7](entityDef, stream, arg3, arg4).
-uint64_t n_sub_8321F548(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t arg3, uint64_t arg4) {
+uint64_t CEntityDef_ReadFromStream(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, uint64_t stream, uint64_t arg3, uint64_t arg4) {
 	if (!UseLiftedCode(141, 0x8321F548)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_8321F548(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8321F548);
 	uint32_t stack = ctx.r1.u64;
@@ -636,7 +639,7 @@ uint64_t n_sub_8321F548(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	uint32_t discardBuffer = stack + 80;
 	ctx.r1.u64 = stack;
 	ctx.r6.u64 = arg4;  // state the callee may pass on
-	n_sub_8321F328(ctx, base, stream, discardBuffer);
+	Stream_ReadToBuffer(ctx, base, stream, discardBuffer);
 
 	uint32_t virtualMethod = LOAD32(uint32_t(entityDef->vtable) + 28);
 	ctx.r3.u64 = entityDefAddr;
@@ -650,10 +653,10 @@ uint64_t n_sub_8321F548(CpuState& ctx, uint8_t* base, uint64_t entityDefAddr, ui
 	ctx.r1.u64 = stack;
 	return ctx.r3.u64;
 }
-PROMOTED_ENTRY(141, sub_8321F548, 0x8321F548) { ctx.r3.u64 = n_sub_8321F548(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(141, sub_8321F548, 0x8321F548) { ctx.r3.u64 = CEntityDef_ReadFromStream(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_8321F618  [80 bytes]
-uint32_t n_sub_8321F618(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8321F618(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(141, 0x8321F618)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8321F618(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8321F618);
 	uint32_t stack = ctx.r1.u64;
@@ -670,9 +673,9 @@ uint32_t n_sub_8321F618(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(141, sub_8321F618, 0x8321F618) { ctx.r3.u64 = n_sub_8321F618(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(141, sub_8321F618, 0x8321F618) { ctx.r3.u64 = CEntityDef_Destructor_8321F618(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8323A908(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8323A908(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323A908)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323A908(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323A908);
 	uint32_t stack = ctx.r1.u64;
@@ -687,10 +690,10 @@ uint32_t n_sub_8323A908(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323A908, 0x8323A908) { ctx.r3.u64 = n_sub_8323A908(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323A908, 0x8323A908) { ctx.r3.u64 = CEntityDef_Destructor_8323A908(ctx, base, ctx.r3.u32); }
 
 // sub_8323B040  [80 bytes]
-uint32_t n_sub_8323B040(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8323B040(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323B040)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323B040(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323B040);
 	uint32_t stack = ctx.r1.u64;
@@ -705,9 +708,9 @@ uint32_t n_sub_8323B040(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323B040, 0x8323B040) { ctx.r3.u64 = n_sub_8323B040(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323B040, 0x8323B040) { ctx.r3.u64 = CEntityDef_Destructor_8323B040(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8323BAC8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8323BAC8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323BAC8)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323BAC8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323BAC8);
 	uint32_t stack = ctx.r1.u64;
@@ -722,9 +725,9 @@ uint32_t n_sub_8323BAC8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323BAC8, 0x8323BAC8) { ctx.r3.u64 = n_sub_8323BAC8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323BAC8, 0x8323BAC8) { ctx.r3.u64 = CEntityDef_Destructor_8323BAC8(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8323C5C0(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8323C5C0(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323C5C0)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323C5C0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323C5C0);
 	uint32_t stack = ctx.r1.u64;
@@ -739,10 +742,10 @@ uint32_t n_sub_8323C5C0(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return destroyResult;
 }
-PROMOTED_ENTRY(142, sub_8323C5C0, 0x8323C5C0) { ctx.r3.u64 = n_sub_8323C5C0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323C5C0, 0x8323C5C0) { ctx.r3.u64 = CEntityDef_Destructor_8323C5C0(ctx, base, ctx.r3.u32); }
 
 // sub_8323D6D0  [152 bytes]
-uint32_t n_sub_8323D6D0(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_DestructorWithTargetHandle100(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323D6D0)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323D6D0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323D6D0);
 	uint32_t stack = ctx.r1.u64;
@@ -770,10 +773,10 @@ uint32_t n_sub_8323D6D0(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323D6D0, 0x8323D6D0) { ctx.r3.u64 = n_sub_8323D6D0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323D6D0, 0x8323D6D0) { ctx.r3.u64 = CEntityDef_DestructorWithTargetHandle100(ctx, base, ctx.r3.u32); }
 
 // sub_8323E5D8  [80 bytes]
-uint32_t n_sub_8323E5D8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_Destructor_8323E5D8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323E5D8)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323E5D8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323E5D8);
 	uint32_t stack = ctx.r1.u64;
@@ -790,9 +793,9 @@ uint32_t n_sub_8323E5D8(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323E5D8, 0x8323E5D8) { ctx.r3.u64 = n_sub_8323E5D8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323E5D8, 0x8323E5D8) { ctx.r3.u64 = CEntityDef_Destructor_8323E5D8(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8323F120(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
+uint32_t CEntityDef_DestructorWithTargetHandleCC(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	if (!UseLiftedCode(142, 0x8323F120)) { ctx.r3.u64 = entityDefAddr; __imp__sub_8323F120(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8323F120);
 	uint32_t stack = ctx.r1.u64;
@@ -817,4 +820,4 @@ uint32_t n_sub_8323F120(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(142, sub_8323F120, 0x8323F120) { ctx.r3.u64 = n_sub_8323F120(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(142, sub_8323F120, 0x8323F120) { ctx.r3.u64 = CEntityDef_DestructorWithTargetHandleCC(ctx, base, ctx.r3.u32); }

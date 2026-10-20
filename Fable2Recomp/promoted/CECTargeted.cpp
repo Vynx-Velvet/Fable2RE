@@ -1,9 +1,9 @@
 // CECTargeted (vtable 0x82003858): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
+uint64_t CECTargeted_CanInteract(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 	if (!UseLiftedCode(11, 0x82294C68)) { ctx.r3.u64 = targetedAddr; __imp__sub_82294C68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82294C68);
 	uint32_t stack = ctx.r1.u64;
@@ -100,8 +100,12 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 		uint32_t interactableAddr = interactableHandle + 196;
 		uint32_t targetValue = uint32_t(targeted->m_4);
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = savedR6;
+		ctx.r7.u64 = savedR7;
+		ctx.r8.u64 = savedR8;
+		ctx.r9.u64 = savedR9;
 		ctx.xer.ca = flags.ca;
-		uint8_t canTXT_820A87D4_B_ = uint8_t(n_sub_82488F30(ctx, base, interactableAddr, targetValue));
+		uint8_t canTXT_820A87D4_B_ = uint8_t(EntityHandle_MatchesEntity(ctx, base, interactableAddr, targetValue));
 		savedR6 = ctx.r6.u64;
 		savedR7 = ctx.r7.u64;
 		savedR8 = ctx.r8.u32;
@@ -124,9 +128,9 @@ uint64_t n_sub_82294C68(CpuState& ctx, uint8_t* base, uint32_t targetedAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_82294C68, 0x82294C68) { ctx.r3.u64 = n_sub_82294C68(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(11, sub_82294C68, 0x82294C68) { ctx.r3.u64 = CECTargeted_CanInteract(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t targeted) {
+uint64_t CECTargeted_ClearSuggestions(CpuState& ctx, uint8_t* base, uint64_t targeted) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(13, 0x822D50B8)) { ctx.r3.u64 = targeted; __imp__sub_822D50B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822D50B8);
@@ -172,6 +176,8 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t targeted) {
 			lookupObj = LOAD32(listObj + 4);
 			sourceEntityId = LOAD32(lookupObj);
 			ctx.r1.u64 = stack;
+			ctx.r8.u64 = lookupObj;
+			ctx.r9.u64 = listObj;
 			ctx.xer.ca = flags.ca;
 			sourceEntity = EntityHandle_Get(ctx, base, sourceEntityId);
 			reg6 = ctx.r6.u64;
@@ -272,6 +278,8 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t targeted) {
 						}
 						eraseElement = currentElement;
 						eraseRecordId = suggestionHandle;
+						ctx.r6.u64 = reg6;
+						ctx.r7.u64 = reg7;
 						ctx.xer.ca = flags.ca;
 						SharedHandleList_EraseMatching(ctx, base, eraseRecordId, eraseElement);
 						reg6 = ctx.r6.u64;
@@ -301,7 +309,7 @@ uint64_t n_sub_822D50B8(CpuState& ctx, uint8_t* base, uint64_t targeted) {
 	ctx.xer.ca = flags.ca;
 	return returnValue;
 }
-PROMOTED_ENTRY(13, sub_822D50B8, 0x822D50B8) { ctx.r3.u64 = n_sub_822D50B8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(13, sub_822D50B8, 0x822D50B8) { ctx.r3.u64 = CECTargeted_ClearSuggestions(ctx, base, ctx.r3.u64); }
 
 uint64_t CECTargeted_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameString) {
 	constexpr int32_t str_TXT_820A8788_B_ = int32_t(0x820A8788);
@@ -313,7 +321,7 @@ uint64_t CECTargeted_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNa
 }
 PROMOTED_ENTRY(19, sub_823974E8, 0x823974E8) { ctx.r3.u64 = CECTargeted_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82397818(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2) {
+uint64_t CECTargeted_EndInteraction(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2) {
 	constexpr int32_t str_TXT_820A87D4_B_ = int32_t(0x820A87D4);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(19, 0x82397818)) { ctx.r3.u64 = targetedAddr; ctx.r8.u64 = arg2; __imp__sub_82397818(ctx, base); return ctx.r3.u64; }
@@ -344,7 +352,7 @@ uint64_t n_sub_82397818(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 		CCharString_ConstructFromCStr(ctx, base, interactString, str_TXT_820A87D4_B_, -1);
 		uint32_t targetData2 = targeted->m_4;
 		uint32_t interactStringManager = LOAD32(LOAD32(LOAD32(gameGlobals + 26788) + 32) + 28);
-		n_sub_821BD998(ctx, base, interactStringManager, targetData2, interactString);
+		InteractionManager_RemoveText(ctx, base, interactStringManager, targetData2, interactString);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, interactString);
 		targeted->m_28 = uint8_t(0);
 	}
@@ -353,9 +361,9 @@ uint64_t n_sub_82397818(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(19, sub_82397818, 0x82397818) { ctx.r3.u64 = n_sub_82397818(ctx, base, ctx.r3.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(19, sub_82397818, 0x82397818) { ctx.r3.u64 = CECTargeted_EndInteraction(ctx, base, ctx.r3.u64, ctx.r8.u64); }
 
-uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2, uint64_t isSaving) {
+uint64_t CECTargeted_Serialize(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uint64_t arg2, uint64_t isSaving) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820A8864_B_ = int32_t(0x820A8864);
 	constexpr int32_t str_TXT_820A8958_B_ = int32_t(0x820A8958);
@@ -392,14 +400,17 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 
 	ctx.r6.u64 = isSaving;
 	beginName(str_TXT_820A8958_B_);
+	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8974_B_);
+	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
 	beginName(str_TXT_820A8864_B_);
+	ctx.r4.u64 = internedName();
 	IStream_SerializeFloat(ctx, base, arg2, targetedAddr + 72);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
@@ -452,6 +463,7 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 			REX_CALL_INDIRECT_FUNC(beginCallback);
 
 			beginName(str_TXT_820A89B0_B_);
+			ctx.r4.u64 = internedName();
 			IStream_SerializeId(ctx, base, arg2, suggestionIdTemp);
 			CCharString_ReleaseAndDecGlobalCountA(ctx, base, fieldNameString);
 
@@ -490,6 +502,7 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 		do {
 			STORE32(recordIdTemp, 0);
 			beginName(str_TXT_820A89B0_B_);
+			ctx.r4.u64 = internedName();
 			IStream_SerializeId(ctx, base, arg2, recordIdTemp);
 			CCharString_Release(ctx, base, fieldNameString);
 
@@ -522,7 +535,7 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 				}
 			}
 
-			n_sub_8239BC88(ctx, base, TXT_820A899C_L_, suggestionRecord);
+			Vector_PushBackPair_8239BC88(ctx, base, TXT_820A899C_L_, suggestionRecord);
 
 			uint32_t nextCallback = LOAD32(LOAD32(uint32_t(arg2)) + 12);
 			ctx.r3.u64 = arg2;
@@ -544,12 +557,12 @@ uint64_t n_sub_82398520(CpuState& ctx, uint8_t* base, uint64_t targetedAddr, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(19, sub_82398520, 0x82398520) { ctx.r3.u64 = n_sub_82398520(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(19, sub_82398520, 0x82398520) { ctx.r3.u64 = CECTargeted_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
 uint64_t n_sub_8239B7A0(CpuState& ctx, uint8_t* base, uint64_t arg1) {
 	if (!UseLiftedCode(19, 0x8239B7A0)) { ctx.r3.u64 = arg1; __imp__sub_8239B7A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8239B7A0);
-	return n_sub_822D50B8(ctx, base, arg1);
+	return CECTargeted_ClearSuggestions(ctx, base, arg1);
 }
 PROMOTED_ENTRY(19, sub_8239B7A0, 0x8239B7A0) { ctx.r3.u64 = n_sub_8239B7A0(ctx, base, ctx.r3.u64); }
 
@@ -571,7 +584,7 @@ uint64_t n_sub_8239B7A8(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	uint32_t guiCounterManager = LOAD32(LOAD32(gameSingleton + 32) + 88);
 	ctx.r1.u64 = stack;
 	n_sub_82176010(ctx, base, guiCounterManager, targetFlags);
-	uint64_t result = n_sub_822D50B8(ctx, base, targetedAddr);
+	uint64_t result = CECTargeted_ClearSuggestions(ctx, base, targetedAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
@@ -595,7 +608,7 @@ uint64_t n_sub_8239B808(CpuState& ctx, uint8_t* base, uint64_t targeted, uint64_
 
 	uint64_t result;
 	if ((int32_t)ctx.r3.u32 == 8) {
-		result = n_sub_8239B880(ctx, base, targeted);
+		result = CECTargeted_CancelInteraction(ctx, base, targeted);
 	} else {
 		// Re-read the accessor: the previous call may have changed the vtable.
 		uint32_t stateGetter2 = LOAD32(LOAD32((uint32_t)interactionState) + 4);
@@ -604,7 +617,7 @@ uint64_t n_sub_8239B808(CpuState& ctx, uint8_t* base, uint64_t targeted, uint64_
 		REX_CALL_INDIRECT_FUNC(stateGetter2);
 		result = ctx.r3.u64;
 		if ((int32_t)result == 9) {
-			result = n_sub_8239B880(ctx, base, targeted);
+			result = CECTargeted_CancelInteraction(ctx, base, targeted);
 		}
 	}
 
@@ -614,7 +627,7 @@ uint64_t n_sub_8239B808(CpuState& ctx, uint8_t* base, uint64_t targeted, uint64_
 }
 PROMOTED_ENTRY(19, sub_8239B808, 0x8239B808) { ctx.r3.u64 = n_sub_8239B808(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8239B880(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
+uint64_t CECTargeted_CancelInteraction(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	if (!UseLiftedCode(19, 0x8239B880)) { ctx.r3.u64 = targetedAddr; __imp__sub_8239B880(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8239B880);
 	constexpr int32_t str_TXT_820A87D4_B_ = int32_t(0x820A87D4);
@@ -623,7 +636,7 @@ uint64_t n_sub_8239B880(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	CECTargeted* targeted = GameObject<CECTargeted>(base, targetedAddr);
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
-	n_sub_822D50B8(ctx, base, targetedAddr);
+	CECTargeted_ClearSuggestions(ctx, base, targetedAddr);
 	uint32_t targetData = targeted->m_4;
 	uint32_t flagsHigh = LOAD32(targetData + 24);
 	uint64_t targetFlags = (uint64_t)LOAD32(targetData + 20) | (uint64_t)flagsHigh;
@@ -648,7 +661,7 @@ uint64_t n_sub_8239B880(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 		uint32_t targetData2 = targeted->m_4;
 		uint32_t interactStringManager = LOAD32(LOAD32(gameGlobals + 26788) + 32);
 		uint32_t callback = LOAD32(interactStringManager + 28);
-		n_sub_821BD998(ctx, base, callback, targetData2, interactStringBuffer);
+		InteractionManager_RemoveText(ctx, base, callback, targetData2, interactStringBuffer);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, interactStringBuffer);
 		targeted->m_28 = 0;
 	}
@@ -656,4 +669,4 @@ uint64_t n_sub_8239B880(CpuState& ctx, uint8_t* base, uint64_t targetedAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(19, sub_8239B880, 0x8239B880) { ctx.r3.u64 = n_sub_8239B880(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(19, sub_8239B880, 0x8239B880) { ctx.r3.u64 = CECTargeted_CancelInteraction(ctx, base, ctx.r3.u64); }

@@ -1,9 +1,9 @@
 // CECPhysicsSimulationKeyframed (vtable 0x82007110): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t arg2, double deltaTime) {
+uint64_t CECPhysicsSimulationKeyframed_Update(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t arg2, double deltaTime) {
 	constexpr int32_t g_82000F94 = int32_t(0x82000F94);
 	if (!UseLiftedCode(5, 0x821FC858)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = arg2; ctx.f1.f64 = deltaTime; __imp__sub_821FC858(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821FC858);
@@ -52,12 +52,13 @@ uint64_t n_sub_821FC858(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	STORE8(stack + 84, uint8_t(0));
 	STORE32(stack + 80, (uint32_t)tempObjectVtable);
 	// state the callee may pass on
-	uint64_t result = n_sub_82202E90(ctx, base, entity, (uint64_t)stack + 80);
+	ctx.r9.u64 = tempObjectVtable;
+	uint64_t result = Entity_NotifyEvent(ctx, base, entity, (uint64_t)stack + 80);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(5, sub_821FC858, 0x821FC858) { ctx.r3.u64 = n_sub_821FC858(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
+PROMOTED_ENTRY(5, sub_821FC858, 0x821FC858) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_Update(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.f1.f64); }
 
 uint64_t CECPhysicsSimulationKeyframed_GetPosition(CpuState& ctx, uint8_t* base, uint64_t positionOut, uint64_t self) {
 	if (!UseLiftedCode(5, 0x8220BA78)) { ctx.r3.u64 = positionOut; ctx.r4.u64 = self; __imp__sub_8220BA78(ctx, base); return ctx.r3.u64; }
@@ -152,7 +153,7 @@ PROMOTED_ENTRY(7, sub_82241468, 0x82241468) { ctx.r3.u64 = n_sub_82241468(ctx, b
 // removes the entity's handle from the handle list at +56; otherwise searches that
 // list (releasing handles whose entity is null on the way) and appends a handle to
 // the entity when none targets it.
-uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t entity, uint64_t removeFlag) {
+uint64_t CECPhysicsSimulationKeyframed_ToggleEntityHandle(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t entity, uint64_t removeFlag) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(11, 0x822A8A10)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = entity; ctx.r5.u64 = removeFlag; __imp__sub_822A8A10(ctx, base); return ctx.r3.u64; }
@@ -186,6 +187,7 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
+			ctx.r7.u64 = handleVtable;
 			ctx.r8.u64 = 0;
 			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
 			EntityHandleList_Remove_822A8BC8(ctx, base, (int64_t)physicsSimulationKeyframedAddr + 56, handleBuf);
@@ -253,7 +255,9 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 			uint64_t handleVtable = g_820F1664;
 			STORE32(stack + 84, 0);
 			STORE32(stack + 80, (uint32_t)handleVtable);
+			ctx.r7.u64 = iteratorCopy;
 			ctx.r8.u64 = iterator;
+			ctx.r9.u64 = handleVtable;
 			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
 
 			uint32_t listEndNode = LOAD32(listHead + 4);
@@ -274,7 +278,7 @@ uint64_t n_sub_822A8A10(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(11, sub_822A8A10, 0x822A8A10) { ctx.r3.u64 = n_sub_822A8A10(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(11, sub_822A8A10, 0x822A8A10) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_ToggleEntityHandle(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t n_sub_822A8CA0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr) {
 	if (!UseLiftedCode(11, 0x822A8CA0)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; __imp__sub_822A8CA0(ctx, base); return ctx.r3.u64; }
@@ -313,7 +317,7 @@ uint64_t n_sub_822A8CA0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	}
 
 	ctx.v1 = incomingV1;
-	uint64_t result = n_sub_8229B070(ctx, base, physicsSimulationKeyframedAddr);
+	uint64_t result = CECPhysicsSimpleLight_Enable(ctx, base, physicsSimulationKeyframedAddr);
 
 	stack = PopStackFrame(stack, 112);
 	// callers read r0 after the call (the original's offset of the v127 spill slot)
@@ -504,7 +508,7 @@ PROMOTED_ENTRY(43, sub_82686A58, 0x82686A58) { ctx.r3.u64 = n_sub_82686A58(ctx, 
 // Resolves every 8-byte key in the list held through the shared handle m_44 and
 // hands each result whose byte +144 has bit 0x40 set to virtual slot 152; then
 // releases the handle and clears m_44.
-uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr) {
+uint64_t CECPhysicsSimulationKeyframed_ResolveKeyList(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(43, 0x82687050)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; __imp__sub_82687050(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82687050);
@@ -533,7 +537,7 @@ uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 				// state the callee may pass on
 				ctx.r1.u64 = stack;
 				ctx.xer.ca = flags.ca;
-				uint64_t found = n_sub_82264448(ctx, base, registry, keyAddr);
+				uint64_t found = EntityManager_LookupEntity(ctx, base, registry, keyAddr);
 				r4AtRelease = found;
 				if ((uint32_t)found != 0 && (LOAD8((uint32_t)found + 144) & 0x40) != 0) {
 					uint32_t slot152Fn = LOAD32(uint32_t(physicsSimulationKeyframed->vtable) + 152);
@@ -554,6 +558,9 @@ uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 		}
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r4.u64 = r4AtRelease;
+		ctx.r7.u64 = (uint64_t)(int64_t)keyCount;
+		ctx.r8.u64 = byteSize;
 		ctx.xer.ca = flags.ca;
 		result = SharedHandle_Release(ctx, base, physicsSimulationKeyframedAddr + 68);
 		physicsSimulationKeyframed->m_44 = 0u;
@@ -562,7 +569,7 @@ uint64_t n_sub_82687050(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(43, sub_82687050, 0x82687050) { ctx.r3.u64 = n_sub_82687050(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(43, sub_82687050, 0x82687050) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_ResolveKeyList(ctx, base, ctx.r3.u64); }
 
 uint64_t CECPhysicsSimulationKeyframed_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameResult) {
 	constexpr int32_t str_TXT_820BC28C_B_ = int32_t(0x820BC28C);
@@ -575,9 +582,9 @@ uint64_t CECPhysicsSimulationKeyframed_GetClassName(CpuState& ctx, uint8_t* base
 PROMOTED_ENTRY(68, sub_82991A48, 0x82991A48) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_GetClassName(ctx, base, ctx.r3.u64); }
 
 // Scalar deleting destructor (vtable slot 0): releases the owned handles and
-// m_58, runs n_sub_824C2A48 on the object, and frees the object itself when bit 0
+// m_58, runs C_820B7540_Cleanup on the object, and frees the object itself when bit 0
 // of deleteFlags is set.
-uint64_t n_sub_82991A88(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t deleteFlags) {
+uint64_t CECPhysicsSimulationKeyframed_ScalarDeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(68, 0x82991A88)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82991A88(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82991A88);
 	uint32_t stack = ctx.r1.u64;
@@ -594,7 +601,7 @@ uint64_t n_sub_82991A88(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	HandleTarget_Free(ctx, base, ownedAllocation);
 	physicsSimulationKeyframed->m_58 = 0u;
 
-	n_sub_824C2A48(ctx, base, physicsSimulationKeyframedAddr);
+	C_820B7540_Cleanup(ctx, base, physicsSimulationKeyframedAddr);
 
 	if ((uint32_t(deleteFlags) & 0x1) != 0) {
 		HandleTarget_Free(ctx, base, physicsSimulationKeyframedAddr);
@@ -604,7 +611,7 @@ uint64_t n_sub_82991A88(CpuState& ctx, uint8_t* base, uint64_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return physicsSimulationKeyframedAddr;
 }
-PROMOTED_ENTRY(68, sub_82991A88, 0x82991A88) { ctx.r3.u64 = n_sub_82991A88(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(68, sub_82991A88, 0x82991A88) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_ScalarDeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t n_sub_82991FC0(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr) {
 	if (!UseLiftedCode(68, 0x82991FC0)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; __imp__sub_82991FC0(ctx, base); return ctx.r3.u64; }
@@ -627,7 +634,7 @@ PROMOTED_ENTRY(68, sub_82991FD0, 0x82991FD0) { ctx.r3.u64 = n_sub_82991FD0(ctx, 
 // Asks the object at +124 of the entity (virtual slot +92) for an entity; if that entity has a physics
 // component, a nonzero flag pushes this simulation's handle target (m_60) onto the component's entity-handle
 // list (sub_82702338), a zero flag passes it to sub_82702428 instead.
-uint32_t n_sub_82991FE0(CpuState& ctx, uint8_t* base, uint32_t physicsSimulationKeyframedAddr, uint64_t entityAddr, uint64_t addFlag) {
+uint32_t CECPhysicsSimulationKeyframed_TogglePhysicsComponentHandle(CpuState& ctx, uint8_t* base, uint32_t physicsSimulationKeyframedAddr, uint64_t entityAddr, uint64_t addFlag) {
 	if (!UseLiftedCode(68, 0x82991FE0)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = entityAddr; ctx.r5.u64 = addFlag; __imp__sub_82991FE0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82991FE0);
 	uint32_t stack = ctx.r1.u64;
@@ -660,9 +667,9 @@ uint32_t n_sub_82991FE0(CpuState& ctx, uint8_t* base, uint32_t physicsSimulation
 			uint32_t physicsComponent = LOAD32(physicsComponentOut);
 			uint32_t handleTarget = physicsSimulationKeyframed->m_60;
 			if (addTarget) {
-				result = n_sub_82702338(ctx, base, physicsComponent, handleTarget);
+				result = PhysicsComponent_AddEntityHandle(ctx, base, physicsComponent, handleTarget);
 			} else {
-				result = n_sub_82702428(ctx, base, physicsComponent, handleTarget);
+				result = PhysicsComponent_RemoveEntityHandle(ctx, base, physicsComponent, handleTarget);
 			}
 		}
 	}
@@ -671,7 +678,7 @@ uint32_t n_sub_82991FE0(CpuState& ctx, uint8_t* base, uint32_t physicsSimulation
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(68, sub_82991FE0, 0x82991FE0) { ctx.r3.u64 = n_sub_82991FE0(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(68, sub_82991FE0, 0x82991FE0) { ctx.r3.u64 = CECPhysicsSimulationKeyframed_TogglePhysicsComponentHandle(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u64); }
 
 // sub_82992118  [4 bytes]
 uint64_t n_sub_82992118(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr) {

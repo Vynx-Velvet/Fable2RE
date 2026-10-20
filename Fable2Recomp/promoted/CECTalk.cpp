@@ -1,9 +1,9 @@
 // CECTalk (vtable 0x820039D8): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -103,6 +103,10 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 				uint32_t soundCategory = LOAD32(currentLine + 44);
 				if (soundCategory != 0) {
 					ctx.r1.u64 = stack;
+					ctx.r6.u64 = r6Value;
+					ctx.r7.u64 = r7Value;
+					ctx.r8.u64 = r8Value;
+					ctx.r10.u64 = r10Value;
 					ctx.xer.ca = flags.ca;
 					r3Value = SoundCategory_IsPlayingByName(ctx, base, soundCategory, TXT_83497E9C_G_);
 					r6Value = ctx.r6.u64;
@@ -118,8 +122,11 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 					return r3Value;
 				}
 				ctx.r1.u64 = stack;
+				ctx.r6.u64 = r6Value;
+				ctx.r7.u64 = r7Value;
+				ctx.r8.u64 = r10Value;
 				ctx.xer.ca = flags.ca;
-				uint64_t stopped = n_sub_8244A6F8(ctx, base, talkAddr, 0);
+				uint64_t stopped = Lua_Talk_StopTalking(ctx, base, talkAddr, 0);
 				stack = PopStackFrame(stack, 112);
 				ctx.r1.u64 = stack;
 				return stopped;
@@ -127,7 +134,8 @@ uint64_t CECTalk_UpdateTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr) 
 		} else {
 			if ((int32_t)LOAD32((uint32_t)g_83320000 - 27380) > (int32_t)LOAD32(talkBase + 20)) {
 				ctx.r1.u64 = stack;
-				uint64_t stopped = n_sub_8244A6F8(ctx, base, talkAddr, 0);
+				ctx.r8.u64 = r8Value;
+				uint64_t stopped = Lua_Talk_StopTalking(ctx, base, talkAddr, 0);
 				stack = PopStackFrame(stack, 112);
 				ctx.r1.u64 = stack;
 				return stopped;
@@ -145,10 +153,8 @@ PROMOTED_ENTRY(4, sub_821E8540, 0x821E8540) { ctx.r3.u64 = CECTalk_UpdateTalking
 uint64_t CECTalk_RemoveComponent(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(4, 0x821F7000)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r8.u64 = arg3; __imp__sub_821F7000(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821F7000);
-	uint32_t stack = ctx.r1.u64;
 	PPCRegister callTarget{};
-
-	stack = PushStackFrame(base, stack, 96);
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	uint32_t talkEntity = (uint32_t)arg1;
 	uint32_t component = (uint32_t)arg2;
@@ -156,7 +162,6 @@ uint64_t CECTalk_RemoveComponent(CpuState& ctx, uint8_t* base, uint64_t arg1, ui
 	// Ask the component for its type id (virtual slot 1).
 	uint32_t getTypeFn = LOAD32(LOAD32(component) + 4);
 	callTarget.u64 = (uint64_t)getTypeFn;
-	ctx.r1.u64 = stack;
 	ctx.r3.u64 = component;
 	ctx.r4.u64 = component;
 	ctx.r8.u64 = arg3;
@@ -166,20 +171,18 @@ uint64_t CECTalk_RemoveComponent(CpuState& ctx, uint8_t* base, uint64_t arg1, ui
 
 	if ((int32_t)result == 8) {
 		if (LOAD32(talkEntity + 0x10) != 0) {
-			n_sub_8244A6F8(ctx, base, talkEntity, 0);  // Lua_Talk_StopTalking
+			Lua_Talk_StopTalking(ctx, base, talkEntity, 0);  // Lua_Talk_StopTalking
 		}
 		uint32_t talkVtable = LOAD32(talkEntity + 0x00);
 		uint32_t targetEntity = LOAD32(talkEntity + 0x04);
 		uint32_t getEntityFn = LOAD32(talkVtable + 0x10);
 		callTarget.u64 = (uint64_t)getEntityFn;
 		ctx.r3.u64 = talkEntity;
+		ctx.r10.u64 = getEntityFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t entity = ctx.r3.u64;
 		result = Entity_RemoveComponentByType(ctx, base, targetEntity, entity, ctx.r8.u64);
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return result;
 }
 PROMOTED_ENTRY(4, sub_821F7000, 0x821F7000) { ctx.r3.u64 = CECTalk_RemoveComponent(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
@@ -200,7 +203,7 @@ uint64_t CECTalk_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameSt
 }
 PROMOTED_ENTRY(25, sub_824480A0, 0x824480A0) { ctx.r3.u64 = CECTalk_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_824480E8(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t deleteFlags) {
+uint64_t CECTalk_Destructor(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t deleteFlags) {
 	if (!UseLiftedCode(25, 0x824480E8)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = deleteFlags; __imp__sub_824480E8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x824480E8);
 	uint32_t stack = ctx.r1.u64;
@@ -237,9 +240,9 @@ uint64_t n_sub_824480E8(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_824480E8, 0x824480E8) { ctx.r3.u64 = n_sub_824480E8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_824480E8, 0x824480E8) { ctx.r3.u64 = CECTalk_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_t arg2) {
+uint64_t Lua_Talk_StopTalking(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_t arg2) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t TXT_83497E9C_G_ = int32_t(0x83497E9C);
 	if (!UseLiftedCode(25, 0x8244A6F8)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = arg2; __imp__sub_8244A6F8(ctx, base); return ctx.r3.u64; }
@@ -313,8 +316,13 @@ uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_
 
 	if (haveSound) {
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = ret6;
+		ctx.r7.u64 = ret7;
+		ctx.r8.u64 = ret8;
+		ctx.r9.u64 = ret9;
+		ctx.r10.u64 = ret10;
 		ctx.xer.ca = flags.ca;
-		n_sub_823A0938(ctx, base, (uint64_t)soundId, (uint64_t)(int64_t)TXT_83497E9C_G_, ret5);
+		Lua_Sound_StopSoundCategoryPlaying(ctx, base, (uint64_t)soundId, (uint64_t)(int64_t)TXT_83497E9C_G_, ret5);
 		arg2 = ctx.r4.u64;
 		ret5 = ctx.r5.u64;
 		ret6 = ctx.r6.u64;
@@ -387,9 +395,9 @@ uint64_t n_sub_8244A6F8(CpuState& ctx, uint8_t* base, uint32_t talkAddr, uint64_
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_8244A6F8, 0x8244A6F8) { ctx.r3.u64 = n_sub_8244A6F8(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_8244A6F8, 0x8244A6F8) { ctx.r3.u64 = Lua_Talk_StopTalking(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t speakerEntity, uint64_t arg3) {
+uint64_t CECTalk_StartTalking(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t speakerEntity, uint64_t arg3) {
 	if (!UseLiftedCode(25, 0x8244AD28)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = speakerEntity; ctx.r8.u64 = arg3; __imp__sub_8244AD28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8244AD28);
 	constexpr int32_t kStrRoperMinimap = int32_t(0x820B0000);
@@ -404,9 +412,9 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	uint32_t animObj = talk->m_4;
 	ctx.r1.u64 = stack;
 	ctx.r8.u64 = arg3;
-	n_sub_82392C88(ctx, base, animObj, talkAddr);
+	CECDoor_UpdateOpenStateForEntity(ctx, base, animObj, talkAddr);
 
-	uint64_t result = n_sub_8244B518(ctx, base, talkAddr, 1, ctx.r8.u64);
+	uint64_t result = CECTalk_SetSpeechEnabled(ctx, base, talkAddr, 1, ctx.r8.u64);
 
 	if ((uint32_t)speakerEntity != 0) {
 		uint64_t TXT_820B2F64_L_ = kStrTXT_820B2F64_B_;
@@ -415,14 +423,14 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 		GameDB_ReadMappedU32Field(ctx, base, speakerEntity, voiceHash, stack + 80);
 
 		ctx.r8.s64 = kStrRoperMinimap;
-		uint64_t narratorName = n_sub_82345978(ctx, base, speakerEntity, (int64_t)kStrRoperMinimap + 12144);
+		uint64_t narratorName = GameDB_GetStringField(ctx, base, speakerEntity, (int64_t)kStrRoperMinimap + 12144);
 		CCharString_AssignFromCStr(ctx, base, talkAddr + 64, narratorName);
 
 		uint32_t mappedValue = LOAD32(stack + 80);
 		ctx.fpscr.disableFlushMode();
 		double defaultWeight = double(LOAD_F32(0x820994B4u));
 		double totalWeight = defaultWeight;
-		n_sub_829FBC40(ctx, base, stack + 88, mappedValue, ctx.r8.u64);
+		GameDB_GetArrayField(ctx, base, stack + 88, mappedValue, ctx.r8.u64);
 
 		uint32_t i = LOAD32(stack + 96);
 		uint32_t end1 = LOAD32(stack + 92);
@@ -444,7 +452,7 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 				ctx.fpscr.disableFlushMode();
 				uint64_t weightHash = String_HashFnv1(ctx, base, (uint64_t)kStrWeight, kFnvSeed);
 				uint32_t mapValue = HashMapU32_FindValue(ctx, base, mapPtr, LOAD32(elemData));
-				uint32_t weightPtr = n_sub_821E55C8(ctx, base, mapValue, weightHash, stack + 80);
+				uint32_t weightPtr = GameDB_FindFieldValueByKey(ctx, base, mapValue, weightHash, stack + 80);
 
 				double weight = defaultWeight;
 				if (weightPtr != 0) {
@@ -467,7 +475,7 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 
 				ctx.fpscr.disableFlushMode();
 				ctx.f1.f64 = rngResult;
-				n_sub_829FBC40(ctx, base, stack + 88, mappedValue, ctx.r8.u64);
+				GameDB_GetArrayField(ctx, base, stack + 88, mappedValue, ctx.r8.u64);
 
 				uint32_t j = LOAD32(stack + 96);
 				uint32_t end2 = LOAD32(stack + 92);
@@ -523,9 +531,9 @@ uint64_t n_sub_8244AD28(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_8244AD28, 0x8244AD28) { ctx.r3.u64 = n_sub_8244AD28(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(25, sub_8244AD28, 0x8244AD28) { ctx.r3.u64 = CECTalk_StartTalking(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
-uint64_t n_sub_8244AFE0(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t stream) {
+uint64_t CECTalk_Serialize(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t stream) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820B2F64_B_ = int32_t(0x820B2F64);
 	constexpr int32_t str_TXT_820B2F70_B_ = int32_t(0x820B2F70);
@@ -545,6 +553,7 @@ uint64_t n_sub_8244AFE0(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	uint32_t voiceTypeName = LOAD32(nameTemp);
 	STORE32(valueTemp, uint32_t(talk->m_20));
 	uint64_t fieldName = (voiceTypeName == 0) ? (uint64_t)(int64_t)g_8209003F : (uint64_t)LOAD32(voiceTypeName);
+	ctx.r4.u64 = fieldName;
 	IStream_SerializeU32(ctx, base, stream, valueTemp);
 	talk->m_20 = LOAD32(valueTemp);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameTemp);
@@ -556,16 +565,16 @@ uint64_t n_sub_8244AFE0(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 
 
 	CCharString_ConstructFromCStr(ctx, base, nameTemp, str_TXT_820B2F70_B_, -1);
-	n_sub_82A16EC0(ctx, base, nameTemp, stream, talkAddr + 64);
+	IStream_SerializeCCharString(ctx, base, nameTemp, stream, talkAddr + 64);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameTemp);
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(25, sub_8244AFE0, 0x8244AFE0) { ctx.r3.u64 = n_sub_8244AFE0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(25, sub_8244AFE0, 0x8244AFE0) { ctx.r3.u64 = CECTalk_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_8244B0C0(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
+uint64_t CECTalk_LoadIdleAnimations(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 	constexpr int32_t str_TXT_820B2EDC_B_ = int32_t(0x820B2EDC);
 	constexpr int32_t str_TXT_820B2EEC_B_ = int32_t(0x820B2EEC);
 	if (!UseLiftedCode(25, 0x8244B0C0)) { ctx.r3.u64 = talkAddr; __imp__sub_8244B0C0(ctx, base); return ctx.r3.u64; }
@@ -636,6 +645,7 @@ uint64_t n_sub_8244B0C0(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 
 		uint64_t TXT_820B2EDC_L_ = str_TXT_820B2EDC_B_;
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = r6Value;
 		CCharString_ConstructFromCStr(ctx, base, stack + 84, TXT_820B2EDC_L_, -1);
 
 		STORE32(stack + 80, 0);
@@ -663,20 +673,20 @@ uint64_t n_sub_8244B0C0(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 	ctx.r1.u64 = stack;
 	return talkAddr;
 }
-PROMOTED_ENTRY(25, sub_8244B0C0, 0x8244B0C0) { ctx.r3.u64 = n_sub_8244B0C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_8244B0C0, 0x8244B0C0) { ctx.r3.u64 = CECTalk_LoadIdleAnimations(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8244B2C0(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
+uint64_t CECTalk_PlaySpeech(CpuState& ctx, uint8_t* base, uint64_t talkAddr) {
 	if (!UseLiftedCode(25, 0x8244B2C0)) { ctx.r3.u64 = talkAddr; __imp__sub_8244B2C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8244B2C0);
 	CECTalk* talk = GameObject<CECTalk>(base, talkAddr);
 	if (talk->m_10 == 0) {
 		return talkAddr;
 	}
-	return n_sub_8244A6F8(ctx, base, talkAddr, 0);
+	return Lua_Talk_StopTalking(ctx, base, talkAddr, 0);
 }
-PROMOTED_ENTRY(25, sub_8244B2C0, 0x8244B2C0) { ctx.r3.u64 = n_sub_8244B2C0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(25, sub_8244B2C0, 0x8244B2C0) { ctx.r3.u64 = CECTalk_PlaySpeech(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t isEnabled, uint64_t arg3) {
+uint64_t CECTalk_SetSpeechEnabled(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_t isEnabled, uint64_t arg3) {
 	constexpr int32_t str_TXT_820B2DB0_B_ = int32_t(0x820B2DB0);
 	if (!UseLiftedCode(25, 0x8244B518)) { ctx.r3.u64 = talkAddr; ctx.r4.u64 = isEnabled; ctx.r8.u64 = arg3; __imp__sub_8244B518(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8244B518);
@@ -740,12 +750,15 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	if (hasEvent) {
 		if ((uint32_t)isEnabled & 0xFF) {
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = r6Value;
 			CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, str_TXT_820B2DB0_B_, -1);
 			n_sub_8223E410(ctx, base, speechEvent, talkAddr + 12, talkAddr + 68, uint64_t(stack) + 80);
 			returnValue = CCharString_ReleaseAndDecGlobalCountA(ctx, base, uint64_t(stack) + 80);
 			isEnabled = ctx.r4.u64;
 		} else {
 			ctx.r1.u64 = stack;
+			ctx.r6.u64 = r6Value;
+			ctx.r7.u64 = r7Value;
 			returnValue = n_sub_82516210(ctx, base, speechEvent, talkAddr + 68, arg3);
 			isEnabled = ctx.r4.u64;
 		}
@@ -756,4 +769,4 @@ uint64_t n_sub_8244B518(CpuState& ctx, uint8_t* base, uint64_t talkAddr, uint64_
 	ctx.r4.u64 = isEnabled;
 	return returnValue;
 }
-PROMOTED_ENTRY(25, sub_8244B518, 0x8244B518) { ctx.r3.u64 = n_sub_8244B518(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(25, sub_8244B518, 0x8244B518) { ctx.r3.u64 = CECTalk_SetSpeechEnabled(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }

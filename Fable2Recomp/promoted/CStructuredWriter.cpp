@@ -1,9 +1,9 @@
 // CStructuredWriter (vtable 0x8200E898): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -85,7 +85,7 @@ uint64_t CStructuredWriter_Destroy(CpuState& ctx, uint8_t* base, uint64_t struct
 	uint32_t listAddr = structuredWriterAddr + 24;
 	structuredWriter->vtable = 0x8200E898u;
 	ctx.r1.u64 = stack;
-	n_sub_8235E680(ctx, base, listAddr);
+	Container_Destruct(ctx, base, listAddr);
 	uint32_t referencedObject = structuredWriter->m_10;
 	if (referencedObject != 0) {
 		uint32_t destroyFn = LOAD32(LOAD32(referencedObject) + 8);
@@ -93,7 +93,7 @@ uint64_t CStructuredWriter_Destroy(CpuState& ctx, uint8_t* base, uint64_t struct
 		ctx.r10.u64 = destroyFn;
 		REX_CALL_INDIRECT_FUNC(destroyFn);
 	}
-	n_sub_82C81BF8(ctx, base, structuredWriterAddr);
+	C_8200E9A8_Destruct(ctx, base, structuredWriterAddr);
 	if ((deletionFlags & 0x1) != 0) {
 		HandleTarget_FreeThunk(ctx, base, structuredWriterAddr);
 	}
@@ -140,7 +140,7 @@ uint64_t CStructuredWriter_BeginElement(CpuState& ctx, uint8_t* base, uint64_t s
 	BasicString_AssignSubstr(ctx, base, (uint64_t)stack + 96, (uint64_t)stack + 128, 0, -1, ctx.r8.u64);
 
 	if (structuredWriter->m_result != 0) {
-		uint32_t writeResult = n_sub_82C83408(ctx, base, (uint64_t)stack + 96, writerAddr, ctx.r8.u64);
+		uint32_t writeResult = CStructuredWriter_WriteString(ctx, base, (uint64_t)stack + 96, writerAddr, ctx.r8.u64);
 		structuredWriter->m_result = (uint8_t)writeResult;
 	}
 
@@ -373,7 +373,7 @@ uint64_t CStructuredWriter_WriteNamedValue(CpuState& ctx, uint8_t* base, uint64_
 	if (LOAD8(nestedWriterAddr + 4) != 0) {
 		uint32_t valueAddr = stack + 81;
 		ctx.r1.u64 = stack;
-		uint32_t writeResult = n_sub_82C839C8(ctx, base, namedValue, nestedWriterAddr, arg3);
+		uint32_t writeResult = CStructuredWriter_WriteNameAndValue(ctx, base, namedValue, nestedWriterAddr, arg3);
 		STORE8(nestedWriterAddr + 4, (uint8_t)writeResult);
 	}
 

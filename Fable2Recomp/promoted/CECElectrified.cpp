@@ -1,9 +1,9 @@
 // CECElectrified (vtable 0x820ED440): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -20,7 +20,7 @@ uint64_t CECElectrified_GetClassName(CpuState& ctx, uint8_t* base, uint64_t clas
 }
 PROMOTED_ENTRY(67, sub_829759C0, 0x829759C0) { ctx.r3.u64 = CECElectrified_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82975C20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr, uint64_t stream, uint64_t flags) {
+uint64_t CECElectrified_Serialize(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr, uint64_t stream, uint64_t flags) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820B59DC_B_ = int32_t(0x820B59DC);
 	constexpr int32_t str_TXT_820CFD90_B_ = int32_t(0x820CFD90);
@@ -54,39 +54,47 @@ uint64_t n_sub_82975C20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr, 
 	};
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED3F8_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 40);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E013C_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 48);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED404_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 52);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820ED414_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 60);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820CFD90_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 64);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820CFDA0_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeFloat(ctx, base, stream, electrifiedAddr + 68);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E01B0_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeId(ctx, base, stream, electrifiedAddr + 32);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E01C4_B_, -1);
+	ctx.r4.u64 = nameText();
 	IStream_SerializeU32(ctx, base, stream, electrifiedAddr + 36);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	CCharString_ConstructFromCStr(ctx, base, nameBuffer, str_TXT_820E01D8_B_, -1);
-	n_sub_8244DAE0(ctx, base, electrifiedAddr + 96, nameBuffer, stream);
+	UID_Serialize(ctx, base, electrifiedAddr + 96, nameBuffer, stream);
 	uint64_t result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, nameBuffer);
 
 	electrified->m_F = uint8_t(((uint32_t)flags & 0xFF) == 0);
@@ -95,9 +103,9 @@ uint64_t n_sub_82975C20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr, 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(67, sub_82975C20, 0x82975C20) { ctx.r3.u64 = n_sub_82975C20(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(67, sub_82975C20, 0x82975C20) { ctx.r3.u64 = CECElectrified_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
-uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint64_t CECElectrified_Activate(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(68, 0x82975E90)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82975E90(ctx, base); return ctx.r3.u64; }
@@ -132,6 +140,7 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 		uint32_t playersSlot = LOAD32(LOAD32(LOAD32(globalObject + 12) + 88) + 4);
 		uint32_t players = LOAD32(playersSlot);
 		ctx.r5.u64 = globalObject;  // state the callee may pass on
+		ctx.r9.u64 = playersSlot;
 		uint32_t isPlayer = Players_IsPlayer(ctx, base, players, entity);
 		r8Value = isPlayer & 0xFF;
 		if ((uint32_t)r8Value != 0) {
@@ -143,8 +152,8 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 
 	uint32_t entity = electrified->m_4;
 	ctx.r8.u64 = r8Value;  // state the callee may pass on
-	uint64_t result = n_sub_824BD958(ctx, base, entity);
-	// r6-r9, cr0 and the carry as the original leaves them (r4 further down); n_sub_82977DB8 is handed these.
+	uint64_t result = Entity_IsFlammable(ctx, base, entity);
+	// r6-r9, cr0 and the carry as the original leaves them (r4 further down); CECElectrified_CreateEffectEntity is handed these.
 	uint64_t r6Value = ctx.r6.u64;
 	uint64_t r7Value = ctx.r7.u64;
 	r8Value = ctx.r8.u64;
@@ -219,7 +228,7 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 				uint32_t players = LOAD32(playersSlot);
 				ctx.r8.u64 = playersSlot;  // state the callee may pass on
 				ctx.xer.ca = flags.ca;
-				uint64_t originEntity = n_sub_82264448(ctx, base, players, originUidAddr);
+				uint64_t originEntity = EntityManager_LookupEntity(ctx, base, players, originUidAddr);
 
 				// Temporary EntityHandle {vtable, target} at stack+80, copied into the handle at +104.
 				uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
@@ -242,14 +251,18 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 				flags.ca = ctx.xer.ca;
 			}
 			// state the callee may pass on
+			ctx.r4.u64 = r4Value;
+			ctx.r6.u64 = r6Value;
+			ctx.r7.u64 = r7Value;
 			ctx.r8.u64 = r8Value;
+			ctx.r9.u64 = r9Value;
 			ctx.cr0 = compare0;
 			ctx.xer.ca = flags.ca;
-			n_sub_82977DB8(ctx, base, electrifiedAddr);
+			CECElectrified_CreateEffectEntity(ctx, base, electrifiedAddr);
 			n_sub_82976AF0(ctx, base, electrifiedAddr);
-			n_sub_82977100(ctx, base, electrifiedAddr);
+			CECElectrified_UpdateTargetInfo(ctx, base, electrifiedAddr);
 			if (electrified->m_15 != 0)
-				n_sub_824B9528(ctx, base, electrified->m_4, 89, 89, 89);
+				Entity_SetTint(ctx, base, electrified->m_4, 89, 89, 89);
 			result = n_sub_82977C30(ctx, base, electrifiedAddr);
 			ctx.fpscr.disableFlushMode();
 			electrified->m_2C = float(double(electrified->m_3C));
@@ -261,9 +274,9 @@ uint64_t n_sub_82975E90(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_82975E90, 0x82975E90) { ctx.r3.u64 = n_sub_82975E90(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82975E90, 0x82975E90) { ctx.r3.u64 = CECElectrified_Activate(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82976128(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint64_t CECElectrified_Deactivate(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(68, 0x82976128)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82976128(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82976128);
@@ -273,8 +286,8 @@ uint64_t n_sub_82976128(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	n_sub_82976DD8(ctx, base, electrifiedAddr);
-	n_sub_82977E68(ctx, base, electrifiedAddr);
+	CECElectrified_ReleaseTargetEntityHandle(ctx, base, electrifiedAddr);
+	CECElectrified_ResetEffectHandle(ctx, base, electrifiedAddr);
 
 	// The object reached from the global at 0x83496920 keeps counts at +8 (raised by sub_82975E90)
 	// and +24. +24 is lowered here when m_D is set, +8 at the end; neither goes below zero.
@@ -293,7 +306,7 @@ uint64_t n_sub_82976128(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	uint64_t r6Value = ctx.r6.u64;
 	flags.ca = ctx.xer.ca;
 	if (electrified->m_15 != 0) {
-		result = n_sub_824B9528(ctx, base, electrified->m_4, level, level, level);
+		result = Entity_SetTint(ctx, base, electrified->m_4, level, level, level);
 		r6Value = ctx.r6.u64;
 		flags.ca = ctx.xer.ca;
 	}
@@ -346,7 +359,7 @@ uint64_t n_sub_82976128(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 		double floatArg = double(LOAD_F32(0x820994C0u));
 		ctx.r6.u64 = r6Value;  // state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		result = n_sub_827CA600(ctx, base, electrified->m_4, floatArg);
+		result = CECTemporalExperience_Apply(ctx, base, electrified->m_4, floatArg);
 	}
 
 	uint32_t globalObject = LOAD32(uint32_t(g_83490000) + 26912);
@@ -359,9 +372,9 @@ uint64_t n_sub_82976128(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_82976128, 0x82976128) { ctx.r3.u64 = n_sub_82976128(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82976128, 0x82976128) { ctx.r3.u64 = CECElectrified_Deactivate(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint64_t CECElectrified_UpdateDamageTimer(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	if (!UseLiftedCode(68, 0x82976A20)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82976A20(ctx, base); return ctx.r3.u64; }
@@ -375,9 +388,9 @@ uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	CECElectrified* electrified = GameObject<CECElectrified>(base, electrifiedAddr);
 
 	stack = PushStackFrame(base, stack, 144);
-	uint64_t result = electrified->m_4;  // returned unless n_sub_824BB6C8 is called
+	uint64_t result = electrified->m_4;  // returned unless Entity_ApplyDamage is called
 	ctx.r1.u64 = stack;
-	double elapsed = n_sub_82207928(ctx, base, result);
+	double elapsed = Game_GetDeltaTime(ctx, base, result);
 	ctx.fpscr.disableFlushMode();
 
 	// m_30 (serialized as str_TXT_820E013C_B_) counts down by elapsed / divisor / m_38 to the floor value.
@@ -408,10 +421,16 @@ uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 			uint32_t field24 = electrified->m_24;
 			uint32_t field20 = electrified->m_20;
 			// state the callee may pass on
+			ctx.f1.f64 = elapsed;
+			ctx.f9.f64 = newTimer;
+			ctx.f10.f64 = timerStep;
+			ctx.f11.f64 = timerPeriod;
+			ctx.f12.f64 = scaledElapsed;
+			ctx.f13.f64 = TXT_820E013C_L_;
 			uint64_t originEntity = EntityHandle_Get_825575C8(ctx, base, originHandleAddr);
 			ctx.fpscr.disableFlushMode();
 			STORE8(stack + 87, uint8_t(1));
-			result = n_sub_824BB6C8(ctx, base, originEntity, entity, field20, 0, field24, 2048, 0, TXT_820ED404_L_);
+			result = Entity_ApplyDamage(ctx, base, originEntity, entity, field20, 0, field24, 2048, 0, TXT_820ED404_L_);
 			ctx.fpscr.disableFlushMode();
 			double timerReset = double(LOAD_F32(uint32_t(g_820994C0)));
 			electrified->m_30 = float(timerReset);
@@ -432,9 +451,9 @@ uint64_t n_sub_82976A20(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.f13.f64 = TXT_820E013C_L_;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_82976A20, 0x82976A20) { ctx.r3.u64 = n_sub_82976A20(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82976A20, 0x82976A20) { ctx.r3.u64 = CECElectrified_UpdateDamageTimer(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint64_t CECElectrified_ReleaseTargetEntityHandle(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(68, 0x82976DD8)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82976DD8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82976DD8);
@@ -461,7 +480,7 @@ uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	}
 
 	ctx.r1.u64 = stack;
-	n_sub_824B8500(ctx, base, entity);
+	Entity_StopParticleEffect(ctx, base, entity);
 
 	// Clear the handle by assigning it an empty temporary handle built at stack+80.
 	uint64_t emptyHandle = (uint64_t)stack + 80;
@@ -480,9 +499,9 @@ uint64_t n_sub_82976DD8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_82976DD8, 0x82976DD8) { ctx.r3.u64 = n_sub_82976DD8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82976DD8, 0x82976DD8) { ctx.r3.u64 = CECElectrified_ReleaseTargetEntityHandle(ctx, base, ctx.r3.u64); }
 
-void n_sub_82977100(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
+void CECElectrified_UpdateTargetInfo(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
 	if (!UseLiftedCode(68, 0x82977100)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977100(ctx, base); return; }
 	LiftedFrame frame(0x82977100);
 	uint32_t stack = ctx.r1.u32;
@@ -575,7 +594,7 @@ void n_sub_82977100(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
 	electrified->m_74 = 0;
 	leaveRegisters(entry17Bytes);
 }
-PROMOTED_ENTRY(68, sub_82977100, 0x82977100) { n_sub_82977100(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(68, sub_82977100, 0x82977100) { CECElectrified_UpdateTargetInfo(ctx, base, ctx.r3.u32); }
 
 uint64_t n_sub_82977C30(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
 	if (!UseLiftedCode(68, 0x82977C30)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977C30(ctx, base); return ctx.r3.u64; }
@@ -613,9 +632,9 @@ uint64_t n_sub_82977C30(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 }
 PROMOTED_ENTRY(68, sub_82977C30, 0x82977C30) { ctx.r3.u64 = n_sub_82977C30(ctx, base, ctx.r3.u32); }
 
-// Adds a new n_sub_824B71D8 result to each of the first three floats copied from electrified+80 and hands
+// Adds a new Random_FloatInRange result to each of the first three floats copied from electrified+80 and hands
 // the resulting vector to the virtual method at vtable +100 of the object whose address is at m_4 + 124.
-uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
+uint32_t CECElectrified_UpdateEffect(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(68, 0x82977C88)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977C88(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82977C88);
@@ -649,7 +668,7 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
 		ctx.r1.u64 = stack;
-		double delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
+		double delta = Random_FloatInRange(ctx, base, kParam1, kParam2);
 		ctx.fpscr.disableFlushMode();
 
 		// lane 0; each new lane value is stored to the scalar slot and loaded back into element 0 of a vector
@@ -661,7 +680,7 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(lane0Loaded), V8(vpermMask)));
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
-		delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
+		delta = Random_FloatInRange(ctx, base, kParam1, kParam2);
 		ctx.fpscr.disableFlushMode();
 
 		// lane 1
@@ -674,7 +693,7 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		SET_V8(vec, rex::ppc::simde_mm_perm_epi8_(V8(vec), V8(lane1Loaded), V8(vpermMask)));
 		VSTORE(vectorAddr & ~0xF, V8(vec));
 
-		delta = n_sub_824B71D8(ctx, base, kParam1, kParam2);
+		delta = Random_FloatInRange(ctx, base, kParam1, kParam2);
 
 		// lane 2, then hand the updated vector to the virtual method at vtable +100
 		uint32_t owner = electrified->m_4;
@@ -716,11 +735,11 @@ uint32_t n_sub_82977C88(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(68, sub_82977C88, 0x82977C88) { ctx.r3.u64 = n_sub_82977C88(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(68, sub_82977C88, 0x82977C88) { ctx.r3.u64 = CECElectrified_UpdateEffect(ctx, base, ctx.r3.u32); }
 
-// Runs n_sub_82977E68, then creates a new object through n_sub_824C8F70 and points the EntityHandle at
+// Runs CECElectrified_ResetEffectHandle, then creates a new object through Entity_Create and points the EntityHandle at
 // electrified+0x88 at it, going through a temporary EntityHandle on the stack.
-uint32_t n_sub_82977DB8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint32_t CECElectrified_CreateEffectEntity(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(68, 0x82977DB8)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977DB8(ctx, base); return ctx.r3.u32; }
@@ -730,7 +749,7 @@ uint32_t n_sub_82977DB8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
-	n_sub_82977E68(ctx, base, electrifiedAddr);
+	CECElectrified_ResetEffectHandle(ctx, base, electrifiedAddr);
 
 	uint32_t owner = electrified->m_4;
 	ctx.fpscr.disableFlushMode();
@@ -746,7 +765,8 @@ uint32_t n_sub_82977DB8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	uint32_t container = LOAD32(LOAD32(LOAD32(LOAD32(manager + 12) + 88) + 4) + 60);
 
 	// state the callee may pass on
-	uint64_t newObject = n_sub_824C8F70(ctx, base, container, counterValue, owner, 2, 0);
+	ctx.f1.f64 = floatConstant;
+	uint64_t newObject = Entity_Create(ctx, base, container, counterValue, owner, 2, 0);
 
 	// temporary EntityHandle on the stack: {vtable, null}
 	const int64_t entityHandleVtable = (int64_t)g_820F0000 + 5732;
@@ -765,11 +785,11 @@ uint32_t n_sub_82977DB8(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return released;
 }
-PROMOTED_ENTRY(68, sub_82977DB8, 0x82977DB8) { ctx.r3.u64 = n_sub_82977DB8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82977DB8, 0x82977DB8) { ctx.r3.u64 = CECElectrified_CreateEffectEntity(ctx, base, ctx.r3.u64); }
 
 // Assigns a temporary {vtable, null} EntityHandle to the handle at electrified+0x88. Before that, if the handle
 // has a reference (m_8C) whose target is null the handle is released, otherwise the target gets its byte at +0xD4 set.
-uint32_t n_sub_82977E68(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
+uint32_t CECElectrified_ResetEffectHandle(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(68, 0x82977E68)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_82977E68(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82977E68);
@@ -807,11 +827,11 @@ uint32_t n_sub_82977E68(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) 
 	ctx.r1.u64 = stack;
 	return released;
 }
-PROMOTED_ENTRY(68, sub_82977E68, 0x82977E68) { ctx.r3.u64 = n_sub_82977E68(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(68, sub_82977E68, 0x82977E68) { ctx.r3.u64 = CECElectrified_ResetEffectHandle(ctx, base, ctx.r3.u64); }
 
 // With m_11 set: when the id-21 component of the owner (m_4) reports mode 45 (CECEntityModeManager_HasMode),
 // calls AnimationComponent_RemoveAnimation on it for 45. Clears byte +0x72 of the owner's id-58 component if it has one.
-// With m_12 set: stores the float at 0x820994C0 to m_38 and passes it, with the owner, to n_sub_827CA600.
+// With m_12 set: stores the float at 0x820994C0 to m_38 and passes it, with the owner, to CECTemporalExperience_Apply.
 uint32_t n_sub_829781D0(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) {
 	if (!UseLiftedCode(68, 0x829781D0)) { ctx.r3.u64 = electrifiedAddr; __imp__sub_829781D0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x829781D0);
@@ -934,7 +954,7 @@ uint32_t n_sub_829781D0(CpuState& ctx, uint8_t* base, uint32_t electrifiedAddr) 
 		electrified->m_38 = float(temporalExperienceAmount);
 		ctx.r1.u64 = stack;
 		writeRegisters();
-		result = n_sub_827CA600(ctx, base, owner, temporalExperienceAmount);
+		result = CECTemporalExperience_Apply(ctx, base, owner, temporalExperienceAmount);
 		readRegisters();
 	}
 

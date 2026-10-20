@@ -1,9 +1,9 @@
 // CECInventory (vtable 0x82004118): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -145,7 +145,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 			STORE32((uint32_t)g_83496EB8, LOAD32((uint32_t)g_83496EB8) - 1);
 
 			STORE32(stack + 80, 0);
-			n_sub_82740D78(ctx, base, item, archive, isSaving);
+			InventoryItem_SerializeData(ctx, base, item, archive, isSaving);
 
 			uint32_t endSerializeVtbl = LOAD32((uint32_t)archive);
 			uint32_t endSerialize = LOAD32(endSerializeVtbl + 12);
@@ -192,7 +192,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 			uint64_t itemHandle = Heap_Alloc(ctx, base, 52);
 			if ((uint32_t)itemHandle != 0) {
 				uint32_t itemId = LOAD32(stack + 84);
-				item = n_sub_82740CA0(ctx, base, itemHandle, inventoryAddr, itemId);
+				item = InventoryItem_Construct(ctx, base, itemHandle, inventoryAddr, itemId);
 			} else {
 				uint32_t handler = LOAD32(allocFailureHandler);
 				if (handler != 0) {
@@ -202,6 +202,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 					REX_CALL_INDIRECT_FUNC(callTarget.u32);
 					itemHandle = ctx.r3.u64;
 				}
+				ctx.r3.u64 = itemHandle;
 				ThrowBadAlloc(ctx, base);
 			}
 
@@ -222,6 +223,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 						REX_CALL_INDIRECT_FUNC(callTarget.u32);
 						sharedHandle = ctx.r3.u64;
 					}
+					ctx.r3.u64 = sharedHandle;
 					ThrowBadAlloc(ctx, base);
 					STORE32(stack + 100, 0);
 				}
@@ -229,7 +231,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 				STORE32(stack + 100, 0);
 			}
 
-			n_sub_82740D78(ctx, base, item, archive, isSaving);
+			InventoryItem_SerializeData(ctx, base, item, archive, isSaving);
 			STORE32(stack + 108, LOAD32(listSentinel + 4));
 			uint64_t listKey = LOAD64(stack + 104);
 			List_InsertNodeCopyRefCountedPair(ctx, base, listSentinel, listKey, stack + 96);
@@ -240,7 +242,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 			if ((uint32_t)item != 0) {
 				IdList_AddUnique(ctx, base, item, stack + 112);
 			}
-			n_sub_8261D8E8(ctx, base, inventoryAddr, stack + 112);
+			CECInventory_ApplyItemEffects(ctx, base, inventoryAddr, stack + 112);
 			uint32_t addedHandle = LOAD32(stack + 112);
 			if (addedHandle != 0) {
 				PtrList_RemoveAll(ctx, base, addedHandle, stack + 112);
@@ -279,7 +281,7 @@ uint64_t CECInventory_Serialize(CpuState& ctx, uint8_t* base, uint64_t inventory
 }
 PROMOTED_ENTRY(40, sub_82618D98, 0x82618D98) { ctx.r3.u64 = CECInventory_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.r6.u64); }
 
-uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint64_t level) {
+uint64_t CECInventory_SelectWeightedItem(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint64_t level) {
 	constexpr int32_t str_TXT_820B0E64_B_ = int32_t(0x820B0E64);
 	constexpr int32_t str_TXT_820B3308_B_ = int32_t(0x820B3308);
 	constexpr int32_t str_TXT_820B331C_B_ = int32_t(0x820B331C);
@@ -392,8 +394,9 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 	if ((uint32_t)sourceList != 0) {
 		ctx.r1.u64 = stack;
 		ctx.r5.u64 = level;
+		ctx.r6.u64 = r6Arg;
 		ctx.xer.ca = ca;
-		n_sub_829FBC40(ctx, base, stack + 104, sourceList, temp63);
+		GameDB_GetArrayField(ctx, base, stack + 104, sourceList, temp63);
 		f1Value = ctx.f1.f64;
 		f13Value = ctx.f13.f64;
 		ca = ctx.xer.ca;
@@ -412,7 +415,7 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 			do {
 				if (i != itemCount) {
 					ctx.xer.ca = ca;
-					uint32_t candidate = (uint32_t)n_sub_829FC128(ctx, base, stack + 104);
+					uint32_t candidate = (uint32_t)ItemEntryList_GetNext(ctx, base, stack + 104);
 					if (candidate != 0) {
 						uint64_t value2 = HashMapU32_FindValue(ctx, base, LOAD32(globalBase + 27600), candidate);
 						uint32_t record = (uint32_t)value2;
@@ -444,7 +447,7 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 														ctx.fpscr.disableFlushMode();
 														STORE_F32(stack + 92, (float)itemWeight);
 														totalWeight = (double)(float)(itemWeight + totalWeight);
-														n_sub_82296D48(ctx, base, stack + 128, stack + 88);
+														Vector_PushBack_82296D48(ctx, base, stack + 128, stack + 88);
 														f1Value = ctx.f1.f64;
 														f13Value = ctx.f13.f64;
 													} else {
@@ -522,6 +525,8 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 					}
 				}
 
+				ctx.f1.f64 = f1Value;
+				ctx.f13.f64 = f13Value;
 				ctx.xer.ca = ca;
 				HandleTarget_Free(ctx, base, begin);
 				f1Value = ctx.f1.f64;
@@ -534,6 +539,8 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 		STORE32(stack + 136, 0);
 		STORE32(stack + 140, 0);
 		uint32_t handle2 = LOAD32(stack + 104);
+		ctx.f1.f64 = f1Value;
+		ctx.f13.f64 = f13Value;
 		ctx.xer.ca = ca;
 		HandleTarget_Free(ctx, base, handle2);
 		f1Value = ctx.f1.f64;
@@ -545,7 +552,7 @@ uint64_t n_sub_826198A0(CpuState& ctx, uint8_t* base, uint64_t sourceList, uint6
 	ctx.xer.ca = ca;
 	return result;
 }
-PROMOTED_ENTRY(40, sub_826198A0, 0x826198A0) { ctx.r3.u64 = n_sub_826198A0(ctx, base, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(40, sub_826198A0, 0x826198A0) { ctx.r3.u64 = CECInventory_SelectWeightedItem(ctx, base, ctx.r4.u64, ctx.r5.u64); }
 
 uint64_t CECInventory_FillFromInitialItems(CpuState& ctx, uint8_t* base, uint64_t inventoryAddr) {
 	constexpr uint32_t kGlobals8349 = 0x83490000;
@@ -562,7 +569,7 @@ uint64_t CECInventory_FillFromInitialItems(CpuState& ctx, uint8_t* base, uint64_
 	// Scratch slot reused for an id-ref / item-name CCharString.
 	uint32_t itemNameSlot = stack + 80;
 
-	uint64_t idHandle = n_sub_821D9F40(ctx, base, itemNameSlot, inventoryAddr);
+	uint64_t idHandle = Component_GetId(ctx, base, itemNameSlot, inventoryAddr);
 	uint64_t idRef = IdRef_Get(ctx, base, idHandle);
 	uint64_t initialItemsList = GameDB_ReadU32Field(ctx, base, idRef, -2113113216);
 
@@ -570,7 +577,7 @@ uint64_t CECInventory_FillFromInitialItems(CpuState& ctx, uint8_t* base, uint64_
 	uint64_t r4Out = 0;
 	if (initialItemsList != 0) {
 		uint32_t itemListSlot = stack + 88;
-		n_sub_829FBC40(ctx, base, itemListSlot, initialItemsList, ctx.r8.u64);
+		GameDB_GetArrayField(ctx, base, itemListSlot, initialItemsList, ctx.r8.u64);
 
 		uint32_t entries = LOAD32(stack + 88);
 		uint32_t entryEnd = LOAD32(stack + 92);
@@ -631,7 +638,7 @@ uint64_t CECInventory_FillFromInitialItems(CpuState& ctx, uint8_t* base, uint64_
 }
 PROMOTED_ENTRY(40, sub_82619CB0, 0x82619CB0) { ctx.r3.u64 = CECInventory_FillFromInitialItems(ctx, base, ctx.r3.u64); }
 
-void n_sub_8261A3B8(CpuState& ctx, uint8_t* base, uint32_t inventoryAddr) {
+void CECInventory_SyncItemViewedFlag(CpuState& ctx, uint8_t* base, uint32_t inventoryAddr) {
 	if (!UseLiftedCode(40, 0x8261A3B8)) { ctx.r3.u64 = inventoryAddr; __imp__sub_8261A3B8(ctx, base); return; }
 	LiftedFrame frame(0x8261A3B8);
 	uint32_t stack = ctx.r1.u32;
@@ -705,7 +712,7 @@ void n_sub_8261A3B8(CpuState& ctx, uint8_t* base, uint32_t inventoryAddr) {
 	ctx.r8.u64 = r8Value;
 	ctx.xer.ca = ca;
 }
-PROMOTED_ENTRY(40, sub_8261A3B8, 0x8261A3B8) { n_sub_8261A3B8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(40, sub_8261A3B8, 0x8261A3B8) { CECInventory_SyncItemViewedFlag(ctx, base, ctx.r3.u32); }
 
 uint64_t ItemList_SumCount(CpuState& ctx, uint8_t* base, uint32_t inventoryAddr) {
 	if (!UseLiftedCode(40, 0x8261C0B8)) { ctx.r3.u64 = inventoryAddr; __imp__sub_8261C0B8(ctx, base); return ctx.r3.u64; }
@@ -731,7 +738,7 @@ uint64_t ItemList_SumCount(CpuState& ctx, uint8_t* base, uint32_t inventoryAddr)
 }
 PROMOTED_ENTRY(40, sub_8261C0B8, 0x8261C0B8) { ctx.r3.u64 = ItemList_SumCount(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64_t itemSource) {
+uint32_t CECInventory_ApplyItemEffects(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64_t itemSource) {
 	constexpr int32_t str_TXT_82000F7C_B_ = int32_t(0x82000F7C);
 	constexpr int32_t str_TXT_820AC354_B_ = int32_t(0x820AC354);
 	constexpr int32_t str_TXT_820AC364_B_ = int32_t(0x820AC364);
@@ -824,7 +831,7 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 			}
 
 			STORE32(stack + 80, 0);
-			uint32_t setButtonResult = n_sub_82620A78(ctx, base, TXT_820C7580_L_, stack + 80);
+			uint32_t setButtonResult = GameDB_GetDpadButton(ctx, base, TXT_820C7580_L_, stack + 80);
 			itemSourceRegister = ctx.r4.u64;
 			uint32_t dpadButton = LOAD32(stack + 80);
 			if (dpadButton == 0) {
@@ -842,9 +849,9 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 			STORE32(stack + 116, 0);
 			STORE32(stack + 120, 0);
 			STORE32(stack + 124, 0);
-			n_sub_8218DF70(ctx, base, stack + 112, itemSource);
+			IdRef_Assign(ctx, base, stack + 112, itemSource);
 			if (effect != stack + 112) {
-				n_sub_8218DF70(ctx, base, effect, stack + 112);
+				IdRef_Assign(ctx, base, effect, stack + 112);
 			}
 			uint32_t tempOwner = LOAD32(stack + 112);
 			if (tempOwner != 0) {
@@ -863,8 +870,8 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 			STORE32(effect + 32, 0);
 
 			STORE32(stack + 88, effect);
-			uint32_t handle = n_sub_8261E450(ctx, base, stack + 88);
-			n_sub_829FD7B8(ctx, base, inventory + 28, handle);
+			uint32_t handle = SharedHandle_Create(ctx, base, stack + 88);
+			PtrList_PushBack(ctx, base, inventory + 28, handle);
 			return SharedHandle_Release(ctx, base, stack + 88);
 		}
 
@@ -897,7 +904,7 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 		}
 
 		STORE32(stack + 80, 0);
-		uint32_t setButtonResult = n_sub_82620A78(ctx, base, TXT_820C7580_L_, stack + 80);
+		uint32_t setButtonResult = GameDB_GetDpadButton(ctx, base, TXT_820C7580_L_, stack + 80);
 		itemSourceRegister = ctx.r4.u64;
 		uint32_t dpadButton = LOAD32(stack + 80);
 		if (dpadButton == 0) {
@@ -915,9 +922,9 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 		STORE32(stack + 132, 0);
 		STORE32(stack + 136, 0);
 		STORE32(stack + 140, 0);
-		n_sub_8218DF70(ctx, base, stack + 128, itemSource);
+		IdRef_Assign(ctx, base, stack + 128, itemSource);
 		if (effect != stack + 128) {
-			n_sub_8218DF70(ctx, base, effect, stack + 128);
+			IdRef_Assign(ctx, base, effect, stack + 128);
 		}
 		uint32_t tempOwner = LOAD32(stack + 128);
 		if (tempOwner != 0) {
@@ -939,8 +946,8 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 		STORE32(effect + 32, (uint32_t)floatToInt(ctx.f1.f64));
 
 		STORE32(stack + 96, effect);
-		uint32_t handle = n_sub_8261E450(ctx, base, stack + 96);
-		n_sub_829FD7B8(ctx, base, inventory + 28, handle);
+		uint32_t handle = SharedHandle_Create(ctx, base, stack + 96);
+		PtrList_PushBack(ctx, base, inventory + 28, handle);
 		return SharedHandle_Release(ctx, base, stack + 96);
 	};
 
@@ -949,7 +956,7 @@ uint32_t n_sub_8261D8E8(CpuState& ctx, uint8_t* base, uint64_t inventory, uint64
 	ctx.r1.u64 = stack;
 	return returnValue;
 }
-PROMOTED_ENTRY(40, sub_8261D8E8, 0x8261D8E8) { ctx.r3.u64 = n_sub_8261D8E8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(40, sub_8261D8E8, 0x8261D8E8) { ctx.r3.u64 = CECInventory_ApplyItemEffects(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CECInventory_OnDeath(CpuState& ctx, uint8_t* base, uint64_t inventoryAddr) {
 	constexpr int32_t str_TXT_820C75E8_B_ = int32_t(0x820C75E8);
@@ -962,7 +969,7 @@ uint64_t CECInventory_OnDeath(CpuState& ctx, uint8_t* base, uint64_t inventoryAd
 	stack = PushStackFrame(base, stack, 160);
 	ctx.r1.u64 = stack;
 
-	uint64_t idSource = n_sub_821D9F40(ctx, base, (int64_t)(uint64_t)stack + 80, inventoryAddr);
+	uint64_t idSource = Component_GetId(ctx, base, (int64_t)(uint64_t)stack + 80, inventoryAddr);
 	uint64_t idRef = IdRef_Get(ctx, base, idSource);
 	uint64_t TXT_820C75E8_L_ = str_TXT_820C75E8_B_;
 	uint32_t shouldDropAll = GameDB_ReadBoolField_82303F38(ctx, base, idRef, TXT_820C75E8_L_);

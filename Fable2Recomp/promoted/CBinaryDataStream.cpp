@@ -1,9 +1,9 @@
 // CBinaryDataStream (vtable 0x8200E3C0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -21,7 +21,7 @@ void CBinaryDataStream_Destructor(CpuState& ctx, uint8_t* base, uint32_t binaryD
 }
 PROMOTED_ENTRY(92, sub_82C79530, 0x82C79530) { CBinaryDataStream_Destructor(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_82C79540(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t flags) {
+uint64_t CBinaryDataStream_Destructor_82C79540(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t flags) {
 	if (!UseLiftedCode(92, 0x82C79540)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = flags; __imp__sub_82C79540(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C79540);
 	uint32_t stack = ctx.r1.u64;
@@ -39,7 +39,7 @@ uint64_t n_sub_82C79540(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	ctx.r1.u64 = stack;
 	return binaryDataStreamAddr;
 }
-PROMOTED_ENTRY(92, sub_82C79540, 0x82C79540) { ctx.r3.u64 = n_sub_82C79540(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(92, sub_82C79540, 0x82C79540) { ctx.r3.u64 = CBinaryDataStream_Destructor_82C79540(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 uint64_t CBinaryDataStream_Release(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr) {
 	if (!UseLiftedCode(92, 0x82C79588)) { ctx.r3.u64 = binaryDataStreamAddr; __imp__sub_82C79588(ctx, base); return ctx.r3.u64; }
@@ -126,7 +126,12 @@ uint64_t CBinaryDataStream_QueryInterface(CpuState& ctx, uint8_t* base, uint64_t
 			ctx.r1.u64 = stack;
 			ctx.r3.u64 = binaryDataStreamAddr;
 			ctx.r4.u64 = interfaceId;
+			ctx.r5.u64 = outInterface;
 			// state the callee may pass on: what the matching compare left in r7-r9
+			ctx.r7.u64 = lastGuidByte;
+			ctx.r8.u64 = interfaceId + 16;
+			ctx.r9.u64 = 0;
+			ctx.r10.u64 = addRefFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			stack = PopStackFrame(stack, 96);
 			ctx.r1.u64 = stack;
@@ -253,7 +258,7 @@ uint64_t CBinaryDataStream_ReadString(CpuState& ctx, uint8_t* base, uint64_t bin
 }
 PROMOTED_ENTRY(92, sub_82C797B8, 0x82C797B8) { ctx.r3.u64 = CBinaryDataStream_ReadString(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_82C79870(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t stringAddr) {
+uint64_t CBinaryDataStream_WriteLengthPrefixedString(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t stringAddr) {
 	if (!UseLiftedCode(92, 0x82C79870)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = stringAddr; __imp__sub_82C79870(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C79870);
 	uint32_t stack = ctx.r1.u64;
@@ -266,9 +271,9 @@ uint64_t n_sub_82C79870(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	// The 32-bit length stored just before the string goes out through the WriteInt32 slot (+88),
 	// then the string data with a pointer to that length.
 	uint32_t lengthAddr = stack + 80;
-	uint32_t storedLength = n_sub_82B4DB10(ctx, base, stringAddr);
+	uint32_t storedLength = String_GetLengthPrefix(ctx, base, stringAddr);
 	STORE32(lengthAddr, storedLength);
-	n_sub_82B4DB28(ctx, base, stringAddr);
+	WString_GetByteSize(ctx, base, stringAddr);
 
 	uint32_t writeInt32Fn = LOAD32(uint32_t(binaryDataStream->vtable) + 88);
 	callTarget.u64 = (uint64_t)writeInt32Fn;
@@ -297,9 +302,9 @@ uint64_t n_sub_82C79870(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	ctx.r1.u64 = stack;
 	return hr;
 }
-PROMOTED_ENTRY(92, sub_82C79870, 0x82C79870) { ctx.r3.u64 = n_sub_82C79870(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(92, sub_82C79870, 0x82C79870) { ctx.r3.u64 = CBinaryDataStream_WriteLengthPrefixedString(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82C79910(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t sourceString, uint64_t arg3) {
+uint64_t CBinaryDataStream_WriteWideString(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t sourceString, uint64_t arg3) {
 	if (!UseLiftedCode(92, 0x82C79910)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = sourceString; ctx.r8.u64 = arg3; __imp__sub_82C79910(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C79910);
 	uint32_t stack = ctx.r1.u64;
@@ -308,15 +313,15 @@ uint64_t n_sub_82C79910(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	// The string goes through n_sub_82CA9D30 into a temporary buffer (length + 1 bytes), which is
+	// The string goes through WString_ToNarrowString into a temporary buffer (length + 1 bytes), which is
 	// written through the WriteString slot (+48) and freed; the result is the WriteString result.
-	uint64_t sourceLength = n_sub_82B4DB28(ctx, base, sourceString);
+	uint64_t sourceLength = WString_GetByteSize(ctx, base, sourceString);
 	uint64_t bufferSize = sourceLength + 1;
-	// state the callee may pass on; n_sub_82CA9D30 then gets r8 as operator_new leaves it
+	// state the callee may pass on; WString_ToNarrowString then gets r8 as operator_new leaves it
 	ctx.r4.u64 = sourceString;
 	ctx.r8.u64 = arg3;
 	uint64_t buffer = operator_new(ctx, base, bufferSize);
-	n_sub_82CA9D30(ctx, base, buffer, sourceString, bufferSize, ctx.r8.u64);
+	WString_ToNarrowString(ctx, base, buffer, sourceString, bufferSize, ctx.r8.u64);
 
 	uint32_t writeStringFn = LOAD32(uint32_t(binaryDataStream->vtable) + 48);
 	callTarget.u64 = (uint64_t)writeStringFn;
@@ -331,10 +336,10 @@ uint64_t n_sub_82C79910(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C79910, 0x82C79910) { ctx.r3.u64 = n_sub_82C79910(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
+PROMOTED_ENTRY(92, sub_82C79910, 0x82C79910) { ctx.r3.u64 = CBinaryDataStream_WriteWideString(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }
 
 // Reads a narrow string through the virtual ReadString and stores a length-prefixed wide copy of it.
-uint64_t n_sub_82C79978(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outWideString) {
+uint64_t CBinaryDataStream_ReadStringAsWideString(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outWideString) {
 	if (!UseLiftedCode(92, 0x82C79978)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = outWideString; __imp__sub_82C79978(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C79978);
 	uint32_t stack = ctx.r1.u64;
@@ -376,7 +381,7 @@ uint64_t n_sub_82C79978(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 
 		// mbstowcs wrapper: widen the narrow string into the buffer, then NUL-terminate it.
 		// The original passes the count as a 64-bit charCount + 1 (no 32-bit wrap).
-		n_sub_82CA3970(ctx, base, wideBuffer, LOAD32(narrowStringSlot), (uint64_t)charCount + 1, ctx.r8.u64);
+		NarrowString_ToWString(ctx, base, wideBuffer, LOAD32(narrowStringSlot), (uint64_t)charCount + 1, ctx.r8.u64);
 		STORE16((charCount << 1) + (uint32_t)wideBuffer, 0);
 
 		uint32_t duplicate = WString_DuplicateWithLengthPrefix(ctx, base, wideBuffer);
@@ -391,7 +396,7 @@ uint64_t n_sub_82C79978(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(92, sub_82C79978, 0x82C79978) { ctx.r3.u64 = n_sub_82C79978(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(92, sub_82C79978, 0x82C79978) { ctx.r3.u64 = CBinaryDataStream_ReadStringAsWideString(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 uint64_t CBinaryDataStream_WriteInt64(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t value) {
 	if (!UseLiftedCode(92, 0x82C79A30)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = value; __imp__sub_82C79A30(ctx, base); return ctx.r3.u64; }
@@ -770,8 +775,8 @@ PROMOTED_ENTRY(93, sub_82C79EC8, 0x82C79EC8) { ctx.r3.u64 = CBinaryDataStream_Re
 // Turns the pairs of a source object into one text for the stream. A wide string stream on the game stack
 // receives the pair count and ':' (58), then for each pair the key's length, ':', the key, the value's
 // length, ':', the value; a length-prefixed copy of the finished text goes to the stream's method at
-// vtable +56, whose result is returned. n_sub_82C7C830 parses text of this layout.
-uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t source) {
+// vtable +56, whose result is returned. CBinaryDataStream_ReadStringPairMap parses text of this layout.
+uint64_t CBinaryDataStream_WriteStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t source) {
 	constexpr int32_t g_8200E480 = int32_t(0x8200E480);
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820CCFBC = int32_t(0x820CCFBC);
@@ -792,12 +797,13 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	STORE32(textStream, 0x820CCE8Cu);
 	STORE32(textStreamBase, (uint32_t)firstBaseVtable);
 	ctx.r1.u64 = stack;
-	n_sub_82C75760(ctx, base, textStreamBase, textBuffer, 0, firstBaseVtable);
+	WStringStream_ConstructWithBuffer(ctx, base, textStreamBase, textBuffer, 0, firstBaseVtable);
 
 	// the virtual base is found through the offset at +4 of the object's vtable
 	STORE32(LOAD32(LOAD32(textStream) + 4) + textStream, (uint32_t)streamBaseVtable);
 	// state the callee may pass on
-	n_sub_82C7A0E0(ctx, base, textBuffer, 2, ctx.r8.u64);
+	ctx.r5.u64 = streamBaseVtable;
+	WStringStream_SetModeFlags(ctx, base, textBuffer, 2, ctx.r8.u64);
 
 	// the source's method at +24 puts an enumerator object at stack+80
 	uint32_t sourceVtable = LOAD32((uint32_t)source);
@@ -809,16 +815,16 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	REX_CALL_INDIRECT_FUNC(enumerateMethod);
 
 	auto destroyBaseAndFail = [&]() -> uint64_t {
-		n_sub_82C7A060(ctx, base, textStreamBase);
+		WStringStreamBase_Destructor(ctx, base, textStreamBase);
 		STORE32(textStreamBase, (uint32_t)lastBaseVtable);
 		ctx.r10.u64 = lastBaseVtable;  // state the callee may pass on
-		n_sub_82CD1E78(ctx, base, textStreamBase);
+		RefCountedObject_Release(ctx, base, textStreamBase);
 		stack = PopStackFrame(stack, 384);
 		ctx.r1.u64 = stack;
 		return 0xFFFFFFFF80004005ull;
 	};
 	auto destroyStreamAndFail = [&]() -> uint64_t {
-		n_sub_82C7A178(ctx, base, textStream);
+		WStringStream_Destructor(ctx, base, textStream);
 		stack = PopStackFrame(stack, 384);
 		ctx.r1.u64 = stack;
 		return 0xFFFFFFFF80004005ull;
@@ -834,8 +840,8 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	REX_CALL_INDIRECT_FUNC(countMethod);
 	if ((int32_t)ctx.r3.u32 < 0) return destroyStreamAndFail();
 
-	uint64_t countChain = n_sub_82C7BDE0(ctx, base, textStream, LOAD32(stack + 84), ctx.r8.u64);
-	n_sub_82C7B808(ctx, base, countChain, 58, ctx.r8.u64);
+	uint64_t countChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 84), ctx.r8.u64);
+	WStringStream_WriteChar(ctx, base, countChain, 58, ctx.r8.u64);
 
 	enumerator = LOAD32(stack + 80);
 	uint32_t resetMethod = LOAD32(LOAD32(enumerator) + 12);
@@ -874,7 +880,7 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 			ctx.r10.u64 = valueMethod;
 			REX_CALL_INDIRECT_FUNC(valueMethod);
 			if ((int32_t)ctx.r3.u32 < 0) {
-				n_sub_82B4DAF8(ctx, base, LOAD32(stack + 88));
+				FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 88));
 				return destroyStreamAndFail();
 			}
 
@@ -882,16 +888,16 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 			BasicWString_ConstructFromWideCStr(ctx, base, stack + 304, LOAD32(stack + 88), ctx.r8.u64);
 			BasicWString_ConstructFromWideCStr(ctx, base, stack + 272, LOAD32(stack + 92), ctx.r8.u64);
 
-			uint64_t keyChain = n_sub_82C7BDE0(ctx, base, textStream, LOAD32(stack + 324), ctx.r8.u64);
-			keyChain = n_sub_82C7B808(ctx, base, keyChain, 58, ctx.r8.u64);
-			n_sub_82C7BAD0(ctx, base, keyChain, stack + 304, ctx.r8.u64);
+			uint64_t keyChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 324), ctx.r8.u64);
+			keyChain = WStringStream_WriteChar(ctx, base, keyChain, 58, ctx.r8.u64);
+			WStringStream_WriteString(ctx, base, keyChain, stack + 304, ctx.r8.u64);
 
-			uint64_t valueChain = n_sub_82C7BDE0(ctx, base, textStream, LOAD32(stack + 292), ctx.r8.u64);
-			valueChain = n_sub_82C7B808(ctx, base, valueChain, 58, ctx.r8.u64);
-			n_sub_82C7BAD0(ctx, base, valueChain, stack + 272, ctx.r8.u64);
+			uint64_t valueChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 292), ctx.r8.u64);
+			valueChain = WStringStream_WriteChar(ctx, base, valueChain, 58, ctx.r8.u64);
+			WStringStream_WriteString(ctx, base, valueChain, stack + 272, ctx.r8.u64);
 
-			n_sub_82B4DAF8(ctx, base, LOAD32(stack + 88));
-			n_sub_82B4DAF8(ctx, base, LOAD32(stack + 92));
+			FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 88));
+			FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 92));
 			WString_Tidy(ctx, base, stack + 272);
 			WString_Tidy(ctx, base, stack + 304);
 			nextR9 = ctx.r9.u64;
@@ -900,7 +906,7 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	}
 
 	ctx.r9.u64 = nextR9;  // state the callee may pass on
-	n_sub_82C7A220(ctx, base, stack + 112, textBuffer, ctx.r8.u64);
+	WStringStream_GetString(ctx, base, stack + 112, textBuffer, ctx.r8.u64);
 
 	// the finished text, a string at stack+112: characters inline at +116 while the capacity at +136 is below 8
 	uint32_t text = LOAD32(stack + 116);
@@ -914,7 +920,7 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	REX_CALL_INDIRECT_FUNC(writeMethod);
 	uint64_t result = ctx.r3.u64;
 
-	n_sub_82B4DAF8(ctx, base, textCopy);
+	FreeLengthPrefixedBlock(ctx, base, textCopy);
 	if (LOAD32(stack + 136) >= 8) {
 		HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 116));
 	}
@@ -922,21 +928,22 @@ uint64_t n_sub_82C7C4C0(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	STORE16(stack + 116, 0);
 	STORE32(stack + 136, 7);
 
-	n_sub_82C7A060(ctx, base, textStreamBase);
+	WStringStreamBase_Destructor(ctx, base, textStreamBase);
 	STORE32(textStreamBase, (uint32_t)lastBaseVtable);
 	// state the callee may pass on
-	n_sub_82CD1E78(ctx, base, textStreamBase);
+	ctx.r9.u64 = lastBaseVtable;
+	RefCountedObject_Release(ctx, base, textStreamBase);
 
 	stack = PopStackFrame(stack, 384);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C7C4C0, 0x82C7C4C0) { ctx.r3.u64 = n_sub_82C7C4C0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(93, sub_82C7C4C0, 0x82C7C4C0) { ctx.r3.u64 = CBinaryDataStream_WriteStringPairMap(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Reads characters from a wide stream into a buffer of length + 1 characters allocated on the game stack
 // (the delimiter is '\n' as n_sub_82C75438 converts it for the stream), then assigns the first `length`
 // characters of the buffer to the string at outString through a temporary string.
-uint32_t n_sub_82C7C778(CpuState& ctx, uint8_t* base, uint64_t stream, uint64_t outString, uint64_t length) {
+uint32_t CBinaryDataStream_ReadDelimitedString(CpuState& ctx, uint8_t* base, uint64_t stream, uint64_t outString, uint64_t length) {
 	if (!UseLiftedCode(93, 0x82C7C778)) { ctx.r4.u64 = stream; ctx.r5.u64 = outString; ctx.r6.u64 = length; __imp__sub_82C7C778(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82C7C778);
 	uint32_t stack = ctx.r1.u64;
@@ -967,7 +974,7 @@ uint32_t n_sub_82C7C778(CpuState& ctx, uint8_t* base, uint64_t stream, uint64_t 
 	ctx.r7.u64 = backChain;
 	ctx.r11.u64 = virtualBaseOffset;
 	uint64_t delimiter = n_sub_82C75438(ctx, base, streamBase, 10, streamVtable);
-	n_sub_82C7A9B0(ctx, base, stream, buffer, length, delimiter, ctx.r8.u64);
+	WStringStream_ReadUntilDelimiter(ctx, base, stream, buffer, length, delimiter, ctx.r8.u64);
 
 	// an empty temporary string at frameBase+80: length 0 at +20, inline capacity 7 at +24
 	uint32_t tempString = frameBase + 80;
@@ -990,14 +997,14 @@ uint32_t n_sub_82C7C778(CpuState& ctx, uint8_t* base, uint64_t stream, uint64_t 
 	__restgprlr_27(ctx, base);
 	return result;
 }
-PROMOTED_ENTRY(93, sub_82C7C778, 0x82C7C778) { ctx.r3.u64 = n_sub_82C7C778(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(93, sub_82C7C778, 0x82C7C778) { ctx.r3.u64 = CBinaryDataStream_ReadDelimitedString(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // Reads a text from the stream (its method at vtable +60) and parses it in a wide string stream on the game
 // stack: the pair count, then for each pair the key's length, the key, the value's length, the value (each
-// number is followed by one separator character, skipped by n_sub_82C77878). A new object receives the pairs
+// number is followed by one separator character, skipped by WStringStream_SkipSeparator). A new object receives the pairs
 // through its method at vtable +16 and is stored at outObjectPtr; on a parse or add failure it is released
-// through its method at +8 instead and E_FAIL is returned. n_sub_82C7C4C0 writes text of this layout.
-uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outObjectPtr, uint64_t callerR8) {
+// through its method at +8 instead and E_FAIL is returned. CBinaryDataStream_WriteStringPairMap writes text of this layout.
+uint64_t CBinaryDataStream_ReadStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outObjectPtr, uint64_t callerR8) {
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820CCFBC = int32_t(0x820CCFBC);
 	if (!UseLiftedCode(93, 0x82C7C830)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = outObjectPtr; ctx.r8.u64 = callerR8; __imp__sub_82C7C830(ctx, base); return ctx.r3.u64; }
@@ -1022,7 +1029,7 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	}
 
 	uint64_t allocation = operator_new(ctx, base, 52);
-	uint64_t resultObject = (uint32_t)allocation != 0 ? n_sub_82C80900(ctx, base, allocation) : 0;
+	uint64_t resultObject = (uint32_t)allocation != 0 ? StringPairMap_Constructor(ctx, base, allocation) : 0;
 
 	uint32_t initFn = LOAD32(LOAD32((uint32_t)resultObject) + 4);
 	ctx.r3.u64 = resultObject;
@@ -1060,16 +1067,16 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 		n_sub_82C73F18(ctx, base, stack + 272);
 		STORE32(stack + 272, (uint32_t)lastBaseVtable);
 		ctx.r10.u64 = lastBaseVtable;  // state the callee may pass on
-		n_sub_82CD1E78(ctx, base, stack + 272);
+		RefCountedObject_Release(ctx, base, stack + 272);
 		stack = PopStackFrame(stack, 416);
 		ctx.r1.u64 = stack;
 		return 0xFFFFFFFF80004005ull;
 	};
 
 	BasicWString_ConstructFromWideCStr(ctx, base, stack + 160, LOAD32(stack + 148), ctx.r8.u64);
-	n_sub_82C779E8(ctx, base, textStream, stack + 160, 1, 1);
+	WStringStream_InitFromString(ctx, base, textStream, stack + 160, 1, 1);
 
-	// destroy the string at stack+160; r9 for n_sub_82C77700: its capacity, or what the free left in it
+	// destroy the string at stack+160; r9 for WStringStream_ReadInteger: its capacity, or what the free left in it
 	uint64_t nextR9 = LOAD32(stack + 184);
 	if ((uint32_t)nextR9 >= 8) {
 		HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 164));
@@ -1077,11 +1084,11 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	}
 	makeEmpty(stack + 160);
 	ctx.r9.u64 = nextR9;  // state the callee may pass on
-	n_sub_82C77700(ctx, base, textStream, stack + 140, ctx.r8.u64);
+	WStringStream_ReadInteger(ctx, base, textStream, stack + 140, ctx.r8.u64);
 	ctx.r11.u64 = 0;  // state the callee may pass on
-	n_sub_82C77878(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
+	WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
 
-	// r11 for each n_sub_82C77700 in the loop: what n_sub_82C77878 left in it, then the pair count
+	// r11 for each WStringStream_ReadInteger in the loop: what WStringStream_SkipSeparator left in it, then the pair count
 	uint32_t nextR11 = ctx.r11.u32;
 	uint32_t pairCount = LOAD32(stack + 140);
 	if (pairCount != 0) {
@@ -1091,14 +1098,14 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 			makeEmpty(stack + 112);
 			makeEmpty(stack + 80);
 			ctx.r11.u64 = nextR11;  // state the callee may pass on
-			n_sub_82C77700(ctx, base, textStream, stack + 152, ctx.r8.u64);
-			n_sub_82C77878(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
+			WStringStream_ReadInteger(ctx, base, textStream, stack + 152, ctx.r8.u64);
+			WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
 			ctx.r3.u64 = (uint32_t)binaryDataStreamAddr;  // state the callee may pass on
-			n_sub_82C7C778(ctx, base, textStream, stack + 112, LOAD32(stack + 152));
-			n_sub_82C77700(ctx, base, textStream, stack + 144, ctx.r8.u64);
-			n_sub_82C77878(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
+			CBinaryDataStream_ReadDelimitedString(ctx, base, textStream, stack + 112, LOAD32(stack + 152));
+			WStringStream_ReadInteger(ctx, base, textStream, stack + 144, ctx.r8.u64);
+			WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
 			ctx.r3.u64 = (uint32_t)binaryDataStreamAddr;  // state the callee may pass on
-			n_sub_82C7C778(ctx, base, textStream, stack + 80, LOAD32(stack + 144));
+			CBinaryDataStream_ReadDelimitedString(ctx, base, textStream, stack + 80, LOAD32(stack + 144));
 
 			// state word at +8 of the stream's virtual base (found through the offset at +4 of its vtable);
 			// a state with 2 or 4 set (mask 6) means the parse failed
@@ -1121,8 +1128,8 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 			ctx.r10.u64 = addFn;
 			REX_CALL_INDIRECT_FUNC(addFn);
 			uint32_t addStatus = ctx.r3.u32;
-			n_sub_82B4DAF8(ctx, base, keyCopy);
-			n_sub_82B4DAF8(ctx, base, valueCopy);
+			FreeLengthPrefixedBlock(ctx, base, keyCopy);
+			FreeLengthPrefixedBlock(ctx, base, valueCopy);
 			if ((int32_t)addStatus < 0) return releaseAndFail();
 
 			destroyString(stack + 80);
@@ -1137,7 +1144,7 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	STORE32(outObjectPtr, (uint32_t)resultObject);
 	STORE32(LOAD32(streamVtable + 4) + textStream, 0x8200E254u);
 	STORE32(stack + 200, 0x8200E21Cu);
-	n_sub_82C73068(ctx, base, stack + 200);
+	WStringStream_Reset(ctx, base, stack + 200);
 
 	// r4 as handed on through the calls below
 	uint64_t nextR4 = (uint64_t)(int64_t)g_82010000;
@@ -1168,10 +1175,13 @@ uint64_t n_sub_82C7C830(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamA
 	STORE32(LOAD32(streamVtable + 4) + textStream, (uint32_t)streamBaseVtable);
 	STORE32(stack + 272, (uint32_t)lastBaseVtable);
 	// state the callee may pass on
-	n_sub_82CD1E78(ctx, base, stack + 272);
+	ctx.r6.u64 = streamVtable;
+	ctx.r7.u64 = lastBaseVtable;
+	ctx.r8.u64 = streamBaseVtable;
+	RefCountedObject_Release(ctx, base, stack + 272);
 
 	stack = PopStackFrame(stack, 416);
 	ctx.r1.u64 = stack;
 	return 0;
 }
-PROMOTED_ENTRY(93, sub_82C7C830, 0x82C7C830) { ctx.r3.u64 = n_sub_82C7C830(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r8.u64); }
+PROMOTED_ENTRY(93, sub_82C7C830, 0x82C7C830) { ctx.r3.u64 = CBinaryDataStream_ReadStringPairMap(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r8.u64); }

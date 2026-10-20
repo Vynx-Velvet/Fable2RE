@@ -1,9 +1,11 @@
+
+
 // CECSpellManager (vtable 0x82004A60): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,11 +13,11 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-// Counts down the m_1A0 values in the 10-float array at +0x238 by a step derived from n_sub_82207928, stopping
+// Counts down the m_1A0 values in the 10-float array at +0x238 by a step derived from Game_GetDeltaTime, stopping
 // at 0. When one reaches 0 the array is rebuilt from the values still above 0, and n_sub_8271FBC8 and
 // n_sub_8271F8A0 get the owner and a stack record (words +4..+12 zeroed); a non-zero word they leave at
 // record+4 goes to HandleTarget_Free.
-uint32_t n_sub_821E66F0(CpuState& ctx, uint8_t* base, uint32_t managerAddr) {
+uint32_t CECSpellManager_UpdateCountdowns(CpuState& ctx, uint8_t* base, uint32_t managerAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	if (!UseLiftedCode(4, 0x821E66F0)) { ctx.r3.u64 = managerAddr; __imp__sub_821E66F0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821E66F0);
@@ -31,7 +33,7 @@ uint32_t n_sub_821E66F0(CpuState& ctx, uint8_t* base, uint32_t managerAddr) {
 		uint32_t owner = spellManager->m_owner;
 		result = owner;
 		ctx.r1.u64 = stack;
-		const double rawStep = n_sub_82207928(ctx, base, owner);
+		const double rawStep = Game_GetDeltaTime(ctx, base, owner);
 		callerF1 = rawStep;
 		flags.ca = ctx.xer.ca;
 
@@ -109,6 +111,11 @@ uint32_t n_sub_821E66F0(CpuState& ctx, uint8_t* base, uint32_t managerAddr) {
 
 			owner = spellManager->m_owner;
 			// state the callee may pass on
+			ctx.r7.u64 = storedCount;
+			ctx.r9.u64 = copiedCount;
+			ctx.f1.f64 = rawStep;
+			ctx.f12.f64 = step;
+			ctx.f13.f64 = lastValue;
 			ctx.xer.ca = flags.ca;
 			n_sub_8271FBC8(ctx, base, owner, record, 0);
 
@@ -128,7 +135,7 @@ uint32_t n_sub_821E66F0(CpuState& ctx, uint8_t* base, uint32_t managerAddr) {
 	ctx.f1.f64 = callerF1;  // callers read f1
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(4, sub_821E66F0, 0x821E66F0) { ctx.r3.u64 = n_sub_821E66F0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(4, sub_821E66F0, 0x821E66F0) { ctx.r3.u64 = CECSpellManager_UpdateCountdowns(ctx, base, ctx.r3.u32); }
 
 // Gets a vector from the owner's object at +124 (virtual slot 64, filled into a stack buffer) and passes it in
 // v1 to virtual slot 100 of the object at +124 of the entity the handle at +472 refers to. A handle whose
@@ -192,8 +199,8 @@ PROMOTED_ENTRY(4, sub_821E6880, 0x821E6880) { ctx.r3.u64 = CECSpellManager_GetSp
 // While m_26D is set, moves the blend position m_20C by m_210 per step: rising, it stops at 1 and m_210 becomes
 // negative; falling to 0 finishes. Until finished, the rotation object reached through 0x83496920 gets the angle
 // blended from m_214 to m_218 by the position, then the angle m_220, eased in from m_21C the shorter way round
-// while the position is below 0.2. When finished, m_26D is cleared and n_sub_82623170 is called on that object.
-uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
+// while the position is below 0.2. When finished, m_26D is cleared and RotationController_RefreshQuaternion is called on that object.
+uint32_t CECSpellManager_UpdateBlendRotation(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
 	constexpr int32_t g_8209BAA8 = int32_t(0x8209BAA8);
 	if (!UseLiftedCode(4, 0x821E6930)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_821E6930(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x821E6930);
@@ -207,7 +214,7 @@ uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 	if (spellManager->m_26D != 0) {
 		result = spellManager->m_owner;
 		ctx.r1.u64 = stack;
-		const double rawStep = n_sub_82207928(ctx, base, result);
+		const double rawStep = Game_GetDeltaTime(ctx, base, result);
 		callerF1 = rawStep;
 		ctx.fpscr.disableFlushMode();
 
@@ -234,7 +241,7 @@ uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 			const uint32_t rotationObject = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(0x83496920u) + 12) + 88) + 4) + 84);
 			const double startAngle = double(spellManager->m_214);
 			const double blendedAngle = double(float(std::fma(double(float(double(spellManager->m_218) - startAngle)), double(spellManager->m_20C), startAngle)));
-			n_sub_82623098(ctx, base, rotationObject, blendedAngle);
+			RotationController_SetBlendAngle(ctx, base, rotationObject, blendedAngle);
 			ctx.fpscr.disableFlushMode();
 
 			const double easeEnd = double(LOAD_F32(uint32_t(g_8209BAA8) - 10108));
@@ -257,14 +264,14 @@ uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 					}
 					ctx.fpscr.disableFlushMode();
 					STORE_F32(stack + 80, float(std::fma(delta, weight, fromAngle)));
-					n_sub_824B6808(ctx, base, stack + 80);
+					Angle_NormalizeRadians(ctx, base, stack + 80);
 					ctx.fpscr.disableFlushMode();
 					angle = double(LOAD_F32(stack + 80));
 				}
 			}
 
 			ctx.fpscr.disableFlushMode();
-			const double rotationResult = n_sub_82623108(ctx, base, rotationObject, angle, zero);
+			const double rotationResult = RotationController_SetEulerAngles(ctx, base, rotationObject, angle, zero);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
 			ctx.f1.f64 = rotationResult;  // callers read f1
@@ -275,7 +282,7 @@ uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 			spellManager->m_26D = 0;
 			result = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(0x83496920u) + 12) + 88) + 4) + 84);
 			ctx.f1.f64 = rawStep;  // state the callee may pass on
-			callerF1 = n_sub_82623170(ctx, base, result);
+			callerF1 = RotationController_RefreshQuaternion(ctx, base, result);
 		}
 	}
 
@@ -284,13 +291,13 @@ uint32_t n_sub_821E6930(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 	ctx.f1.f64 = callerF1;  // callers read f1
 	return result;
 }
-PROMOTED_ENTRY(4, sub_821E6930, 0x821E6930) { ctx.r3.u64 = n_sub_821E6930(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(4, sub_821E6930, 0x821E6930) { ctx.r3.u64 = CECSpellManager_UpdateBlendRotation(ctx, base, ctx.r3.u32); }
 
 // With m_26A set, searches for a spell by target: none found clears m_26A (and, if m_17C is 0, sets m_234 to the
 // game-database float at 0x833191D4); m_26B is cleared either way. With m_70 set, decrements m_174 unless it is 0 and
-// calls three helpers. Then lowers m_234 by one step toward 0 and runs n_sub_821E6AD0, n_sub_821E66F0, n_sub_821E6930
+// calls three helpers. Then lowers m_234 by one step toward 0 and runs n_sub_821E6AD0, CECSpellManager_UpdateCountdowns, CECSpellManager_UpdateBlendRotation
 // and CECSpellManager_GetSpellComponent.
-uint64_t n_sub_821E6FA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint64_t CECSpellManager_Update(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(4, 0x821E6FA0)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_821E6FA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821E6FA0);
@@ -309,6 +316,8 @@ uint64_t n_sub_821E6FA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		const uint32_t target = LOAD32(element + 68);
 		// state the callee may pass on
 		ctx.r1.u64 = stack;
+		ctx.r8.u64 = element;
+		ctx.r9.u64 = container;
 		const uint32_t foundSpell = SpellManager_FindSpellByTarget(ctx, base, target, 2, 0, owner);
 		f1Value = ctx.f1.f64;
 		f13Value = ctx.f13.f64;
@@ -331,7 +340,7 @@ uint64_t n_sub_821E6FA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		ctx.r1.u64 = stack;
 		n_sub_82429168(ctx, base, spellManagerAddr);
 		n_sub_824293D0(ctx, base, spellManagerAddr);
-		n_sub_8242D7B0(ctx, base, spellManagerAddr);
+		CECSpellManager_UpdateChargingTheme(ctx, base, spellManagerAddr);
 		f1Value = ctx.f1.f64;
 		f13Value = ctx.f13.f64;
 	}
@@ -341,7 +350,7 @@ uint64_t n_sub_821E6FA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	if (double(spellManager->m_234) > zero) {
 		const uint32_t owner = spellManager->m_owner;
 		ctx.r1.u64 = stack;
-		f1Value = n_sub_82207928(ctx, base, owner);
+		f1Value = Game_GetDeltaTime(ctx, base, owner);
 		ctx.fpscr.disableFlushMode();
 		const double current = double(spellManager->m_234);
 		const double step = double(float(f1Value / LOAD_F64(0x83319510u)));
@@ -358,15 +367,17 @@ uint64_t n_sub_821E6FA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	// state the callees may pass on
 	ctx.r1.u64 = stack;
 	ctx.f1.f64 = f1Value;
+	ctx.f11.f64 = zero;
+	ctx.f13.f64 = f13Value;
 	n_sub_821E6AD0(ctx, base, spellManagerAddr);
-	n_sub_821E66F0(ctx, base, spellManagerAddr);
-	n_sub_821E6930(ctx, base, spellManagerAddr);
+	CECSpellManager_UpdateCountdowns(ctx, base, spellManagerAddr);
+	CECSpellManager_UpdateBlendRotation(ctx, base, spellManagerAddr);
 	const uint64_t result = CECSpellManager_GetSpellComponent(ctx, base, spellManagerAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(4, sub_821E6FA0, 0x821E6FA0) { ctx.r3.u64 = n_sub_821E6FA0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(4, sub_821E6FA0, 0x821E6FA0) { ctx.r3.u64 = CECSpellManager_Update(ctx, base, ctx.r3.u64); }
 
 // sub_82427628  [60 bytes]
 uint64_t CECSpellManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t charString) {
@@ -385,8 +396,8 @@ uint64_t CECSpellManager_GetClassName(CpuState& ctx, uint8_t* base, uint64_t cha
 PROMOTED_ENTRY(24, sub_82427628, 0x82427628) { ctx.r3.u64 = CECSpellManager_GetClassName(ctx, base, ctx.r3.u64); }
 
 // Constructor: sets the owner and vtable, resets the cast table at +128, zeroes the strings at +424 and +428
-// (each adds one to the global count at 0x83496EB8), sets up the entity handles and calls n_sub_82427848.
-uint64_t n_sub_82427678(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint32_t owner) {
+// (each adds one to the global count at 0x83496EB8), sets up the entity handles and calls CECSpellManager_Reset.
+uint64_t CECSpellManager_Construct(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint32_t owner) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(24, 0x82427678)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = owner; __imp__sub_82427678(ctx, base); return ctx.r3.u64; }
@@ -471,18 +482,24 @@ uint64_t n_sub_82427678(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	spellManager->m_284 = 0xFFFFFFFF;
 
 	// state the callee may pass on
+	ctx.r4.u64 = secondCount;
+	ctx.r5.u64 = stringCountAddr;
+	ctx.r6.u64 = stringCountAddr;
+	ctx.r7.u64 = firstLockState;
 	ctx.r8.u64 = firstCount;
-	n_sub_82427848(ctx, base, spellManagerAddr);
+	ctx.r9.s64 = globalsBase;
+	ctx.r10.u64 = handleVtable;
+	CECSpellManager_Reset(ctx, base, spellManagerAddr);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
 	return spellManagerAddr;
 }
-PROMOTED_ENTRY(24, sub_82427678, 0x82427678) { ctx.r3.u64 = n_sub_82427678(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(24, sub_82427678, 0x82427678) { ctx.r3.u64 = CECSpellManager_Construct(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
 // Destructor: releases the entity handles at +636 and +472 down to +432 (each gets the EntityHandle vtable,
 // is released and its pointer word cleared), releases the strings at +428 and +424, sets the vtable to
 // 0x820A8D10 and, when bit 0 of deleteFlags is set, frees the object.
-uint64_t n_sub_82427778(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t deleteFlags) {
+uint64_t CECSpellManager_Destructor(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t deleteFlags) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(24, 0x82427778)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = deleteFlags; __imp__sub_82427778(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82427778);
@@ -535,12 +552,12 @@ uint64_t n_sub_82427778(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.r1.u64 = stack;
 	return spellManagerAddr;
 }
-PROMOTED_ENTRY(24, sub_82427778, 0x82427778) { ctx.r3.u64 = n_sub_82427778(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_82427778, 0x82427778) { ctx.r3.u64 = CECSpellManager_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Puts the manager into its initial state: clears the handles at +472 and +464 by assigning an empty
 // stack handle, resets flags, counters and the blend/countdown floats, empties the string at +428, copies two
 // vectors from 0x83497DF0/0x83497E00 to +48/+64 and resets the cast table at +128.
-uint32_t n_sub_82427848(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_Reset(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_82000000 = int32_t(0x82000000);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -617,7 +634,7 @@ uint32_t n_sub_82427848(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	}
 
 	ctx.r9.u64 = 0;  // state the callee may pass on
-	n_sub_824279D0(ctx, base, spellManagerAddr);
+	CECSpellManager_ResetCastingData(ctx, base, spellManagerAddr);
 
 	STORE32(tempHandle, handleVtable);
 	STORE32(tempHandle + 4, 0);
@@ -639,9 +656,9 @@ uint32_t n_sub_82427848(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_82427848, 0x82427848) { ctx.r3.u64 = n_sub_82427848(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_82427848, 0x82427848) { ctx.r3.u64 = CECSpellManager_Reset(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_824279D0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_ResetCastingData(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(24, 0x824279D0)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_824279D0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824279D0);
@@ -730,14 +747,13 @@ uint32_t n_sub_824279D0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r8.u64 = 16;   // callers may read r8 after the call
 	return result;
 }
-PROMOTED_ENTRY(24, sub_824279D0, 0x824279D0) { ctx.r3.u64 = n_sub_824279D0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_824279D0, 0x824279D0) { ctx.r3.u64 = CECSpellManager_ResetCastingData(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82428A58(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
+uint64_t CECSpellManager_UpdateOwnerPlayerState(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(24, 0x82428A58)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_82428A58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82428A58);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 96);
+	GameStackFrame stackFrame(ctx, base, 96);
 
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, spellManagerAddr);
 
@@ -746,20 +762,17 @@ uint64_t n_sub_82428A58(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 	uint32_t rootChild = LOAD32(LOAD32(globalRoot + 12) + 88);
 	uint32_t systemTable = LOAD32(rootChild + 4);
 	uint32_t players = LOAD32(systemTable);
-
-	ctx.r1.u64 = stack;
 	// state the callee may pass on
+	ctx.r8.u64 = systemTable;
+	ctx.r9.u64 = rootChild;
 	uint64_t isPlayer = Players_IsPlayer(ctx, base, players, owner);
 
 	if ((isPlayer & 0xFF) != 0) {
 		spellManager->m_270 = 0;
 	}
-
-	stack = PopStackFrame(stack, 96);
-	ctx.r1.u64 = stack;
 	return isPlayer;
 }
-PROMOTED_ENTRY(24, sub_82428A58, 0x82428A58) { ctx.r3.u64 = n_sub_82428A58(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(24, sub_82428A58, 0x82428A58) { ctx.r3.u64 = CECSpellManager_UpdateOwnerPlayerState(ctx, base, ctx.r3.u32); }
 
 uint64_t n_sub_82428AB8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -770,9 +783,9 @@ uint64_t n_sub_82428AB8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_8242EBB8(ctx, base, spellManagerAddr);
+	CECSpellManager_DestroySpellAudioEntity(ctx, base, spellManagerAddr);
 	CECSpellManager_ResetState(ctx, base, spellManagerAddr);
-	// f1 as the calls above left it, or what n_sub_82623170 returns; n_sub_8242DEA0 receives it
+	// f1 as the calls above left it, or what RotationController_RefreshQuaternion returns; CECSpellManager_DestroyChargingLightSource receives it
 	double f1Value = ctx.f1.f64;
 
 	if (spellManager->m_26D != 0) {
@@ -781,12 +794,13 @@ uint64_t n_sub_82428AB8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		uint32_t rootChild = LOAD32(LOAD32(globalRoot + 12) + 88);
 		uint32_t object84 = LOAD32(LOAD32(rootChild + 4) + 84);
 		ctx.r8.u64 = rootChild;   // state the callee may pass on
-		f1Value = n_sub_82623170(ctx, base, object84);
+		f1Value = RotationController_RefreshQuaternion(ctx, base, object84);
 	}
 
-	n_sub_8242DEA0(ctx, base, spellManagerAddr);
+	ctx.f1.f64 = f1Value;
+	CECSpellManager_DestroyChargingLightSource(ctx, base, spellManagerAddr);
 
-	n_sub_8242E910(ctx, base, spellManagerAddr, 1);
+	CECSpellManager_RemovePendingSpell(ctx, base, spellManagerAddr, 1);
 
 	uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
 	uint32_t owner = spellManager->m_owner;
@@ -814,23 +828,24 @@ uint64_t n_sub_82428B58(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 
-	n_sub_8242EBB8(ctx, base, spellManagerAddr);
+	CECSpellManager_DestroySpellAudioEntity(ctx, base, spellManagerAddr);
 
 	uint32_t ownerEntity = spellManager->m_owner;
 	SpellManager_ResetEntityMagicImpl(ctx, base, ownerEntity, 1, 0);
 
-	// f1 as the calls above left it, or what n_sub_82623170 returns; n_sub_8242DEA0 receives it
+	// f1 as the calls above left it, or what RotationController_RefreshQuaternion returns; CECSpellManager_DestroyChargingLightSource receives it
 	double f1Value = ctx.f1.f64;
 	if (spellManager->m_26D != 0) {
 		spellManager->m_26D = 0;
 		uint32_t rootChild = LOAD32(LOAD32(LOAD32(kGlobalRootAddr) + 12) + 88);
 		uint32_t systemTable = LOAD32(rootChild + 4);
-		f1Value = n_sub_82623170(ctx, base, LOAD32(systemTable + 84));
+		f1Value = RotationController_RefreshQuaternion(ctx, base, LOAD32(systemTable + 84));
 	}
 
-	n_sub_8242DEA0(ctx, base, spellManagerAddr);
+	ctx.f1.f64 = f1Value;
+	CECSpellManager_DestroyChargingLightSource(ctx, base, spellManagerAddr);
 
-	n_sub_8242E910(ctx, base, (uint32_t)spellManagerAddr, 1);
+	CECSpellManager_RemovePendingSpell(ctx, base, (uint32_t)spellManagerAddr, 1);
 
 	spellManager->m_1A0 = 0;
 	uint32_t clearAddr = (uint32_t)spellManagerAddr + 568;
@@ -839,7 +854,7 @@ uint64_t n_sub_82428B58(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		clearAddr += 4;
 	}
 
-	n_sub_8242D6E0(ctx, base, spellManagerAddr, 1);
+	CECSpellManager_UpdateSpellNameDisplay(ctx, base, spellManagerAddr, 1);
 
 	uint32_t rootChild = LOAD32(LOAD32(LOAD32(kGlobalRootAddr) + 12) + 88);
 	uint32_t systemTable = LOAD32(rootChild + 4);
@@ -863,12 +878,12 @@ uint32_t CECSpellManager_ResetState(CpuState& ctx, uint8_t* base, uint64_t spell
 	ctx.fpscr.disableFlushMode();
 	const double zero = double(LOAD_F32(0x820994B4u));   // 0.0f constant
 	ctx.r1.u64 = stack;
-	n_sub_82429280(ctx, base, spellManagerAddr, 0, zero);
-	n_sub_8242CD80(ctx, base, spellManagerAddr);
-	n_sub_8242CF40(ctx, base, spellManagerAddr);
+	CECSpellManager_SetSpellAction(ctx, base, spellManagerAddr, 0, zero);
+	SpellManager_ReleaseSpellEntity(ctx, base, spellManagerAddr);
+	CECSpellManager_DestroySpellTarget(ctx, base, spellManagerAddr);
 	CECSpellManager_UpdateSpellLight(ctx, base, spellManagerAddr);
 
-	// Release the effect pair n_sub_8242E150 creates (its m_1E4 reference count is at +16).
+	// Release the effect pair CECSpellManager_UpdateChargingEffect creates (its m_1E4 reference count is at +16).
 	if (spellManager->m_26E != 0) {
 		uint32_t effect = spellManager->m_1E4;
 		if (effect != 0) {
@@ -883,8 +898,8 @@ uint32_t CECSpellManager_ResetState(CpuState& ctx, uint8_t* base, uint64_t spell
 		spellManager->m_26E = 0;
 	}
 
-	n_sub_8242EA00(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
-	n_sub_8242D6E0(ctx, base, spellManagerAddr, 0);
+	EntityHandle_ForwardToTarget(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
+	CECSpellManager_UpdateSpellNameDisplay(ctx, base, spellManagerAddr, 0);
 	uint32_t fadeResult = CECSpellManager_FadeScreenShake(ctx, base, spellManagerAddr);
 	spellManager->m_263 = 0;
 	spellManager->m_264 = 0;
@@ -894,7 +909,7 @@ uint32_t CECSpellManager_ResetState(CpuState& ctx, uint8_t* base, uint64_t spell
 }
 PROMOTED_ENTRY(24, sub_82429098, 0x82429098) { ctx.r3.u64 = CECSpellManager_ResetState(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t castMode) {
+uint32_t CECSpellManager_UpdateCastState(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t castMode) {
 	constexpr int32_t g_82000C98 = int32_t(0x82000C98);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -922,26 +937,28 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 			spellManager->m_266 = uint8_t(0);
 			ctx.r1.u64 = stack;
 			ctx.r4.u64 = castMode;   // state the callee may pass on
-			f1Value = n_sub_82429920(ctx, base, spellManagerAddr, zero);
+			f1Value = CECSpellManager_UpdateSpellCharge(ctx, base, spellManagerAddr, zero);
 
 			uint32_t castIndex = spellManager->m_160;
 			if ((int32_t)castIndex != (int32_t)spellManager->m_198 && (int32_t)castIndex >= 0) {
 				uint8_t castEntry = LOAD8(uint32_t((uint64_t)castIndex + spellManagerAddr) + 128);
 				// state the callee may pass on
-				n_sub_8242EA00(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
-				n_sub_8242EC58(ctx, base, spellManagerAddr, (uint32_t)(int32_t)(int8_t)castEntry, castIndex);
+				ctx.r9.u64 = castEntry;
+				ctx.f1.f64 = f1Value;
+				EntityHandle_ForwardToTarget(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
+				CECSpellManager_PlaySpellHoldLoopSound(ctx, base, spellManagerAddr, (uint32_t)(int32_t)(int8_t)castEntry, castIndex);
 				f1Value = ctx.f1.f64;
 				spellManager->m_198 = castIndex;
 			}
 
 			ctx.f1.f64 = f1Value;   // state the callee may pass on
-			result = n_sub_8242E150(ctx, base, spellManagerAddr, 0);
+			result = CECSpellManager_UpdateChargingEffect(ctx, base, spellManagerAddr, 0);
 			returnR4 = ctx.r4.u64;
 		}
 		if (spellManager->m_261 != 0) {
 			ctx.fpscr.disableFlushMode();
 			ctx.r1.u64 = stack;
-			uint32_t stateResult = n_sub_82429280(ctx, base, spellManagerAddr, 4, zero);
+			uint32_t stateResult = CECSpellManager_SetSpellAction(ctx, base, spellManagerAddr, 4, zero);
 			stack = PopStackFrame(stack, 128);
 			ctx.r1.u64 = stack;
 			return stateResult;
@@ -966,7 +983,7 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 		PPCCRRegister iterationsCompare{};
 		iterationsCompare.compare<int32_t>((int32_t)iterations, 0, xer);
 
-		// state n_sub_8242C4E0 may pass on; the original hands the callee's r5-r8 on from pass to pass,
+		// state CECSpellManager_GetSpellChargeValue may pass on; the original hands the callee's r5-r8 on from pass to pass,
 		// so setting them once before the first pass is the same
 		ctx.r5.u64 = maskedDiff;
 		ctx.r6.u64 = signMask;
@@ -978,7 +995,7 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 			do {
 				ctx.r1.u64 = stack;
 				ctx.xer.ca = xer.ca;
-				f1Value = n_sub_8242C4E0(ctx, base, spellManagerAddr, i);
+				f1Value = CECSpellManager_GetSpellChargeValue(ctx, base, spellManagerAddr, i);
 				ctx.fpscr.disableFlushMode();
 				double accumulated = double(spellManager->m_1FC);
 				i++;
@@ -991,7 +1008,7 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 		do {
 			ctx.r1.u64 = stack;
 			ctx.xer.ca = xer.ca;
-			f1Value = n_sub_8242C4E0(ctx, base, spellManagerAddr, pass);
+			f1Value = CECSpellManager_GetSpellChargeValue(ctx, base, spellManagerAddr, pass);
 			ctx.fpscr.disableFlushMode();
 			double accumulated = double(spellManager->m_200);
 			pass++;
@@ -1000,13 +1017,16 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 		} while ((int32_t)pass < 5);
 
 		// state the callee may pass on
+		ctx.r4.u64 = pass;
+		ctx.f1.f64 = f1Value;
+		ctx.f13.f64 = sum;
 		ctx.cr0 = iterationsCompare;
-		n_sub_8242CAB0(ctx, base, spellManagerAddr);
+		CECSpellManager_UpdateChargingOrbEffects(ctx, base, spellManagerAddr);
 
-		n_sub_8242E150(ctx, base, spellManagerAddr, 1);
+		CECSpellManager_UpdateChargingEffect(ctx, base, spellManagerAddr, 1);
 
-		n_sub_8242DB00(ctx, base, spellManagerAddr);
-		// r6, f1 and f2 as n_sub_8242DB00 left them, replaced below when n_sub_82420130 runs;
+		CECSpellManager_CreateChargingLightSource(ctx, base, spellManagerAddr);
+		// r6, f1 and f2 as CECSpellManager_CreateChargingLightSource left them, replaced below when n_sub_82420130 runs;
 		// CCharString_AssignFromCStr receives them
 		uint64_t assignR6 = ctx.r6.u64;
 		f1Value = ctx.f1.f64;
@@ -1017,7 +1037,7 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 			uint32_t stringBlock = spellManager->m_1A8;
 			uint64_t charStringAddr = (int64_t)spellManagerAddr + 424;
 			if (stringBlock != 0 && (int32_t)LOAD32(stringBlock + 4) != 0) {
-				uint64_t ownerKind = n_sub_8242DA90(ctx, base, spellManagerAddr);
+				uint64_t ownerKind = CECSpellManager_GetOwnerKind(ctx, base, spellManagerAddr);
 				assignR6 = ownerKind;
 				ctx.fpscr.disableFlushMode();
 				f2Value = double(LOAD_F32(constantsAddr + 8236));
@@ -1032,6 +1052,9 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 			spellManager->m_19C = 0xFFFFFFFFu;
 			spellManager->m_267 = uint8_t(1);
 			// state the callee may pass on
+			ctx.r6.u64 = assignR6;
+			ctx.f1.f64 = f1Value;
+			ctx.f2.f64 = f2Value;
 			CCharString_AssignFromCStr(ctx, base, charStringAddr, g_82000C98);   // g_82000C98 is an empty string
 			ctx.fpscr.disableFlushMode();
 			spellManager->m_22C = LOAD_F32(constantsAddr + 8236);
@@ -1039,7 +1062,7 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 
 		ctx.fpscr.disableFlushMode();
 		const double quickCastTime = double(LOAD_F32(0x833191B4u));   // QuickCastTimeSecs tuning value
-		f1Value = n_sub_82429920(ctx, base, spellManagerAddr, quickCastTime);
+		f1Value = CECSpellManager_UpdateSpellCharge(ctx, base, spellManagerAddr, quickCastTime);
 
 		ctx.fpscr.disableFlushMode();
 		spellManager->m_266 = (double(spellManager->m_1F0) > zero) ? uint8_t(0) : uint8_t(1);
@@ -1055,9 +1078,9 @@ uint32_t n_sub_82429580(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.r4.u64 = returnR4;   // callers read r4 after the call
 	return result;
 }
-PROMOTED_ENTRY(24, sub_82429580, 0x82429580) { ctx.r3.u64 = n_sub_82429580(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_82429580, 0x82429580) { ctx.r3.u64 = CECSpellManager_UpdateCastState(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t castMode) {
+uint32_t CECSpellManager_UpdateChargeState(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t castMode) {
 	constexpr int32_t TXT_83497DE4_G_ = int32_t(0x83497DE4);
 	if (!UseLiftedCode(24, 0x824297B8)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = castMode; __imp__sub_824297B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824297B8);
@@ -1091,8 +1114,9 @@ uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 				SET_V8(block10, VLOAD(((uint32_t)spellManagerAddr + 16u) & ~0xFu));
 				ctx.r1.u64 = stack;
 				// state the callee may pass on
+				ctx.r8.u64 = new170;
 				ctx.v1 = block10;
-				result = n_sub_82429A50(ctx, base, spellManagerAddr, castSlot, new164);
+				result = CECSpellManager_ApplyChargeLevel(ctx, base, spellManagerAddr, castSlot, new164);
 				returnR4 = ctx.r4.u64;
 				returnR7 = spellManager->m_170;
 				if ((int32_t)returnR7 > 0) {
@@ -1104,7 +1128,7 @@ uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 				} else {
 					ctx.fpscr.disableFlushMode();
 					ctx.r7.u64 = returnR7;   // state the callee may pass on
-					result = n_sub_82429280(ctx, base, spellManagerAddr, 6, zero);
+					result = CECSpellManager_SetSpellAction(ctx, base, spellManagerAddr, 6, zero);
 					returnR4 = ctx.r4.u64;
 					returnR7 = ctx.r7.u64;
 				}
@@ -1116,7 +1140,7 @@ uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 		ctx.r4.u64 = castMode;   // state the callee may pass on
 		CECSpellManager_UpdateSpellLight(ctx, base, spellManagerAddr);
 
-		// Release the effect pair n_sub_8242E150 creates (its m_1E4 reference count is at +16).
+		// Release the effect pair CECSpellManager_UpdateChargingEffect creates (its m_1E4 reference count is at +16).
 		if (spellManager->m_26E != 0) {
 			uint32_t effect = spellManager->m_1E4;
 			if (effect != 0) {
@@ -1130,13 +1154,13 @@ uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 			}
 			spellManager->m_26E = uint8_t(0);
 		}
-		n_sub_8242EA00(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
+		EntityHandle_ForwardToTarget(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
 		spellManager->m_260 = uint8_t(0);
 		ctx.fpscr.disableFlushMode();
 		const double zero = double(LOAD_F32(0x820994B4u));   // 0.0f constant
 		spellManager->m_1F0 = float(zero);
 		spellManager->m_1F4 = float(zero);
-		result = n_sub_8242D6E0(ctx, base, spellManagerAddr, 0);
+		result = CECSpellManager_UpdateSpellNameDisplay(ctx, base, spellManagerAddr, 0);
 		returnR4 = ctx.r4.u64;
 		returnR7 = ctx.r7.u64;
 		spellManager->m_288 = 0;
@@ -1149,9 +1173,9 @@ uint32_t n_sub_824297B8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.r7.u64 = returnR7;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_824297B8, 0x824297B8) { ctx.r3.u64 = n_sub_824297B8(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_824297B8, 0x824297B8) { ctx.r3.u64 = CECSpellManager_UpdateChargeState(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-double n_sub_82429920(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, double floatArg1) {
+double CECSpellManager_UpdateSpellCharge(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, double floatArg1) {
 	if (!UseLiftedCode(24, 0x82429920)) { ctx.r3.u64 = spellManagerAddr; ctx.f1.f64 = floatArg1; __imp__sub_82429920(ctx, base); return ctx.f1.f64; }
 	LiftedFrame frame(0x82429920);
 	uint32_t stack = ctx.r1.u32;
@@ -1172,7 +1196,7 @@ double n_sub_82429920(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, d
 			spellManager->m_15C = nextIndex;
 			ctx.r1.u64 = stack;
 			ctx.f1.f64 = floatArg1;   // state the callee may pass on
-			double nextValue = n_sub_8242C4E0(ctx, base, spellManagerAddr, nextIndex);
+			double nextValue = CECSpellManager_GetSpellChargeValue(ctx, base, spellManagerAddr, nextIndex);
 			ctx.fpscr.disableFlushMode();
 			double delta = double(float(nextValue - floatArg1));
 			returnF13 = double(LOAD_F32(0x820994B4u));   // 0.0f lower bound
@@ -1184,7 +1208,7 @@ double n_sub_82429920(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, d
 			spellManager->m_260 = 0;
 			spellManager->m_1F4 = float(delta);
 			ctx.f1.f64 = nextValue;   // state the callee may pass on
-			result = n_sub_8242C4E0(ctx, base, spellManagerAddr, nextIndex);
+			result = CECSpellManager_GetSpellChargeValue(ctx, base, spellManagerAddr, nextIndex);
 			ctx.fpscr.disableFlushMode();
 			spellManager->m_204 = float(result);
 			spellManager->m_208 = float(floatArg1);
@@ -1241,9 +1265,9 @@ double n_sub_82429920(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, d
 	ctx.f13.f64 = returnF13;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_82429920, 0x82429920) { ctx.f1.f64 = n_sub_82429920(ctx, base, ctx.r3.u32, ctx.f1.f64); }
+PROMOTED_ENTRY(24, sub_82429920, 0x82429920) { ctx.f1.f64 = CECSpellManager_UpdateSpellCharge(ctx, base, ctx.r3.u32, ctx.f1.f64); }
 
-uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t row, uint64_t level) {
+uint32_t CECSpellManager_ApplyChargeLevel(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t row, uint64_t level) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(24, 0x82429A50)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = row; ctx.r5.u64 = level; __imp__sub_82429A50(ctx, base); return ctx.r3.u32; }
@@ -1274,7 +1298,7 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 
 	ctx.r1.u64 = stack;
 	ctx.v126 = entryV1;
-	n_sub_824BEAF8(ctx, base, spellManager->m_owner, (uint32_t)row, cappedCount, spellManager->m_265);
+	Creature_StartSpellCast(ctx, base, spellManager->m_owner, (uint32_t)row, cappedCount, spellManager->m_265);
 	// r8 (and r7 further down) is handed on to the calls below and left for the callers.
 	uint64_t r8Value = ctx.r8.u64;
 	// v1 as the call left it; replaced by the vector the owner's virtual method writes to stack + 112.
@@ -1282,6 +1306,7 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 
 	if ((int32_t)row == 0) {
 		uint32_t playersRef = LOAD32(LOAD32(LOAD32(LOAD32(globalRootAddr) + 12) + 88) + 4);
+		ctx.r9.u64 = playersRef;
 		uint32_t isPlayer = Players_IsPlayer(ctx, base, LOAD32(playersRef), spellManager->m_owner);
 		r8Value = isPlayer & 0xFF;
 		if (r8Value != 0) {
@@ -1320,6 +1345,7 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 
 	uint64_t r7Value = handleTarget;
 	if (spellId > -1) {
+		ctx.r8.u64 = r8Value;
 		ctx.v1 = shotVector;
 		ctx.v2 = entryV1;
 		ctx.v127 = shotVector;
@@ -1327,13 +1353,16 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 		r7Value = ctx.r7.u64;
 		r8Value = ctx.r8.u64;
 		if (spellShot != 0) {
-			n_sub_8242E460(ctx, base, spellManagerAddr, effectiveLevel, row);
+			SpellManager_ApplySpellScreenShake(ctx, base, spellManagerAddr, effectiveLevel, row);
 			r7Value = ctx.r7.u64;
 			r8Value = ctx.r8.u64;
 		}
 	}
 
 	uint32_t playersRef = LOAD32(LOAD32(LOAD32(LOAD32(globalRootAddr) + 12) + 88) + 4);
+	ctx.r7.u64 = r7Value;
+	ctx.r8.u64 = r8Value;
+	ctx.r9.u64 = playersRef;
 	uint64_t result = Players_IsPlayer(ctx, base, LOAD32(playersRef), spellManager->m_owner);
 	uint64_t r6Value = ctx.r6.u64;
 	r7Value = ctx.r7.u64;
@@ -1385,6 +1414,7 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 				STORE32((uint32_t)result + 16, 2u);
 			}
 			ctx.fpscr.disableFlushMode();
+			ctx.r6.u64 = r6Value;
 			ctx.r8.u64 = r8Value;
 			ctx.f1.f64 = double(LOAD_F32(0x8209B4D8u));
 			result = n_sub_822B3AE8(ctx, base, result);
@@ -1405,9 +1435,9 @@ uint32_t n_sub_82429A50(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.v127 = savedV127;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_82429A50, 0x82429A50) { ctx.r3.u64 = n_sub_82429A50(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(24, sub_82429A50, 0x82429A50) { ctx.r3.u64 = CECSpellManager_ApplyChargeLevel(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
-double n_sub_8242C4E0(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint32_t spellIndex) {
+double CECSpellManager_GetSpellChargeValue(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint32_t spellIndex) {
 	if (!UseLiftedCode(24, 0x8242C4E0)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = spellIndex; __imp__sub_8242C4E0(ctx, base); return ctx.f1.f64; }
 	LiftedFrame frame(0x8242C4E0);
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, spellManagerAddr);
@@ -1443,7 +1473,7 @@ double n_sub_8242C4E0(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, u
 	if (result < minimum) return minimum;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242C4E0, 0x8242C4E0) { ctx.f1.f64 = n_sub_8242C4E0(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(24, sub_8242C4E0, 0x8242C4E0) { ctx.f1.f64 = CECSpellManager_GetSpellChargeValue(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
 uint64_t SpellManager_SetSpellCastTableItem(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint32_t spellCastId, uint32_t slotIndex, uint64_t spellCastValue, uint64_t shouldBroadcast) {
 	if (!UseLiftedCode(24, 0x8242C970)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = spellCastId; ctx.r5.u64 = slotIndex; ctx.r6.u64 = spellCastValue; ctx.r7.u64 = shouldBroadcast; __imp__sub_8242C970(ctx, base); return ctx.r3.u64; }
@@ -1488,7 +1518,7 @@ uint64_t SpellManager_SetSpellCastTableItem(CpuState& ctx, uint8_t* base, uint64
 }
 PROMOTED_ENTRY(24, sub_8242C970, 0x8242C970) { ctx.r3.u64 = SpellManager_SetSpellCastTableItem(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u32, ctx.r6.u64, ctx.r7.u64); }
 
-uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_UpdateChargingOrbEffects(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
 	constexpr int32_t str_TXT_820B1C18_B_ = int32_t(0x820B1C18);
 	constexpr int32_t str_TXT_820B1C2C_B_ = int32_t(0x820B1C2C);
@@ -1506,8 +1536,7 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	LiftedFrame frame(0x8242CAB0);
 
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, spellManagerAddr);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 192);
+	GameStackFrame stackFrame(ctx, base, 192);
 
 	const uint32_t managerBase = uint32_t(spellManagerAddr);
 	const uint64_t hashSeed = 0xFFFFFFFF811C9DC5ull;
@@ -1527,7 +1556,6 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	if ((hashFlags & 1) == 0) {
 		hashFlags |= 1;
 		STORE32(hashFlagsAddr, hashFlags);
-		ctx.r1.u64 = stack;
 		STORE32(chargingFXHashes + 0, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1C40_B_), hashSeed));
 		STORE32(chargingFXHashes + 4, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1C2C_B_), hashSeed));
 		STORE32(chargingFXHashes + 8, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1C18_B_), hashSeed));
@@ -1538,7 +1566,6 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	if ((hashFlags & 2) == 0) {
 		hashFlags |= 2;
 		STORE32(hashFlagsAddr, hashFlags);
-		ctx.r1.u64 = stack;
 		STORE32(chargedScaleHashes + 0, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1CC4_B_), hashSeed));
 		STORE32(chargedScaleHashes + 4, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1CA8_B_), hashSeed));
 		STORE32(chargedScaleHashes + 8, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1C8C_B_), hashSeed));
@@ -1548,7 +1575,6 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	}
 	if ((hashFlags & 4) == 0) {
 		STORE32(hashFlagsAddr, hashFlags | 4);
-		ctx.r1.u64 = stack;
 		STORE32(orbFXHashes + 0, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1D40_B_), hashSeed));
 		STORE32(orbFXHashes + 4, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B1D28_B_), hashSeed));
 		STORE32(orbFXHashes + 8, String_HashFnv1(ctx, base, uint64_t(str_TXT_820B0000_B_) + 7440, hashSeed));
@@ -1581,9 +1607,7 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 
 			const int32_t spellId = int8_t(LOAD8(managerBase + 0x80 + entryIndex));
 			if (spellId == -1) continue;
-
-			ctx.r1.u64 = stack;
-			const uint64_t spellDef = n_sub_82622780(ctx, base, spellId);
+			const uint64_t spellDef = Spell_GetDefinition(ctx, base, spellId);
 			r4Value = ctx.r4.u64;
 			r6Value = ctx.r6.u64;
 			if (uint32_t(spellDef) == 0) continue;
@@ -1607,7 +1631,7 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 			if (orbFXField != 0) {
 				STORE32(orbFXAddr, LOAD32(orbFXField));
 			} else {
-				n_sub_829FB728(ctx, base, spellDef, LOAD32(orbFXHashes), orbFXAddr);
+				GameDB_TryGetFieldValue(ctx, base, spellDef, LOAD32(orbFXHashes), orbFXAddr);
 				r4Value = ctx.r4.u64;
 				r6Value = ctx.r6.u64;
 			}
@@ -1615,15 +1639,14 @@ uint32_t n_sub_8242CAB0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	}
 
 	spellManager->m_180 = 0xFFFFFFFFu;
-	ctx.r1.u64 = stack;
-	const uint32_t result = n_sub_8242D100(ctx, base, spellManagerAddr);
-	stack = PopStackFrame(stack, 192);
-	ctx.r1.u64 = stack;
+	ctx.r4.u64 = r4Value;
+	ctx.r6.u64 = r6Value;
+	const uint32_t result = SpellManager_UpdateSpellCastEffects(ctx, base, spellManagerAddr);
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242CAB0, 0x8242CAB0) { ctx.r3.u64 = n_sub_8242CAB0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242CAB0, 0x8242CAB0) { ctx.r3.u64 = CECSpellManager_UpdateChargingOrbEffects(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242CD80(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t SpellManager_ReleaseSpellEntity(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(24, 0x8242CD80)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242CD80(ctx, base); return ctx.r3.u32; }
@@ -1699,7 +1722,10 @@ uint32_t n_sub_8242CD80(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 
 			const uint32_t subObject = LOAD32(component + 16);
 			if (subObject != 0) {
-				n_sub_8322B788(ctx, base, subObject);
+				ctx.r6.u64 = r6Value;
+				ctx.r7.u64 = r7Value;
+				ctx.r8.u64 = r8Value;
+				Vector_DeletePointerElements(ctx, base, subObject);
 				r6Value = ctx.r6.u64;
 				r7Value = ctx.r7.u64;
 				r8Value = ctx.r8.u64;
@@ -1708,6 +1734,10 @@ uint32_t n_sub_8242CD80(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 			}
 		}
 
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
+		ctx.r8.u64 = r8Value;
+		ctx.r9.u64 = r9Value;
 		const uint64_t doomedEntity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, doomedEntity);
 
@@ -1730,9 +1760,9 @@ uint32_t n_sub_8242CD80(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_8242CD80, 0x8242CD80) { ctx.r3.u64 = n_sub_8242CD80(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242CD80, 0x8242CD80) { ctx.r3.u64 = SpellManager_ReleaseSpellEntity(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242CF40(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_DestroySpellTarget(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(24, 0x8242CF40)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242CF40(ctx, base); return ctx.r3.u32; }
@@ -1808,7 +1838,10 @@ uint32_t n_sub_8242CF40(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 
 			const uint32_t subObject = LOAD32(component + 16);
 			if (subObject != 0) {
-				n_sub_8322B788(ctx, base, subObject);
+				ctx.r6.u64 = r6Value;
+				ctx.r7.u64 = r7Value;
+				ctx.r8.u64 = r8Value;
+				Vector_DeletePointerElements(ctx, base, subObject);
 				r6Value = ctx.r6.u64;
 				r7Value = ctx.r7.u64;
 				r8Value = ctx.r8.u64;
@@ -1817,6 +1850,10 @@ uint32_t n_sub_8242CF40(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 			}
 		}
 
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
+		ctx.r8.u64 = r8Value;
+		ctx.r9.u64 = r9Value;
 		const uint64_t doomedEntity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
 		Entity_DestroyImpl(ctx, base, doomedEntity);
 
@@ -1839,9 +1876,9 @@ uint32_t n_sub_8242CF40(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_8242CF40, 0x8242CF40) { ctx.r3.u64 = n_sub_8242CF40(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242CF40, 0x8242CF40) { ctx.r3.u64 = CECSpellManager_DestroySpellTarget(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242D6E0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t startCharging) {
+uint32_t CECSpellManager_UpdateSpellNameDisplay(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t startCharging) {
 	if (!UseLiftedCode(24, 0x8242D6E0)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = startCharging; __imp__sub_8242D6E0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8242D6E0);
 	uint32_t stack = ctx.r1.u64;
@@ -1851,7 +1888,7 @@ uint32_t n_sub_8242D6E0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	stack = PushStackFrame(base, stack, 112);
 	ctx.r1.u64 = stack;
 	ctx.r4.u64 = startCharging;  // state the callee may pass on
-	const uint64_t ownerKind = n_sub_8242DA90(ctx, base, spellManagerAddr);
+	const uint64_t ownerKind = CECSpellManager_GetOwnerKind(ctx, base, spellManagerAddr);
 	// callers read f1 and f2 after the call
 	double f1Value = ctx.f1.f64;
 	double f2Value = ctx.f2.f64;
@@ -1884,10 +1921,10 @@ uint32_t n_sub_8242D6E0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.f2.f64 = f2Value;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_8242D6E0, 0x8242D6E0) { ctx.r3.u64 = n_sub_8242D6E0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_8242D6E0, 0x8242D6E0) { ctx.r3.u64 = CECSpellManager_UpdateSpellNameDisplay(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // Returns 1 when the owner is the hero entity, 2 when it is the local player's entity, else 0.
-uint64_t n_sub_8242DA90(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
+uint64_t CECSpellManager_GetOwnerKind(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
 	if (!UseLiftedCode(24, 0x8242DA90)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242DA90(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8242DA90);
 	uint32_t stack = ctx.r1.u64;
@@ -1910,9 +1947,9 @@ uint64_t n_sub_8242DA90(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return ownerKind;
 }
-PROMOTED_ENTRY(24, sub_8242DA90, 0x8242DA90) { ctx.r3.u64 = n_sub_8242DA90(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(24, sub_8242DA90, 0x8242DA90) { ctx.r3.u64 = CECSpellManager_GetOwnerKind(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8242DB00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_CreateChargingLightSource(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t str_TXT_820B1DAC_B_ = int32_t(0x820B1DAC);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_8335C310 = int32_t(0x8335C310);
@@ -1981,6 +2018,7 @@ uint32_t n_sub_8242DB00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		STORE32(stack + 92, 0);
 		STORE32(tempHandle, (uint32_t)handleVtable);
 		// state the callee may pass on
+		ctx.r9.s64 = handleVtable;
 		EntityHandle_SetTarget(ctx, base, tempHandle, createdEntity);
 		EntityHandle_Assign(ctx, base, handleAddr, tempHandle);
 		STORE32(tempHandle, (uint32_t)handleVtable);
@@ -2050,6 +2088,8 @@ uint32_t n_sub_8242DB00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		// differs and is marked for update after each change.
 		auto markNeedsUpdate = [&]() {
 			// state the callee may pass on, and r6-r8 as it leaves them
+			ctx.r6.u64 = r6Value;
+			ctx.r7.u64 = r7Value;
 			Light_MarkNeedsUpdate(ctx, base, light);
 			r6Value = ctx.r6.u64;
 			r7Value = ctx.r7.u64;
@@ -2094,7 +2134,10 @@ uint32_t n_sub_8242DB00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 		double f13Value = copyFloat(36, 68);
 
 		// state the callee may pass on
+		ctx.r6.u64 = r6Value;
+		ctx.r7.u64 = r7Value;
 		ctx.r8.u64 = r8Value;
+		ctx.f13.f64 = f13Value;
 		n_sub_8255EC08(ctx, base, light, 1);  // Lua_Light_SetAsActive
 		r8Value = ctx.r8.u64;
 		spellManager->m_1EC = setting;
@@ -2123,9 +2166,9 @@ uint32_t n_sub_8242DB00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	return leave(ctx.r3.u64);
 }
-PROMOTED_ENTRY(24, sub_8242DB00, 0x8242DB00) { ctx.r3.u64 = n_sub_8242DB00(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242DB00, 0x8242DB00) { ctx.r3.u64 = CECSpellManager_CreateChargingLightSource(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242DEA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_DestroyChargingLightSource(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(24, 0x8242DEA0)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242DEA0(ctx, base); return ctx.r3.u32; }
@@ -2168,7 +2211,7 @@ uint32_t n_sub_8242DEA0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_8242DEA0, 0x8242DEA0) { ctx.r3.u64 = n_sub_8242DEA0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242DEA0, 0x8242DEA0) { ctx.r3.u64 = CECSpellManager_DestroyChargingLightSource(ctx, base, ctx.r3.u64); }
 
 // sub_8242DF40  [524 bytes]
 uint32_t CECSpellManager_UpdateSpellLight(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
@@ -2275,9 +2318,15 @@ uint32_t CECSpellManager_UpdateSpellLight(CpuState& ctx, uint8_t* base, uint64_t
 				STORE32(light + 52, truncatedInt.u32);
 
 				// state the callee may pass on
+				ctx.r5.u64 = r5Value;
+				ctx.r6.u64 = r6Value;
+				ctx.r7.u64 = r7Value;
 				ctx.r8.u64 = r8Value;
 				ctx.f9 = truncatedInt;
+				ctx.f10.f64 = narrowed;
+				ctx.f11.f64 = widened;
 				ctx.f12 = roundedInt;
+				ctx.f13.f64 = rounded;
 				result = n_sub_8255EC08(ctx, base, light, 0);  // Lua_Light_SetAsActive
 			}
 			spellManager->m_26F = 1;
@@ -2290,7 +2339,7 @@ uint32_t CECSpellManager_UpdateSpellLight(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(24, sub_8242DF40, 0x8242DF40) { ctx.r3.u64 = CECSpellManager_UpdateSpellLight(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint64_t resetM224) {
+uint32_t CECSpellManager_UpdateChargingEffect(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint64_t resetM224) {
 	constexpr int32_t g_820994C0 = int32_t(0x820994C0);
 	constexpr int32_t str_TXT_820B1DC8_B_ = int32_t(0x820B1DC8);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -2298,7 +2347,7 @@ uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint
 	LiftedFrame frame(0x8242E150);
 	uint32_t stack = ctx.r1.u64;
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, managerAddr);
-	// r4 and r9 as callers see them after the return (not after the return that follows n_sub_824C90A0)
+	// r4 and r9 as callers see them after the return (not after the return that follows SpellEffect_CreateInstance)
 	uint64_t callerR4 = resetM224;
 	uint64_t callerR9 = ctx.r9.u64;
 	stack = PushStackFrame(base, stack, 160);
@@ -2327,7 +2376,7 @@ uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
 			ctx.r8.u64 = element;
-			uint32_t effect = (uint32_t)n_sub_824C92D8(ctx, base, elementValue, spellManager->m_owner, 0);
+			uint32_t effect = (uint32_t)SpellEffect_CreateFromSpell(ctx, base, elementValue, spellManager->m_owner, 0);
 			callerR4 = ctx.r4.u64;
 			callerR9 = ctx.r9.u64;
 			result = effect;
@@ -2342,7 +2391,7 @@ uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint
 				ctx.r9.u64 = refCount;  // state the callee may pass on
 				CCharString_ConstructFromCStr(ctx, base, name, str_TXT_820B1DC8_B_, -1);
 				CCharString_CopyTransformed(ctx, base, transformedName, name);
-				uint32_t nameKey = (uint32_t)n_sub_82BFD780(ctx, base, transformedName);
+				uint32_t nameKey = (uint32_t)CCharString_GetHash(ctx, base, transformedName);
 				CCharString_ReleaseAndDecGlobalCountA(ctx, base, transformedName);
 				CCharString_ReleaseAndDecGlobalCountA(ctx, base, name);
 
@@ -2354,7 +2403,7 @@ uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint
 				STORE8(stack + 95, 0);
 				STORE32(stack + 84, stack + 100);
 				ctx.r8.u64 = stack + 100;  // state the callee may pass on
-				uint32_t instance = n_sub_824C90A0(ctx, base, elementValue, spellManager->m_owner, spellManager->m_1E4, 0, 2, stack + 96, floatArg1, floatArg2);
+				uint32_t instance = SpellEffect_CreateInstance(ctx, base, elementValue, spellManager->m_owner, spellManager->m_1E4, 0, 2, stack + 96, floatArg1, floatArg2);
 				spellManager->m_1E8 = instance;
 				spellManager->m_26E = 1;
 				stack = PopStackFrame(stack, 160);
@@ -2383,9 +2432,9 @@ uint32_t n_sub_8242E150(CpuState& ctx, uint8_t* base, uint32_t managerAddr, uint
 	ctx.r9.u64 = callerR9;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242E150, 0x8242E150) { ctx.r3.u64 = n_sub_8242E150(ctx, base, ctx.r3.u32, ctx.r4.u64); }
+PROMOTED_ENTRY(24, sub_8242E150, 0x8242E150) { ctx.r3.u64 = CECSpellManager_UpdateChargingEffect(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
-uint32_t n_sub_8242E460(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint64_t recordIndex, uint32_t enableByte) {
+uint32_t SpellManager_ApplySpellScreenShake(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint64_t recordIndex, uint32_t enableByte) {
 	constexpr uint32_t kShakeTable = 0x833191F8;
 	constexpr uint32_t kShakeParams = 0x820994B4;
 	if (!UseLiftedCode(24, 0x8242E460)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = recordIndex; ctx.r5.u64 = enableByte; __imp__sub_8242E460(ctx, base); return ctx.r3.u32; }
@@ -2496,7 +2545,7 @@ uint32_t n_sub_8242E460(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr,
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242E460, 0x8242E460) { ctx.r3.u64 = n_sub_8242E460(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
+PROMOTED_ENTRY(24, sub_8242E460, 0x8242E460) { ctx.r3.u64 = SpellManager_ApplySpellScreenShake(ctx, base, ctx.r3.u32, ctx.r4.u64, ctx.r5.u32); }
 
 // sub_8242E628  [324 bytes]
 uint32_t CECSpellManager_FadeScreenShake(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr) {
@@ -2564,7 +2613,7 @@ uint32_t CECSpellManager_FadeScreenShake(CpuState& ctx, uint8_t* base, uint32_t 
 }
 PROMOTED_ENTRY(24, sub_8242E628, 0x8242E628) { ctx.r3.u64 = CECSpellManager_FadeScreenShake(ctx, base, ctx.r3.u32); }
 
-uint32_t n_sub_8242E910(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint32_t passToHandler) {
+uint32_t CECSpellManager_RemovePendingSpell(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr, uint32_t passToHandler) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(24, 0x8242E910)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = passToHandler; __imp__sub_8242E910(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8242E910);
@@ -2581,15 +2630,17 @@ uint32_t n_sub_8242E910(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr,
 		uint32_t searchKey = LOAD32(element + 68);
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r8.u64 = element;
+		ctx.r9.u64 = container;
 		uint64_t spell = SpellManager_FindSpellByTarget(ctx, base, searchKey, 2, 0, owner);
 		result = spell;
 		if ((uint32_t)spell != 0) {
-			// with the low byte of passToHandler set, n_sub_827C9C70 takes the spell (and r8 as the search
+			// with the low byte of passToHandler set, Spell_Activate takes the spell (and r8 as the search
 			// left it); otherwise the spell's byte at +158 is cleared
 			if ((passToHandler & 0xFF) == 0) {
 				STORE8((uint32_t)spell + 158, 0);
 			} else {
-				result = n_sub_827C9C70(ctx, base, spell, ctx.r8.u64);
+				result = Spell_Activate(ctx, base, spell, ctx.r8.u64);
 			}
 			STORE8((uint32_t)spell + 72, 1);
 		}
@@ -2601,9 +2652,9 @@ uint32_t n_sub_8242E910(CpuState& ctx, uint8_t* base, uint32_t spellManagerAddr,
 	ctx.r1.u64 = stack;
 	return (uint32_t)result;
 }
-PROMOTED_ENTRY(24, sub_8242E910, 0x8242E910) { ctx.r3.u64 = n_sub_8242E910(ctx, base, ctx.r3.u32, ctx.r4.u32); }
+PROMOTED_ENTRY(24, sub_8242E910, 0x8242E910) { ctx.r3.u64 = CECSpellManager_RemovePendingSpell(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint32_t n_sub_8242E9A0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t soundName, uint64_t arg3) {
+uint32_t CECSpellManager_PlaySoundOnTarget(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t soundName, uint64_t arg3) {
 	if (!UseLiftedCode(24, 0x8242E9A0)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = soundName; ctx.r5.u64 = arg3; __imp__sub_8242E9A0(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8242E9A0);
 	uint32_t stack = ctx.r1.u64;
@@ -2613,7 +2664,7 @@ uint32_t n_sub_8242E9A0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	// state the callee may pass on
 	ctx.r4.u64 = soundName;
 	ctx.r5.u64 = arg3;
-	n_sub_8242EA70(ctx, base, spellManagerAddr);
+	CECSpellManager_EnsureSpellAudioEntity(ctx, base, spellManagerAddr);
 
 	// Entity handle at +472; m_1DC is its reference, whose first word is the target (0 once it is gone).
 	uint32_t target = 0;
@@ -2631,11 +2682,11 @@ uint32_t n_sub_8242E9A0(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242E9A0, 0x8242E9A0) { ctx.r3.u64 = n_sub_8242E9A0(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(24, sub_8242E9A0, 0x8242E9A0) { ctx.r3.u64 = CECSpellManager_PlaySoundOnTarget(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // Passes the entity behind the manager's EntityHandle (+472) on to n_sub_824BE5A8, or 0 when the handle is
 // empty; a handle whose target was cleared is released first.
-uint64_t n_sub_8242EA00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t arg2, uint64_t arg3) {
+uint64_t EntityHandle_ForwardToTarget(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr, uint64_t arg2, uint64_t arg3) {
 	if (!UseLiftedCode(24, 0x8242EA00)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; __imp__sub_8242EA00(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8242EA00);
 	uint32_t stack = ctx.r1.u64;
@@ -2657,11 +2708,11 @@ uint64_t n_sub_8242EA00(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr,
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242EA00, 0x8242EA00) { ctx.r3.u64 = n_sub_8242EA00(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
+PROMOTED_ENTRY(24, sub_8242EA00, 0x8242EA00) { ctx.r3.u64 = EntityHandle_ForwardToTarget(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64); }
 
 // Makes sure the manager's spell-audio entity exists: when its EntityHandle (+472) has no live target, creates
 // the entity and stores it in the handle. Returns the manager when the entity already existed.
-uint32_t n_sub_8242EA70(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_EnsureSpellAudioEntity(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t str_TXT_820B1DE4_B_ = int32_t(0x820B1DE4);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	if (!UseLiftedCode(24, 0x8242EA70)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242EA70(ctx, base); return ctx.r3.u32; }
@@ -2717,9 +2768,9 @@ uint32_t n_sub_8242EA70(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	PPCVRegister ownerVector{};
 	SET_V8(ownerVector, VLOAD(vectorBuffer & ~0xF));
 
-	uint32_t fixedTextString = stack + 88;  // built by n_sub_824C1818 from a fixed text constant
+	uint32_t fixedTextString = stack + 88;  // built by CCharString_ConstructFromFixedText from a fixed text constant
 	ctx.r5.u64 = 0;  // state the callee may pass on
-	uint64_t fixedText = n_sub_824C1818(ctx, base, fixedTextString);
+	uint64_t fixedText = CCharString_ConstructFromFixedText(ctx, base, fixedTextString);
 
 	ctx.v1 = ownerVector;
 	ctx.v127 = ownerVector;
@@ -2754,11 +2805,11 @@ uint32_t n_sub_8242EA70(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.v127 = savedV127;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242EA70, 0x8242EA70) { ctx.r3.u64 = n_sub_8242EA70(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242EA70, 0x8242EA70) { ctx.r3.u64 = CECSpellManager_EnsureSpellAudioEntity(ctx, base, ctx.r3.u64); }
 
 // Destroys the entity behind the manager's EntityHandle (+472) when the handle has a target, and empties the handle;
 // a handle whose target was already cleared is just released.
-uint32_t n_sub_8242EBB8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
+uint32_t CECSpellManager_DestroySpellAudioEntity(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(24, 0x8242EBB8)) { ctx.r3.u64 = spellManagerAddr; __imp__sub_8242EBB8(ctx, base); return ctx.r3.u32; }
@@ -2809,9 +2860,9 @@ uint32_t n_sub_8242EBB8(CpuState& ctx, uint8_t* base, uint64_t spellManagerAddr)
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242EBB8, 0x8242EBB8) { ctx.r3.u64 = n_sub_8242EBB8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(24, sub_8242EBB8, 0x8242EBB8) { ctx.r3.u64 = CECSpellManager_DestroySpellAudioEntity(ctx, base, ctx.r3.u64); }
 
-uint32_t n_sub_8242EC58(CpuState& ctx, uint8_t* base, uint64_t spellManager, uint32_t spellType, uint64_t slotIndex) {
+uint32_t CECSpellManager_PlaySpellHoldLoopSound(CpuState& ctx, uint8_t* base, uint64_t spellManager, uint32_t spellType, uint64_t slotIndex) {
 	constexpr int32_t str_TXT_820B1E00_B_ = int32_t(0x820B1E00);
 	constexpr int32_t str_TXT_820B1DF8_B_ = int32_t(0x820B1DF8);
 	constexpr int32_t g_StringCounter = int32_t(0x83496EB8);
@@ -2832,7 +2883,7 @@ uint32_t n_sub_8242EC58(CpuState& ctx, uint8_t* base, uint64_t spellManager, uin
 	const uint32_t prefixAndSpell = stack + 80;
 	const uint32_t spellName = stack + 84;
 	const uint32_t slotSuffix = stack + 88;
-	const uint32_t scratch = stack + 92;  // slot number text, later the name passed to n_sub_8242E9A0
+	const uint32_t scratch = stack + 92;  // slot number text, later the name passed to CECSpellManager_PlaySoundOnTarget
 
 	ctx.r5.u64 = slotIndex;  // state the callee may pass on
 	uint64_t slotNumberText = CCharString_ConstructFormatInt(ctx, base, scratch, slotIndex + 1);
@@ -2871,7 +2922,7 @@ uint32_t n_sub_8242EC58(CpuState& ctx, uint8_t* base, uint64_t spellManager, uin
 	LocalisedString_Assign(ctx, base, scratch, prefixAndSpell, slotSuffix);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, prefixAndSpell);
 
-	n_sub_8242E9A0(ctx, base, spellManager, scratch, TXT_83497DE4_G_);
+	CECSpellManager_PlaySoundOnTarget(ctx, base, spellManager, scratch, TXT_83497DE4_G_);
 
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratch);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, spellName);
@@ -2881,7 +2932,7 @@ uint32_t n_sub_8242EC58(CpuState& ctx, uint8_t* base, uint64_t spellManager, uin
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(24, sub_8242EC58, 0x8242EC58) { ctx.r3.u64 = n_sub_8242EC58(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u64); }
+PROMOTED_ENTRY(24, sub_8242EC58, 0x8242EC58) { ctx.r3.u64 = CECSpellManager_PlaySpellHoldLoopSound(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r5.u64); }
 
 uint32_t CECSpellManager_PlaySpellReleaseSound(CpuState& ctx, uint8_t* base, uint64_t spellManager, uint32_t spellType, uint32_t castMode, uint64_t slotIndex) {
 	constexpr int32_t str_TXT_820B1DF8_B_ = int32_t(0x820B1DF8);
@@ -2952,7 +3003,7 @@ uint32_t CECSpellManager_PlaySpellReleaseSound(CpuState& ctx, uint8_t* base, uin
 
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, joinedStr);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, prefixStr);
-	n_sub_8242E9A0(ctx, base, spellManager, soundNameStr, TXT_83497DE8_G_);
+	CECSpellManager_PlaySoundOnTarget(ctx, base, spellManager, soundNameStr, TXT_83497DE8_G_);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, soundNameStr);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, spellNameStr);
 	CCharString_ReleaseAndDecGlobalCountA(ctx, base, scratchStr);

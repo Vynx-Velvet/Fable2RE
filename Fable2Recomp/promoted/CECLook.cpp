@@ -1,9 +1,9 @@
 // CECLook (vtable 0x82004058): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -11,7 +11,7 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
+uint64_t CECLook_Update(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
 	if (!UseLiftedCode(7, 0x8223E6B8)) { ctx.r3.u64 = lookAddress; __imp__sub_8223E6B8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8223E6B8);
 	uint32_t stack = ctx.r1.u64;
@@ -35,13 +35,13 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
 
 	if (LOAD8(lookA + 84) != 0 && LOAD8(lookA + 96) == 0) {
 		ctx.r1.u64 = stack;
-		n_sub_82240660(ctx, base, lookAddress);
+		CECLook_UpdateIdleLook(ctx, base, lookAddress);
 	} else {
 		ctx.r1.u64 = stack;
-		n_sub_82704F20(ctx, base, lookAddress);  // Lua_Look_ClearIdleLooking
+		Lua_Look_ClearIdleLooking(ctx, base, lookAddress);  // Lua_Look_ClearIdleLooking
 	}
 
-	result = n_sub_82262AF0(ctx, base, lookAddress);
+	result = CECLook_UpdateLookAtTarget(ctx, base, lookAddress);
 	if (LOAD32(lookA + 140) == 0) {
 		stack = PopStackFrame(stack, 128);
 		ctx.r1.u64 = stack;
@@ -101,9 +101,9 @@ uint64_t n_sub_8223E6B8(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
 		node = LOAD32(node);
 	}
 }
-PROMOTED_ENTRY(7, sub_8223E6B8, 0x8223E6B8) { ctx.r3.u64 = n_sub_8223E6B8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(7, sub_8223E6B8, 0x8223E6B8) { ctx.r3.u64 = CECLook_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
+uint64_t CECLook_UpdateLookAtTarget(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
 	if (!UseLiftedCode(9, 0x82262AF0)) { ctx.r3.u64 = lookAddress; __imp__sub_82262AF0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82262AF0);
 	uint32_t stack = ctx.r1.u64;
@@ -230,6 +230,9 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
 				bool alreadyApplied = LOAD8(info + 33) != 0 && LOAD8(info + 34) != 0;
 				if (!alreadyApplied) {
 					SET_V8(vec, VLOAD((stack + 80) & ~0xF));
+					ctx.r6.u64 = newBits;
+					ctx.r7.u64 = handleFlags;
+					ctx.r8.u64 = knownFlags;
 					ctx.v1 = vec;
 					n_sub_82704160(ctx, base, lookAddress);
 					newBits = ctx.r6.u64;
@@ -244,6 +247,10 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
 			uint32_t info = look->m_70;
 			uint64_t diff = flagDiff;
 			SET_V8(vec, VLOAD((stack + 80) & ~0xF));
+			ctx.r6.u64 = newBits;
+			ctx.r7.u64 = handleFlags;
+			ctx.r8.u64 = knownFlags;
+			ctx.r9.u64 = handle;
 			ctx.v1 = vec;
 			result = n_sub_822628B8(ctx, base, info, diff);
 			reg8 = ctx.r8.u64;
@@ -263,7 +270,7 @@ uint64_t n_sub_82262AF0(CpuState& ctx, uint8_t* base, uint32_t lookAddress) {
 	ctx.xer.ca = carry;
 	return result;
 }
-PROMOTED_ENTRY(9, sub_82262AF0, 0x82262AF0) { ctx.r3.u64 = n_sub_82262AF0(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(9, sub_82262AF0, 0x82262AF0) { ctx.r3.u64 = CECLook_UpdateLookAtTarget(ctx, base, ctx.r3.u32); }
 
 uint32_t CECLook_CanLookAt(CpuState& ctx, uint8_t* base, uint32_t lookAddress, uint64_t arg2) {
 	if (!UseLiftedCode(9, 0x822643B0)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = arg2; __imp__sub_822643B0(ctx, base); return ctx.r3.u32; }
@@ -323,7 +330,7 @@ uint64_t CECLook_GetClassName(CpuState& ctx, uint8_t* base, uint64_t classNameSt
 }
 PROMOTED_ENTRY(47, sub_82702C00, 0x82702C00) { ctx.r3.u64 = CECLook_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint32_t TXT_820A76B4_L_) {
+uint64_t CECLook_Constructor(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint32_t TXT_820A76B4_L_) {
 	constexpr int32_t str_TXT_820B0000_B_ = int32_t(0x820B0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(47, 0x82703478)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = TXT_820A76B4_L_; __imp__sub_82703478(ctx, base); return ctx.r3.u64; }
@@ -390,9 +397,9 @@ uint64_t n_sub_82703478(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 	ctx.r1.u64 = stack;
 	return lookAddress;
 }
-PROMOTED_ENTRY(47, sub_82703478, 0x82703478) { ctx.r3.u64 = n_sub_82703478(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+PROMOTED_ENTRY(47, sub_82703478, 0x82703478) { ctx.r3.u64 = CECLook_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t deleteFlags) {
+uint64_t CECLook_Destructor(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t deleteFlags) {
 	if (!UseLiftedCode(47, 0x827035B0)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = deleteFlags; __imp__sub_827035B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827035B0);
 	uint32_t stack = ctx.r1.u64;
@@ -402,7 +409,7 @@ uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 	stack = PushStackFrame(base, stack, 112);
 
 	ctx.r1.u64 = stack;
-	n_sub_824C6480(ctx, base, (uint32_t)(lookAddress + 132));
+	IntrusiveList_Clear(ctx, base, (uint32_t)(lookAddress + 132));
 	C_820EFB9C_Destructor(ctx, base, (uint32_t)(lookAddress + 120));
 	SharedHandle_Release(ctx, base, (uint32_t)(lookAddress + 112));
 
@@ -429,9 +436,9 @@ uint64_t n_sub_827035B0(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(47, sub_827035B0, 0x827035B0) { ctx.r3.u64 = n_sub_827035B0(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(47, sub_827035B0, 0x827035B0) { ctx.r3.u64 = CECLook_Destructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t gameDb) {
+uint64_t CECLook_Initialize(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint64_t gameDb) {
 	constexpr int32_t str_TXT_820CF300_B_ = int32_t(0x820CF300);
 	constexpr int32_t g_82970000 = int32_t(0x82970000);
 	if (!UseLiftedCode(47, 0x82703650)) { ctx.r3.u64 = lookAddress; ctx.r4.u64 = gameDb; __imp__sub_82703650(ctx, base); return ctx.r3.u64; }
@@ -452,7 +459,7 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 
 	uint32_t TXT_820A76B4_L_ = look->m_4;
 	ctx.r1.u64 = stack;
-	uint32_t component = n_sub_827031D0(ctx, base, TXT_820A76B4_L_);
+	uint32_t component = Entity_GetLookComponent(ctx, base, TXT_820A76B4_L_);
 
 	uint32_t handleAddr = (uint32_t)(lookAddress + 112);
 	SharedHandle_Release(ctx, base, lookAddress + 112);
@@ -490,7 +497,10 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 		uint32_t vfunc = LOAD32((uint32_t)look->vtable + 16);
 		callTarget.u64 = (uint64_t)vfunc;
 		ctx.r3.u64 = lookAddress;
+		ctx.r7.u64 = carryR7;
 		ctx.r8.u64 = carryR8;
+		ctx.r9.u64 = carryR9a;
+		ctx.r10.u64 = vfunc;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		uint64_t componentId = ctx.r3.u64;
 		uint64_t removed = Entity_RemoveComponentByType(ctx, base, (uint64_t)TXT_820A76B4_L_2, componentId, ctx.r8.u64);
@@ -558,6 +568,7 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 	}
 
 	if (applied != 0) {
+		ctx.r7.u64 = carryR7;
 		ctx.r8.u64 = carryR8;
 		n_sub_8254F608(ctx, base, lookValue, lookAddress + 120, 3, lookAddress + 12);
 		carryR6 = ctx.r6.u64;
@@ -567,15 +578,19 @@ uint64_t n_sub_82703650(CpuState& ctx, uint8_t* base, uint64_t lookAddress, uint
 	}
 
 	uint32_t TXT_820A76B4_L_3 = look->m_4;
-	uint64_t result = n_sub_82392C88(ctx, base, TXT_820A76B4_L_3, lookAddress);
+	ctx.r6.u64 = carryR6;
+	ctx.r7.u64 = carryR7;
+	ctx.r8.u64 = carryR8;
+	ctx.r9.u64 = carryR9b;
+	uint64_t result = CECDoor_UpdateOpenStateForEntity(ctx, base, TXT_820A76B4_L_3, lookAddress);
 	look->m_50 = look->m_50 | 1;
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(47, sub_82703650, 0x82703650) { ctx.r3.u64 = n_sub_82703650(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(47, sub_82703650, 0x82703650) { ctx.r3.u64 = CECLook_Initialize(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_t stream, uint64_t lookAtKind, uint64_t loadFlag) {
+uint64_t CECLook_Serialize(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_t stream, uint64_t lookAtKind, uint64_t loadFlag) {
 	constexpr int32_t g_82001C44 = int32_t(0x82001C44);
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t str_TXT_820A76B4_B_ = int32_t(0x820A76B4);
@@ -646,6 +661,7 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		uint32_t nameBuffer = LOAD32(stack + 80);
 		uint64_t nameLength = g_8209003F;
 		if (nameBuffer != 0) nameLength = LOAD32(nameBuffer);
+		ctx.r4.u64 = nameLength;
 		IStream_SerializeU32(ctx, base, stream, stack + 84);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -653,6 +669,7 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		nameBuffer = LOAD32(stack + 80);
 		nameLength = g_8209003F;
 		if (nameBuffer != 0) nameLength = LOAD32(nameBuffer);
+		ctx.r4.u64 = nameLength;
 		IStream_SerializeId(ctx, base, stream, lookAddr + 92);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
@@ -777,13 +794,14 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		}
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820A76B4_B_, -1);
-		n_sub_825BC3B0(ctx, base, lookAddr + 16, stack + 80, stream);
+		SerializeEntity(ctx, base, lookAddr + 16, stack + 80, stream);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820DF968_B_, -1);
 		uint32_t lookAtIdBuffer = LOAD32(stack + 80);
 		uint64_t lookAtIdName = g_8209003F;
 		if (lookAtIdBuffer != 0) lookAtIdName = LOAD32(lookAtIdBuffer);
+		ctx.r4.u64 = lookAtIdName;
 		IStream_SerializeId(ctx, base, stream, lookAddr + 40);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
 		{
@@ -796,17 +814,18 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, str_TXT_820CF334_B_, -1);
-		n_sub_8244DAE0(ctx, base, lookAddr + 44, stack + 88, stream);
+		UID_Serialize(ctx, base, lookAddr + 44, stack + 88, stream);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, str_TXT_820CF350_B_, -1);
-		n_sub_82A17080(ctx, base, stack + 88, stream, lookAddr + 64);
+		SerializePosition(ctx, base, stack + 88, stream, lookAddr + 64);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 
 		CCharString_ConstructFromCStr(ctx, base, stack + 88, str_TXT_820CF318_B_, -1);
 		uint32_t currentIdBuffer = LOAD32(stack + 88);
 		uint64_t currentIdName = g_8209003F;
 		if (currentIdBuffer != 0) currentIdName = LOAD32(currentIdBuffer);
+		ctx.r4.u64 = currentIdName;
 		IStream_SerializeU32(ctx, base, stream, lookAddr + 80);
 		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 88);
 		streamReg = ctx.r4.u64;
@@ -817,10 +836,10 @@ uint64_t n_sub_82703860(CpuState& ctx, uint8_t* base, uint64_t lookAddr, uint64_
 	ctx.r4.u64 = streamReg;
 	return result;
 }
-PROMOTED_ENTRY(47, sub_82703860, 0x82703860) { ctx.r3.u64 = n_sub_82703860(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
+PROMOTED_ENTRY(47, sub_82703860, 0x82703860) { ctx.r3.u64 = CECLook_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
 // sub_82703BE8  [132 bytes]
-uint64_t n_sub_82703BE8(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
+uint64_t CECLook_GetLookAtPriority(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(47, 0x82703BE8)) { ctx.r3.u64 = lookAddr; __imp__sub_82703BE8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82703BE8);
@@ -836,6 +855,8 @@ uint64_t n_sub_82703BE8(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 	uint32_t playerEntity = LOAD32(field4);
 
 	ctx.r1.u64 = stack;
+	ctx.r8.u64 = field4;
+	ctx.r9.u64 = field88;
 	uint32_t isPlayer = Players_IsPlayer(ctx, base, playerEntity, lookEntity);
 	if ((isPlayer & 0xFF) != 0) {
 		stack = PopStackFrame(stack, 96);
@@ -850,9 +871,9 @@ uint64_t n_sub_82703BE8(CpuState& ctx, uint8_t* base, uint32_t lookAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(47, sub_82703BE8, 0x82703BE8) { ctx.r3.u64 = n_sub_82703BE8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(47, sub_82703BE8, 0x82703BE8) { ctx.r3.u64 = CECLook_GetLookAtPriority(ctx, base, ctx.r3.u32); }
 
-uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
+uint64_t CECLook_UpdateWeakSpot(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 	constexpr int32_t g_83320000 = int32_t(0x83320000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_83497770 = int32_t(0x83497770);
@@ -896,6 +917,7 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 			uint64_t trollTable = (uint64_t)g_83497770;
 
 			ctx.r1.u64 = stack;
+			ctx.r10.u64 = helper;
 			n_sub_821F5B90(ctx, base, stack + 88, LOAD32(helper + 96), trollTable);
 
 			uint32_t manager = LOAD32(uint32_t(g_83490000) + 26912);
@@ -1006,6 +1028,10 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 				uint64_t tblA = (uint64_t)g_8349B1B8;
 				uint64_t tblB = (uint64_t)g_8349B1B4;
 
+				ctx.r6.u64 = weakSpotR6;
+				ctx.r7.u64 = weakSpotR7;
+				ctx.r8.u64 = weakSpotR8;
+				ctx.r9.u64 = weakSpotR9;
 				ctx.xer.ca = flags.ca;
 				uint32_t ws1 = CECTroll_HasWeakSpot(ctx, base, targetId, tblA);
 				vecV10 = ctx.v10;
@@ -1021,12 +1047,12 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 					vecV13 = ctx.v13;
 					flags.ca = ctx.xer.ca;
 					if ((ws2 & 0xFF) != 0) {
-						uint32_t posA = n_sub_825490A8(ctx, base, stack + 128, targetId, tblB, 0);
+						uint32_t posA = CECTroll_GetWeakSpotPosition(ctx, base, stack + 128, targetId, tblB, 0);
 						flags.ca = ctx.xer.ca;
 						ctx.fpscr.disableFlushMode();
 						SET_V8(vecA, VLOAD(posA & ~0xF));
 						STORE_F32(stack + 80, float(double(LOAD_F32(0x82099334u))));
-						uint32_t posB = n_sub_825490A8(ctx, base, stack + 144, targetId, tblA, 0);
+						uint32_t posB = CECTroll_GetWeakSpotPosition(ctx, base, stack + 144, targetId, tblA, 0);
 						flags.ca = ctx.xer.ca;
 						SET_V8(vecB, VLOAD(posB & ~0xF));
 						ctx.fpscr.enableFlushMode();
@@ -1089,9 +1115,9 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 			ctx.v12 = vecV12;
 			ctx.v13 = vecV13;
 			ctx.xer.ca = flags.ca;
-			n_sub_82A3A508(ctx, base, stack + 160);
+			C_820A64F4_Initialize(ctx, base, stack + 160);
 
-			n_sub_821DDE30(ctx, base, stack + 160, actorId, 1);
+			EffectManager_AddEffect(ctx, base, stack + 160, actorId, 1);
 
 			C_820A64F4_Destructor(ctx, base, stack + 160);
 
@@ -1104,9 +1130,9 @@ uint64_t n_sub_827045B8(CpuState& ctx, uint8_t* base, uint64_t lookAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(47, sub_827045B8, 0x827045B8) { ctx.r3.u64 = n_sub_827045B8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(47, sub_827045B8, 0x827045B8) { ctx.r3.u64 = CECLook_UpdateWeakSpot(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_82704F20(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
+uint64_t Lua_Look_ClearIdleLooking(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
 	if (!UseLiftedCode(47, 0x82704F20)) { ctx.r3.u64 = lookAddress; __imp__sub_82704F20(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82704F20);
 	CECLook* look = GameObject<CECLook>(base, lookAddress);
@@ -1123,4 +1149,4 @@ uint64_t n_sub_82704F20(CpuState& ctx, uint8_t* base, uint64_t lookAddress) {
 	VSTORE(((uint32_t)lookAddress + 64u) & ~0xF, V8(zeroVector));
 	return result;
 }
-PROMOTED_ENTRY(47, sub_82704F20, 0x82704F20) { ctx.r3.u64 = n_sub_82704F20(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(47, sub_82704F20, 0x82704F20) { ctx.r3.u64 = Lua_Look_ClearIdleLooking(ctx, base, ctx.r3.u64); }

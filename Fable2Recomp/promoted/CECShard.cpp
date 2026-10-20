@@ -1,9 +1,9 @@
 // CECShard (vtable 0x820CCBD0): methods of the class as readable C++.
 //
-// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md). Each function was written
+// Promoted from model rewrites (tools/rewrite/promote.py, docs/promoted-code.md).Each function was written
 // by a language model from the lifter's exact code for the user's own copy and accepted by the differential
-// checker on input profiles 0-5 (tools/rewrite/check.py --outputs). Review and game-check status per function:
-// REVIEW.tsv in this directory and docs/status.md. A function keeps the address of the original
+// checker on input profiles 0-5 (tools/rewrite/check.py --outputs).Review and game-check status per function:
+// REVIEW.tsv in this directory and docs/status.md.A function keeps the address of the original
 // (PROMOTED_ENTRY) and its fallback to the recompiled original (UseLiftedCode).
 // Layouts and declarations come from the lifter, generated locally (lifted/classes.h, native_decls.h).
 #include "lifted/lifted.h"
@@ -28,21 +28,21 @@ uint64_t CECShard_GetClassName(CpuState& ctx, uint8_t* base, uint64_t resultStri
 }
 PROMOTED_ENTRY(45, sub_826B20F8, 0x826B20F8) { ctx.r3.u64 = CECShard_GetClassName(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826B2340(CpuState& ctx, uint8_t* base, uint64_t shard, uint64_t flags) {
+uint64_t CECShard_Delete(CpuState& ctx, uint8_t* base, uint64_t shard, uint64_t flags) {
 	if (!UseLiftedCode(45, 0x826B2340)) { ctx.r3.u64 = shard; ctx.r4.u64 = flags; __imp__sub_826B2340(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B2340);
 	GameStackFrame stackFrame(ctx, base, 112);
 	ctx.r4.u64 = flags;  // state the callee may pass on
-	n_sub_826B2390(ctx, base, shard);
+	CECShard_Destructor(ctx, base, shard);
 	if (flags & 0x1) {
 		HandleTarget_Free(ctx, base, shard);
 	}
 	return shard;
 }
-PROMOTED_ENTRY(45, sub_826B2340, 0x826B2340) { ctx.r3.u64 = n_sub_826B2340(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+PROMOTED_ENTRY(45, sub_826B2340, 0x826B2340) { ctx.r3.u64 = CECShard_Delete(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_826B2390  [248 bytes]
-uint32_t n_sub_826B2390(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint32_t CECShard_Destructor(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(45, 0x826B2390)) { ctx.r3.u64 = shardAddr; __imp__sub_826B2390(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x826B2390);
@@ -96,9 +96,9 @@ uint32_t n_sub_826B2390(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B2390, 0x826B2390) { ctx.r3.u64 = n_sub_826B2390(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B2390, 0x826B2390) { ctx.r3.u64 = CECShard_Destructor(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826B2FA8(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint64_t CECShard_Update(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (!UseLiftedCode(45, 0x826B2FA8)) { ctx.r3.u64 = shardAddr; __imp__sub_826B2FA8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B2FA8);
 	uint32_t stack = ctx.r1.u64;
@@ -107,7 +107,7 @@ uint64_t n_sub_826B2FA8(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 
 	if (shard->m_188 != 0) {
 		ctx.r1.u64 = stack;
-		uint64_t result = n_sub_826B9C28(ctx, base, shardAddr);
+		uint64_t result = CECShard_UpdateExplosion(ctx, base, shardAddr);
 		stack = PopStackFrame(stack, 96);
 		ctx.r1.u64 = stack;
 		return result;
@@ -115,16 +115,16 @@ uint64_t n_sub_826B2FA8(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 
 	if (shard->m_40 != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_826B43B8(ctx, base, shardAddr);
+		CECShard_UpdatePhysics(ctx, base, shardAddr);
 	}
 	if (shard->m_A5 != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_826B5308(ctx, base, shardAddr);
+		CECShard_UpdateParticles(ctx, base, shardAddr);
 	}
 	// m_134 is the flag Shard.IsAdjustingSpinSpeed reports
 	if (shard->m_134 != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_826B5FF8(ctx, base, shardAddr);
+		CECShard_UpdateSpinSpeed(ctx, base, shardAddr);
 	}
 
 	// Shard.TrackTarget keeps the tracked entity's handle at +0x13C (m_140 is its reference).
@@ -141,30 +141,29 @@ uint64_t n_sub_826B2FA8(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 			uint32_t entityBit40 = LOAD8(entity + 0x90) & 0x40;
 			if (entityBit40 != 0) {
 				ctx.r10.u64 = entityBit40;  // state the callee may pass on
-				n_sub_826B62A0(ctx, base, shardAddr);
+				CECShard_UpdateTargetTracking(ctx, base, shardAddr);
 			}
 		}
 	}
 
 	if (shard->m_118 != 0) {
 		ctx.r1.u64 = stack;
-		n_sub_826B8618(ctx, base, shardAddr);
+		CECShard_UpdateTrail(ctx, base, shardAddr);
 	}
 
 	ctx.r1.u64 = stack;
-	uint64_t result = n_sub_826B8F58(ctx, base, shardAddr);
+	uint64_t result = CECShard_UpdateCombat(ctx, base, shardAddr);
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B2FA8, 0x826B2FA8) { ctx.r3.u64 = n_sub_826B2FA8(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B2FA8, 0x826B2FA8) { ctx.r3.u64 = CECShard_Update(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826B42F0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint64_t CECShard_DestroyEntityList(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(45, 0x826B42F0)) { ctx.r3.u64 = shardAddr; __imp__sub_826B42F0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B42F0);
-	uint32_t stack = ctx.r1.u64;
-	stack = PushStackFrame(base, stack, 128);
+	GameStackFrame stackFrame(ctx, base, 128);
 
 	uint64_t listHandleAddr = shardAddr + 396;
 	uint32_t list = LOAD32((uint32_t)listHandleAddr);
@@ -180,9 +179,8 @@ uint64_t n_sub_826B42F0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 
 		while (i < entryCount) {
 			uint64_t entryAddr = (uint64_t)LOAD32(list + 4) + entryOffset;
-			ctx.r1.u64 = stack;
 			ctx.xer.ca = carry;
-			uint64_t entity = n_sub_82264448(ctx, base,
+			uint64_t entity = EntityManager_LookupEntity(ctx, base,
 				LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(g_83490000 + 26912) + 12) + 88) + 4)),
 				entryAddr);
 			if ((uint32_t)entity != 0 && (LOAD8((uint32_t)entity + 144) & 64) != 0) {
@@ -195,19 +193,16 @@ uint64_t n_sub_826B42F0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 			carry = ((int32_t)byteSize < 0) & (((uint32_t)byteSize & 0x7) != 0);
 			entryCount = (uint32_t)((int32_t)byteSize >> 3);
 		}
-
-		ctx.r1.u64 = stack;
 		// state the callee may pass on
+		ctx.r7.u64 = (uint64_t)(int64_t)(int32_t)entryCount;
+		ctx.r8.u64 = byteSize;
 		ctx.xer.ca = carry;
 		result = SharedHandle_Release(ctx, base, listHandleAddr);
 		STORE32((uint32_t)listHandleAddr, 0u);
 	}
-
-	stack = PopStackFrame(stack, 128);
-	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B42F0, 0x826B42F0) { ctx.r3.u64 = n_sub_826B42F0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B42F0, 0x826B42F0) { ctx.r3.u64 = CECShard_DestroyEntityList(ctx, base, ctx.r3.u64); }
 
 uint32_t Shard_Kill_Impl(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -297,6 +292,7 @@ uint32_t Shard_Kill_Impl(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 			ctx.fpscr.disableFlushMode();
 			double fadeOutTime = double(LOAD_F32(0x820994C0u));
 			// state the callee may pass on
+			ctx.r6.u64 = argR6;
 			ctx.r8.u64 = argR8;
 			ctx.cr0 = cr0;
 			ctx.xer.ca = xer.ca;
@@ -335,7 +331,7 @@ PROMOTED_ENTRY(45, sub_826B5DB0, 0x826B5DB0) { ctx.r3.u64 = Shard_Kill_Impl(ctx,
 // Moves the value at entry+40 (the owner's table entry with key 29) by the change rate m_138, clamped to the
 // target m_1C that Shard.SetNewSpinSpeed / StartSpinning / StopSpinning set; reaching the target, or having
 // no entry, clears m_134.
-uint32_t n_sub_826B5FF8(CpuState& ctx, uint8_t* base, uint32_t shardAddr) {
+uint32_t CECShard_UpdateSpinSpeed(CpuState& ctx, uint8_t* base, uint32_t shardAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t str_TXT_82100000_B_ = int32_t(0x82100000);
 	if (!UseLiftedCode(45, 0x826B5FF8)) { ctx.r3.u64 = shardAddr; __imp__sub_826B5FF8(ctx, base); return ctx.r3.u32; }
@@ -409,7 +405,7 @@ uint32_t n_sub_826B5FF8(CpuState& ctx, uint8_t* base, uint32_t shardAddr) {
 		ctx.r1.u64 = stack;
 		// state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		double callResult = n_sub_82207928(ctx, base, owner);
+		double callResult = Game_GetDeltaTime(ctx, base, owner);
 		ctx.fpscr.disableFlushMode();
 		double step = callResult / scale;
 		double changeRate = double(shard->m_138);
@@ -479,13 +475,13 @@ uint32_t n_sub_826B5FF8(CpuState& ctx, uint8_t* base, uint32_t shardAddr) {
 	ctx.xer.ca = flags.ca;
 	return owner;
 }
-PROMOTED_ENTRY(45, sub_826B5FF8, 0x826B5FF8) { ctx.r3.u64 = n_sub_826B5FF8(ctx, base, ctx.r3.u32); }
+PROMOTED_ENTRY(45, sub_826B5FF8, 0x826B5FF8) { ctx.r3.u64 = CECShard_UpdateSpinSpeed(ctx, base, ctx.r3.u32); }
 
 // Turns the shard's owner (m_4) toward the entity tracked through the handle at +0x13C (Shard.TrackTarget):
 // the aim point is the target's slot-64 vector plus its slot-76 vector scaled by the float at +0x144; the turn
 // per call is limited by m_148, and with m_14C clear the owner's reversed facing is used. When the target is
 // gone or lacks bit 0x40 of its byte +0x90, the handle is emptied instead.
-uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint32_t CECShard_UpdateTargetTracking(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
 	if (!UseLiftedCode(45, 0x826B62A0)) { ctx.r3.u64 = shardAddr; __imp__sub_826B62A0(ctx, base); return ctx.r3.u32; }
@@ -540,6 +536,9 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint32_t targetSlot64 = LOAD32(targetVtable + 64);
 		callTarget.u64 = targetSlot64;
 		ctx.r3.u64 = targetPointAddr;
+		ctx.r4.u64 = targetObj;
+		ctx.r9.u64 = targetSlot64;
+		ctx.r10.u64 = targetVtable;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// slot 76 of the same kind of object writes a vector to stack+128
@@ -549,6 +548,11 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		uint32_t targetVtable2 = LOAD32(targetObj2);
 		uint32_t targetSlot76 = LOAD32(targetVtable2 + 76);
 		callTarget.u64 = targetSlot76;
+		ctx.r3.u64 = targetMotionAddr;
+		ctx.r4.u64 = targetObj2;
+		ctx.r6.u64 = targetSlot76;
+		ctx.r7.u64 = targetVtable2;
+		ctx.r8.u64 = target2;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 		// aim point = point + motion * lead, lead being the float at +0x144 (lvlx + splat) in every lane
@@ -576,6 +580,11 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		ctx.r3.u64 = ownerPointAddr;
 		ctx.r4.u64 = ownerObj;
 		// state the callee may pass on
+		ctx.r5.u64 = 324;
+		ctx.r7.u64 = ownerSlot64;
+		ctx.r8.u64 = ownerVtable;
+		ctx.r9.u64 = owner;
+		ctx.r10.u64 = targetPointAddr;
 		ctx.v10 = aimPoint;
 		ctx.v11 = targetMotion;
 		ctx.v12 = targetPoint;
@@ -599,16 +608,20 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		VSTORE(aimDirAddr & ~0xF, V8(toAimMasked));
 		double aimDistance = Vec4_NormalizeInPlace_ReturnLength(ctx, base, aimDirAddr, minLength);
 
-		// n_sub_821F5A90 writes the owner's current facing vector to stack+80
+		// GetFacingDirection writes the owner's current facing vector to stack+80
 		owner = shard->m_4;
 		uint64_t facingAddr = (uint64_t)stack + 80;
 		uint32_t ownerObjForFacing = LOAD32(owner + 124);
 		// state the callee may pass on
+		ctx.r5.u64 = ownerPointAddr;
+		ctx.r6.u64 = targetPointAddr;
+		ctx.r8.u64 = owner;
+		ctx.f1.f64 = aimDistance;
 		ctx.v6 = toAimMasked;
 		ctx.v7 = toAim;
 		ctx.v8 = ownerPoint;
 		ctx.v9 = aimPoint;
-		n_sub_821F5A90(ctx, base, facingAddr, ownerObjForFacing);
+		GetFacingDirection(ctx, base, facingAddr, ownerObjForFacing);
 		// v12/v13 as that call leaves them; the later calls receive them unless replaced below
 		PPCVRegister handV12 = ctx.v12;
 		PPCVRegister handV13 = ctx.v13;
@@ -635,7 +648,7 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		ctx.fpscr.disableFlushMode();
 		// state the callee may pass on
 		ctx.f1.f64 = angle;
-		double callResult = n_sub_82207928(ctx, base, owner);
+		double callResult = Game_GetDeltaTime(ctx, base, owner);
 		ctx.fpscr.disableFlushMode();
 		double turnSpeed = double(shard->m_148);
 		double step = callResult / LOAD_F64(0x83319510u);
@@ -689,9 +702,9 @@ uint32_t n_sub_826B62A0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B62A0, 0x826B62A0) { ctx.r3.u64 = n_sub_826B62A0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B62A0, 0x826B62A0) { ctx.r3.u64 = CECShard_UpdateTargetTracking(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826B8098(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint64_t CECShard_KillTrackedParticle(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (!UseLiftedCode(45, 0x826B8098)) { ctx.r3.u64 = shardAddr; __imp__sub_826B8098(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B8098);
 	uint32_t stack = ctx.r1.u64;
@@ -796,10 +809,10 @@ uint64_t n_sub_826B8098(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B8098, 0x826B8098) { ctx.r3.u64 = n_sub_826B8098(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B8098, 0x826B8098) { ctx.r3.u64 = CECShard_KillTrackedParticle(ctx, base, ctx.r3.u64); }
 
 // sub_826B8618  [476 bytes]
-uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint32_t CECShard_UpdateTrail(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(45, 0x826B8618)) { ctx.r3.u64 = shardAddr; __imp__sub_826B8618(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x826B8618);
@@ -905,14 +918,14 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (havePayload) {
 		// r7, r8 and xer.ca as the search leaves them: state the callee may pass on
 		ctx.xer.ca = flags.ca;
-		uint32_t lookup = n_sub_825490A8(ctx, base, pairOut, payload, shardAddr + 20, 0);
+		uint32_t lookup = CECTroll_GetWeakSpotPosition(ctx, base, pairOut, payload, shardAddr + 20, 0);
 
 		SET_V8(vectorA, VLOAD(lookup & ~0xF));
 		uint32_t slotIndex = shard->m_120;
 		VSTORE(vecBufA & ~0xF, V8(vectorA));
 
 		// state the callee may pass on
-		uint64_t lookup2 = n_sub_825490A8(ctx, base, pairOut, payload,
+		uint64_t lookup2 = CECTroll_GetWeakSpotPosition(ctx, base, pairOut, payload,
 			(uint64_t)(slotIndex << 2) + (uint64_t)((int64_t)g_834A0000 - 20760), 0);
 
 		// the object held by the shared handle at +280
@@ -921,9 +934,12 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 		VSTORE(vecBufB & ~0xF, V8(vectorB));
 		SET_V8(vectorA, VLOAD(vecBufA & ~0xF));
 		// state the callee may pass on
+		ctx.r4.u64 = vecBufA;
+		ctx.r5.u64 = vecBufB;
+		ctx.r6.u64 = lookup2;
 		ctx.v1 = vectorA;
 		ctx.v2 = vectorB;
-		result = n_sub_8322BD20(ctx, base, heldObject);
+		result = ParticleEmitter_SetTransform(ctx, base, heldObject);
 
 		r5Value = ctx.r5.u64;
 		r6Value = ctx.r6.u64;
@@ -948,9 +964,9 @@ uint32_t n_sub_826B8618(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.xer.ca = flags.ca;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B8618, 0x826B8618) { ctx.r3.u64 = n_sub_826B8618(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B8618, 0x826B8618) { ctx.r3.u64 = CECShard_UpdateTrail(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_826B8AA0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint64_t CECShard_KillSecondaryTrackedParticle(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	if (!UseLiftedCode(45, 0x826B8AA0)) { ctx.r3.u64 = shardAddr; __imp__sub_826B8AA0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x826B8AA0);
 	uint32_t stack = ctx.r1.u64;
@@ -1055,10 +1071,10 @@ uint64_t n_sub_826B8AA0(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B8AA0, 0x826B8AA0) { ctx.r3.u64 = n_sub_826B8AA0(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B8AA0, 0x826B8AA0) { ctx.r3.u64 = CECShard_KillSecondaryTrackedParticle(ctx, base, ctx.r3.u64); }
 
 // sub_826B8D48  [508 bytes]
-uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
+uint64_t Shard_Release(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_820994B4 = int32_t(0x820994B4);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
@@ -1069,9 +1085,9 @@ uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	stack = PushStackFrame(base, stack, 128);
 	ctx.r1.u64 = stack;
 
-	n_sub_826B8AA0(ctx, base, shardAddr);
-	n_sub_826B8098(ctx, base, shardAddr);
-	n_sub_826B7828(ctx, base, shardAddr);
+	CECShard_KillSecondaryTrackedParticle(ctx, base, shardAddr);
+	CECShard_KillTrackedParticle(ctx, base, shardAddr);
+	Shard_UpdateVisualEffects(ctx, base, shardAddr);
 	Shard_ReleaseEffectsAndSendBeamAttack(ctx, base, shardAddr);
 
 	// m_118 is the first word of the shared handle at +280.
@@ -1180,7 +1196,7 @@ uint64_t n_sub_826B8D48(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	ctx.r1.u64 = stack;
 	return result;
 }
-PROMOTED_ENTRY(45, sub_826B8D48, 0x826B8D48) { ctx.r3.u64 = n_sub_826B8D48(ctx, base, ctx.r3.u64); }
+PROMOTED_ENTRY(45, sub_826B8D48, 0x826B8D48) { ctx.r3.u64 = Shard_Release(ctx, base, ctx.r3.u64); }
 
 uint32_t Shard_ReleaseEffectsAndSendBeamAttack(CpuState& ctx, uint8_t* base, uint64_t shardAddr) {
 	constexpr int32_t g_820A86F8 = int32_t(0x820A86F8);
@@ -1190,7 +1206,7 @@ uint32_t Shard_ReleaseEffectsAndSendBeamAttack(CpuState& ctx, uint8_t* base, uin
 	CECShard* shard = GameObject<CECShard>(base, shardAddr);
 	stack = PushStackFrame(base, stack, 192);
 
-	// Release the four shared handles at +248..+272; the object each holds goes to n_sub_8322B788 first.
+	// Release the four shared handles at +248..+272; the object each holds goes to Vector_DeletePointerElements first.
 	uint32_t result = 0;
 	bool carry = ctx.xer.ca;  // xer.ca: the loop counter's decrement sets it after every pass
 	uint64_t handleSlot = shardAddr + 248;
@@ -1201,7 +1217,7 @@ uint32_t Shard_ReleaseEffectsAndSendBeamAttack(CpuState& ctx, uint8_t* base, uin
 			ctx.r1.u64 = stack;
 			// state the callee may pass on
 			ctx.xer.ca = carry;
-			n_sub_8322B788(ctx, base, heldObject);
+			Vector_DeletePointerElements(ctx, base, heldObject);
 			result = SharedHandle_Release(ctx, base, handleSlot);
 			STORE32((uint32_t)handleSlot, 0);
 		}
