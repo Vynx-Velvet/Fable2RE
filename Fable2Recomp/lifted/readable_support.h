@@ -32,12 +32,11 @@ inline uint64_t RegisterAtExit(CpuState& ctx, uint8_t* base, uint32_t function) 
 }
 
 // The FNV-1 hash of a name (String_HashFnv1, sub_821F3C28) from the FNV offset basis 0x811C9DC5, as the
-// start-up functions compute the hashes of property and definition names. The call goes through the function's
-// entry with r3 = the text and r4 = the basis, as the original code made it, so r4 still holds the basis
-// afterwards for a caller that reads it.
+// start-up functions compute the hashes of property and definition names: the lifter's own sequence (a direct call,
+// then r4 = the basis, as the original code leaves it for a caller that reads it).
 inline uint64_t HashNameFnv1(CpuState& ctx, uint8_t* base, int32_t text) {
-  ctx.r3.u64 = uint64_t(int64_t(text));
-  ctx.r4.u64 = uint64_t(int64_t(int32_t(0x811C9DC5u)));
-  sub_821F3C28(ctx, base);
-  return ctx.r3.u64;
+  const uint64_t basis = uint64_t(int64_t(int32_t(0x811C9DC5u)));
+  uint64_t hash = String_HashFnv1(ctx, base, uint64_t(int64_t(text)), basis);
+  ctx.r4.u64 = basis;
+  return hash;
 }
