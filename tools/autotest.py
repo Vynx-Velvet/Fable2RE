@@ -1,8 +1,8 @@
 """Unattended test run of the release build (src/autotest.cpp): scripted controller input inside the game,
 snapshots, clean exit. No desktop keys/mouse are sent; the window stays behind the others; audio is muted.
 
-    python tools/autotest.py --scenario menu|load|play|boot      built-in scripts, see SCENARIOS
-    python tools/autotest.py --suite [menu,load,play]            in sequence, stops at the first failure
+    python tools/autotest.py --scenario menu|load|play|boot|newgame|resume   built-in scripts, see SCENARIOS
+    python tools/autotest.py --suite [menu,load,play,newgame,resume]  in sequence, stops at the first failure
     python tools/autotest.py --script "at 40; shot; exit" [--cvars "lifted_disable_ranges=..."] [--tag name]
     python tools/autotest.py --make-golden [--force]             golden save from the current save slot
 
@@ -52,6 +52,7 @@ Result classes and exit codes:
   --make-golden exits 0 when the golden save was written, 2 when it refused.
 """
 import argparse
+import copy
 import datetime
 import hashlib
 import json
@@ -87,9 +88,23 @@ SCENARIOS = {
              260),
     'load': ('at 38; press A; wait 6; press DOWN; wait 1.5; press A; wait 7; press A; wait 32; shot; wait 10; shot; exit',
              150),
+    # New Game: A -> New Game -> the character cards (a direction focuses one, A picks it, A confirms) -> the
+    # intro video (about 70-125 s) -> the zoom into the player (about 135 s) -> the intro cutscene at the
+    # brazier (about 160 s on) -> the hero waits for input. Snapshots at the zoom, in the cutscene and after it;
+    # none of them is black or a void when the prologue works (measured 2026-10-20, native renderer).
+    'newgame': ('at 38; press A; wait 6; press A; wait 8; press LEFT; wait 1; stick -1 0; wait 1; stick 0 0; wait 1; '
+                'press A; wait 3; press A; wait 3; press A; wait 70; shot; wait 15; shot; wait 15; shot; wait 15; shot; '
+                'wait 15; shot; wait 15; shot; exit', 260),
+    # Continue on the save the game itself writes at New Game start (right after the character is chosen, before
+    # the video): a save in the prologue's own level. Its reference save is runs/save_golden_newgame (the slot after
+    # a `newgame` run, kept with --make-golden --scenario resume). 2026-10-20: a promoted function with dropped
+    # register hand-overs crashed Havok 8 s after this Continue; the mid-game save did not reach that code.
+    'resume': ('at 38; press A; wait 6; press DOWN; wait 1.5; press A; wait 7; press A; wait 30; shot; wait 15; shot; '
+               'wait 15; shot; exit', 160),
 }
-NEEDS_GOLDEN = {'load', 'play'}  # these press Continue: without the golden save they test whatever save is there
-SUITE = ('menu', 'load', 'play')
+NEEDS_GOLDEN = {'load', 'play', 'resume'}  # these press Continue: without the golden save they test whatever save is there
+SCENARIO_GOLDEN = {'resume': 'save_golden_newgame'}   # a scenario with its own reference save (runs/<name>)
+SUITE = ('menu', 'load', 'play', 'newgame', 'resume')
 
 OK, OK_EXIT_CRASH, PROBLEM, NOT_STARTED, SETUP_ERROR = 'OK', 'OK_EXIT_CRASH', 'PROBLEM', 'NOT_STARTED', 'SETUP_ERROR'
 PASSING = (OK, OK_EXIT_CRASH)
@@ -928,6 +943,9 @@ def run(script, cvars='', tag=None, limit=180, quiet=False, *, scenario=None, la
     launcher = launcher or launch_game
     floors = floors or default_floors()
     scenario = scenario or scenario_of(script)
+    if scenario in SCENARIO_GOLDEN:   # (the scenario's own reference save, beside the mid-game one)
+        layout = copy.copy(layout)
+        layout.golden = os.path.join(layout.runs, SCENARIO_GOLDEN[scenario])
     tag = tag or time.strftime('%H%M%S')
     out = os.path.join(layout.results, tag)
     if os.path.isdir(out):
@@ -1079,6 +1097,9 @@ def main(argv=None):
         layout.ledger = os.path.abspath(a.ledger)
     floors = {'luma': a.min_luma, 'std': a.min_std, 'noise': SCRAMBLED}
     if a.make_golden:
+        if a.scenario in SCENARIO_GOLDEN:   # (--make-golden --scenario resume: that scenario's reference save)
+            layout = copy.copy(layout)
+            layout.golden = os.path.join(layout.runs, SCENARIO_GOLDEN[a.scenario])
         return make_golden(layout, force=a.force)
     if a.suite is not None:
         names = [n.strip() for n in a.suite.split(',') if n.strip()]

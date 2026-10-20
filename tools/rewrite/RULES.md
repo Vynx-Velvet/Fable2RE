@@ -52,7 +52,11 @@ Within that, make it readable:
   destructors) is a vtable, not a state value; `research/names/classes.tsv` names many of them.
 - Drop register hand-overs (`ctx.rN = ...`, `x = ctx.rN`) that the checker does not demand. A hand-over you
   keep stays exactly as the lifted code has it (same value, same sign extension, right before its call), a
-  value read back (`x = ctx.rN`) stays right after the same call, and you add none of your own. Keep
+  value read back (`x = ctx.rN`) stays right after the same call, and you add none of your own. A hand-over
+  whose value is a frame address (`stack + 144`), a variable or a parameter is an argument the callee may read
+  through a pointer or pass on, and the checker cannot see it (its stand-in callees read nothing): keep every
+  one of them, and every hand-over before a call through a pointer (2026-10-20: a dropped `ctx.r4 = stack + 144`
+  before `BoneDriver_Update` corrupted the bone drivers and crashed Havok on a later load). Keep
   `ctx.r1.u64 = stack;` before calls that use the game stack, on every path, and keep the stack frame if any
   stack memory is used (addresses of stack temporaries handed to calls must stay the same offsets). Every
   store into a stack slot whose address goes to a call stays, both words of an 8-byte value included.

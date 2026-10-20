@@ -236,9 +236,11 @@ For mods, point `tools/mods.py --game` at the game folder in use (default: the r
 `tools/autotest.py` boots the game unattended (scripted pad input inside the process, snapshots, log scan) and is the runtime check every change goes through:
 
 ```powershell
-python tools/autotest.py --suite            # menu, load, play in order; stops at the first failure
-python tools/autotest.py --scenario menu    # one scenario
+python tools/autotest.py --suite            # menu, load, play, newgame, resume in order; stops at the first failure
+python tools/autotest.py --scenario menu    # one scenario (newgame: the prologue through the intro cutscene;
+                                            # resume: Continue on the save the game writes at New Game start)
 python tools/autotest.py --make-golden      # once: your current save slot becomes the known-good save load/play start from
+python tools/autotest.py --make-golden --scenario resume   # once, after a newgame run: that save becomes resume's
 python -m unittest discover -s tools/tests  # the checker's own tests (seconds, no game)
 ```
 

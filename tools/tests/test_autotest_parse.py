@@ -806,12 +806,16 @@ class SuiteTests(SandboxCase):
 
     def test_exit_crashes_counted(self):
         self.sb.make_save(self.layout.golden)
+        self.sb.make_save(os.path.join(self.layout.runs, 'save_golden_newgame'))   # (the resume scenario's)
         games = ByScenario({'menu': FakeGame(fixture('menu_run.txt'), MENU_FRAMES, CRASH_STATUS),
                             'load': FakeGame(fixture('load_run.txt'), LOAD_FRAMES),
-                            'play': FakeGame(self.play_log(), {f'frame_{1000 * k:06}.png': real for k in range(1, 11)})})
+                            'play': FakeGame(self.shots_log(10), {f'frame_{1000 * k:06}.png': real for k in range(1, 11)}),
+                            'newgame': FakeGame(self.shots_log(6), {f'frame_{1000 * k:06}.png': real for k in range(1, 7)}),
+                            'resume': FakeGame(self.shots_log(3), {f'frame_{1000 * k:06}.png': real for k in range(1, 4)})})
         code, done, out = self.suite(games)
         self.assertEqual(code, 0, out)
         self.assertIn('teardown crashes: 1', out)
+        self.assertEqual(games.order, list(autotest.SUITE))
 
     def test_exit_crash_stops_strict_suite(self):
         self.sb.make_save(self.layout.golden)
@@ -820,9 +824,10 @@ class SuiteTests(SandboxCase):
         self.assertEqual((code, games.order), (3, ['menu']))
 
     @staticmethod
-    def play_log():
+    def shots_log(count):
+        """A run's log with `count` snapshots, ten seconds apart."""
         lines = ['[2026-10-10 10:00:00.000] [info] [core] [t1] Fable2 starting\n']
-        for k in range(1, 11):
+        for k in range(1, count + 1):
             lines.append(f'[2026-10-10 10:00:{k:02}.000] [info] [core] [t2] autotest: {k * 10}.0 s shot\n')
             lines.append(f'[2026-10-10 10:00:{k:02}.100] [info] [core] [t3] native renderer: snapshot '
                          f'{{snapdir}}\\frame_{1000 * k:06}.png\n')

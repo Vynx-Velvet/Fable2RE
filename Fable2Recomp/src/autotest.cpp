@@ -165,7 +165,10 @@ void AutoTest_Init() {
     g_script = script;
     g_active = !g_script.empty();
   }
-  if (g_active) rex::cvar::SetFlagByName("audio_mute", "true");  // (unattended runs stay silent)
+  // (unattended runs stay silent, unless the run's own settings say otherwise: F2_CVARS="audio_mute=false")
+  const char* cvars = std::getenv("F2_CVARS");
+  if (g_active && !(cvars && std::string(cvars).find("audio_mute=") != std::string::npos))
+    rex::cvar::SetFlagByName("audio_mute", "true");
 }
 
 bool AutoTest_Active() { return g_active; }

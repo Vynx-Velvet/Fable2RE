@@ -8,10 +8,12 @@ Steps, each only where it provably keeps the behaviour the check compares:
   register writes   `ctx.rN.u64 = <value>;` (N not r1) goes when, in the straight-line code after it, the register
                     is written again or changed by a call (summaries 'mods') before anything reads it: a call that
                     reads it ('rin'), a read of ctx.rN, a return with N among the registers callers read
-                    ('outputs'), a branch or label (undecided). A callee that only passes the register on ('fwd')
-                    does not read it when the value is a leftover temporary (a constant or an address, not an
-                    argument the function was entered with): the check compares only arguments passed through.
-                    The value must have no side effects (no call, no memory read).
+                    ('outputs'), a branch, a label or a call through a pointer (undecided). A callee that only
+                    passes the register on ('fwd') does not read it when the value is a literal or a constexpr
+                    address; a frame address, a variable or a parameter is a real argument (2026-10-20: dropping
+                    `ctx.r4 = stack + 144` before BoneDriver_Update, which hands the address on, corrupted the
+                    bone drivers and crashed Havok on a later load; the check cannot see it, its stand-in callees
+                    read nothing). The value must have no side effects (no call, no memory read).
   stack frame       `stack = PushStackFrame(base, stack, N)` ... `PopStackFrame` around a body that keeps nothing in
                     the frame becomes one line, GameStackFrame stackFrame(ctx, base, N);
   at-exit           CRT atexit called with the r8 it was handed (`..., ctx.r8.u64)`) becomes
@@ -93,12 +95,18 @@ def pure(expr):
     return not re.search(r'\(ctx, base|\bLOAD|\+\+|--|(?<![=!<>])=(?!=)|\bRAW\(|->|\[', expr)
 
 
-def temporary(expr, params):
-    """A leftover temporary: a constant or address, not built from the function's arguments or the CPU state."""
-    return pure(expr) and 'ctx.' not in expr and not any(re.search(rf'\b{re.escape(p)}\b', expr) for p in params)
+def temporary(expr, consts):
+    """A leftover temporary: a literal or a constexpr address, nothing else. A frame address (stack + 144), a
+    variable or a parameter handed to a callee that passes the register on is a real argument the check cannot
+    see (its stand-in callees read nothing; 2026-10-20: dropping `ctx.r4 = stack + 144` before BoneDriver_Update
+    corrupted the bone drivers and crashed Havok on a later load)."""
+    if not pure(expr) or 'ctx.' in expr:
+        return False
+    idents = set(re.findall(r'\b[A-Za-z_]\w*\b', expr)) - {'int64_t', 'int32_t', 'uint64_t', 'uint32_t'}
+    return idents <= set(consts)
 
 
-def write_needed(fn, lines, i, reg, value, params):
+def write_needed(fn, lines, i, reg, value, consts):
     """Whether the register write on line i can be seen by anything the check compares."""
     S = summaries()
     b = regs.bit(reg)
@@ -118,7 +126,7 @@ def write_needed(fn, lines, i, reg, value, params):
                 return True
             if S['rin'][c] & b:
                 return True
-            if S['fwd'][c] & b and not temporary(value, params):
+            if S['fwd'][c] & b and not temporary(value, consts):
                 return True
             if S['mods'][c] & b:
                 return False
@@ -242,7 +250,7 @@ def transform(n, text, module_names):
     for i, line in enumerate(lines):
         w = WRITE.match(line)
         if w and w.group(2) != 'r1' and pure(w.group(3)) and not write_needed(n, lines, i, w.group(2), w.group(3),
-                                                                             params):
+                                                                             list(consts)):
             changes.append('register write')
             continue
         keep.append(line)
