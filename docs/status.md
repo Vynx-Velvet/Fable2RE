@@ -79,6 +79,29 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
   include `newgame` (the prologue through the intro cutscene) and `resume` (Continue on the New Game-start save);
   the suite of five passes. The count of readable, named functions is unchanged, 15.2%
   ([finding](../research/findings/2026-10-20-prologue-and-continue-crash.md)).
+- *Reviews before the next look-alike promotion (2026-10-20, evening; no new game build yet).* The 91 look-alike
+  representatives of the Freebuff packets 0292-0300 and 0308/0309 (standing for 2,534 look-alikes) were reviewed
+  and corrected by review agents and checked again: 86 corrected in place (comments and names mostly, three
+  behaviour faults), 5 good, none sent back. The promotion step's own "cleaner form" had the same hole as the
+  readable form (hand-overs of variables dropped when other statements separate them from their call): 58
+  promoted functions were affected, 55 are written again with the fixed rule and pass the strict check, 1 was a
+  false alarm, 2 were already fixed; the 3 functions demoted in the morning are promoted again from their reviewed
+  texts. The 254 functions of the 2026-10-17 DeepSeek round that had no review are now reviewed (24 agents, one
+  per module): 109 corrected for behaviour (dropped hand-overs, 64-bit values cut to 32, missing floating-point
+  mode switches, atomic counts made plain), 115 for names only, 30 good; every correction passes the strict
+  check, so all 9,624 promoted functions are recorded OK
+  ([finding](../research/findings/2026-10-20-freebuff-reps-review-and-cleaner-form.md)).
+- *Second look-alike promotion (night of 2026-10-20/21).* The 91 reviewed representatives were copied to 2,434
+  look-alikes (`copy_lookalikes.py`, strict check on every copy, none failing; 100 members refused for literals
+  with several meanings or a shape apart; 40 refusals lifted by renaming variables the reviewers had named after
+  a callee, 26 by a copier fix: declared constants were aligned by address order, which crosses between
+  look-alikes, and showed only where a rewrite had folded a page base and an offset). 2,524 functions promoted in
+  five chunks, a sampled review of 264 copies by eight agents found every one right, and all 12,148 promoted
+  functions are recorded OK. The build with everything of the day (the repaired 55, the re-promoted 3, the 224
+  corrected, the 2,524 new) passes menu, load, play and newgame; the resume check plays through and the process
+  crashes while closing, in three runs of three, as it did in both runs on the afternoon build before any of
+  these changes: an open teardown crash after a Continue, not a regression of the promotion
+  ([finding](../research/findings/2026-10-20-freebuff-reps-review-and-cleaner-form.md)).
 - *Checks.* Game checks can no longer pass without snapshots or on an earlier run's log; mod tools target the
   script bank the game mounts (`gamescripts_r.bnk`).
 
@@ -87,7 +110,7 @@ are its text, are no longer shipped: the setup writes them (step `globals`,
 | Area | Evidence and current state | Remaining validation / work |
 |---|---|---|
 | Gameplay baseline | September/October findings record title-screen and in-world play | Repeatable regression coverage, full playthrough and save/load validation |
-| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/` (57 functions by hand); 7,378 reviewed rewrites in 249 published modules ([process](promoted-code.md)), of which 4,072 are readable C++ with every name, 1,421 readable with names still to give and 1,885 still at machine level (CPU registers in the code) ([levels](../research/findings/2026-10-19-readability-levels.md)); 254 more promoted, awaiting review | The readable form (no CPU registers in the body), then naming; whole-game reconstruction |
+| Readable C++ | Health, combat, entity/handle, tuning, and debug modules exist under `src/game/` (57 functions by hand); 7,378 reviewed rewrites in 249 published modules ([process](promoted-code.md)), of which 4,072 are readable C++ with every name, 1,421 readable with names still to give and 1,885 still at machine level (CPU registers in the code) ([levels](../research/findings/2026-10-19-readability-levels.md)); the 254 of the 2026-10-17 round reviewed 2026-10-20 (224 corrected, all 9,624 promoted recorded OK, build pending) | The readable form (no CPU registers in the body), then naming; whole-game reconstruction |
 | Automatic lifting | Lifter and fallback controls exist; [guide](lifted-code.md) records broad function coverage | Coverage counts are generation-specific and do not measure semantic readability or full-game correctness |
 | Rendering | Native D3D12 renderer, frontend, and GPU synchronization exist | Remaining packet/memory/shader dependencies; shader failures recorded on October 2 |
 | Debug tools | F2 menu, Lua bridge, original-menu gate, and replacement displays implemented; about 30 commands and WinterShrine loading were reported working | Verify each command; some retail bindings are absent or empty |

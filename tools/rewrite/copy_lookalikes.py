@@ -96,7 +96,8 @@ def addresses(text):
     found, lines = [], []
     for line in text.split('\n'):
         if CONSTEXPR.match(line):
-            lines.append(line)
+            # a declared value is aligned where the code uses it, not here: the declarations are in address
+            # order, and two look-alikes' addresses can order differently (the copy declares its own anyway)
             continue
         def mark(m):
             k = address_key(m, globs)
@@ -228,13 +229,21 @@ class Rep:
         self.globals = globals_of(lifted)
         self.rep_class = rep_class
 
-    def mark_addresses(self, code, addr, problems):
-        """(the line with each address of the lifted code replaced by a mark, [the look-alike's spelling of each])."""
+    def mark_addresses(self, code, addr, nums, problems):
+        """(the line with each address of the lifted code replaced by a mark, [the look-alike's spelling of each]).
+        A base and an offset the rewrite folded into one address (`g_82540000 + 19848`) while the lifted code
+        keeps them apart (`local = g_82540000; ... local + 19848`) are mapped one by one: the base as the bare
+        address, the offset as the number."""
         spelled = []
 
         def mark(m):
             k = address_key(m, self.globals)
             to = addr.get(k[0]) if k else None
+            if not to and k and k[1]:
+                base, n = addr.get(self.globals[m.group(1)]), nums.get(k[1])
+                if base and len(base) == 1 and n and len(n) == 1:
+                    spelled.append(f'{single(base)} {m.group(2)} {single(n)}')
+                    return chr(MARK + len(spelled))
             if not to:
                 return m.group(0)   # (not an address of the lifted code: its parts are mapped one by one)
             if len(to) > 1:
@@ -382,7 +391,7 @@ class Rep:
                 if not line.strip():
                     lines.append('')
                 continue
-            todo.append((len(lines), *self.mark_addresses(code, addr, problems)))
+            todo.append((len(lines), *self.mark_addresses(code, addr, nums, problems)))
             lines.append(None)
         choices = self.choose_numbers([code for _, code, _ in todo], nums, sites)
         for li, (at, code, spelled) in enumerate(todo):

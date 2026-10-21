@@ -93,15 +93,37 @@ def check_form(name, text):
                   flags=re.M)
 
 
+_CONST_LINE_RE = re.compile(r'^\s*constexpr\s+[\w:]+\s+(\w+)\s*=')
+_HANDOVER_VALUE_RE = re.compile(r'^\s*ctx\.[rf]\d+\.(?:u64|u32|s64|s32|f64)\s*=\s*([^;]*);')
+_CAST_WORDS = {'int64_t', 'int32_t', 'uint64_t', 'uint32_t', 'float', 'double'}
+
+
+def plain_value(expr, consts):
+    """A literal or a constexpr address (casts allowed), nothing else. Only such a hand-over can go without the
+    check seeing it: a frame address (stack + 144), a variable or a parameter is an argument the callee may read
+    through a pointer or pass on, and the check's stand-in callees read nothing (2026-10-20: a dropped
+    `ctx.r4 = stack + 144` before BoneDriver_Update corrupted the bone drivers; readable_form.temporary)."""
+    if re.search(r'\(ctx, base|\bLOAD|\bRAW\(|->|\[|ctx\.', expr):
+        return False
+    idents = set(re.findall(r'\b[A-Za-z_]\w*\b', expr)) - _CAST_WORDS
+    return idents <= set(consts)
+
+
 def drop_handovers(text):
-    """Hand-overs of argument registers (ctx.rN = x;) that neither a call nor a return follows. (Until
-    2026-10-10 hand-overs before native calls and before returns were dropped too: a callee may pass them on
-    to a call through a pointer, and callers read registers set before a return;
-    research/findings/2026-10-10-native-call-check.md.)"""
+    """Hand-overs of argument registers (ctx.rN = x;) that neither a call nor a return follows, when their value
+    is a literal or a constexpr address (plain_value). (Until 2026-10-10 hand-overs before native calls and before
+    returns were dropped too: a callee may pass them on to a call through a pointer, and callers read registers
+    set before a return; research/findings/2026-10-10-native-call-check.md. Until 2026-10-20 hand-overs of frame
+    addresses, variables and parameters were dropped too when a statement separated them from their call; the
+    readable form, tools/rewrite/readable_form.py, removes what the whole-game analysis shows unneeded.)"""
     lines = text.split('\n')
     keep = [True] * len(lines)
+    consts = {m.group(1) for m in (_CONST_LINE_RE.match(l) for l in lines) if m}
     for i, line in enumerate(lines):
         if not HANDOVER_RE.match(line):
+            continue
+        value = _HANDOVER_VALUE_RE.match(line)
+        if not value or not plain_value(value.group(1).strip(), consts):
             continue
         j = i + 1
         while j < len(lines) and (HANDOVER_RE.match(lines[j]) or not lines[j].strip()
@@ -617,6 +639,7 @@ def cmd_sync(a):
     subs.update(old['classes'])
     fsubs = _field_subs(old.get('fields', {}))
     changed = 0
+    reviewed = reviewed_texts()   # (a rename changes no code: a recorded review carries over to the renamed text)
     for f in sorted(os.listdir(PROMOTED)) if os.path.isdir(PROMOTED) else []:
         if not f.endswith('.cpp'):
             continue
@@ -627,9 +650,14 @@ def cmd_sync(a):
         # (a field access only: no whitespace between, or a comment's full stop takes the next line with it)
         new = re.sub(r'(->|\.)([A-Za-z_]\w*)\b', lambda m: m.group(1) + fsubs.get(m.group(2), m.group(2)), new)
         if new != text:
+            before, after = split_module(text)[1], split_module(new)[1]
+            for n, t in before.items():
+                if n in after and after[n] != t and reviewed.get(n) == text_digest(t):
+                    reviewed[n] = text_digest(after[n])
             with open(p, 'w', encoding='utf-8', newline='\n') as fh:
                 fh.write(new)
             changed += 1
+    save_reviewed_texts(reviewed)
     # a class that got a name: its module file takes it too
     this, structs, _ = class_of()
     for key, s in structs.items():
@@ -800,7 +828,7 @@ def cmd_record(a):
             by_module[funcs[n][0]][n] = t
         for p, new in by_module.items():
             head, have = split_module(open(p, encoding='utf-8').read())
-            head = refresh_header(head)
+            head = ensure_includes(refresh_header(head))   # (a fix may use the readable form's helpers)
             have.update(new)
             write_module(p, head, have)
     # demotions

@@ -14,11 +14,13 @@ that callee's own code, so the callee is named from what it does. Answers use th
     M  class id  offset  name  confidence  basis          a field of the function's class
     L  function address  variable as shown  name  ...    a parameter or variable of a promoted function
 
-collect hands F and M lines to tools/naming/merge.py (checked, then added to research/names/; they take effect
-with the next tools/lift/apply_names.py, which re-lifts what they affect, and promote.py sync, which writes them
-into the modules) and applies L lines at once to the promoted modules, where those names exist only: a rename
-inside one function, refused when the new name is not an identifier, is reserved, or is already used there. A
-rename changes no code, so it takes no new check; the review recorded for the function carries over.
+collect hands F lines to tools/naming/merge.py (checked, then added to research/names/; they take effect with the
+next tools/lift/apply_names.py, which re-lifts what they affect, and promote.py sync, which writes them into the
+modules). M lines are not taken yet: field names need a check that the offset is the class's own object (models
+gave the class offsets the code reads on other objects, once offset 0, its vtable). collect applies L lines at
+once to the promoted modules, where those names exist only: a rename inside one function, refused when the new
+name is not an identifier, is reserved, or is already used there. A rename changes no code, so it takes no new
+check; the review recorded for the function carries over.
 
 The packets contain game code (the user's own copy). `run` sends them to the model's provider, as the rewrite
 runner does with its packets.
@@ -251,7 +253,13 @@ def cmd_collect(a):
             if placeholder.fullmatch(name):
                 refused[f'{c[0]}: a name made from an offset'] += 1
                 continue
-            if c[0] in ('F', 'M'):
+            if c[0] == 'M':
+                # (2026-10-19: models gave the function's class names for offsets the code reads on other objects,
+                # one of them offset 0, the vtable; a field name needs a check that the class's own object is
+                # accessed there before it can go into the dictionary)
+                refused['M: field names not taken (no check yet that the offset is the class\'s own)'] += 1
+                continue
+            if c[0] == 'F':
                 dictionary_lines.append('\t'.join(c))
             else:
                 n = by_addr.get(c[1].upper().replace('0X', '')[-8:])

@@ -69,8 +69,10 @@ stages anything and `check` among its checks. `src/game/promoted/` is ignored by
 3. **Game checks.** The build with the rewrite runs the menu, save-load and play scenarios
    (`tools/autotest.py`).
 4. **Promotion** (`tools/rewrite/promote.py build`). Names in effect are written into the source; comments
-   quoting game text are removed; register hand-overs no callee reads are dropped; every function is checked
-   again on all six profiles, in its cleaned form where that passes. Passing functions go into their class's
+   quoting game text are removed; register hand-overs of a literal or a constant address that no call or return
+   follows directly are dropped (since 2026-10-20 only those: a hand-over of a frame address, a variable or a
+   parameter is an argument the check cannot see, and the readable form removes what the whole-game analysis
+   shows unneeded); every function is checked again on all six profiles, in its cleaned form where that passes. Passing functions go into their class's
    module and the lifter leaves them out of its generated files from then on. Since 2026-10-10 every check in
    this step and after it is stricter than the rewrite runner's: the function is called as lifted code calls
    it (arguments natively, their registers in the CPU state stale), and it must leave the registers its
