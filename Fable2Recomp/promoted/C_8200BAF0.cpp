@@ -17,3 +17,10 @@ uint64_t SequenceEntries_Get(CpuState& ctx, uint8_t* base) {
 	return TXT_83334D78_G_;
 }
 PROMOTED_ENTRY(90, sub_82C29540, 0x82C29540) { ctx.r3.u64 = SequenceEntries_Get(ctx, base); }
+
+uint64_t C_8200BAF0_Constructor(CpuState& ctx, uint8_t* base, uint64_t object, uint64_t arg2, uint64_t arg3) {
+	if (!UseLiftedCode(90, 0x82C2A388)) { ctx.r3.u64 = object; ctx.r4.u64 = arg2; ctx.r6.u64 = arg3; __imp__sub_82C2A388(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x82C2A388);
+	return C_8200BAF0_BaseConstructor(ctx, base, arg2, (int64_t)object + 4, arg3);
+}
+PROMOTED_ENTRY(90, sub_82C2A388, 0x82C2A388) { ctx.r3.u64 = C_8200BAF0_Constructor(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }

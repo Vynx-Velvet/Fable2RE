@@ -666,146 +666,138 @@ uint32_t CECWorldMapInfo_RefreshBuildingNameMap36(CpuState& ctx, uint8_t* base, 
 	stack = PushStackFrame(base, stack, 208);
 
 	uint32_t registry = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
-	uint32_t holderData = LOAD32(LOAD32(LOAD32(registry + 88) + 4) + 8);
-	uint32_t record = LOAD32(LOAD32(holderData + 4) + 36);
+	uint32_t containerNode = LOAD32(registry + 88) + 4;
+	uint32_t entityList = LOAD32(LOAD32(containerNode) + 8);
+	uint32_t entityRecord = LOAD32(LOAD32(entityList + 4) + 36);
 
 	uint32_t result = uint32_t(worldMapInfoAddr);
-	if (record != 0) {
-		uint32_t target = LOAD32(record + 4);
+	if (entityRecord != 0) {
+		uint32_t target = LOAD32(entityRecord + 4);
 		uint32_t targetId = LOAD32(target + 180);
 
 		ctx.r1.u64 = stack;
-		ctx.r8.u64 = holderData;  // state the callee may pass on
-		CCharString_CopyConstruct(ctx, base, stack + 88, uint64_t(target) + 172);
+		CCharString_CopyConstruct(ctx, base, stack + 88, target + 172);
 
-		ctx.r3.u64 = uint32_t(worldMapInfoAddr);  // state the callee may pass on
-		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, stack + 88);
-		STORE32(stack + 80, nameKey);
+		uint32_t nameId = CECWorldMapInfo_HashRegionName(ctx, base, stack + 88);
+		STORE32(stack + 80, nameId);
 
-		uint64_t infoMapAddr = worldMapInfoAddr + 36;
-		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
+		uint32_t infoList = uint32_t(worldMapInfoAddr) + 36;
+		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoList, stack + 80));
 
 		RbTree_InitEmptyNode12(ctx, base, stack + 128);
-		// r6, r8 and xer.ca as the lifted code tracks them from here; the callees below receive them
-		uint64_t r6Value = ctx.r6.u64;
-		PPCXERRegister flags = ctx.xer;
+		uint32_t mapEndNode = ctx.r6.u64;
 
-		uint32_t owner = worldMapInfo->m_4;
-		if (((LOAD32(owner + 44) >> 5) & 1) != 0) {
-			// Entry 69 of the owner's sorted (type, value) table: through the cached index when there is
-			// one, otherwise by a lower_bound search.
-			uint32_t entry;
-			uint32_t cachedIndex = LOAD32(owner + 140);
-			uint32_t pair = LOAD32(owner + 72);
-			if (cachedIndex != 0) {
-				entry = LOAD32(pair + (LOAD8(cachedIndex + 69) << 3) + 4);
+		uint32_t mapOwner = worldMapInfo->m_4;
+		uint32_t entry = 0;
+		bool hasEntry = false;
+		if (((LOAD32(mapOwner + 44) >> 5) & 1) != 0) {
+			uint32_t root = LOAD32(mapOwner + 140);
+			uint32_t start = LOAD32(mapOwner + 72);
+			if (root != 0) {
+				entry = LOAD32(start + (LOAD8(root + 69) << 3) + 4);
+				hasEntry = true;
 			} else {
-				uint32_t pairsEnd = LOAD32(owner + 76);
-				r6Value = pairsEnd;
+				mapEndNode = LOAD32(mapOwner + 76);
 				STORE32(stack + 96, 0);
-				uint32_t byteCount = pairsEnd - pair;
-				STORE32(stack + 100, pair);
-				flags.ca = int32_t(byteCount) < 0 && (byteCount & 7) != 0;
-				int32_t remaining = int32_t(byteCount) >> 3;
-				if (remaining > 0) {
+				uint32_t remaining = uint32_t(int32_t(mapEndNode - start) >> 3);
+				STORE32(stack + 100, start);
+				if (int32_t(remaining) > 0) {
 					do {
-						int32_t half = remaining >> 1;
-						uint32_t step = uint32_t(half) << 3;
-						pair += step;
-						if (int32_t(LOAD32(pair)) < 69) {
-							remaining = remaining - half - 1;
-							pair += 8;
+						uint32_t half = uint32_t(int32_t(remaining) >> 1);
+						start += half << 3;
+						if (int32_t(LOAD32(start)) < 69) {
+							remaining -= half + 1;
+							start += 8;
 						} else {
-							pair -= step;
 							remaining = half;
+							start -= half << 3;
 						}
-					} while (remaining > 0);
-					STORE32(stack + 100, pair);
+					} while (int32_t(remaining) > 0);
+					STORE32(stack + 100, start);
 				}
-				if (pair != pairsEnd && int32_t(LOAD32(pair)) <= 69) {
+				if (start != mapEndNode && int32_t(LOAD32(start)) <= 69) {
 					STORE64(stack + 112, LOAD64(stack + 96));
-					entry = LOAD32(pair + 4);
+					entry = LOAD32(start + 4);
 				} else {
-					entry = LOAD32(pairsEnd + 4);
+					entry = LOAD32(mapEndNode + 4);
 				}
+				hasEntry = true;
 			}
-
-			uint32_t list = entry + 24;
-			uint32_t node = LOAD32(LOAD32(entry + 28));
-			while (node != LOAD32(list + 4)) {
-				uint32_t item = LOAD32(node + 8);
+		}
+		if (hasEntry) {
+			uint32_t nodeList = entry + 24;
+			uint32_t currentNode = LOAD32(LOAD32(entry + 28));
+			for (;;) {
+				uint32_t listEnd = LOAD32(nodeList + 4);
+				if (currentNode == listEnd) break;
+				uint32_t item = LOAD32(currentNode + 8);
 				if (LOAD8(item + 12) != 0 && LOAD32(item + 20) == targetId) {
-					uint32_t holder = LOAD32(LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12) + 88) + 4);
-					// state the callee may pass on
-					ctx.xer.ca = flags.ca;
-					uint32_t linked = EntityManager_LookupEntity(ctx, base, LOAD32(holder), item);
-					r6Value = ctx.r6.u64;
-					uint64_t r8Value = ctx.r8.u64;
-					if (linked != 0 && (LOAD8(linked + 144) & 64) != 0 && ((LOAD32(linked + 44) >> 3) & 1) != 0) {
-						// entry 67 of the linked object's table, looked up the same way
-						uint32_t value;
-						uint32_t linkedIndex = LOAD32(linked + 140);
-						uint32_t linkedPair = LOAD32(linked + 72);
-						if (linkedIndex != 0) {
-							value = LOAD32(linkedPair + (LOAD8(linkedIndex + 67) << 3) + 4);
-						} else {
-							uint32_t linkedEnd = LOAD32(linked + 76);
-							r6Value = linkedEnd;
-							STORE32(stack + 104, 0);
-							uint32_t byteCount = linkedEnd - linkedPair;
-							STORE32(stack + 108, linkedPair);
-							flags.ca = int32_t(byteCount) < 0 && (byteCount & 7) != 0;
-							int32_t remaining = int32_t(byteCount) >> 3;
-							if (remaining > 0) {
-								do {
-									int32_t half = remaining >> 1;
-									uint32_t step = uint32_t(half) << 3;
-									r8Value = step;
-									linkedPair += step;
-									if (int32_t(LOAD32(linkedPair)) < 67) {
-										remaining = remaining - half - 1;
-										linkedPair += 8;
-									} else {
-										linkedPair -= step;
-										remaining = half;
-									}
-								} while (remaining > 0);
-								STORE32(stack + 108, linkedPair);
-							}
-							if (linkedPair != linkedEnd && int32_t(LOAD32(linkedPair)) <= 67) {
-								STORE64(stack + 120, LOAD64(stack + 104));
-								value = LOAD32(linkedPair + 4);
+					uint32_t container = LOAD32(LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12) + 88) + 4;
+					uint32_t handle = EntityManager_LookupEntity(ctx, base, LOAD32(container), item);
+					mapEndNode = ctx.r6.u64;
+					uint32_t lookupR8 = ctx.r8.u64;
+					if (handle != 0 && (LOAD8(handle + 144) & 64) != 0) {
+						uint32_t subValue = 0;
+						bool subFound = false;
+						if (((LOAD32(handle + 44) >> 3) & 1) != 0) {
+							uint32_t subRoot = LOAD32(handle + 140);
+							uint32_t subStart = LOAD32(handle + 72);
+							if (subRoot != 0) {
+								subValue = LOAD32(subStart + (LOAD8(subRoot + 67) << 3) + 4);
+								subFound = true;
 							} else {
-								value = LOAD32(linkedEnd + 4);
+								mapEndNode = LOAD32(handle + 76);
+								STORE32(stack + 104, 0);
+								uint32_t subRemaining = uint32_t(int32_t(mapEndNode - subStart) >> 3);
+								STORE32(stack + 108, subStart);
+								if (int32_t(subRemaining) > 0) {
+									do {
+										uint32_t half = uint32_t(int32_t(subRemaining) >> 1);
+										subStart += half << 3;
+										if (int32_t(LOAD32(subStart)) < 67) {
+											subRemaining -= half + 1;
+											subStart += 8;
+										} else {
+											subRemaining = half;
+											subStart -= half << 3;
+										}
+									} while (int32_t(subRemaining) > 0);
+									STORE32(stack + 108, subStart);
+								}
+								if (subStart != mapEndNode && int32_t(LOAD32(subStart)) <= 67) {
+									subFound = true;
+									STORE64(stack + 120, LOAD64(stack + 104));
+									subValue = LOAD32(subStart + 4);
+								} else {
+									subValue = LOAD32(mapEndNode + 4);
+									subFound = true;
+								}
 							}
 						}
-
-						// state the callee may pass on
-						ctx.xer.ca = flags.ca;
-						GetBuildingNameString(ctx, base, stack + 84, value);
-						StringHash_FromCharString(ctx, base, stack + 96, stack + 84, ctx.r8.u64);
-						// insert the hash at the end of the list at stack + 128
-						uint32_t tempListEnd = LOAD32(stack + 132);
-						STORE32(stack + 112, stack + 128);
-						STORE32(stack + 116, tempListEnd);
-						List_InsertNodeCopyWord(ctx, base, stack + 128, LOAD64(stack + 112), stack + 96);
-						CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
-						r6Value = ctx.r6.u64;
-						flags.ca = ctx.xer.ca;
+						if (subFound) {
+							GetBuildingNameString(ctx, base, stack + 84, subValue);
+							StringHash_FromCharString(ctx, base, stack + 96, stack + 84, ctx.r8.u64);
+							uint32_t existingEnd = LOAD32(stack + 132);
+							STORE32(stack + 112, stack + 128);
+							STORE32(stack + 116, existingEnd);
+							List_InsertNodeCopyWord(ctx, base, stack + 128, LOAD64(stack + 112), stack + 96);
+							CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
+							mapEndNode = ctx.r6.u64;
+						}
 					}
 				}
-				if (node == LOAD32(list + 4)) {
+				if (currentNode == LOAD32(nodeList + 4)) {
 					ppc_trap(ctx, base, 22);
 				}
-				node = LOAD32(node);
+				currentNode = LOAD32(currentNode);
 			}
 		}
 
-		// state the callee may pass on
-		ctx.xer.ca = flags.ca;
-		List_ClearFreeNodes(ctx, base, HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80));
-		uint64_t infoEntry = HashMap_FindOrCreateList_82892770(ctx, base, infoMapAddr, stack + 80);
-		List_Assign_824FDF98(ctx, base, infoEntry, stack + 128);
+		ctx.r6.u64 = mapEndNode;
+		uint32_t firstEntry = HashMap_FindOrCreateList_82892770(ctx, base, infoList, stack + 80);
+		List_ClearFreeNodes(ctx, base, firstEntry);
+		uint32_t secondEntry = HashMap_FindOrCreateList_82892770(ctx, base, infoList, stack + 80);
+		List_Assign_824FDF98(ctx, base, secondEntry, stack + 128);
 		List_ClearFreeNodes(ctx, base, stack + 128);
 		HandleTarget_Free(ctx, base, LOAD32(stack + 132));
 		STORE32(stack + 132, 0);
@@ -980,69 +972,79 @@ uint32_t CECWorldMapInfo_RefreshBuildingNameMap48(CpuState& ctx, uint8_t* base, 
 }
 PROMOTED_ENTRY(60, sub_828914E8, 0x828914E8) { ctx.r3.u64 = CECWorldMapInfo_RefreshBuildingNameMap48(ctx, base, ctx.r3.u64); }
 
-uint32_t CECWorldMapInfo_UpdateType40Count(CpuState& ctx, uint8_t* base, uint64_t worldMapInfoAddr) {
+uint32_t CECWorldMapInfo_UpdateType40Count(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(60, 0x82891898)) { ctx.r3.u64 = worldMapInfoAddr; __imp__sub_82891898(ctx, base); return ctx.r3.u32; }
+	if (!UseLiftedCode(60, 0x82891898)) { ctx.r3.u64 = worldMapInfo; __imp__sub_82891898(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82891898);
 	uint32_t stack = ctx.r1.u64;
+	PPCXERRegister flags = ctx.xer;
 	stack = PushStackFrame(base, stack, 192);
 
-	uint32_t registry = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
-	uint32_t target = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(registry + 88) + 4) + 8) + 4) + 36) + 4);
-	uint64_t targetNameAddr = uint64_t(target) + 172;
-	uint32_t nameData = LOAD32(target + 172);
+	const uint32_t engineGlobals = uint32_t(g_83490000);
 
-	uint64_t result = worldMapInfoAddr;
-	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
+	// Walk the engine globals down to the entity that owns the map slot at +0xAC.
+	uint32_t manager = LOAD32(LOAD32(engineGlobals + 26912) + 12);
+	uint32_t entity = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 8) + 4) + 36) + 4);
+	uint32_t slotAddress = entity + 172;
+	uint32_t slot = LOAD32(entity + 172);
+
+	uint64_t result = worldMapInfo;
+	if (slot != 0 && LOAD32(slot + 4) != 0) {
+		uint64_t thisPtr = worldMapInfo;
+
 		ctx.r1.u64 = stack;
-		ctx.r3.u64 = worldMapInfoAddr;  // state the callee may pass on
-		uint32_t nameKey = CECWorldMapInfo_HashRegionName(ctx, base, targetNameAddr);
-		uint32_t mapValue = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfoAddr, targetNameAddr);
+		uint32_t theHandle = CECWorldMapInfo_HashRegionName(ctx, base, slotAddress);
+		uint32_t mapValue = WorldMapInfo_LookupKeyByName(ctx, base, thisPtr, slotAddress);
 
-		// ObjectQuery_Execute fills the vector at stack + 96 (begin at +100, end at +104, 4-byte elements);
-		// stack + 88 holds the 40 it is given.
-		uint32_t registryNow = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
+		// Build the little descriptor/vector on the stack for the map lookup.
+		uint32_t mapRoot = LOAD32(engineGlobals + 26912);
+		uint32_t elementSize = 40;
 		STORE32(stack + 100, 0);
 		STORE32(stack + 104, 0);
+		uint32_t keyArray = stack + 96;
 		STORE32(stack + 108, 0);
-		STORE32(stack + 88, 40);
+		uint32_t keyCount = 4;
+		STORE32(stack + 88, elementSize);
+		uint32_t lookupArg = stack + 88;
+		uint32_t mapRootNode = LOAD32(mapRoot + 12);
 		STORE32(stack + 80, mapValue);
-		uint32_t holder = LOAD32(registryNow + 88);
-		uint32_t collector = LOAD32(LOAD32(holder + 4) + 12);
-		// state the callee may pass on
-		ctx.r7.u64 = holder;
-		ObjectQuery_Execute(ctx, base, collector, stack + 88, 4, stack + 96, registryNow);
+		uint32_t container = LOAD32(mapRootNode + 88);
+		uint32_t containerEntry = LOAD32(LOAD32(container + 4) + 12);
+		ctx.r7.u64 = container;
+		ctx.r9.u64 = elementSize;
+		ObjectQuery_Execute(ctx, base, containerEntry, lookupArg, keyCount, keyArray, mapRootNode);
 
-		uint64_t mapAddr = worldMapInfoAddr + 60;
-		uint32_t collectedBegin = LOAD32(stack + 100);
-		uint32_t mapEnd = LOAD32(uint32_t(mapAddr) + 4);
-		uint32_t collectedBytes = LOAD32(stack + 104) - collectedBegin;
-		uint32_t collectedCount = uint32_t(int32_t(collectedBytes) >> 2);
-		ctx.xer.ca = int32_t(collectedBytes) < 0 && (collectedBytes & 3) != 0;  // state the callee may pass on
-
-		// find mapValue in the map; the iterator lands at stack + 88
-		n_sub_822F5BC8(ctx, base, stack + 88, uint32_t(mapAddr), stack + 80);
-		uint32_t iteratorMap = LOAD32(stack + 88);
-		if (iteratorMap == 0 || iteratorMap != uint32_t(mapAddr)) {
+		thisPtr = (int64_t)thisPtr + 60;
+		uint64_t outPtr = stack + 80;
+		uint32_t findResult = stack + 88;
+		uint64_t thisPlus60 = thisPtr;
+		uint32_t keyArrayHead = LOAD32(stack + 100);
+		uint32_t thisField4 = LOAD32((uint32_t)thisPtr + 4);
+		uint64_t diff = (uint64_t)LOAD32(stack + 104) - (uint64_t)keyArrayHead;
+		flags.ca = (int32_t)diff < 0 & (diff & 0x3) != 0;
+		uint32_t elementCount = (int32_t)diff >> 2;
+		ctx.xer.ca = flags.ca;
+		n_sub_822F5BC8(ctx, base, findResult, thisPlus60, outPtr);
+		uint32_t foundNode = LOAD32(findResult);
+		if (foundNode == 0 || foundNode != (uint32_t)thisPtr) {
 			ppc_trap(ctx, base, 22);
 		}
-		uint64_t r5Value = stack + 80;
-		if (LOAD32(stack + 92) == mapEnd) {
+		if (LOAD32(findResult + 4) == thisField4) {
 			STORE32(stack + 112, mapValue);
-			// state the callee may pass on
-			ctx.r4.u64 = mapAddr;
-			ctx.r5.u64 = stack + 80;
-			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
-			uint64_t newEntry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
-			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
-			r5Value = ctx.r5.u64;
+			uint32_t handleDst = stack + 116;
+			ctx.r4.u64 = thisPlus60;
+			ctx.r5.u64 = outPtr;
+			WorldMapInfo_MapValue_Construct(ctx, base, handleDst);
+			uint64_t entryA = n_sub_82892960(ctx, base, thisPtr, (uint64_t)(stack + 80));
+			WorldMapInfo_MapEntry_Assign(ctx, base, entryA, (uint64_t)(stack + 112));
+			StdMap_DestroyGlobal_83497DCC(ctx, base, (uint64_t)(stack + 116));
+			outPtr = ctx.r5.u64;
 		}
-		ctx.r5.u64 = r5Value;  // state the callee may pass on
-		uint64_t entry = n_sub_82892960(ctx, base, mapAddr, stack + 80);
-		result = WorldMapInfo_Entry_SetCount(ctx, base, entry, nameKey, collectedCount);
-		if (collectedBegin != 0) {
-			result = HandleTarget_Free(ctx, base, collectedBegin);
+		ctx.r5.u64 = outPtr;
+		uint64_t entry = n_sub_82892960(ctx, base, thisPtr, (uint64_t)(stack + 80));
+		result = WorldMapInfo_Entry_SetCount(ctx, base, entry, theHandle, elementCount);
+		if (keyArrayHead != 0) {
+			result = HandleTarget_Free(ctx, base, keyArrayHead);
 		}
 	}
 	stack = PopStackFrame(stack, 192);
@@ -1375,75 +1377,84 @@ uint32_t n_sub_82892040(CpuState& ctx, uint8_t* base, uint64_t worldMapInfo) {
 	if (!UseLiftedCode(60, 0x82892040)) { ctx.r3.u64 = worldMapInfo; __imp__sub_82892040(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82892040);
 	uint32_t stack = ctx.r1.u64;
+	uint64_t returnValue = worldMapInfo;
+	PPCXERRegister flags = ctx.xer;
 	stack = PushStackFrame(base, stack, 192);
 
-	// Returned unchanged when the name string below is empty.
-	uint64_t result = worldMapInfo;
-
 	const uint32_t globalBase = uint32_t(g_83490000);
-	uint32_t manager = LOAD32(LOAD32(globalBase + 26912) + 12);
-	uint32_t nameOwner = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 8) + 4) + 36) + 4);
-	uint64_t nameString = (uint64_t)nameOwner + 172;    // a CCharString
-	uint32_t nameData = LOAD32(nameOwner + 172);
+	uint32_t singleton = LOAD32(globalBase + 26912);
+	uint32_t manager = LOAD32(singleton + 12);
+	uint32_t mapManager = LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 8) + 4) + 36) + 4);
+	uint32_t mapListSlot = mapManager + 172;
+	uint32_t mapList = LOAD32(mapManager + 172);
 
-	if (nameData != 0 && LOAD32(nameData + 4) != 0) {
-		// state the callee may pass on
+	if (mapList != 0 && LOAD32(mapList + 4) != 0) {
 		ctx.r1.u64 = stack;
-		uint32_t nameHash = CECWorldMapInfo_HashRegionName(ctx, base, nameString);
-		uint32_t mapKey = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfo, nameString);
+		uint32_t groupId = CECWorldMapInfo_HashRegionName(ctx, base, mapListSlot);
+		uint32_t targetId = WorldMapInfo_LookupKeyByName(ctx, base, worldMapInfo, mapListSlot);
 
-		// ObjectQuery_Execute fills the array of 4-byte elements at stack + 96 (begin at +100, end at +104).
-		uint32_t managerAgain = LOAD32(LOAD32(globalBase + 26912) + 12);
+		uint32_t managerCopy = LOAD32(globalBase + 26912);
 		STORE32(stack + 100, 0);
 		STORE32(stack + 104, 0);
 		STORE32(stack + 108, 0);
-		STORE32(stack + 88, 96);
-		STORE32(stack + 80, mapKey);
-		uint32_t sourceOwner = LOAD32(managerAgain + 88);
+		uint32_t elementSize = 96;
+		STORE32(stack + 88, elementSize);
+		uint32_t buildArg = stack + 88;
+		uint32_t buildOut = stack + 96;
+		uint32_t managerInnerCopy = LOAD32(managerCopy + 12);
+		STORE32(stack + 80, targetId);
+		uint32_t sourceOwner = LOAD32(managerInnerCopy + 88);
 		uint32_t sourceList = LOAD32(LOAD32(sourceOwner + 4) + 12);
-		// state the callee may pass on
 		ctx.r7.u64 = sourceOwner;
-		ObjectQuery_Execute(ctx, base, sourceList, stack + 88, 3, stack + 96, managerAgain);
+		ctx.r9.u64 = elementSize;
+		ObjectQuery_Execute(ctx, base, sourceList, buildArg, 3, buildOut, managerInnerCopy);
 
-		// Tree map at +124 (header node at +128), keyed by mapKey (stored at stack + 80).
-		uint64_t entryMap = worldMapInfo + 124;
-		uint32_t listBegin = LOAD32(stack + 100);
-		uint32_t entryMapHeader = LOAD32((uint32_t)entryMap + 4);
-		uint32_t listBytes = LOAD32(stack + 104) - listBegin;
-		uint32_t listCount = (int32_t)listBytes >> 2;
-		// carry of the arithmetic shift, left in XER
-		ctx.xer.ca = ((int32_t)listBytes < 0) & ((listBytes & 0x3) != 0);
+		uint64_t entryKey = worldMapInfo + 124;
+		uint32_t idSlot = stack + 80;
+		uint32_t mapKeyPtr = idSlot;
+		uint32_t findSlot = stack + 88;
+		uint32_t targetBegin = LOAD32(stack + 100);
+		uint32_t targetIdAtKey = LOAD32((uint32_t)entryKey + 4);
 
-		uint64_t mapKeyPtr = stack + 80;
-		n_sub_822F5BC8(ctx, base, stack + 88, entryMap, mapKeyPtr);
-		uint32_t foundMap = LOAD32(stack + 88);
-		if (foundMap == 0 || foundMap != (uint32_t)entryMap) {
+		uint64_t byteSize = (uint64_t)LOAD32(stack + 104) - (uint64_t)targetBegin;
+		flags.ca = (int32_t)byteSize < 0 & (byteSize & 0x3) != 0;
+		uint32_t targetCount = (int32_t)byteSize >> 2;
+		ctx.xer.ca = flags.ca;
+
+		n_sub_822F5BC8(ctx, base, findSlot, entryKey, idSlot);
+		uint32_t foundKey = LOAD32(findSlot);
+		if (foundKey == 0 || foundKey != (uint32_t)entryKey) {
 			ppc_trap(ctx, base, 22);
 		}
-		if (LOAD32(stack + 92) == entryMapHeader) {
-			// the find ended at the header: no node for the key yet
-			STORE32(stack + 112, mapKey);
-			// state the callee may pass on
-			ctx.r4.u64 = entryMap;
+		if (LOAD32(findSlot + 4) == targetIdAtKey) {
+			STORE32(stack + 112, targetId);
+			uint32_t entrySlot = stack + 116;
+			ctx.r4.u64 = entryKey;
 			ctx.r5.u64 = mapKeyPtr;
-			WorldMapInfo_MapValue_Construct(ctx, base, stack + 116);
-			uint64_t newEntry = n_sub_82892960(ctx, base, entryMap, stack + 80);
-			WorldMapInfo_MapEntry_Assign(ctx, base, newEntry, stack + 112);
-			StdMap_DestroyGlobal_83497DCC(ctx, base, stack + 116);
+			WorldMapInfo_MapValue_Construct(ctx, base, entrySlot);
+			flags.ca = ctx.xer.ca;
+			uint32_t createdEntry = n_sub_82892960(ctx, base, entryKey, idSlot);
+			flags.ca = ctx.xer.ca;
+			WorldMapInfo_MapEntry_Assign(ctx, base, createdEntry, stack + 112);
+			flags.ca = ctx.xer.ca;
+			StdMap_DestroyGlobal_83497DCC(ctx, base, entrySlot);
 			mapKeyPtr = ctx.r5.u64;
+			flags.ca = ctx.xer.ca;
 		}
-		// state the callee may pass on
 		ctx.r5.u64 = mapKeyPtr;
-		uint64_t mapEntry = n_sub_82892960(ctx, base, entryMap, stack + 80);
-		result = WorldMapInfo_Entry_SetCount(ctx, base, mapEntry, nameHash, listCount);
-		if (listBegin != 0) {
-			result = HandleTarget_Free(ctx, base, listBegin);
+		uint32_t mapEntry = n_sub_82892960(ctx, base, entryKey, idSlot);
+		flags.ca = ctx.xer.ca;
+		returnValue = WorldMapInfo_Entry_SetCount(ctx, base, mapEntry, groupId, targetCount);
+		flags.ca = ctx.xer.ca;
+		if (targetBegin != 0) {
+			returnValue = HandleTarget_Free(ctx, base, targetBegin);
+			flags.ca = ctx.xer.ca;
 		}
 	}
 
 	stack = PopStackFrame(stack, 192);
 	ctx.r1.u64 = stack;
-	return (uint32_t)result;
+	return (uint32_t)returnValue;
 }
 PROMOTED_ENTRY(60, sub_82892040, 0x82892040) { ctx.r3.u64 = n_sub_82892040(ctx, base, ctx.r3.u64); }
 

@@ -37,6 +37,16 @@ uint64_t n_sub_82175EF8(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity, 
 	SET_V8(vec, VLOAD((stack + 80) & ~0xF));
 	VSTORE((stack + 80) & ~0xF, V8(vec));
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = stack + 80;
+	ctx.r5.u64 = stack + 80;
+	ctx.r6.u64 = stack + 80;
+	ctx.r7.u64 = stack + 112;
+	ctx.r8.u64 = stack + 80;
+	ctx.r9.u64 = stack + 112;
+	ctx.r10.u64 = stack + 96;
+	ctx.f11.f64 = fA2;
+	ctx.f12.f64 = fA3;
+	ctx.f13.f64 = fA0;
 	uint64_t result = n_sub_82D7B818(ctx, base, rigidBodyId);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;
@@ -139,6 +149,7 @@ uint64_t n_sub_821C0818(CpuState& ctx, uint8_t* base, uint64_t rigidBodyEntity) 
 	uint32_t saveArea = stack + 80;
 	VSTORE(saveArea & ~0xF, V8(savedVector));
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = saveArea;
 	uint64_t result = n_sub_82D7B7D0(ctx, base, rigidBody);
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;

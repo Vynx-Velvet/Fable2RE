@@ -52,36 +52,38 @@ uint32_t CGuiOptionsAudioScreen_Construct(CpuState& ctx, uint8_t* base, uint64_t
 
 	CGuiOptionsAudioScreen_Constructor(ctx, base, guiOptionsAudioScreenAddr);
 
-	uint64_t itemListAddr = guiOptionsAudioScreenAddr + 28;
+	uint32_t menuListAddr = (uint32_t)guiOptionsAudioScreenAddr + 28;
 	guiOptionsAudioScreen->vtable = 0x820E4768u;
-	RbTree_InitEmptyNode28(ctx, base, itemListAddr);
+	RbTree_InitEmptyNode28(ctx, base, menuListAddr);
 
-	// initial field values read out of read-only constants
+	// default values read out of the read-only globals
 	ctx.fpscr.disableFlushMode();
-	double initial40 = double(LOAD_F32(0x820994B4));
-	double initial4C = double(LOAD_F32(0x8209B674));
-	double initial54 = double(LOAD_F32(0x8209F48C));
+	double valueA = double(LOAD_F32(0x820994B4));
+	double valueB = double(LOAD_F32(0x8209B674));
+	double valueC = double(LOAD_F32(0x8209F48C));
 
 	guiOptionsAudioScreen->m_SelectedItem = 0xFFFFFFFFu;
 	guiOptionsAudioScreen->m_3C = 0;
-	guiOptionsAudioScreen->m_40 = float(initial40);
-	guiOptionsAudioScreen->m_44 = float(initial40);
+	guiOptionsAudioScreen->m_40 = float(valueA);
+	guiOptionsAudioScreen->m_44 = float(valueA);
 	guiOptionsAudioScreen->m_48 = 0;
 	guiOptionsAudioScreen->m_49 = 0;
-	guiOptionsAudioScreen->m_4C = float(initial4C);
-	guiOptionsAudioScreen->m_50 = float(initial4C);
-	guiOptionsAudioScreen->m_54 = float(initial54);
-	guiOptionsAudioScreen->m_58 = float(initial54);
+	guiOptionsAudioScreen->m_4C = float(valueB);
+	guiOptionsAudioScreen->m_50 = float(valueB);
+	guiOptionsAudioScreen->m_54 = float(valueC);
+	guiOptionsAudioScreen->m_58 = float(valueC);
 	guiOptionsAudioScreen->m_5C = 0;
 	guiOptionsAudioScreen->m_5D = 1;
 	guiOptionsAudioScreen->m_60 = 1;
 	guiOptionsAudioScreen->m_64 = 0;
 	guiOptionsAudioScreen->m_68 = 0;
 
-	// state the callees may pass on
-	ctx.r8.s64 = g_820A0000;
-	ctx.f12.f64 = initial54;
-	ctx.f13.f64 = initial4C;
+	int32_t selectedIndex = -1;
+	int32_t colorValue = g_820A0000;
+	ctx.r6.s64 = selectedIndex;
+	ctx.r8.s64 = colorValue;
+	ctx.f12.f64 = valueC;
+	ctx.f13.f64 = valueB;
 
 	// build one menu entry and append it to the screen's item list
 	auto addMenuEntry = [&](uint32_t (*entryConstructor)(CpuState&, uint8_t*, uint64_t),
@@ -97,7 +99,7 @@ uint32_t CGuiOptionsAudioScreen_Construct(CpuState& ctx, uint8_t* base, uint64_t
 			entryRef = stack + 80;
 			STORE32(stack + 84, 0);
 		}
-		RbTree_InsertOrAssignByKey(ctx, base, itemListAddr, entryRef, index);
+		RbTree_InsertOrAssignByKey(ctx, base, menuListAddr, entryRef, index);
 	};
 
 	addMenuEntry(n_sub_82885D68, 56, 0);

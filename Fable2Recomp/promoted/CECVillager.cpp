@@ -731,101 +731,106 @@ uint64_t CECVillager_SetVillage(CpuState& ctx, uint8_t* base, uint64_t villagerA
 PROMOTED_ENTRY(52, sub_827A0E00, 0x827A0E00) { ctx.r3.u64 = CECVillager_SetVillage(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
 // sub_827A1AB8  [624 bytes]
-uint64_t CECVillager_BuildJobSchedule(CpuState& ctx, uint8_t* base, uint64_t villagerAddr, uint64_t jobSchedule) {
+uint64_t CECVillager_BuildJobSchedule(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t jobSchedule) {
 	constexpr int32_t str_TXT_820D56D8_B_ = int32_t(0x820D56D8);
 	constexpr int32_t str_TXT_820D56E4_B_ = int32_t(0x820D56E4);
 	constexpr int32_t str_TXT_820D56F0_B_ = int32_t(0x820D56F0);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t g_8349E164 = int32_t(0x8349E164);
 	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
-	if (!UseLiftedCode(53, 0x827A1AB8)) { ctx.r3.u64 = villagerAddr; ctx.r4.u64 = jobSchedule; __imp__sub_827A1AB8(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(53, 0x827A1AB8)) { ctx.r3.u64 = arg1; ctx.r4.u64 = jobSchedule; __imp__sub_827A1AB8(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x827A1AB8);
-	constexpr uint64_t kHashSeed = 0xFFFFFFFF811C9DC5ull;  // FNV offset basis, sign-extended as the game loads it
 	uint32_t stack = ctx.r1.u64;
-	uint64_t result = villagerAddr;
+	uint64_t arg3 = ctx.r5.u64;
+	uint64_t arg4 = ctx.r6.u64;
 	stack = PushStackFrame(base, stack, 256);
 
-	// Vector of 12-byte (job phase, start time, finish time) entries at +0x8C: begin +0x90, end +0x94,
-	// capacity end +0x98. It is emptied first.
-	const uint64_t schedule = villagerAddr + 0x8C;
+	// Schedule vector embedded at arg1+0x8C: begin at +0x90, end at +0x94, capacity at +0x98.
+	const uint32_t schedule = (uint32_t)arg1 + 0x8C;
 	const uint32_t scheduleBegin = LOAD32(schedule + 4);
 	if (scheduleBegin != LOAD32(schedule + 8)) {
-		STORE32(schedule + 8, scheduleBegin);
+		STORE32(schedule + 8, scheduleBegin);   // reset the vector to empty
 	}
 
 	if ((uint32_t)jobSchedule != 0) {
 		ctx.r1.u64 = stack;
-		GameDB_GetArrayField(ctx, base, stack + 96, jobSchedule, scheduleBegin);
-		double f13 = ctx.f13.f64;  // f13 as the calls below are handed it
-		// the words GameDB_GetArrayField left at +96: entry array, end index, first index
-		const uint32_t entries = LOAD32(stack + 96);
-		const uint32_t endIndex = LOAD32(stack + 100);
-		uint32_t index = LOAD32(stack + 104);
-		if (index != endIndex) {
+		ctx.r5.u64 = arg3;
+		ctx.r6.u64 = arg4;
+		GameDB_GetArrayField(ctx, base, (uint64_t)stack + 96, jobSchedule, scheduleBegin);
+		double f13 = ctx.f13.f64;
+
+		uint32_t i = LOAD32(stack + 104);
+		const uint32_t iEnd = LOAD32(stack + 100);
+		const uint32_t targetBase = LOAD32(stack + 96);
+		if (i != iEnd) {
 			ctx.fpscr.disableFlushMode();
-			const double defaultTime = double(LOAD_F32(0x820994B4u));
-			const uint32_t matchKeyAddr = uint32_t(g_834A0000) - 7848;
+			const double zeroTime = double(LOAD_F32(0x820994B4u));
+			const uint32_t tableGlobal = uint32_t(g_83490000);
+			const uint32_t fallbackSource = uint32_t(g_834A0000);
+			const uint32_t fallbackTarget = uint32_t(g_8349E164);
+			const uint64_t startTimeKey = str_TXT_820D56D8_B_;
+			const uint64_t finishTimeKey = str_TXT_820D56E4_B_;
+			const uint64_t jobPhaseKey = str_TXT_820D56F0_B_;
 			do {
-				const uint32_t entry = index * 12 + entries;
-				uint32_t keyAddr = LOAD32(entry + 8);
-				// a type-4 entry whose key equals the one at matchKeyAddr uses the key at g_8349E164 instead
-				if (LOAD32(entry) == 4 && LOAD32(keyAddr) == LOAD32(matchKeyAddr)) {
-					keyAddr = uint32_t(g_8349E164);
+				uint32_t entryAddr = i * 12 + targetBase;
+				uint32_t dataPtr = LOAD32(entryAddr + 8);
+				uint32_t entryType = LOAD32(entryAddr);
+				if (entryType == 4 && LOAD32(dataPtr) == LOAD32(fallbackSource - 7848)) {
+					dataPtr = fallbackTarget;
 				}
-				const uint32_t recordMap = LOAD32(uint32_t(g_83490000) + 27600);
-				const uint64_t record = HashMapU32_FindValue(ctx, base, recordMap, LOAD32(keyAddr));
+				uint32_t table = LOAD32(tableGlobal + 27600);
+				uint64_t record = HashMapU32_FindValue(ctx, base, table, LOAD32(dataPtr));
 				ctx.fpscr.disableFlushMode();
-				STORE_F32(stack + 80, float(defaultTime));
-				STORE_F32(stack + 84, float(defaultTime));
-				if ((GameDB_ReadFloatField(ctx, base, record, str_TXT_820D56D8_B_, stack + 80) & 0xFF) != 0 &&
-				    (GameDB_ReadFloatField(ctx, base, record, str_TXT_820D56E4_B_, stack + 84) & 0xFF) != 0) {
-					const uint64_t phaseHash = String_HashFnv1(ctx, base, str_TXT_820D56F0_B_, kHashSeed);
-					const uint32_t phaseField = GameDB_FindFieldValue(ctx, base, record, phaseHash, 2);
-					if (phaseField != 0) {
-						const uint32_t TXT_820D56F0_L_ = LOAD32(phaseField);
-						const uint32_t vecBegin = LOAD32(schedule + 4);
-						ctx.fpscr.disableFlushMode();
-						const double TXT_820D56D8_L_ = double(LOAD_F32(stack + 80));
-						f13 = double(LOAD_F32(stack + 84));  // the finish time
-						// the new entry, built in the temporary at +96
-						STORE32(stack + 96, TXT_820D56F0_L_);
-						STORE_F32(stack + 100, float(TXT_820D56D8_L_));
-						STORE_F32(stack + 104, float(f13));
-						uint32_t capacity = 0;
-						if (vecBegin != 0) {
-							capacity = uint32_t((int32_t)(LOAD32(schedule + 12) - vecBegin) / 12);
-						}
-						const uint32_t vecEnd = LOAD32(schedule + 8);
-						const uint32_t size = uint32_t((int32_t)(vecEnd - vecBegin) / 12);
-						if (size < capacity) {
-							if (vecEnd != 0) {
-								const uint32_t startBits = LOAD32(stack + 100);
-								const uint32_t finishBits = LOAD32(stack + 104);
-								STORE32(vecEnd, TXT_820D56F0_L_);
-								STORE32(vecEnd + 4, startBits);
-								STORE32(vecEnd + 8, finishBits);
+				STORE_F32(stack + 80, float(zeroTime));
+				STORE_F32(stack + 84, float(zeroTime));
+				uint32_t hasStart = GameDB_ReadFloatField(ctx, base, record, startTimeKey, stack + 80);
+				if ((hasStart & 0xFF) != 0) {
+					uint32_t hasFinish = GameDB_ReadFloatField(ctx, base, record, finishTimeKey, stack + 84);
+					if ((hasFinish & 0xFF) != 0) {
+						uint64_t phaseHash = String_HashFnv1(ctx, base, jobPhaseKey, 0x811C9DC5);
+						uint32_t fieldValue = GameDB_FindFieldValue(ctx, base, record, phaseHash, 2);
+						if (fieldValue != 0) {
+							uint32_t jobPhaseValue = LOAD32(fieldValue);
+							uint32_t vecBegin = LOAD32(schedule + 4);
+							ctx.fpscr.disableFlushMode();
+							double TXT_820D56D8_L_ = double(LOAD_F32(stack + 80));
+							double TXT_820D56E4_L_ = double(LOAD_F32(stack + 84));
+							f13 = TXT_820D56E4_L_;
+							STORE32(stack + 96, jobPhaseValue);
+							STORE_F32(stack + 100, float(TXT_820D56D8_L_));
+							STORE_F32(stack + 104, float(TXT_820D56E4_L_));
+							uint32_t capacityCount = 0;
+							if (vecBegin != 0) {
+								capacityCount = uint32_t((int32_t)(LOAD32(schedule + 12) - vecBegin) / 12);
 							}
-							STORE32(schedule + 8, vecEnd + 12);
-						} else {
-							// insert at the end: the position goes over as the 64-bit value built at +88
-							STORE32(stack + 92, vecEnd);
-							STORE32(stack + 88, 0);
-							// state the callee may pass on
-							ctx.f13.f64 = f13;
-							n_sub_823955A8(ctx, base, schedule, LOAD64(stack + 88), stack + 96);
-							f13 = ctx.f13.f64;
+							uint32_t vecEnd = LOAD32(schedule + 8);
+							uint32_t sizeCount = uint32_t((int32_t)(vecEnd - vecBegin) / 12);
+							if (sizeCount < capacityCount) {
+								if (vecEnd != 0) {
+									STORE32(vecEnd, jobPhaseValue);
+									STORE32(vecEnd + 4, LOAD32(stack + 100));
+									STORE32(vecEnd + 8, LOAD32(stack + 104));
+								}
+								STORE32(schedule + 8, vecEnd + 12);
+							} else {
+								STORE32(stack + 92, vecEnd);
+								STORE32(stack + 88, 0);
+								ctx.f13.f64 = f13;
+								n_sub_823955A8(ctx, base, schedule, LOAD64(stack + 88), (uint64_t)stack + 96);
+								f13 = ctx.f13.f64;
+							}
 						}
 					}
 				}
-				index = index + 1;
-			} while (index != endIndex);
+				i = i + 1;
+			} while (i != iEnd);
 		}
-		ctx.f13.f64 = f13;  // state the callee may pass on
-		result = HandleTarget_Free(ctx, base, entries);
+		ctx.f13.f64 = f13;
+		arg1 = HandleTarget_Free(ctx, base, targetBase);
 	}
 	stack = PopStackFrame(stack, 256);
 	ctx.r1.u64 = stack;
-	return result;
+	return arg1;
 }
 PROMOTED_ENTRY(53, sub_827A1AB8, 0x827A1AB8) { ctx.r3.u64 = CECVillager_BuildJobSchedule(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 

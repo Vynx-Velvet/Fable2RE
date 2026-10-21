@@ -1676,118 +1676,153 @@ uint64_t CECDog_ApplyState(CpuState& ctx, uint8_t* base, uint64_t dogAddr) {
 	constexpr int32_t g_82790000 = int32_t(0x82790000);
 	if (!UseLiftedCode(52, 0x82789B68)) { ctx.r3.u64 = dogAddr; __imp__sub_82789B68(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82789B68);
-	uint64_t reg0 = ctx.r0.u64;
+	uint64_t callerR0 = ctx.r0.u64;
 	uint32_t stack = ctx.r1.u64;
+	PPCCRRegister compare6{};
 	PPCXERRegister flags = ctx.xer;
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
 
 	stack = PushStackFrame(base, stack, 112);
 
-	const int64_t dataBase = g_82099334;            // kept sign-extended, as the original does
-	const int64_t stateTable = dataBase + 11548;    // three floats per state
-	const uint32_t state = dog->m_114;
+	const int64_t dataBase = g_82099334;               // 0x82099334, kept sign-extended as the original does
+	const int64_t animTable = dataBase + 11548;        // per-state animation data table
+	const uint32_t animState = dog->m_114;
 	const uint32_t owner = dog->m_4;
-	const uint32_t stateOffset = uint32_t(state + uint64_t(state << 1)) << 2;   // 12 * state
+	const uint32_t animOffset = uint32_t(animState + uint64_t(animState << 1)) << 2;   // 12 * animState
 
-	ctx.fpscr.disableFlushMode();
-	const double stateValue0 = double(LOAD_F32(stateOffset + uint32_t(stateTable)));
-	dog->m_68 = float(stateValue0);
-	const double stateValue1 = double(LOAD_F32(stateOffset + uint32_t(stateTable + 4)));
-	dog->m_6C = float(stateValue1);
-	const double stateValue2 = double(LOAD_F32(stateOffset + uint32_t(stateTable + 8)));
-	dog->m_70 = float(stateValue2);
+	const double animVal0 = double(LOAD_F32(animOffset + uint32_t(animTable)));
+	dog->m_68 = float(animVal0);
+	const double animVal1 = double(LOAD_F32(animOffset + uint32_t(animTable + 4)));
+	dog->m_6C = float(animVal1);
+	const double animVal2 = double(LOAD_F32(animOffset + uint32_t(animTable + 8)));
+	dog->m_70 = float(animVal2);
 
-	// r5, r7 and r8 as the original leaves them; handed to the first slot call below
-	uint64_t reg5 = stateTable;
-	uint32_t reg7 = stateOffset;
+	// r8/r5/r7 are forwarded to the animation calls below and may be clobbered on the way.
 	uint64_t reg8 = (LOAD32(owner + 40) >> 12) & 1;
-	uint32_t entry = 0;   // payload of the owner's entry with key 44
-	bool found = false;
+	uint64_t reg5 = animTable;
+	uint32_t reg7 = animOffset;
+	uint32_t entryPtr = 0;                             // payload of the located table entry
+	uint32_t found = 0;
 
 	if (uint32_t(reg8) != 0) {
-		const uint32_t indexTable = LOAD32(owner + 140);
-		if (indexTable != 0) {
-			reg8 = uint64_t(LOAD8(indexTable + 44)) * 8 + LOAD32(owner + 72);
-			entry = LOAD32(uint32_t(reg8) + 4);
+		const uint32_t indexNode = LOAD32(owner + 140);
+		if (indexNode != 0) {
+			reg8 = uint64_t(LOAD8(indexNode + 44)) * 8 + LOAD32(owner + 72);
+			entryPtr = LOAD32(uint32_t(reg8) + 4);
+			found = 1;
 		} else {
-			// lower_bound(44) over the sorted 8-byte entries in [owner+72, owner+76)
-			uint64_t first = LOAD32(owner + 72);
+			// lower_bound(44) over the 8-byte entries in [owner+72, owner+76)
+			uint64_t begin = LOAD32(owner + 72);
 			reg5 = LOAD32(owner + 76);
 			STORE32(stack + 80, 0u);
-			reg8 = reg5 - first;
-			STORE32(stack + 84, uint32_t(first));
-			flags.ca = int32_t(reg8) < 0 && (uint32_t(reg8) & 0x7) != 0;
-			int32_t remaining = int32_t(reg8) >> 3;
-			if (remaining > 0) {
+			reg8 = reg5 - begin;
+			STORE32(stack + 84, uint32_t(begin));
+			flags.ca = (int32_t(reg8) < 0) & ((uint32_t(reg8) & 0x7) != 0);
+			uint32_t count = uint32_t(int32_t(reg8) >> 3);
+			if (int32_t(count) > 0) {
 				do {
-					const int32_t half = remaining >> 1;
-					reg8 = uint32_t(half) << 3;
-					const uint64_t mid = reg8 + first;
-					reg7 = int32_t(LOAD32(uint32_t(mid))) < 44 ? 1u : 0u;
+					flags.ca = (int32_t(count) < 0) & ((count & 0x1) != 0);
+					const uint32_t half = uint32_t(int32_t(count) >> 1);
+					reg8 = uint64_t(half) << 3;
+					begin = reg8 + begin;
+					compare6.compare<int32_t>(int32_t(LOAD32(uint32_t(begin))), 44, flags);
+					reg7 = compare6.lt ? 1u : 0u;
+					reg7 &= 0xFF;
 					if (reg7 != 0) {
-						first = mid + 8;
-						remaining = remaining - half - 1;
+						count -= half;
+						begin += 8;
+						count = uint32_t(int32_t(count) - 1);
 					} else {
-						remaining = half;
+						begin -= reg8;
+						count = half;
 					}
-				} while (remaining > 0);
-				flags.ca = 0;   // halving a positive count leaves CA clear
-				STORE32(stack + 84, uint32_t(first));
+				} while (int32_t(count) > 0);
+				STORE32(stack + 84, uint32_t(begin));
 			}
-			if (uint32_t(first) != uint32_t(reg5) && int32_t(LOAD32(uint32_t(first))) <= 44) {
-				STORE64(stack + 80, LOAD64(stack + 80));
-				entry = LOAD32(LOAD32(stack + 84) + 4);
+			if (uint32_t(begin) == uint32_t(reg5)) {
+				entryPtr = LOAD32(uint32_t(reg5) + 4);
+				found = 1;
 			} else {
-				entry = LOAD32(uint32_t(reg5) + 4);
+				compare6.compare<int32_t>(int32_t(LOAD32(uint32_t(begin))), 44, flags);
+				if (compare6.gt) {
+					entryPtr = LOAD32(uint32_t(reg5) + 4);
+					found = 1;
+				} else {
+					STORE64(stack + 80, LOAD64(stack + 80));
+					entryPtr = LOAD32(LOAD32(stack + 84) + 4);
+					found = 1;
+				}
 			}
 		}
-		found = true;
 	}
 
-	if (found && state <= 7) {
-		reg0 = LOAD32(uint32_t(g_82790000 - 25356) + state * 4);   // the original's jump-table entry, left in r0
-		switch (state) {
+	uint32_t useMinusOne = (animState == 2 || animState == 3) ? 1u : 0u;
+	if (found != 0 && animState <= 7) {
+		callerR0 = LOAD32(uint32_t(g_82790000 - 25356) + animState * 4);
+		switch (animState) {
+		case 0:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			STORE_F32(LOAD32(entryPtr + 112) + 48, float(double(LOAD_F32(0x8209B674u))));
+			break;
 		case 1:
-			STORE_F32(LOAD32(entry + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase + 19204)))));
+			STORE_F32(LOAD32(entryPtr + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase + 19204)))));
+			useMinusOne = 0;
 			break;
 		case 2:
-			STORE_F32(LOAD32(entry + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase + 8988)))));
+			STORE_F32(LOAD32(entryPtr + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase + 8988)))));
+			useMinusOne = 1;
 			break;
 		case 3:
-			STORE_F32(LOAD32(entry + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase)))));
-			break;
-		default:   // 0, 4, 5, 6, 7
-			STORE_F32(LOAD32(entry + 112) + 48, float(double(LOAD_F32(0x8209B674u))));
+			STORE_F32(LOAD32(entryPtr + 112) + 48, float(double(LOAD_F32(uint32_t(dataBase)))));
+			useMinusOne = 1;
 			break;
 		}
 	}
 
-	// dog+904, +936 and +1064 are entries 4, 5 and 9 of the ten 32-byte slots at dog+776
-	const uint32_t slotOwner = dog->m_4;
-	const uint64_t slot4 = dogAddr + 904;
-	// state the callees may pass on
-	ctx.r0.u64 = reg0;
-	ctx.r1.u64 = stack;
-	ctx.r8.u64 = reg8;
-	ctx.f12.f64 = stateValue2;
-	ctx.f13.f64 = stateValue1;
-	ctx.xer.ca = flags.ca;
-	if (state == 2 || state == 3) {
-		EntitySlot_SetMode(ctx, base, slot4, slotOwner, -1, 31);
-	} else {
+	const uint32_t dogOwner = dog->m_4;
+	const uint64_t handle388 = dogAddr + 904;
+	if (useMinusOne == 0) {
+		ctx.r1.u64 = stack;
 		ctx.r5.u64 = reg5;
 		ctx.r6.u64 = uint64_t(dataBase);
 		ctx.r7.u64 = reg7;
-		EntitySlot_Clear(ctx, base, slot4, slotOwner);
+		ctx.r8.u64 = reg8;
+		ctx.f12.f64 = animVal2;
+		ctx.f13.f64 = animVal1;
+		ctx.xer.ca = flags.ca;
+		EntitySlot_Clear(ctx, base, handle388, dogOwner);
+	} else {
+		const int32_t minusOne = -1;
+		const uint32_t chain31 = 31;
+		ctx.r0.u64 = callerR0;
+		ctx.r1.u64 = stack;
+		ctx.r8.u64 = reg8;
+		ctx.f12.f64 = animVal2;
+		ctx.f13.f64 = animVal1;
+		ctx.xer.ca = flags.ca;
+		EntitySlot_SetMode(ctx, base, handle388, dogOwner, minusOne, chain31);
 	}
 
-	uint64_t result;
-	if (state == 5) {
-		EntitySlot_SetMode(ctx, base, dogAddr + 936, dog->m_4, -1, 255);
-		result = EntitySlot_SetMode(ctx, base, dogAddr + 1064, dog->m_4, -1, 255);
+	const uint32_t dogOwner2 = dog->m_4;
+	const uint64_t handle3A8 = dogAddr + 936;
+	uint64_t result = 0;
+	if (animState == 5) {
+		const int32_t minusOne = -1;
+		const uint32_t chain255 = 255;
+		EntitySlot_SetMode(ctx, base, handle3A8, dogOwner2, minusOne, chain255);
+		const uint32_t dogOwner3 = dog->m_4;
+		const uint64_t handle428 = dogAddr + 1064;
+		const int32_t minusOne2 = -1;
+		const uint32_t chain255b = 255;
+		result = EntitySlot_SetMode(ctx, base, handle428, dogOwner3, minusOne2, chain255b);
 	} else {
-		EntitySlot_Clear(ctx, base, dogAddr + 936, dog->m_4);
-		result = EntitySlot_Clear(ctx, base, dogAddr + 1064, dog->m_4);
+		EntitySlot_Clear(ctx, base, handle3A8, dogOwner2);
+		const uint64_t handle428 = dogAddr + 1064;
+		const uint32_t dogOwner4 = dog->m_4;
+		result = EntitySlot_Clear(ctx, base, handle428, dogOwner4);
 	}
 
 	stack = PopStackFrame(stack, 112);
@@ -1799,54 +1834,55 @@ PROMOTED_ENTRY(52, sub_82789B68, 0x82789B68) { ctx.r3.u64 = CECDog_ApplyState(ct
 uint64_t CECDog_MustStay(CpuState& ctx, uint8_t* base, uint32_t dogAddr, uint64_t arg2, uint64_t arg3) {
 	constexpr int32_t str_TXT_820C0000_B_ = int32_t(0x820C0000);
 	constexpr int32_t str_TXT_820D4AF0_B_ = int32_t(0x820D4AF0);
-	constexpr int32_t str_TXT_820D4B0C_B_ = int32_t(0x820D4B0C);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	if (!UseLiftedCode(52, 0x8278A258)) { ctx.r3.u64 = dogAddr; ctx.r6.u64 = arg2; ctx.r7.u64 = arg3; __imp__sub_8278A258(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8278A258);
 	uint32_t stack = PushStackFrame(base, ctx.r1.u64, 128);
 
 	CECDog* dog = GameObject<CECDog>(base, dogAddr);
-	const uint32_t globalsRef = stack + 88;     // reference to the script global table
-	const uint32_t aiManagerRef = stack + 80;   // a field of that table, fetched below
-	const uint32_t scriptCall = stack + 96;     // a function reference, with a CCharString at +8
 
-	uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
-	uint32_t scriptHost = LOAD32(LOAD32(globalRoot + 12) + 120);
-	uint32_t stateHolder = LOAD32(scriptHost + 4);
-	uint32_t luaState = LOAD32(stateHolder);
+	// Script side: aim the dog's stay decision at AIManager.GetMustStayType.
+	uint32_t scriptSystem = LOAD32(uint32_t(g_83490000) + 26912);
+	uint32_t luaVm = LOAD32(LOAD32(scriptSystem + 12) + 120);
+	uint32_t luaState = LOAD32(luaVm + 4);
+	uint32_t luaGlobalTable = LOAD32(luaState);
 
+	uint32_t aiManagerRef = stack + 88;
 	ctx.r1.u64 = stack;
-	ctx.r8.u64 = stateHolder;   // state the callee may pass on
-	ctx.r9.u64 = scriptHost;
-	LuaRef_GetGlobalTable(ctx, base, globalsRef, luaState, arg2, arg3);
+	ctx.r8.u64 = luaState;
+	ctx.r9.u64 = luaVm;
+	LuaRef_GetGlobalTable(ctx, base, aiManagerRef, luaGlobalTable, arg2, arg3);
 
-	uint64_t aiManagerName = (int64_t)str_TXT_820C0000_B_ + 11796;
-	ctx.r7.s64 = str_TXT_820C0000_B_;   // state the callee may pass on
-	LuaTableRef_GetField(ctx, base, aiManagerRef, globalsRef, aiManagerName);
+	uint32_t getMustStayTypeRef = stack + 80;
+	uint64_t aIManagerName = (int64_t)str_TXT_820C0000_B_ + 11796;
+	ctx.r7.s64 = str_TXT_820C0000_B_;
+	LuaTableRef_GetField(ctx, base, getMustStayTypeRef, aiManagerRef, aIManagerName);
 
-	bool mustStay = false;
-	uint64_t reg6 = 0;   // r6 for the releases at the end, as the original leaves it
-	if (LOAD32(aiManagerRef) != 0) {
-		ctx.r5.u64 = str_TXT_820D4B0C_B_;   // state the callee may pass on
+	bool mustStayFromAI = false;
+	uint32_t releaseRef = LOAD32(stack + 80);
+	if (releaseRef != 0) {
 		ctx.r6.u64 = str_TXT_820D4AF0_B_;
-		Lua_PrepareAIManagerGetMustStayType(ctx, base, scriptCall, aiManagerRef);
+		Lua_PrepareAIManagerGetMustStayType(ctx, base, stack + 96, stack + 80);
 
-		uint64_t reg9 = LOAD32(scriptCall);
-		if (reg9 != 0) {
-			uint32_t owner = dog->m_4;
-			int32_t stayType = Lua_CallAIManagerGetMustStayType(ctx, base, scriptCall, aiManagerRef, owner, ctx.r6.u64, ctx.r7.u64);
-			reg9 = ctx.r9.u64;
-			mustStay = stayType == 1 || stayType == 2 || stayType == 3;
+		uint32_t resultRef = LOAD32(stack + 96);
+		if (resultRef != 0) {
+			uint32_t mustStayTypeId = dog->m_4;
+			int32_t mustStayType = Lua_CallAIManagerGetMustStayType(ctx, base, stack + 96, stack + 80, mustStayTypeId, ctx.r6.u64, ctx.r7.u64);
+			resultRef = ctx.r9.u64;
+			mustStayFromAI = (mustStayType == 1 || mustStayType == 2 || mustStayType == 3);
 		}
-		CCharString_ReleaseAndDecGlobalCountA(ctx, base, scriptCall + 8);
-		SharedHandle_Release(ctx, base, scriptCall);
-		reg6 = ctx.r6.u64;
+		if (!mustStayFromAI) {
+			ctx.r9.u64 = resultRef;
+		}
+		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 104);
+		SharedHandle_Release(ctx, base, stack + 96);
+		releaseRef = ctx.r6.u64;
 	}
 
-	mustStay = mustStay || dog->m_22 != 0;
-	ctx.r6.u64 = reg6;
-	SharedHandle_Release(ctx, base, aiManagerRef);
-	SharedHandle_Release(ctx, base, globalsRef);
+	bool mustStay = mustStayFromAI || (LOAD8(dogAddr + 34) != 0);
+	ctx.r6.u64 = releaseRef;
+	SharedHandle_Release(ctx, base, stack + 80);
+	SharedHandle_Release(ctx, base, stack + 88);
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
 	return mustStay ? 1 : 0;

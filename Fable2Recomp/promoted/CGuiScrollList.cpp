@@ -463,6 +463,8 @@ uint64_t CGuiScrollList_UpdateArrows(CpuState& ctx, uint8_t* base, uint64_t guiS
 					ctx.fpscr.disableFlushMode();
 					currentValue = minValue;
 				}
+				ctx.r8.u64 = v10;
+				ctx.r9.u64 = r9AfterIcon;
 				uint32_t upArrowState = GuiElement_GetState(ctx, base, TXT_820DB6F4_L_, entity);
 				uint32_t downArrowState = GuiElement_GetState(ctx, base, TXT_820DB6FC_L_, entity);
 				ctx.fpscr.disableFlushMode();
@@ -495,11 +497,13 @@ uint64_t CGuiScrollList_UpdateArrows(CpuState& ctx, uint8_t* base, uint64_t guiS
 				ctx.fpscr.disableFlushMode();
 				double scrollDelta = double(float(maxValue - currentValue));
 				double scrollAmount = double(float(scrollDelta * double(LOAD_F32(TXT_8209BAAC_L_))));
+				ctx.f13.f64 = scrollDelta;
 				CGuiScrollList_SetScrollPosition(ctx, base, guiScrollList->m_14, entity, scrollAmount);
 				scrollMode = 1;
 			} else {
 				ctx.fpscr.disableFlushMode();
 				double scrollAmount = double(LOAD_F32(uint32_t(str_TXT_8209BAAC_B_)));
+				ctx.r9.u64 = r9Value;
 				CGuiScrollList_SetScrollPosition(ctx, base, guiScrollList->m_14, entity, scrollAmount);
 				scrollMode = 0;
 			}

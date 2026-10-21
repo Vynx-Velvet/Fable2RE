@@ -61,6 +61,8 @@ uint32_t CPhysicsRagdollEntity_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 		owner = physicsRagdollEntity->m_pWorld;
 		if ((int32_t)owner != 0) {
 			ctx.r1.u64 = stack;
+			ctx.r9.u64 = vtable;
+			ctx.r10.u64 = sharedHandle;
 			CPhysicsRagdollEntity_RemoveFromWorld(ctx, base, entityAddr);
 			owner = ctx.r4.u64;
 		}
@@ -96,6 +98,7 @@ uint32_t CPhysicsRagdollEntity_Destructor(CpuState& ctx, uint8_t* base, uint64_t
 	STORE32(handleBlock + 12, zero);
 
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = owner;
 	SharedHandle_Release(ctx, base, handleAddr);
 
 	uint32_t result = C_820F06D0_Destructor(ctx, base, physicsRagdollEntityAddr);

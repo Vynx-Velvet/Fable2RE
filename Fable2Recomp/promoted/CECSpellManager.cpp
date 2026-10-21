@@ -1085,92 +1085,89 @@ uint32_t CECSpellManager_UpdateChargeState(CpuState& ctx, uint8_t* base, uint64_
 	if (!UseLiftedCode(24, 0x824297B8)) { ctx.r3.u64 = spellManagerAddr; ctx.r4.u64 = castMode; __imp__sub_824297B8(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x824297B8);
 	uint32_t stack = ctx.r1.u64;
+	uint64_t preservedR7 = ctx.r7.u64;
+	PPCVRegister vectorValue = ctx.v1;
+
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, spellManagerAddr);
 	stack = PushStackFrame(base, stack, 112);
 
-	// r3, r4 and r7 at the return: as received, or as the last call (or the m_170 reload) left them;
-	// callers read r4 and r7 back.
 	uint64_t result = spellManagerAddr;
-	uint64_t returnR4 = castMode;
-	uint64_t returnR7 = ctx.r7.u64;
+	uint32_t state = (uint32_t)castMode;
 
-	const uint32_t mode = (uint32_t)castMode;
-	if (mode == 1) {
-		int32_t skipCount = (int32_t)spellManager->m_288;
-		if (skipCount > 0) {
-			spellManager->m_288 = (uint32_t)(skipCount - 1);
+	if (state == 1) {
+		int32_t chargesRemaining = (int32_t)spellManager->m_288;
+		if (chargesRemaining > 0) {
+			spellManager->m_288 = (uint32_t)(chargesRemaining - 1);
 		} else {
-			double timer = double(spellManager->m_1F4);
-			const double zero = double(LOAD_F32(0x820994B4u));   // 0.0f constant
-			if (!(timer > zero)) {
-				uint32_t old164 = spellManager->m_164;
-				uint64_t new164 = (uint64_t)old164 + 1;
-				uint32_t castSlot = spellManager->m_74;
-				uint32_t old170 = spellManager->m_170;
-				uint64_t new170 = (uint64_t)old170 - 1;
-				spellManager->m_164 = (uint32_t)new164;
-				spellManager->m_170 = (uint32_t)new170;
-				PPCVRegister block10{};
-				SET_V8(block10, VLOAD(((uint32_t)spellManagerAddr + 16u) & ~0xFu));
+			double currentCharge = double(spellManager->m_1F4);
+			double chargeThreshold = double(LOAD_F32(0x820994B4u));
+			if (currentCharge <= chargeThreshold) {
+				uint32_t vectorOffset = 16;
+				uint64_t count164 = (int64_t)(uint64_t)spellManager->m_164 + 1;
+				uint32_t spellId = spellManager->m_74;
+				uint64_t count170 = (int64_t)(uint64_t)spellManager->m_170 - 1;
+				spellManager->m_164 = (uint32_t)count164;
+				spellManager->m_170 = (uint32_t)count170;
+				SET_V8(vectorValue, VLOAD(((uint32_t)spellManagerAddr + vectorOffset) & ~0xFu));
 				ctx.r1.u64 = stack;
-				// state the callee may pass on
-				ctx.r8.u64 = new170;
-				ctx.v1 = block10;
-				result = CECSpellManager_ApplyChargeLevel(ctx, base, spellManagerAddr, castSlot, new164);
-				returnR4 = ctx.r4.u64;
-				returnR7 = spellManager->m_170;
-				if ((int32_t)returnR7 > 0) {
+				ctx.r8.u64 = count170;
+				ctx.r9.u64 = vectorOffset;
+				ctx.v1 = vectorValue;
+				result = CECSpellManager_ApplyChargeLevel(ctx, base, spellManagerAddr, spellId, count164);
+				castMode = ctx.r4.u64;
+				uint64_t remaining = spellManager->m_170;
+				preservedR7 = remaining;
+				if ((int32_t)remaining > 0) {
 					ctx.fpscr.disableFlushMode();
-					const double castCascadeTime = double(LOAD_F32(0x833191B8u));   // CastCascadeTimeSecs tuning value
+					double resetCharge = double(LOAD_F32(0x833191B8u));
 					spellManager->m_260 = uint8_t(0);
-					spellManager->m_1F0 = float(castCascadeTime);
-					spellManager->m_1F4 = float(castCascadeTime);
+					spellManager->m_1F0 = float(resetCharge);
+					spellManager->m_1F4 = float(resetCharge);
 				} else {
 					ctx.fpscr.disableFlushMode();
-					ctx.r7.u64 = returnR7;   // state the callee may pass on
-					result = CECSpellManager_SetSpellAction(ctx, base, spellManagerAddr, 6, zero);
-					returnR4 = ctx.r4.u64;
-					returnR7 = ctx.r7.u64;
+					ctx.r7.u64 = remaining;
+					result = CECSpellManager_SetSpellAction(ctx, base, spellManagerAddr, 6, chargeThreshold);
+					castMode = ctx.r4.u64;
+					preservedR7 = ctx.r7.u64;
 				}
 			}
 		}
-	} else if (mode == 0) {
+	} else if (state == 0) {
 		spellManager->m_164 = (uint32_t)spellManager->m_168 - 1;
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = castMode;   // state the callee may pass on
+		ctx.r4.u64 = castMode;
 		CECSpellManager_UpdateSpellLight(ctx, base, spellManagerAddr);
 
-		// Release the effect pair CECSpellManager_UpdateChargingEffect creates (its m_1E4 reference count is at +16).
+		uint32_t zero = 0;
 		if (spellManager->m_26E != 0) {
-			uint32_t effect = spellManager->m_1E4;
-			if (effect != 0) {
-				STORE32(effect + 16, LOAD32(effect + 16) - 1);
-				spellManager->m_1E4 = 0;
+			uint32_t spellEffect = spellManager->m_1E4;
+			if (spellEffect != 0) {
+				STORE32(spellEffect + 16, LOAD32(spellEffect + 16) - 1);
+				spellManager->m_1E4 = zero;
 			}
-			uint32_t effectInstance = spellManager->m_1E8;
-			if (effectInstance != 0) {
-				STORE8(effectInstance + 48, uint8_t(1));
-				spellManager->m_1E8 = 0;
+			uint32_t attachment = spellManager->m_1E8;
+			if (attachment != 0) {
+				STORE8(attachment + 48, uint8_t(1));
+				spellManager->m_1E8 = zero;
 			}
 			spellManager->m_26E = uint8_t(0);
 		}
 		EntityHandle_ForwardToTarget(ctx, base, spellManagerAddr, TXT_83497DE4_G_, 200);
 		spellManager->m_260 = uint8_t(0);
 		ctx.fpscr.disableFlushMode();
-		const double zero = double(LOAD_F32(0x820994B4u));   // 0.0f constant
-		spellManager->m_1F0 = float(zero);
-		spellManager->m_1F4 = float(zero);
+		double resetCharge = double(LOAD_F32(0x820994B4u));
+		spellManager->m_1F0 = float(resetCharge);
+		spellManager->m_1F4 = float(resetCharge);
 		result = CECSpellManager_UpdateSpellNameDisplay(ctx, base, spellManagerAddr, 0);
-		returnR4 = ctx.r4.u64;
-		returnR7 = ctx.r7.u64;
-		spellManager->m_288 = 0;
+		castMode = ctx.r4.u64;
+		preservedR7 = ctx.r7.u64;
+		spellManager->m_288 = zero;
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	// callers read r4 and r7 after the call
-	ctx.r4.u64 = returnR4;
-	ctx.r7.u64 = returnR7;
+	ctx.r4.u64 = castMode;
+	ctx.r7.u64 = preservedR7;
 	return (uint32_t)result;
 }
 PROMOTED_ENTRY(24, sub_824297B8, 0x824297B8) { ctx.r3.u64 = CECSpellManager_UpdateChargeState(ctx, base, ctx.r3.u64, ctx.r4.u64); }
@@ -1958,213 +1955,284 @@ uint32_t CECSpellManager_CreateChargingLightSource(CpuState& ctx, uint8_t* base,
 
 	uint32_t stack = ctx.r1.u64;
 	CECSpellManager* spellManager = GameObject<CECSpellManager>(base, spellManagerAddr);
-	uint64_t result = spellManagerAddr;
+	uint64_t entityHandleAddr = spellManagerAddr + 464;
 	PPCRegister callTarget{};
 
-	// the original prologue saves v127 below the frame
-	VSTORE((stack + 0xFFFFFFC0u) & ~0xF, V8(ctx.v127));
+	PPCVRegister savedV1 = ctx.v1;
+	PPCVRegister savedV127 = ctx.v127;
+	VSTORE((stack + 0xFFFFFFC0u) & ~0xF, V8(savedV127));
 	stack = PushStackFrame(base, stack, 176);
-	auto leave = [&](uint64_t value) -> uint32_t {
-		stack = PopStackFrame(stack, 176);
-		ctx.r0.u64 = 0xFFFFFFC0u;  // callers see r0 as the original epilogue leaves it
-		ctx.r1.u64 = stack;
-		return (uint32_t)value;
-	};
 
-	// Entity handle at +464; m_1D4 is its reference, whose first word is the target (0 once it is gone).
-	uint64_t handleAddr = spellManagerAddr + 464;
-	bool hasTarget = false;
-	uint32_t handleRef = spellManager->m_1D4;
-	if (handleRef != 0) {
-		uint32_t oldTarget = LOAD32(handleRef);
-		if (oldTarget != 0) {
-			hasTarget = true;
+	uint32_t handleField = spellManager->m_1D4;
+	bool handleIsValid = false;
+	if (handleField != 0) {
+		uint32_t handleRefCount = LOAD32(handleField);
+		if (handleRefCount != 0) {
+			handleIsValid = true;
 		} else {
 			ctx.r1.u64 = stack;
-			ctx.r10.u64 = oldTarget;  // state the callee may pass on
-			EntityHandle_Release(ctx, base, handleAddr);
+			EntityHandle_Release(ctx, base, entityHandleAddr);
 		}
 	}
 
-	if (!hasTarget) {
-		// Create the entity from its named definition and store it in the handle.
+	if (!handleIsValid) {
+		uint64_t orbName = (uint64_t)str_TXT_820B1DAC_B_;
 		ctx.r1.u64 = stack;
-		CCharString_ConstructFromCStr(ctx, base, stack + 84, str_TXT_820B1DAC_B_, -1);
-		CCharString_ConstructFromCStr(ctx, base, stack + 80, str_TXT_820B1DAC_B_, -1);
+		CCharString_ConstructFromCStr(ctx, base, stack + 84, orbName, -1);
+		CCharString_ConstructFromCStr(ctx, base, stack + 80, orbName, -1);
 
-		// Method 16 of the owner's component at +124 is called with +96 of the frame; the vector there
-		// then goes to Entity_CreateFromNamedDefinition in v1.
 		uint32_t owner = spellManager->m_owner;
-		uint32_t ownerComponent = LOAD32(owner + 124);
-		uint32_t ownerVtable = LOAD32(ownerComponent);
-		uint32_t ownerMethod = LOAD32(ownerVtable + 64);
-		callTarget.u64 = ownerMethod;
+		uint32_t ownerVtable = LOAD32(owner + 124);
+		uint32_t ownerClass = LOAD32(ownerVtable);
+		uint32_t createDefFn = LOAD32(ownerClass + 64);
+		callTarget.u64 = (uint64_t)createDefFn;
 		ctx.r3.u64 = stack + 96;
-		ctx.r4.u64 = ownerComponent;
-		// state the callee may pass on
-		ctx.r8.u64 = ownerMethod;
-		ctx.r9.u64 = ownerVtable;
+		ctx.r4.u64 = ownerVtable;
+		ctx.r8.u64 = createDefFn;
+		ctx.r9.u64 = ownerClass;
 		ctx.r10.u64 = owner;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-		// r6 and v1 go to the callee through the state
-		SET_V8(ctx.v1, VLOAD((stack + 96) & ~0xF));
-		uint64_t createdEntity = Entity_CreateFromNamedDefinition(ctx, base, stack + 80, stack + 84, -1);
+		SET_V8(savedV1, VLOAD(uint32_t(stack + 96) & ~0xF));
+		ctx.v1 = savedV1;
+		uint64_t orbEntity = Entity_CreateFromNamedDefinition(ctx, base, stack + 80, stack + 84, -1);
+		savedV1 = ctx.v1;
 
-		// A temporary EntityHandle {vtable, 0} on the stack takes the entity, is assigned to the handle
-		// and released.
-		int64_t handleVtable = (int64_t)g_820F0000 + 5732;  // 0x820F1664
-		uint32_t tempHandle = stack + 88;
+		uint32_t nullHandle = (uint32_t)(g_820F0000 + 5732);
 		STORE32(stack + 92, 0);
-		STORE32(tempHandle, (uint32_t)handleVtable);
-		// state the callee may pass on
-		ctx.r9.s64 = handleVtable;
-		EntityHandle_SetTarget(ctx, base, tempHandle, createdEntity);
-		EntityHandle_Assign(ctx, base, handleAddr, tempHandle);
-		STORE32(tempHandle, (uint32_t)handleVtable);
-		// state the callee may pass on
-		EntityHandle_Release(ctx, base, tempHandle);
+		STORE32(stack + 88, nullHandle);
+		ctx.r9.u64 = nullHandle;
+		EntityHandle_SetTarget(ctx, base, stack + 88, orbEntity);
+		savedV1 = ctx.v1;
+
+		EntityHandle_Assign(ctx, base, entityHandleAddr, stack + 88);
+		savedV1 = ctx.v1;
+
+		STORE32(stack + 88, nullHandle);
+		EntityHandle_Release(ctx, base, stack + 88);
+		savedV1 = ctx.v1;
+
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);
-		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
+		savedV1 = ctx.v1;
+		spellManagerAddr = CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 84);
+		savedV1 = ctx.v1;
 	}
 
-	handleRef = spellManager->m_1D4;
-	if (handleRef == 0)
-		return leave(result);
-	uint32_t target = LOAD32(handleRef);
-	ctx.r1.u64 = stack;
-	ctx.r10.u64 = target;  // state the callee may pass on
-	if (target == 0)
-		return leave(EntityHandle_Release(ctx, base, handleAddr));
+	uint32_t handlePtr = LOAD32(entityHandleAddr + 4);
+	if (handlePtr != 0) {
+		uint32_t handleRefCount = LOAD32(handlePtr);
+		if (handleRefCount == 0) {
+			ctx.r1.u64 = stack;
+			uint32_t released = EntityHandle_Release(ctx, base, entityHandleAddr);
+			savedV1 = ctx.v1;
+			stack = PopStackFrame(stack, 176);
+			uint32_t frameOffset = 0xFFFFFFC0;
+			SET_V8(savedV127, VLOAD((stack + frameOffset) & ~0xF));
+			ctx.r0.u64 = frameOffset;
+			ctx.r1.u64 = stack;
+			return released;
+		}
 
-	uint64_t entity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
-	// r6-r8 as this call leaves them, changed below, go on to the light calls
-	uint64_t r6Value = ctx.r6.u64;
-	uint64_t r7Value = ctx.r7.u64;
-	uint64_t r8Value = ctx.r8.u64;
-	uint32_t entityAddr = (uint32_t)entity;
-	if (((LOAD32(entityAddr + 36) >> 8) & 1) != 0) {
-		// Component 8 (the light) of the entity, from its sorted (type, instance) table: through the
-		// cached index when there is one, otherwise with a lower_bound search.
-		uint32_t light;
-		uint32_t cached = LOAD32(entityAddr + 140);
-		if (cached != 0) {
-			uint32_t index = LOAD8(cached + 8);
-			light = LOAD32(LOAD32(entityAddr + 72) + index * 8 + 4);
-		} else {
-			uint32_t begin = LOAD32(entityAddr + 72);
-			uint32_t end = LOAD32(entityAddr + 76);
-			r6Value = end;
-			STORE32(stack + 88, 0);
-			STORE32(stack + 92, begin);
-			uint32_t byteCount = end - begin;
-			int32_t count = (int32_t)byteCount >> 3;
-			// the carry of this shift goes on to the light calls
-			ctx.xer.ca = (int32_t)byteCount < 0 && (byteCount & 7) != 0;
-			if (count > 0) {
-				do {
-					int32_t half = count >> 1;
-					uint32_t mid = begin + ((uint32_t)half << 3);
-					bool below = (int32_t)LOAD32(mid) < 8;
-					r7Value = below ? 1 : 0;
-					if (below) {
-						begin = mid + 8;
-						count = count - half - 1;
-					} else {
-						count = half;
-					}
-				} while (count > 0);
-				STORE32(stack + 92, begin);
-			}
-			if (begin != end && (int32_t)LOAD32(begin) <= 8) {
-				STORE64(stack + 88, LOAD64(stack + 88));
-				light = LOAD32(LOAD32(stack + 92) + 4);
+		uint32_t light = 0;
+		ctx.r1.u64 = stack;
+		uint32_t entity = EntityHandle_Get_825575C8(ctx, base, entityHandleAddr);
+		uint64_t regR6 = ctx.r6.u64;
+		uint64_t regR7 = ctx.r7.u64;
+		uint64_t regR8 = ctx.r8.u64;
+		savedV1 = ctx.v1;
+
+		bool updateLight;
+		if (((LOAD32(entity + 36) >> 8) & 1) != 0) {
+			uint32_t lightList = LOAD32(entity + 140);
+			if (lightList != 0) {
+				uint32_t entry = (LOAD8(lightList + 8) << 3) + LOAD32(entity + 72);
+				light = LOAD32(entry + 4);
+				updateLight = true;
 			} else {
-				light = LOAD32(end + 4);
+				// lower_bound for key 8 over the entity's array of 8-byte entries
+				uint32_t begin = LOAD32(entity + 72);
+				regR6 = LOAD32(entity + 76);
+				STORE32(stack + 88, 0);
+				int32_t count = (int32_t)((uint32_t)regR6 - begin) >> 3;
+				STORE32(stack + 92, begin);
+				uint32_t it = begin;
+				if (count > 0) {
+					do {
+						uint32_t half = (int32_t)count >> 1;
+						uint32_t offset = half << 3;
+						regR8 = offset;
+						it += offset;
+						regR7 = (int32_t)LOAD32(it) < 8 ? 1 : 0;
+						if ((uint32_t)regR7 != 0) {
+							count = count - half - 1;
+							it += 8;
+						} else {
+							it -= offset;
+							count = half;
+						}
+					} while (count > 0);
+					STORE32(stack + 92, it);
+				}
+				if (it == (uint32_t)regR6 || (int32_t)LOAD32(it) > 8) {
+					light = LOAD32((uint32_t)regR6 + 4);
+				} else {
+					STORE64(stack + 88, LOAD64(stack + 88));
+					light = LOAD32(LOAD32(stack + 92) + 4);
+				}
+				updateLight = true;
 			}
+		} else {
+			updateLight = false;
 		}
 
-		// m_80 selects one of the 220-byte light settings at 0x8335C310; the light takes each value that
-		// differs and is marked for update after each change.
-		auto markNeedsUpdate = [&]() {
-			// state the callee may pass on, and r6-r8 as it leaves them
-			ctx.r6.u64 = r6Value;
-			ctx.r7.u64 = r7Value;
-			Light_MarkNeedsUpdate(ctx, base, light);
-			r6Value = ctx.r6.u64;
-			r7Value = ctx.r7.u64;
-			r8Value = ctx.r8.u64;
-		};
-		int8_t settingIndex = (int8_t)spellManager->m_80;
-		r8Value = (uint64_t)(int64_t)settingIndex;
-		uint32_t setting = (uint32_t)((int64_t)settingIndex * 220) + uint32_t(g_8335C310);
-		uint32_t setting0 = LOAD32(setting);
-		uint32_t setting4 = LOAD32(setting + 4);
-		uint32_t setting8 = LOAD32(setting + 8);
-		bool bytesMatch = false;
-		if ((int32_t)LOAD8(light + 18) == (int32_t)setting0) {
-			r8Value = LOAD8(light + 17);
-			if ((int32_t)r8Value == (int32_t)setting4) {
-				r8Value = LOAD8(light + 16);
-				bytesMatch = (int32_t)r8Value == (int32_t)setting8;
+		if (updateLight) {
+			int8_t lightIndex = (int8_t)spellManager->m_80;
+			uint64_t regR8b = lightIndex;
+			uint32_t configArray = (uint32_t)g_8335C310;
+			uint32_t configBase = (uint32_t)((int64_t)lightIndex * 220 + configArray);
+			uint32_t configKey = LOAD32(configBase);
+			uint32_t configA = LOAD32(configBase + 4);
+			uint32_t configB = LOAD32(configBase + 8);
+
+			bool matches = false;
+			if ((int32_t)LOAD8(light + 18) == (int32_t)configKey) {
+				regR8b = LOAD8(light + 17);
+				if ((int32_t)regR8b == (int32_t)configA) {
+					regR8b = LOAD8(light + 16);
+					if ((int32_t)regR8b == (int32_t)configB) {
+						matches = true;
+					}
+				}
 			}
-		}
-		if (!bytesMatch) {
-			STORE8(light + 18, (uint8_t)setting0);
-			STORE8(light + 17, (uint8_t)setting4);
-			STORE8(light + 16, (uint8_t)setting8);
-			markNeedsUpdate();
-		}
-		// Returns the f13 value the next call receives: the light's previous value, or what the update left.
-		auto copyFloat = [&](uint32_t settingOffset, uint32_t lightOffset) -> double {
+			if (!matches) {
+				STORE8(light + 18, (uint8_t)configKey);
+				STORE8(light + 17, (uint8_t)configA);
+				STORE8(light + 16, (uint8_t)configB);
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				savedV1 = ctx.v1;
+			}
+
+			double cfgValue;
+			double lightValue;
 			ctx.fpscr.disableFlushMode();
-			double wanted = double(LOAD_F32(setting + settingOffset));
-			double current = double(LOAD_F32(light + lightOffset));
-			if (current == wanted)
-				return current;
-			STORE_F32(light + lightOffset, float(wanted));
-			ctx.f13.f64 = current;  // state the callee may pass on
-			markNeedsUpdate();
-			return ctx.f13.f64;
-		};
-		copyFloat(12, 24);
-		copyFloat(20, 20);
-		copyFloat(28, 72);
-		copyFloat(32, 64);
-		double f13Value = copyFloat(36, 68);
+			cfgValue = double(LOAD_F32(configBase + 12));
+			lightValue = double(LOAD_F32(light + 24));
+			if (lightValue != cfgValue) {
+				STORE_F32(light + 24, float(cfgValue));
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				ctx.f13.f64 = lightValue;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				savedV1 = ctx.v1;
+			}
+			ctx.fpscr.disableFlushMode();
+			cfgValue = double(LOAD_F32(configBase + 20));
+			lightValue = double(LOAD_F32(light + 20));
+			if (lightValue != cfgValue) {
+				STORE_F32(light + 20, float(cfgValue));
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				ctx.f13.f64 = lightValue;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				savedV1 = ctx.v1;
+			}
+			ctx.fpscr.disableFlushMode();
+			cfgValue = double(LOAD_F32(configBase + 28));
+			lightValue = double(LOAD_F32(light + 72));
+			if (lightValue != cfgValue) {
+				STORE_F32(light + 72, float(cfgValue));
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				ctx.f13.f64 = lightValue;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				savedV1 = ctx.v1;
+			}
+			ctx.fpscr.disableFlushMode();
+			cfgValue = double(LOAD_F32(configBase + 32));
+			lightValue = double(LOAD_F32(light + 64));
+			if (lightValue != cfgValue) {
+				STORE_F32(light + 64, float(cfgValue));
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				ctx.f13.f64 = lightValue;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				savedV1 = ctx.v1;
+			}
+			ctx.fpscr.disableFlushMode();
+			cfgValue = double(LOAD_F32(configBase + 36));
+			lightValue = double(LOAD_F32(light + 68));
+			if (lightValue != cfgValue) {
+				STORE_F32(light + 68, float(cfgValue));
+				ctx.r6.u64 = regR6;
+				ctx.r7.u64 = regR7;
+				ctx.f13.f64 = lightValue;
+				Light_MarkNeedsUpdate(ctx, base, light);
+				regR6 = ctx.r6.u64;
+				regR7 = ctx.r7.u64;
+				regR8b = ctx.r8.u64;
+				lightValue = ctx.f13.f64;
+				savedV1 = ctx.v1;
+			}
 
-		// state the callee may pass on
-		ctx.r6.u64 = r6Value;
-		ctx.r7.u64 = r7Value;
-		ctx.r8.u64 = r8Value;
-		ctx.f13.f64 = f13Value;
-		n_sub_8255EC08(ctx, base, light, 1);  // Lua_Light_SetAsActive
-		r8Value = ctx.r8.u64;
-		spellManager->m_1EC = setting;
+			ctx.r6.u64 = regR6;
+			ctx.r7.u64 = regR7;
+			ctx.r8.u64 = regR8b;
+			ctx.f13.f64 = lightValue;
+			n_sub_8255EC08(ctx, base, light, 1);  // Lua_Light_SetAsActive
+			regR8 = ctx.r8.u64;
+			savedV1 = ctx.v1;
+			spellManager->m_1EC = configBase;
+		}
+
+		spellManager->m_26F = 0;
+		spellManager->m_184 = 0;
+		uint32_t owner2 = spellManager->m_owner;
+		uint32_t flag263 = spellManager->m_263;
+		uint32_t flag74 = spellManager->m_74;
+		ctx.fpscr.disableFlushMode();
+		double resetValue = double(LOAD_F32(0x820994B4u));
+		spellManager->m_228 = float(resetValue);
+		n_sub_824BE7F0(ctx, base, owner2, 0, flag74, flag263);
+		savedV1 = ctx.v1;
+		SET_V8(savedV127, V8(savedV1));
+		uint64_t target = EntityHandle_Get_825575C8(ctx, base, entityHandleAddr);
+		target = LOAD32((uint32_t)target + 124);
+		SET_V8(savedV1, V8(savedV127));
+		uint32_t targetVtable = LOAD32((uint32_t)target);
+		uint32_t targetFn = LOAD32(targetVtable + 100);
+		callTarget.u64 = (uint64_t)targetFn;
+		ctx.r3.u64 = target;
+		ctx.r9.u64 = targetFn;
+		ctx.r10.u64 = targetVtable;
+		ctx.v1 = savedV1;
+		REX_CALL_INDIRECT_FUNC(callTarget.u32);
+		spellManagerAddr = ctx.r3.u64;
+		savedV1 = ctx.v1;
 	}
 
-	spellManager->m_26F = 0;
-	spellManager->m_184 = 0;
-	ctx.fpscr.disableFlushMode();
-	spellManager->m_228 = float(double(LOAD_F32(0x820994B4u)));
-	ctx.r8.u64 = r8Value;  // state the callee may pass on
-	n_sub_824BE7F0(ctx, base, spellManager->m_owner, 0, spellManager->m_74, spellManager->m_263);
-
-	// The original keeps v1, as that call left it, in v127 across EntityHandle_Get and hands it to
-	// method 25 of the entity's component at +124.
-	PPCVRegister keptV1 = ctx.v1;
-	uint64_t currentEntity = EntityHandle_Get_825575C8(ctx, base, handleAddr);
-	uint32_t entityComponent = LOAD32((uint32_t)currentEntity + 124);
-	uint32_t componentVtable = LOAD32(entityComponent);
-	uint32_t componentMethod = LOAD32(componentVtable + 100);
-	callTarget.u64 = componentMethod;
-	ctx.r3.u64 = entityComponent;
-	// state the callee may pass on
-	ctx.r9.u64 = componentMethod;
-	ctx.r10.u64 = componentVtable;
-	ctx.v1 = keptV1;
-	REX_CALL_INDIRECT_FUNC(callTarget.u32);
-	return leave(ctx.r3.u64);
+	stack = PopStackFrame(stack, 176);
+	uint32_t frameOffset = 0xFFFFFFC0;
+	SET_V8(savedV127, VLOAD((stack + frameOffset) & ~0xF));
+	ctx.r0.u64 = frameOffset;
+	ctx.r1.u64 = stack;
+	return spellManagerAddr;
 }
 PROMOTED_ENTRY(24, sub_8242DB00, 0x8242DB00) { ctx.r3.u64 = CECSpellManager_CreateChargingLightSource(ctx, base, ctx.r3.u64); }
 

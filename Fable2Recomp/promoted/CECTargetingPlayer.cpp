@@ -1618,99 +1618,124 @@ uint32_t CECTargetingPlayer_HasTargetingComponent(CpuState& ctx, uint8_t* base, 
 	if (!UseLiftedCode(51, 0x8277A330)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277A330(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x8277A330);
 	uint32_t stack = ctx.r1.u64;
+	uint64_t reg6 = ctx.r6.u64;
+	uint64_t reg7 = ctx.r7.u64;
+	uint64_t reg8 = ctx.r8.u64;
+	uint64_t scratch = 0;
+	uint32_t entry = 0;
+	uint32_t subResult = 0;
+	uint32_t TXT_82000EAC_L_ = 0;
+	uint32_t result = 0;
+	uint32_t retval = 0;
 	PPCRegister callTarget{};
+	PPCVRegister rangeMask{};
+	PPCVRegister dotResult{};
+	PPCVRegister maskedDiff{};
+	PPCVRegister diff{};
+	PPCVRegister outBVec{};
+	PPCVRegister outAVec{};
+	double rangeSquared{};
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
 
 	stack = PushStackFrame(base, stack, 128);
 	uint32_t outA = stack + 80;
 	uint32_t outB = stack + 96;
 
-	// Look up the record for key 33 in the table of m_4. reg6-reg9 follow what the original code
-	// leaves in r6-r9 on the way; the first call below receives them.
 	uint32_t owner = targetingPlayer->m_4;
-	uint64_t reg6 = ctx.r6.u64;
-	uint64_t reg7 = ctx.r7.u64;
-	uint64_t reg8 = ctx.r8.u64;
-	uint64_t reg9 = 0;
-	uint32_t entry = 0;
 	if (((LOAD32(owner + 40) >> 1) & 1) != 0) {
 		uint32_t sparseIndex = LOAD32(owner + 140);
 		if (sparseIndex != 0) {
-			reg9 = (uint64_t)LOAD32(owner + 72) + (uint64_t)LOAD8(sparseIndex + 33) * 8;
-			entry = LOAD32((uint32_t)reg9 + 4);
+			uint32_t index = LOAD8(sparseIndex + 33);
+			uint32_t tableBegin = LOAD32(owner + 72);
+			scratch = (uint64_t)tableBegin + (uint64_t)index * 8;
+			entry = LOAD32((uint32_t)scratch + 4);
 		} else {
 			uint32_t begin = LOAD32(owner + 72);
 			uint32_t end = LOAD32(owner + 76);
 			reg6 = end;
-			reg8 = (uint64_t)end - (uint64_t)begin;
-			STORE32(outA, 0);
+			scratch = 0;
+			STORE32(outA, (uint32_t)scratch);
+			reg8 = end - begin;
 			STORE32(outA + 4, begin);
-			// xer.ca from the count shift: the first call below and callers read it.
-			ctx.xer.ca = (int32_t)reg8 < 0 && (reg8 & 0x7) != 0;
-			// std::lower_bound for key 33 over the 8-byte {key, record} entries.
-			int32_t remaining = (int32_t)reg8 >> 3;
+			uint32_t count = (int32_t)reg8 >> 3;
 			uint32_t found = begin;
-			if (remaining > 0) {
+			if ((int32_t)count > 0) {
+				uint32_t remaining = count;
 				do {
-					int32_t step = remaining >> 1;
-					reg9 = (uint32_t)step;
-					reg8 = (uint32_t)step << 3;
-					uint32_t mid = found + (uint32_t)reg8;
-					reg7 = (int32_t)LOAD32(mid) < 33 ? 1 : 0;
-					if (reg7 != 0) {
-						remaining = remaining - step - 1;
-						found = mid + 8;
+					uint32_t mid = (int32_t)remaining >> 1;
+					scratch = mid;
+					reg8 = (uint64_t)((uint32_t)mid << 3);
+					uint32_t ptr = found + (uint32_t)reg8;
+					reg7 = (int32_t)LOAD32(ptr) < 33 ? 1 : 0;
+					if ((uint32_t)reg7 != 0) {
+						remaining = remaining - mid - 1;
+						found = ptr + 8;
 					} else {
-						remaining = step;
+						remaining = mid;
 					}
-				} while (remaining > 0);
+				} while ((int32_t)remaining > 0);
 				STORE32(outA + 4, found);
 			}
 			if (found != end && (int32_t)LOAD32(found) <= 33) {
-				entry = LOAD32(found + 4);
+				STORE64(outA, LOAD64(outA));
+				entry = LOAD32(LOAD32(outA + 4) + 4);
 			} else {
 				entry = LOAD32(end + 4);
 			}
 		}
-	}
-
-	// Later calls receive r6-r9 and xer.ca as the previous call left them, as in the original.
-	bool targetIsValid = false;
-	if (entry != 0) {
-		uint32_t sub = LOAD32(entry + 20);
-		if (sub != 0) {
-			// state the callee may pass on
-			ctx.r1.u64 = stack;
-			ctx.r6.u64 = reg6;
-			ctx.r7.u64 = reg7;
-			ctx.r8.u64 = reg8;
-			if ((List_ContainsKey(ctx, base, sub, 4) & 0xFF) != 0) {
+		if (entry != 0) {
+			uint32_t sub = LOAD32(entry + 20);
+			if (sub != 0) {
+				ctx.r1.u64 = stack;
+				ctx.r6.u64 = reg6;
+				ctx.r7.u64 = reg7;
+				ctx.r8.u64 = reg8;
+				subResult = List_ContainsKey(ctx, base, sub, 4);
+				reg6 = ctx.r6.u64;
+				reg7 = ctx.r7.u64;
+				reg8 = ctx.r8.u64;
+				scratch = ctx.r9.u64;
+			} else {
+				subResult = 0;
+			}
+			if ((subResult & 0xFF) != 0) {
 				uint32_t method = LOAD32((uint32_t)targetingPlayer->vtable + 68);
 				callTarget.u64 = method;
 				ctx.r1.u64 = stack;
 				ctx.r3.u64 = targetingPlayerAddr;
+				ctx.r6.u64 = reg6;
+				ctx.r7.u64 = reg7;
+				ctx.r8.u64 = reg8;
+				ctx.r9.u64 = scratch;
 				ctx.r10.u64 = method;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				uint32_t TXT_82000EAC_L_ = ctx.r3.u32;
-				targetIsValid = TXT_82000EAC_L_ != 0 && (LOAD8(TXT_82000EAC_L_ + 144) & 64) != 0;
+				TXT_82000EAC_L_ = ctx.r3.u32;
+				reg6 = ctx.r6.u64;
+				reg7 = ctx.r7.u64;
+				reg8 = ctx.r8.u64;
+				scratch = ctx.r9.u64;
+				result = (TXT_82000EAC_L_ != 0 && (LOAD8(TXT_82000EAC_L_ + 144) & 64) != 0) ? 1 : 0;
 			}
 		}
 	}
 
-	uint32_t result = 0;
-	if (targetIsValid) {
+	if (result != 0) {
 		uint32_t method = LOAD32((uint32_t)targetingPlayer->vtable + 68);
 		callTarget.u64 = method;
 		ctx.r1.u64 = stack;
 		ctx.r3.u64 = targetingPlayerAddr;
+		ctx.r6.u64 = reg6;
+		ctx.r7.u64 = reg7;
+		ctx.r8.u64 = reg8;
+		ctx.r9.u64 = scratch;
 		ctx.r10.u64 = method;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		uint32_t TXT_82000EAC_L_ = ctx.r3.u32;
+		TXT_82000EAC_L_ = ctx.r3.u32;
 		if (TXT_82000EAC_L_ != 0 && (LOAD8(TXT_82000EAC_L_ + 144) & 64) != 0) {
-			method = LOAD32((uint32_t)targetingPlayer->vtable + 68);
-			callTarget.u64 = method;
+			uint32_t method3 = LOAD32((uint32_t)targetingPlayer->vtable + 68);
+			callTarget.u64 = method3;
 			ctx.r3.u64 = targetingPlayerAddr;
-			ctx.r10.u64 = method;
+			ctx.r10.u64 = method3;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			uint64_t obj = ctx.r3.u64;
 
@@ -1718,8 +1743,7 @@ uint32_t CECTargetingPlayer_HasTargetingComponent(CpuState& ctx, uint8_t* base, 
 			uint32_t vtblA = LOAD32(handlerA);
 			uint32_t methodA = LOAD32(vtblA + 64);
 			callTarget.u64 = methodA;
-			// state the callee may pass on
-			ctx.r3.u64 = outA;
+			ctx.r3.u64 = (uint64_t)outA;
 			ctx.r4.u64 = handlerA;
 			ctx.r7.u64 = methodA;
 			ctx.r8.u64 = vtblA;
@@ -1730,42 +1754,35 @@ uint32_t CECTargetingPlayer_HasTargetingComponent(CpuState& ctx, uint8_t* base, 
 			uint32_t handlerB = LOAD32(owner2 + 124);
 			uint32_t vtblB = LOAD32(handlerB);
 			callTarget.u64 = LOAD32(vtblB + 64);
-			// state the callee may pass on
-			ctx.r3.u64 = outB;
+			ctx.r3.u64 = (uint64_t)outB;
 			ctx.r4.u64 = handlerB;
 			ctx.r5.u64 = vtblB;
 			ctx.r6.u64 = owner2;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-			// Squared length of (outA - outB) over the components the mask keeps, against the
-			// square of the limit at 0x83319474.
-			PPCVRegister outAVec{};
-			PPCVRegister outBVec{};
-			PPCVRegister diff{};
-			PPCVRegister componentMask{};
-			PPCVRegister maskedDiff{};
-			PPCVRegister dotResult{};
 			SET_V8(outBVec, VLOAD(outB & ~0xFu));
 			SET_V8(outAVec, VLOAD(outA & ~0xFu));
+			retval = 1;
 			ctx.fpscr.enableFlushMode();
 			SET_VF(diff, simde_mm_sub_ps(VF(outAVec), VF(outBVec)));
 			ctx.fpscr.disableFlushModeUnconditional();
-			double limit = double(LOAD_F32(0x83319474u));
-			SET_V8(componentMask, VLOAD(0x82099150u & ~0xFu));
-			double limitSquared = double(float(limit * limit));
-			SET_V8(maskedDiff, simde_mm_and_si128(V8(diff), V8(componentMask)));
+			rangeSquared = double(LOAD_F32(0x83319474u));
+			SET_V8(rangeMask, VLOAD(0x82099150u & ~0xFu));
+			rangeSquared = double(float(rangeSquared * rangeSquared));
+			SET_V8(maskedDiff, simde_mm_and_si128(V8(diff), V8(rangeMask)));
 			ctx.fpscr.enableFlushModeUnconditional();
 			SET_VF(dotResult, simde_mm_dp_ps(VF(maskedDiff), VF(diff), 0xEF));
 			VSTORE(outB & ~0xFu, V8(dotResult));
 			ctx.fpscr.disableFlushModeUnconditional();
-			result = double(LOAD_F32(outB)) < limitSquared ? 1 : 0;
+			if (!(double(LOAD_F32(outB)) < rangeSquared)) {
+				retval = 0;
+			}
 		}
 	}
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	// xer.ca already holds what callers read: set above or left by the last call.
-	return result;
+	return retval;
 }
 PROMOTED_ENTRY(51, sub_8277A330, 0x8277A330) { ctx.r3.u64 = CECTargetingPlayer_HasTargetingComponent(ctx, base, ctx.r3.u64); }
 
@@ -2052,236 +2069,453 @@ uint64_t CECTargetingPlayer_Update_8277B2B0(CpuState& ctx, uint8_t* base, uint64
 	if (!UseLiftedCode(51, 0x8277B2B0)) { ctx.r3.u64 = targetingPlayerAddr; __imp__sub_8277B2B0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8277B2B0);
 	uint32_t stack = ctx.r1.u64;
+	uint32_t local22{};
+	uint64_t local23{};
+	uint32_t local24{};
+	uint32_t local25{};
+	uint32_t c{};
+	uint32_t local27{};
+	uint32_t local28{};
+	uint32_t local15{};
+	uint32_t isPlayer{};
+	uint32_t local16{};
+	uint32_t local17{};
+	uint32_t local18{};
+	uint32_t local19{};
+	uint64_t local20{};
+	uint64_t local21{};
+	uint32_t local33{};
+	uint32_t v4{};
+	uint32_t local35{};
+	uint32_t local30{};
+	uint32_t local31{};
+	uint32_t local32{};
+	uint32_t local36{};
+	uint64_t local37{};
+	uint64_t local38{};
+	uint32_t local39{};
+	uint64_t local40{};
+	uint32_t local41{};
+	uint64_t local42{};
+	uint64_t local43{};
+	uint64_t local44{};
+	uint32_t local45{};
+	uint32_t local46{};
+	uint64_t local51{};
+	uint32_t local52{};
+	uint32_t local53{};
+	uint32_t local54{};
+	uint32_t local55{};
+	uint32_t local56{};
+	uint32_t local47{};
+	uint32_t local57{};
+	uint32_t local58{};
+	uint32_t local59{};
+	uint32_t local60{};
+	uint32_t local61{};
+	uint64_t local48{};
+	uint32_t local49{};
+	uint32_t local50{};
+	uint32_t local66{};
+	uint32_t local67{};
+	uint32_t local68{};
+	uint32_t local69{};
+	uint32_t local70{};
+	uint32_t local71{};
+	uint32_t local72{};
+	uint32_t local73{};
+	uint32_t local74{};
+	uint32_t local75{};
+	uint32_t local62{};
+	uint32_t local76{};
+	uint32_t local77{};
+	uint32_t local78{};
+	uint32_t local63{};
+	uint32_t local64{};
+	uint32_t local65{};
+	uint32_t local79{};
+	uint32_t local80{};
+	uint32_t local82{};
+	uint32_t local83{};
+	uint32_t local84{};
+	PPCCRRegister compare6{};
+	PPCXERRegister flags = ctx.xer;
 	PPCRegister callTarget{};
 	CECTargetingPlayer* targetingPlayer = GameObject<CECTargetingPlayer>(base, targetingPlayerAddr);
 	stack = PushStackFrame(base, stack, 144);
-
-	// virtual slot 68 returns an entity in r3
-	uint32_t slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 68);
-	callTarget.u64 = slotFn;
+	local47 = LOAD32(uint32_t(targetingPlayer->vtable) + 68);
+	callTarget.u64 = (uint64_t)local47;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = targetingPlayerAddr;
-	ctx.r10.u64 = slotFn;
+	ctx.r10.u64 = local47;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
-	uint32_t entityBefore = ctx.r3.u32;
-
-	// r6-r9 and xer.ca as the calls below receive them; each call and table search changes them
-	uint64_t passR6 = ctx.r6.u64;
-	uint64_t passR7 = ctx.r7.u64;
-	uint64_t passR8 = 0;
-	uint64_t passR9 = 0;
-	PPCXERRegister flags = ctx.xer;
-	auto handOverState = [&]() {
-		ctx.r6.u64 = passR6;
-		ctx.r7.u64 = passR7;
-		ctx.r8.u64 = passR8;
-		ctx.r9.u64 = passR9;
-		ctx.xer.ca = flags.ca;
-	};
-	auto takeBackState = [&]() {
-		passR6 = ctx.r6.u64;
-		passR7 = ctx.r7.u64;
-		passR8 = ctx.r8.u64;
-		passR9 = ctx.r9.u64;
-		flags.ca = ctx.xer.ca;
-	};
-	auto isActive = [&](uint32_t entity) {
-		return entity != 0 && (LOAD8(entity + 144) & 64) != 0;
-	};
-	// The entity's component under the given key: from its cached index table when there is one,
-	// otherwise by a lower_bound search of its sorted 8-byte (key, component) entries with
-	// stack+80 as scratch. Sets r6-r9 and xer.ca as the original search does.
-	auto findComponent = [&](uint32_t entity, int32_t key) -> uint32_t {
-		uint32_t indexCache = LOAD32(entity + 140);
-		if (indexCache != 0) {
-			uint32_t index = LOAD8(indexCache + key);
-			passR9 = (uint64_t)(index * 8) + LOAD32(entity + 72);
-			return LOAD32((uint32_t)passR9 + 4);
+	local15 = ctx.r3.u32;
+	local37 = ctx.r6.u64;
+	local38 = ctx.r7.u64;
+	flags.ca = ctx.xer.ca;
+	local62 = targetingPlayer->m_4;
+	local82 = 0;
+	local79 = (uint64_t)local82;
+	local80 = 1;
+	local43 = LOAD32(local62 + 40);
+	local83 = (uint64_t)local82;
+	local40 = (uint32_t)local43 >> 1 & 1;
+	if ((uint32_t)local40 != 0) {
+		local48 = LOAD32(local62 + 140);
+		if ((uint32_t)local48 != 0) {
+			local48 = LOAD8((uint32_t)local48 + 33);
+			local62 = LOAD32(local62 + 72);
+			local48 = __builtin_rotateleft32((uint32_t)local48, 3);
+			local43 = local48 + (uint64_t)local62;
+			local83 = (uint64_t)LOAD32((uint32_t)local43 + 4);
+			local63 = 1;
+			goto loc_8277B3EC;
 		}
-		uint32_t entry = LOAD32(entity + 72);
-		uint32_t end = LOAD32(entity + 76);
-		passR6 = end;
-		STORE32(stack + 80, 0);
-		STORE32(stack + 84, entry);
-		int32_t byteCount = (int32_t)(end - entry);
-		int32_t count = byteCount >> 3;
-		flags.ca = byteCount < 0 && (byteCount & 0x7) != 0;
-		if (count > 0) {
-			flags.ca = 0;  // halving a positive count leaves carry clear
+		local49 = LOAD32(local62 + 72);
+		local37 = LOAD32(local62 + 76);
+		STORE32(stack + 80, local82);
+		local64 = local37 - local49;
+		STORE32(stack + 84, local49);
+		flags.ca = (int32_t)local64 < 0 & (local64 & 0x7) != 0;
+		local64 = (int32_t)local64 >> 3;
+		if ((int32_t)local64 > 0) {
 			do {
-				int32_t half = count >> 1;
-				uint32_t step = (uint32_t)half << 3;
-				uint32_t mid = entry + step;
-				bool below = (int32_t)LOAD32(mid) < key;
-				passR7 = below;
-				passR8 = step;
-				passR9 = (uint64_t)half;
-				if (below) {
-					entry = mid + 8;
-					count = count - half - 1;
+				flags.ca = (int32_t)local64 < 0 & (local64 & 0x1) != 0;
+				local43 = (int32_t)local64 >> 1;
+				local40 = (uint32_t)local43 << 3;
+				local49 = local40 + local49;
+				compare6.compare<int32_t>(int32_t(LOAD32(local49)), 33, flags);
+				local38 = 1;
+				if (!compare6.lt) {
+					local38 = (uint64_t)local82;
+				}
+				local38 = (uint32_t)local38 & 0xFF;
+				if ((uint32_t)local38 != 0) {
+					local64 = local64 - local43;
+					local49 = (int32_t)local49 + 8;
+					local64 = (int32_t)local64 - 1;
 				} else {
-					count = half;
+					local49 = local49 - local40;
+					local64 = local43;
 				}
-			} while (count > 0);
-			STORE32(stack + 84, entry);
+			} while ((int32_t)local64 > 0);
+			STORE32(stack + 84, local49);
 		}
-		if (entry != end && (int32_t)LOAD32(entry) <= key) {
-			STORE64(stack + 80, LOAD64(stack + 80));  // the original rewrites the 8-byte result unchanged
-			return LOAD32(entry + 4);
-		}
-		return LOAD32(end + 4);
-	};
-
-	// together with whether entityBefore is still active, these decide whether the m_C call below runs
-	bool forceCall = true;
-	bool holdCall = false;
-
-	uint32_t owner = targetingPlayer->m_4;
-	uint32_t ownerFlags = LOAD32(owner + 40);
-	passR9 = ownerFlags;
-	passR8 = (ownerFlags >> 1) & 1;
-	if (passR8 != 0) {
-		uint32_t component = findComponent(owner, 33);
-		uint32_t linked = LOAD32(component + 20);
-		bool passed4 = false;
-		if (linked != 0) {
-			handOverState();
-			passed4 = (List_ContainsKey(ctx, base, linked, 4) & 0xFF) != 0;
-			takeBackState();
-		}
-
-		bool checkEntityBefore = passed4;
-		if (!passed4) {
-			uint32_t settings = LOAD32(uint32_t(g_83490000) + 26788);
-			passR9 = LOAD8(LOAD32(settings + 28) + 34);
-			checkEntityBefore = passR9 != 0;
-			if (!checkEntityBefore) {
-				targetingPlayer->m_D4 = 0;
-				uint32_t linkedNow = LOAD32(component + 20);
-				bool passed23 = false;
-				if (linkedNow != 0) {
-					handOverState();
-					passed23 = (List_ContainsKey(ctx, base, linkedNow, 23) & 0xFF) != 0;
-					takeBackState();
-				}
-				if (passed23) {
-					forceCall = false;
-					holdCall = true;
-				}
+		if (local49 != (uint32_t)local37) {
+			compare6.compare<int32_t>(int32_t(LOAD32(local49)), 33, flags);
+			local65 = 1;
+			if (!compare6.gt) {
+				local65 = (uint64_t)local82;
 			}
+			local65 = local65 & 0xFF;
+			if (local65 != 0) goto loc_8277B3D4;
+			STORE64(stack + 80, LOAD64(stack + 80));
+			local66 = LOAD32(stack + 84);
+			local66 = LOAD32(local66 + 4);
+			local83 = (uint64_t)local66;
+			local63 = 1;
+			goto loc_8277B3EC;
 		}
-
-		if (checkEntityBefore) {
-			forceCall = false;
-			if (isActive(entityBefore)) {
-				passR9 = (LOAD32(entityBefore + 36) >> 20) & 1;
-				if (passR9 != 0) {
-					uint32_t entityComponent = findComponent(entityBefore, 20);
-					if (LOAD8(entityComponent + 24) == 0) {
-						// virtual slot 112 with r4 = 1
-						forceCall = true;
-						slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
-						callTarget.u64 = slotFn;
-						ctx.r3.u64 = targetingPlayerAddr;
-						ctx.r4.u64 = 1;
-						handOverState();
-						ctx.r10.u64 = slotFn;
-						REX_CALL_INDIRECT_FUNC(callTarget.u32);
-						takeBackState();
-					}
-				}
-				// virtual slot 124
-				slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 124);
-				callTarget.u64 = slotFn;
-				ctx.r3.u64 = targetingPlayerAddr;
-				handOverState();
-				ctx.r10.u64 = slotFn;
-				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				uint32_t slot124Result = ctx.r3.u32;
-				takeBackState();
-				if (slot124Result != 0) {
-					forceCall = true;
-				}
-			} else if (targetingPlayer->m_D4 != 0) {
-				// virtual slot 112 with r4 = 1
-				forceCall = true;
-				slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
-				callTarget.u64 = slotFn;
-				ctx.r3.u64 = targetingPlayerAddr;
-				ctx.r4.u64 = 1;
-				handOverState();
-				ctx.r10.u64 = slotFn;
-				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				takeBackState();
+loc_8277B3D4:
+		local67 = local37;
+		local67 = LOAD32(local67 + 4);
+		local83 = (uint64_t)local67;
+		local63 = 1;
+	} else {
+		local63 = (uint64_t)local82;
+	}
+loc_8277B3EC:
+	local63 = local63 & 0xFF;
+	if (local63 != 0) {
+		local16 = LOAD32(local83 + 20);
+		if (local16 != 0) {
+			local30 = 4;
+			ctx.r6.u64 = local37;
+			ctx.r7.u64 = local38;
+			ctx.r8.u64 = local40;
+			ctx.xer.ca = flags.ca;
+			local17 = List_ContainsKey(ctx, base, local16, local30);
+			local37 = ctx.r6.u64;
+			local38 = ctx.r7.u64;
+			local40 = ctx.r8.u64;
+			local43 = ctx.r9.u64;
+			flags.ca = ctx.xer.ca;
+		} else {
+			local17 = (uint64_t)local82;
+		}
+		if (uint32_t(local17 & 0xFF) == 0) {
+			local68 = uint32_t(g_83490000);
+			local68 = LOAD32(local68 + 26788);
+			local43 = LOAD8(LOAD32(local68 + 28) + 34);
+			if ((uint32_t)local43 != 0) goto loc_8277B46C;
+			targetingPlayer->m_D4 = (uint8_t)local82;
+			local18 = LOAD32(local83 + 20);
+			if (local18 != 0) {
+				local31 = 23;
+				ctx.r6.u64 = local37;
+				ctx.r7.u64 = local38;
+				ctx.r8.u64 = local40;
+				ctx.xer.ca = flags.ca;
+				local19 = List_ContainsKey(ctx, base, local18, local31);
+				local37 = ctx.r6.u64;
+				local38 = ctx.r7.u64;
+				local40 = ctx.r8.u64;
+				local43 = ctx.r9.u64;
+				flags.ca = ctx.xer.ca;
 			} else {
-				handOverState();
-				uint32_t handleEntity = (uint32_t)EntityHandle_Get_316(ctx, base, component);
-				takeBackState();
-				if (isActive(handleEntity)) {
-					holdCall = true;
-				}
+				local19 = (uint64_t)local82;
 			}
+			if (uint32_t(local19 & 0xFF) == 0) goto loc_8277B654;
+			local80 = (uint64_t)local82;
+			goto loc_8277B650;
 		}
-	}
-
-	if (targetingPlayer->m_15 != 0) {
-		forceCall = false;
-		holdCall = true;
-	}
-	bool entityBeforeActive = isActive(entityBefore);
-	if (forceCall || (!entityBeforeActive && !holdCall)) {
-		// first virtual function of the m_C object, called with this object
-		uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
-		uint32_t objectC = targetingPlayer->m_C;
-		uint32_t rootChild = LOAD32(globalRoot + 12);
-		uint32_t objectCVtable = LOAD32(objectC);
-		uint32_t rootChild88 = LOAD32(rootChild + 88);
-		uint32_t objectCFn = LOAD32(objectCVtable);
-		uint32_t playerData = LOAD32(rootChild88 + 4);
-		uint32_t playerData12 = LOAD32(playerData + 12);
-		callTarget.u64 = objectCFn;
-		ctx.r3.u64 = objectC;
-		ctx.r4.u64 = targetingPlayerAddr;
-		ctx.r5.u64 = playerData12;
-		ctx.r6.u64 = passR6;
-		// state the callee may pass on
-		ctx.r7.u64 = playerData;
-		ctx.r8.u64 = objectCFn;
-		ctx.r9.u64 = rootChild88;
-		ctx.r10.u64 = objectCVtable;
+loc_8277B46C:
+		local80 = (uint64_t)local82;
+		if (local15 != 0) {
+			local50 = LOAD8(local15 + 144) & 64;
+			local69 = 1;
+			if (local50 != 0) goto loc_8277B490;
+		}
+		local69 = (uint64_t)local82;
+loc_8277B490:
+		local69 = local69 & 0xFF;
+		if (local69 != 0) {
+			local70 = (uint64_t)local82;
+			local44 = (LOAD32(local15 + 36) >> 20) & 1;
+			if ((uint32_t)local44 != 0) {
+				local71 = LOAD32(local15 + 140);
+				if (local71 != 0) {
+					local51 = LOAD8(local71 + 20);
+					local51 = __builtin_rotateleft32((uint32_t)local51, 3);
+					local44 = local51 + (uint64_t)LOAD32(local15 + 72);
+					local52 = 1;
+					local70 = LOAD32((uint32_t)local44 + 4);
+					goto loc_8277B598;
+				}
+				local53 = LOAD32(local15 + 72);
+				local37 = LOAD32(local15 + 76);
+				STORE32(stack + 80, local82);
+				local72 = local37 - local53;
+				STORE32(stack + 84, local53);
+				flags.ca = (int32_t)local72 < 0 & (local72 & 0x7) != 0;
+				local72 = (int32_t)local72 >> 3;
+				if ((int32_t)local72 > 0) {
+					do {
+						flags.ca = (int32_t)local72 < 0 & (local72 & 0x1) != 0;
+						local44 = (int32_t)local72 >> 1;
+						local40 = (uint32_t)local44 << 3;
+						local53 = local40 + local53;
+						compare6.compare<int32_t>(int32_t(LOAD32(local53)), 20, flags);
+						local38 = 1;
+						if (!compare6.lt) {
+							local38 = (uint64_t)local82;
+						}
+						local38 = (uint32_t)local38 & 0xFF;
+						if ((uint32_t)local38 != 0) {
+							local72 = local72 - local44;
+							local53 = (int32_t)local53 + 8;
+							local72 = (int32_t)local72 - 1;
+						} else {
+							local53 = local53 - local40;
+							local72 = local44;
+						}
+					} while ((int32_t)local72 > 0);
+					STORE32(stack + 84, local53);
+				}
+				if (local53 != (uint32_t)local37) {
+					compare6.compare<int32_t>(int32_t(LOAD32(local53)), 20, flags);
+					local73 = 1;
+					if (!compare6.gt) {
+						local73 = (uint64_t)local82;
+					}
+					local73 = local73 & 0xFF;
+					if (local73 != 0) goto loc_8277B584;
+					local52 = 1;
+					STORE64(stack + 80, LOAD64(stack + 80));
+					local70 = LOAD32(stack + 84);
+					local70 = LOAD32(local70 + 4);
+					goto loc_8277B598;
+				}
+loc_8277B584:
+				local70 = local37;
+				local52 = 1;
+				local70 = LOAD32(local70 + 4);
+			} else {
+				local52 = (uint64_t)local82;
+			}
+loc_8277B598:
+			local52 = local52 & 0xFF;
+			if (local52 != 0) {
+				local70 = LOAD8(local70 + 24);
+				if (local70 != 0) goto loc_8277B5CC;
+				local80 = 1;
+				local32 = 1;
+				local20 = targetingPlayerAddr;
+				local54 = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
+				callTarget.u64 = (uint64_t)local54;
+				ctx.r3.u64 = local20;
+				ctx.r4.u64 = local32;
+				ctx.r6.u64 = local37;
+				ctx.r7.u64 = local38;
+				ctx.r8.u64 = local40;
+				ctx.r9.u64 = local44;
+				ctx.r10.u64 = local54;
+				ctx.xer.ca = flags.ca;
+				REX_CALL_INDIRECT_FUNC(callTarget.u32);
+				local37 = ctx.r6.u64;
+				local38 = ctx.r7.u64;
+				local40 = ctx.r8.u64;
+				local44 = ctx.r9.u64;
+				flags.ca = ctx.xer.ca;
+			}
+loc_8277B5CC:
+			local21 = targetingPlayerAddr;
+			local55 = LOAD32(uint32_t(targetingPlayer->vtable) + 124);
+			callTarget.u64 = (uint64_t)local55;
+			ctx.r3.u64 = local21;
+			ctx.r6.u64 = local37;
+			ctx.r7.u64 = local38;
+			ctx.r8.u64 = local40;
+			ctx.r9.u64 = local44;
+			ctx.r10.u64 = local55;
+			ctx.xer.ca = flags.ca;
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			local22 = ctx.r3.u32;
+			local37 = ctx.r6.u64;
+			local38 = ctx.r7.u64;
+			local40 = ctx.r8.u64;
+			local43 = ctx.r9.u64;
+			flags.ca = ctx.xer.ca;
+			if ((int32_t)local22 == 0) goto loc_8277B654;
+			local80 = 1;
+			goto loc_8277B654;
+		}
+		if (LOAD8((uint32_t)targetingPlayerAddr + 212) != 0) {
+			local80 = 1;
+			local33 = 1;
+			local23 = targetingPlayerAddr;
+			local56 = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
+			callTarget.u64 = (uint64_t)local56;
+			ctx.r3.u64 = local23;
+			ctx.r4.u64 = local33;
+			ctx.r6.u64 = local37;
+			ctx.r7.u64 = local38;
+			ctx.r8.u64 = local40;
+			ctx.r9.u64 = local43;
+			ctx.r10.u64 = local56;
+			ctx.xer.ca = flags.ca;
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			local37 = ctx.r6.u64;
+			local38 = ctx.r7.u64;
+			local40 = ctx.r8.u64;
+			local43 = ctx.r9.u64;
+			flags.ca = ctx.xer.ca;
+			goto loc_8277B654;
+		}
+		local24 = (uint64_t)local83;
+		ctx.r6.u64 = local37;
+		ctx.r7.u64 = local38;
+		ctx.r8.u64 = local40;
+		ctx.r9.u64 = local43;
 		ctx.xer.ca = flags.ca;
-		REX_CALL_INDIRECT_FUNC(callTarget.u32);
-		takeBackState();
-	}
-
-	// virtual slot 68 again; when the entity changed and the owner is a player, m_20 takes the
-	// global at 0x8331948C
-	slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 68);
-	callTarget.u64 = slotFn;
-	ctx.r3.u64 = targetingPlayerAddr;
-	handOverState();
-	ctx.r10.u64 = slotFn;
-	REX_CALL_INDIRECT_FUNC(callTarget.u32);
-	uint32_t entityAfter = ctx.r3.u32;
-	passR8 = ctx.r8.u64;
-	if (entityBefore != entityAfter) {
-		uint32_t globalRoot = LOAD32(uint32_t(g_83490000) + 26912);
-		uint32_t playerData = LOAD32(LOAD32(LOAD32(globalRoot + 12) + 88) + 4);
-		ctx.r9.u64 = playerData;  // state the callee may pass on
-		uint32_t isPlayer = (uint32_t)Players_IsPlayer(ctx, base, LOAD32(playerData), targetingPlayer->m_4);
-		passR8 = isPlayer & 0xFF;
-		if (passR8 != 0) {
-			targetingPlayer->m_20 = LOAD32(uint32_t(g_83320000) - 27380);
+		local25 = EntityHandle_Get_316(ctx, base, local24);
+		local37 = ctx.r6.u64;
+		local38 = ctx.r7.u64;
+		local40 = ctx.r8.u64;
+		local43 = ctx.r9.u64;
+		flags.ca = ctx.xer.ca;
+		if (local25 != 0) {
+			local57 = LOAD8(local25 + 144) & 64;
+			local74 = 1;
+			if (local57 != 0) goto loc_8277B644;
 		}
+		local74 = (uint64_t)local82;
+loc_8277B644:
+		local74 = local74 & 0xFF;
+		if (local74 == 0) goto loc_8277B654;
+loc_8277B650:
+		local79 = 1;
 	}
-
-	// virtual slot 112 with r4 = 0; r8 as set above, the other registers as the last call left them
-	slotFn = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
-	callTarget.u64 = slotFn;
+loc_8277B654:
+	if (LOAD8((uint32_t)targetingPlayerAddr + 21) != 0) {
+		local80 = (uint64_t)local82;
+		local79 = 1;
+	}
+	if (local15 != 0) {
+		local58 = LOAD8(local15 + 144) & 64;
+		local75 = 1;
+		if (local58 != 0) goto loc_8277B688;
+	}
+	local75 = (uint64_t)local82;
+loc_8277B688:
+	local75 = local75 & 0xFF;
+	local84 = uint32_t(g_83490000);
+	if (local75 == 0) {
+		if (uint32_t(local79 & 0xFF) == 0) goto loc_8277B6B0;
+	}
+	if (uint32_t(local80 & 0xFF) == 0) goto loc_8277B6DC;
+loc_8277B6B0:
+	local76 = LOAD32(local84 + 26912);
+	c = targetingPlayer->m_C;
+	local76 = LOAD32(local76 + 12);
+	local59 = LOAD32(c);
+	local45 = LOAD32(local76 + 88);
+	local41 = LOAD32(local59);
+	local39 = LOAD32(local45 + 4);
+	local36 = LOAD32(local39 + 12);
+	callTarget.u64 = (uint64_t)local41;
+	ctx.r3.u64 = c;
+	ctx.r4.u64 = targetingPlayerAddr;
+	ctx.r5.u64 = local36;
+	ctx.r6.u64 = local37;
+	ctx.r7.u64 = local39;
+	ctx.r8.u64 = local41;
+	ctx.r9.u64 = local45;
+	ctx.r10.u64 = local59;
+	ctx.xer.ca = flags.ca;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	local37 = ctx.r6.u64;
+	local38 = ctx.r7.u64;
+	local40 = ctx.r8.u64;
+	local43 = ctx.r9.u64;
+	flags.ca = ctx.xer.ca;
+loc_8277B6DC:
+	local60 = LOAD32(uint32_t(targetingPlayer->vtable) + 68);
+	callTarget.u64 = (uint64_t)local60;
 	ctx.r3.u64 = targetingPlayerAddr;
-	ctx.r4.u64 = 0;
-	ctx.r8.u64 = passR8;
-	ctx.r10.u64 = slotFn;
+	ctx.r6.u64 = local37;
+	ctx.r7.u64 = local38;
+	ctx.r8.u64 = local40;
+	ctx.r9.u64 = local43;
+	ctx.r10.u64 = local60;
+	ctx.xer.ca = flags.ca;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	local27 = ctx.r3.u32;
+	local42 = ctx.r8.u64;
+	flags.ca = ctx.xer.ca;
+	if (local15 != local27) {
+		local77 = LOAD32(local84 + 26912);
+		v4 = targetingPlayer->m_4;
+		local77 = LOAD32(local77 + 12);
+		local46 = LOAD32(LOAD32(local77 + 88) + 4);
+		local28 = LOAD32(local46);
+		ctx.r9.u64 = local46;
+		isPlayer = Players_IsPlayer(ctx, base, local28, v4);
+		flags.ca = ctx.xer.ca;
+		local42 = isPlayer & 0xFF;
+		if ((uint32_t)local42 == 0) goto loc_8277B72C;
+		local78 = uint32_t(g_83320000);
+		local78 = LOAD32(local78 - 27380);
+		targetingPlayer->m_20 = local78;
+	}
+loc_8277B72C:
+	local35 = 0;
+	local61 = LOAD32(uint32_t(targetingPlayer->vtable) + 112);
+	callTarget.u64 = (uint64_t)local61;
+	ctx.r3.u64 = targetingPlayerAddr;
+	ctx.r4.u64 = local35;
+	ctx.r8.u64 = local42;
+	ctx.r10.u64 = local61;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	stack = PopStackFrame(stack, 144);
 	ctx.r1.u64 = stack;

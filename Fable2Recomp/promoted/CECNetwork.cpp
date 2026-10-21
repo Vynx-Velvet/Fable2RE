@@ -11,28 +11,32 @@
 #include "lifted/native_decls.h"
 #include "lifted/readable_support.h"
 
-uint64_t CECNetwork_ShouldReplicateEntity(CpuState& ctx, uint8_t* base, uint32_t object) {
+uint64_t CECNetwork_ShouldReplicateEntity(CpuState& ctx, uint8_t* base, uint32_t arg1) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(5, 0x82214C28)) { ctx.r3.u64 = object; __imp__sub_82214C28(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(5, 0x82214C28)) { ctx.r3.u64 = arg1; __imp__sub_82214C28(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82214C28);
 
-	// manager+140 is the net message queue the senders in this module append to.
+	// Global network root -> replication manager -> per-entity replication settings.
 	uint32_t manager = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
-	uint32_t messageQueue = LOAD32(manager + 140);
-	// callers read r9 after the call: it holds the manager on every return
-	ctx.r9.u64 = manager;
+	uint32_t settings = LOAD32(manager + 140);
 
-	if (LOAD8(messageQueue + 52) != 0) {
-		if (LOAD8(messageQueue + 53) != 0 && LOAD8(object + 104) == 0) {
+	if (LOAD8(settings + 52) != 0) {
+		// Only replicate when the entity's local flag disagrees with the
+		// corresponding replication setting.
+		if (LOAD8(settings + 53) != 0 && LOAD8(arg1 + 104) == 0) {
+			ctx.r9.u64 = manager;
 			return 1;
 		}
-		if (LOAD8(messageQueue + 54) != 0 && LOAD8(object + 104) != 0) {
+		if (LOAD8(settings + 54) != 0 && LOAD8(arg1 + 104) != 0) {
+			ctx.r9.u64 = manager;
 			return 1;
 		}
 		if (LOAD32(manager + 284) != 2) {
+			ctx.r9.u64 = manager;
 			return 0;
 		}
 	}
+	ctx.r9.u64 = manager;
 	return 1;
 }
 PROMOTED_ENTRY(5, sub_82214C28, 0x82214C28) { ctx.r3.u64 = CECNetwork_ShouldReplicateEntity(ctx, base, ctx.r3.u32); }

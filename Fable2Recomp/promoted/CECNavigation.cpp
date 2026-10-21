@@ -74,141 +74,237 @@ void CECNavigation_SetSpeed(CpuState& ctx, uint8_t* base, uint32_t navigationAdd
 }
 PROMOTED_ENTRY(0, sub_82175F80, 0x82175F80) { CECNavigation_SetSpeed(ctx, base, ctx.r3.u32, ctx.r4.u32); }
 
-uint64_t CECNavigation_ComputeDistance(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t queryKind, uint32_t skipTargetEntity, double floatArg1) {
+uint64_t CECNavigation_ComputeDistance(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t arg2, uint32_t arg3, double floatArg1) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_83499170 = int32_t(0x83499170);
-	if (!UseLiftedCode(4, 0x821E7D58)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = queryKind; ctx.r5.u64 = skipTargetEntity; ctx.f1.f64 = floatArg1; __imp__sub_821E7D58(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t g_8349AD70 = int32_t(0x8349AD70);
+	if (!UseLiftedCode(4, 0x821E7D58)) { ctx.r3.u64 = navigationAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_821E7D58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x821E7D58);
 	uint32_t stack = ctx.r1.u64;
 	CECNavigation* navigation = GameObject<CECNavigation>(base, navigationAddr);
 	PPCRegister callTarget{};
+	PPCVRegister vecSelf{};
+	PPCVRegister vecTarget{};
+	PPCVRegister vecDelta{};
+	PPCVRegister vecMasked{};
+	PPCVRegister vecDot{};
+	PPCVRegister vecMask{};
+	PPCCRRegister condReg{};
+	uint64_t keepR4{};
+	uint64_t keepR5{};
+	uint64_t keepR7{};
+	uint64_t keepR8{};
+	uint64_t keepR9{};
+	uint32_t keepR10{};
+	uint64_t result{};
+	double distance{};
 
 	stack = PushStackFrame(base, stack, 160);
-	const uint64_t facingPointAddr = uint64_t(stack) + 96;
-	const uint64_t entityPointAddr = uint64_t(stack) + 80;
+	uint32_t selfPos = stack + 96;
+	uint32_t targetPos = stack + 80;
 	ctx.r1.u64 = stack;
-	const uint64_t facingResult = CECNavigation_ComputeFacingTargetPoint(ctx, base, navigationAddr, facingPointAddr, queryKind);
-	if ((facingResult & 0xFF) == 0) {
-		ctx.fpscr.disableFlushMode();
-		const double fallbackDistance = double(LOAD_F32(0x8209DE04u));
+	ctx.r3.u64 = navigationAddr;
+	ctx.r4.u64 = selfPos;
+	ctx.r5.u64 = arg2;
+	sub_821E7C38(ctx, base);
+	uint64_t initResult = ctx.r3.u64;
+	if ((initResult & 0xFF) == 0) {
+		floatArg1 = double(LOAD_F32(0x8209DE04u));
 		stack = PopStackFrame(stack, 160);
 		ctx.r1.u64 = stack;
-		// callers read r4, r5 and f1 after the call
-		ctx.r4.u64 = facingPointAddr;
-		ctx.r5.u64 = queryKind;
-		ctx.f1.f64 = fallbackDistance;
-		return facingResult;
+		ctx.r4.u64 = selfPos;
+		ctx.r5.u64 = arg2;
+		ctx.f1.f64 = floatArg1;
+		return initResult;
 	}
 
-	// the m_4 entity's component at +124 writes a point into the frame through its vtable slot +64
-	const uint32_t entityComponent = LOAD32(uint32_t(navigation->m_4) + 124);
-	const uint32_t entityComponentVtable = LOAD32(entityComponent);
-	const uint32_t getPointFn = LOAD32(entityComponentVtable + 64);
-	callTarget.u64 = getPointFn;
-	ctx.r3.u64 = entityPointAddr;
-	ctx.r4.u64 = entityComponent;
-	ctx.r5.u64 = queryKind;
-	ctx.r9.u64 = getPointFn;
-	ctx.r10.u64 = entityComponentVtable;
+	// fetch the current target position of the navigation component
+	uint32_t navComponent = LOAD32(uint32_t(navigation->m_4) + 124);
+	uint32_t navComponentVtbl = LOAD32(navComponent);
+	uint32_t getTargetPosFn = LOAD32(navComponentVtbl + 64);
+	callTarget.u64 = getTargetPosFn;
+	ctx.r3.u64 = targetPos;
+	ctx.r4.u64 = navComponent;
+	ctx.r5.u64 = arg2;
+	ctx.r9.u64 = getTargetPosFn;
+	ctx.r10.u64 = navComponentVtbl;
 	ctx.f1.f64 = floatArg1;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	floatArg1 = ctx.f1.f64;
 
-	// distance between the facing point and the entity's point, over the components the mask keeps
-	const uint64_t maskAddr = uint64_t(int64_t(g_820A0000) - 28336);
-	PPCVRegister facingPoint{};
-	PPCVRegister entityPoint{};
-	PPCVRegister difference{};
-	PPCVRegister mask{};
-	PPCVRegister maskedDifference{};
-	PPCVRegister lengthSquared{};
-	SET_V8(facingPoint, VLOAD((uint32_t)facingPointAddr & ~0xF));
-	SET_V8(entityPoint, VLOAD((uint32_t)entityPointAddr & ~0xF));
-	ctx.fpscr.enableFlushMode();
-	SET_VF(difference, simde_mm_sub_ps(VF(facingPoint), VF(entityPoint)));
-	SET_V8(mask, VLOAD((uint32_t)maskAddr & ~0xF));
-	SET_V8(maskedDifference, simde_mm_and_si128(V8(difference), V8(mask)));
-	SET_VF(lengthSquared, simde_mm_dp_ps(VF(maskedDifference), VF(difference), 0xEF));
-	VSTORE((uint32_t)facingPointAddr & ~0xF, V8(lengthSquared));
-	ctx.fpscr.disableFlushModeUnconditional();
-	double distance = double(float(sqrt(double(LOAD_F32(stack + 96)))));
+	int64_t maskAddress = int64_t(g_820A0000) - 28336;
+	keepR4 = uint64_t(maskAddress);
+	keepR5 = selfPos;
+	SET_V8(vecSelf, VLOAD(selfPos & ~0xF));
+	SET_V8(vecTarget, VLOAD(targetPos & ~0xF));
+	SET_VF(vecDelta, simde_mm_sub_ps(VF(vecSelf), VF(vecTarget)));
+	SET_V8(vecMask, VLOAD((uint32_t)maskAddress & ~0xF));
+	SET_V8(vecMasked, simde_mm_and_si128(V8(vecDelta), V8(vecMask)));
+	SET_VF(vecDot, simde_mm_dp_ps(VF(vecMasked), VF(vecDelta), 0xEF));
+	VSTORE(selfPos & ~0xF, V8(vecDot));
+	distance = double(float(sqrt(double(LOAD_F32(stack + 96)))));
 
-	// state the callee may pass on
-	uint64_t result = CECNavigation_GetNavigationData(ctx, base, (uint32_t)navigationAddr);
-
-	// From here on v9-v13 hold these vectors: every later call is handed them and returns them, and
-	// callers read them after the call.
-	ctx.v9 = lengthSquared;
-	ctx.v10 = maskedDifference;
-	ctx.v11 = difference;
-	ctx.v12 = entityPoint;
-	ctx.v13 = facingPoint;
+	ctx.r3.u64 = navigationAddr;
+	sub_821E8750(ctx, base);
+	result = ctx.r3.u64;
+	keepR7 = ctx.r7.u64;
+	keepR8 = ctx.r8.u64;
+	keepR9 = ctx.r9.u64;
 
 	if ((uint32_t)result != 0) {
-		// state the callee may pass on
-		ctx.r5.u64 = facingPointAddr;
-		result = CMoveGraphController_FindChildBByType(ctx, base, LOAD32((uint32_t)result + 24), g_83499170);
-		if ((uint32_t)result != 0) {
-			// the child's vtable slot +68 replaces the distance
-			const uint32_t childFn = LOAD32(LOAD32((uint32_t)result) + 68);
+		uint64_t childObject = LOAD32((uint32_t)result + 24);
+		ctx.r5.u64 = keepR5;
+		ctx.v9 = vecDot;
+		ctx.v10 = vecMasked;
+		ctx.v11 = vecDelta;
+		ctx.v12 = vecTarget;
+		ctx.v13 = vecSelf;
+		childObject = CMoveGraphController_FindChildBByType(ctx, base, childObject, g_83499170);
+		keepR4 = ctx.r4.u64;
+		keepR5 = ctx.r5.u64;
+		keepR7 = ctx.r7.u64;
+		keepR8 = ctx.r8.u64;
+		keepR9 = ctx.r9.u64;
+		floatArg1 = ctx.f1.f64;
+		vecDot = ctx.v9;
+		vecMasked = ctx.v10;
+		vecDelta = ctx.v11;
+		vecTarget = ctx.v12;
+		vecSelf = ctx.v13;
+
+		if ((uint32_t)childObject != 0) {
+			uint32_t childFn = LOAD32(LOAD32((uint32_t)childObject) + 68);
 			callTarget.u64 = childFn;
-			ctx.r3.u64 = result;
+			ctx.r3.u64 = childObject;
 			ctx.r10.u64 = childFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = ctx.r3.u64;
-			ctx.fpscr.disableFlushMode();
-			distance = ctx.f1.f64;
+			keepR4 = ctx.r4.u64;
+			keepR5 = ctx.r5.u64;
+			keepR7 = ctx.r7.u64;
+			keepR8 = ctx.r8.u64;
+			keepR9 = ctx.r9.u64;
+			floatArg1 = ctx.f1.f64;
+			vecDot = ctx.v9;
+			vecMasked = ctx.v10;
+			vecDelta = ctx.v11;
+			vecTarget = ctx.v12;
+			vecSelf = ctx.v13;
+			distance = floatArg1;
 		}
-	} else {
-		// what the original leaves in r4 and r5 on this path; r5 is also passed on to EntityHandle_IsValid
-		ctx.r4.u64 = maskAddr;
-		ctx.r5.u64 = facingPointAddr;
 	}
 
-	if ((skipTargetEntity & 0xFF) == 0) {
-		const uint64_t targetHandleAddr = navigationAddr + 128;
-		// state the callee may pass on (r5 already holds what the original passes)
-		result = EntityHandle_IsValid(ctx, base, targetHandleAddr);
-		if ((result & 0xFF) != 0) {
-			const int32_t navigationState = (int32_t)(uint32_t)navigation->m_AC;
-			// The original also compares two vectors here when (queryKind | 1) == 0, which is never
-			// true, so that branch is left out.
-			if (navigationState != 6 && navigationState != 2) {
-				// state the callee may pass on: r7-r9 still hold what EntityHandle_IsValid left,
-				// and of r10 the original passes only the low word
-				const uint32_t targetEntity = EntityHandle_Get_825575C8(ctx, base, targetHandleAddr);
-				const uint32_t targetComponent = LOAD32(targetEntity + 124);
+	if ((arg3 & 0xFF) == 0) {
+		uint64_t targetEntityHandle = navigationAddr + 128;
+		ctx.r5.u64 = keepR5;
+		ctx.v9 = vecDot;
+		ctx.v10 = vecMasked;
+		ctx.v11 = vecDelta;
+		ctx.v12 = vecTarget;
+		ctx.v13 = vecSelf;
+		result = EntityHandle_IsValid(ctx, base, targetEntityHandle);
+		keepR4 = ctx.r4.u64;
+		keepR5 = ctx.r5.u64;
+		keepR7 = ctx.r7.u64;
+		keepR8 = ctx.r8.u64;
+		keepR9 = ctx.r9.u64;
+		keepR10 = ctx.r10.u32;
+		floatArg1 = ctx.f1.f64;
+		vecDot = ctx.v9;
+		vecMasked = ctx.v10;
+		vecDelta = ctx.v11;
+		vecTarget = ctx.v12;
+		vecSelf = ctx.v13;
 
-				// subtract what both components return from their vtable slot +72
-				const uint32_t navComponent = LOAD32(uint32_t(navigation->m_4) + 124);
-				const uint32_t navComponentVtable = LOAD32(navComponent);
-				const uint32_t navExtentFn = LOAD32(navComponentVtable + 72);
-				callTarget.u64 = navExtentFn;
+		uint32_t navState = navigation->m_AC;
+		if (((uint32_t)result & 0xFF) != 0 && (int32_t)navState != 6 && (int32_t)navState != 2) {
+			bool hasTargetEntity = true;
+			if ((int32_t)(arg2 | 1) == 0) {
+				keepR10 = 528;
+				keepR9 = g_8349AD70;
+				SET_V8(vecSelf, VLOAD((uint32_t(navigationAddr) + keepR10) & ~0xF));
+				SET_V8(vecMask, VLOAD((uint32_t)keepR9 & ~0xF));
+				SET_V8(vecTarget, simde_mm_shuffle_epi32(V8(vecSelf), 0xE7));
+				SET_V8(vecDelta, simde_mm_shuffle_epi32(V8(vecMask), 0xE7));
+				SET_VF(vecMasked, simde_mm_cmpeq_ps(VF(vecTarget), VF(vecDelta)));
+				condReg.setFromMask(VF(vecMasked), 0xF);
+				keepR8 = uint64_t((condReg.lt << 7) | (condReg.gt << 6) | (condReg.eq << 5) | (condReg.so << 4));
+				keepR7 = uint64_t((uint32_t)keepR8 >> 7 & 1);
+				hasTargetEntity = ((uint32_t)keepR7 != 0);
+			}
+			if (hasTargetEntity) {
+				ctx.r7.u64 = keepR7;
+				ctx.r8.u64 = keepR8;
+				ctx.r9.u64 = keepR9;
+				ctx.v10 = vecMasked;
+				ctx.v11 = vecDelta;
+				ctx.v12 = vecTarget;
+				ctx.v13 = vecSelf;
+				uint64_t targetEntity = EntityHandle_Get_825575C8(ctx, base, targetEntityHandle);
+				floatArg1 = ctx.f1.f64;
+				vecDot = ctx.v9;
+				vecMasked = ctx.v10;
+				vecDelta = ctx.v11;
+				vecTarget = ctx.v12;
+				vecSelf = ctx.v13;
+
+				uint32_t targetComponent = LOAD32((uint32_t)targetEntity + 124);
+				navComponent = LOAD32(uint32_t(navigation->m_4) + 124);
+				uint32_t navVtbl = LOAD32(navComponent);
+				uint32_t navFn = LOAD32(navVtbl + 72);
+				callTarget.u64 = navFn;
 				ctx.r3.u64 = navComponent;
-				ctx.r9.u64 = navExtentFn;
-				ctx.r10.u64 = navComponentVtable;
+				ctx.r9.u64 = navFn;
+				ctx.r10.u64 = navVtbl;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				const uint32_t targetComponentVtable = LOAD32(targetComponent);
-				ctx.fpscr.disableFlushMode();
-				const double navExtent = ctx.f1.f64;
-				const uint32_t targetExtentFn = LOAD32(targetComponentVtable + 72);
-				callTarget.u64 = targetExtentFn;
+				floatArg1 = ctx.f1.f64;
+				vecDot = ctx.v9;
+				vecMasked = ctx.v10;
+				vecDelta = ctx.v11;
+				vecTarget = ctx.v12;
+				vecSelf = ctx.v13;
+				double navToTarget = floatArg1;
+
+				uint32_t targetVtbl = LOAD32(targetComponent);
+				uint32_t targetFn = LOAD32(targetVtbl + 72);
+				callTarget.u64 = targetFn;
 				ctx.r3.u64 = targetComponent;
-				ctx.r7.u64 = targetExtentFn;
-				ctx.r8.u64 = targetComponentVtable;
+				ctx.r7.u64 = targetFn;
+				ctx.r8.u64 = targetVtbl;
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
 				result = ctx.r3.u64;
-				ctx.fpscr.disableFlushMode();
-				const double extentSum = double(float(navExtent + ctx.f1.f64));
-				distance = double(float(distance - extentSum));
+				keepR4 = ctx.r4.u64;
+				keepR5 = ctx.r5.u64;
+				keepR7 = ctx.r7.u64;
+				keepR8 = ctx.r8.u64;
+				keepR9 = ctx.r9.u64;
+				floatArg1 = ctx.f1.f64;
+				vecDot = ctx.v9;
+				vecMasked = ctx.v10;
+				vecDelta = ctx.v11;
+				vecTarget = ctx.v12;
+				vecSelf = ctx.v13;
+
+				// subtract the radial extents of navigation and target entity
+				double extentsSum = double(float(navToTarget + floatArg1));
+				distance = double(float(distance - extentsSum));
 			}
 		}
 	}
 
-	ctx.fpscr.disableFlushMode();
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	// callers read f1 after the call; r4-r9 and v9-v13 already hold what the original leaves there
+	ctx.r4.u64 = keepR4;
+	ctx.r5.u64 = keepR5;
+	ctx.r7.u64 = keepR7;
+	ctx.r8.u64 = keepR8;
+	ctx.r9.u64 = keepR9;
 	ctx.f1.f64 = distance;
+	ctx.v9 = vecDot;
+	ctx.v10 = vecMasked;
+	ctx.v11 = vecDelta;
+	ctx.v12 = vecTarget;
+	ctx.v13 = vecSelf;
 	return result;
 }
 PROMOTED_ENTRY(4, sub_821E7D58, 0x821E7D58) { ctx.r3.u64 = CECNavigation_ComputeDistance(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32, ctx.f1.f64); }
@@ -1096,10 +1192,6 @@ uint64_t n_sub_82674D18(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, u
 }
 PROMOTED_ENTRY(43, sub_82674D18, 0x82674D18) { ctx.r3.u64 = n_sub_82674D18(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// Sets the speed, then (unless +612 is above the limit at 0x8331950C) switches to mode m_A8 = 3 / m_AC = 6
-// with the target, unless that mode is already set for this target: m_9C is taken from one of two globals
-// (chosen by the byte at 0x834BE801), m_B0 from stateByte, and the vector the target's object writes is
-// copied to +32.
 uint64_t CECNavigation_SetMode6Target(CpuState& ctx, uint8_t* base, uint64_t navigationAddr, uint64_t targetEntity, uint64_t speed, uint64_t reinitFlag, uint64_t stateByte) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
@@ -1110,96 +1202,98 @@ uint64_t CECNavigation_SetMode6Target(CpuState& ctx, uint8_t* base, uint64_t nav
 	uint32_t stack = ctx.r1.u64;
 	CECNavigation* navigation = GameObject<CECNavigation>(base, navigationAddr);
 	PPCRegister callTarget{};
+	PPCVRegister handleVector{};
+
 	stack = PushStackFrame(base, stack, 160);
-
-	// r4 and r5 start out holding the speed; the calls below may change them, and callers read r4
-	uint64_t r4Value = speed;
-	uint64_t r5Value = speed;
-	uint64_t result = navigationAddr;
+	const uint64_t navAddr = navigationAddr;
+	uint64_t savedSpeed = speed;
+	uint32_t reinit = uint32_t(reinitFlag);
+	uint32_t state = uint32_t(stateByte);
 	ctx.r1.u64 = stack;
-	CECNavigation_SetSpeed(ctx, base, navigationAddr, speed);
 
-	const int32_t limit = int32_t(LOAD32(uint32_t(g_83320000) - 27380));
-	if (int32_t(LOAD32((uint32_t)navigationAddr + 612)) <= limit) {
-		result = CECNavigation_GetNavigationData(ctx, base, navigationAddr);
-		if ((uint32_t)result != 0) {
-			callTarget.u64 = LOAD32(LOAD32((uint32_t)result) + 20);
-			ctx.r3.u64 = result;
-			ctx.r4.u64 = r4Value;
-			ctx.r5.u64 = r5Value;
-			ctx.r10.u64 = callTarget.u64;
+	CECNavigation_SetSpeed(ctx, base, navigationAddr, savedSpeed);
+
+	uint32_t maxNavigationDataAge = LOAD32(uint32_t(g_83320000) - 27380);
+	if (int32_t(LOAD32((uint32_t)navAddr + 612)) <= (int32_t)maxNavigationDataAge) {
+		navigationAddr = CECNavigation_GetNavigationData(ctx, base, navigationAddr);
+		if (uint32_t(navigationAddr) != 0) {
+			uint32_t resetNavigationData = LOAD32(LOAD32((uint32_t)navigationAddr) + 20);
+			callTarget.u64 = uint64_t(resetNavigationData);
+			ctx.r3.u64 = navigationAddr;
+			ctx.r4.u64 = savedSpeed;
+			ctx.r5.u64 = speed;
+			ctx.r10.u64 = resetNavigationData;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
-			result = ctx.r3.u64;
-			r4Value = ctx.r4.u64;
-			r5Value = ctx.r5.u64;
+			navigationAddr = ctx.r3.u64;
+			savedSpeed = ctx.r4.u64;
+			speed = ctx.r5.u64;
 		}
 
-		bool alreadyTargeting = false;
-		if (navigation->m_A8 == 3 && navigation->m_AC == 6) {
-			const uint32_t currentTarget = navigation->m_280;
-			alreadyTargeting = currentTarget != 0 && currentTarget == (uint32_t)targetEntity;
-		}
+		bool alreadyInitialized =
+			navigation->m_A8 == 3 &&
+			navigation->m_AC == 6 &&
+			navigation->m_280 != 0 &&
+			navigation->m_280 == uint32_t(targetEntity);
 
-		if (!alreadyTargeting) {
-			if ((reinitFlag & 0xFF) != 0) {
-				// state the callee may pass on
-				ctx.r4.u64 = r4Value;
-				ctx.r5.u64 = r5Value;
-				InitEntityHandlePairAndVectors(ctx, base, navigationAddr + 272);
-				r5Value = ctx.r5.u64;
+		if (!alreadyInitialized) {
+			if ((reinit & 0xFF) != 0) {
+				ctx.r4.u64 = savedSpeed;
+				ctx.r5.u64 = speed;
+				InitEntityHandlePairAndVectors(ctx, base, (uint32_t)navAddr + 0x110);
+				speed = ctx.r5.u64;
 			}
 
-			// temporary entity handle at stack+80: vtable word, then an empty target
+			uint32_t handleAddr = stack + 80;
+			const uint32_t emptyHandleVtable = uint32_t(g_820F1664);
 			STORE32(stack + 84, 0);
-			STORE32(stack + 80, uint32_t(g_820F1664));
-			// state the callee may pass on
-			ctx.r5.u64 = r5Value;
-			EntityHandle_SetTarget(ctx, base, uint64_t(stack) + 80, targetEntity);
-			EntityHandle_Assign(ctx, base, navigationAddr + 128, uint64_t(stack) + 80);
+			STORE32(stack + 80, emptyHandleVtable);
+			ctx.r5.u64 = speed;
+			ctx.r9.u64 = emptyHandleVtable;
+			EntityHandle_SetTarget(ctx, base, handleAddr, targetEntity);
 
-			const uint32_t handleVtable = uint32_t(g_820F0000) + 5732;
-			STORE32(stack + 80, handleVtable);
-			// state the callee may pass on (zero-extended this time)
-			EntityHandle_Release(ctx, base, uint64_t(stack) + 80);
+			EntityHandle_Assign(ctx, base, (uint32_t)navAddr + 0x80, handleAddr);
 
-			const uint32_t valuePairAddr = uint32_t(g_820A0000) - 27860;
-			const uint32_t useSecondValue = LOAD8(0x834BE801u);
-			ctx.fpscr.disableFlushMode();
-			double value9C = double(LOAD_F32(valuePairAddr));
-			if (useSecondValue != 0) {
-				value9C = double(LOAD_F32(valuePairAddr + 12));
+			uint32_t vtableBase = uint32_t(g_820F0000);
+			uint32_t releaseVtable = vtableBase + 5732;
+			STORE32(stack + 80, releaseVtable);
+			EntityHandle_Release(ctx, base, handleAddr);
+
+			const uint32_t navigationSpeedSlot = uint32_t(g_820A0000) - 27860;
+			uint8_t useAlternateSpeed = LOAD8(0x834BE801u);
+			float navigationSpeed = LOAD_F32(navigationSpeedSlot);
+			if (useAlternateSpeed != 0) {
+				navigationSpeed = LOAD_F32(navigationSpeedSlot + 12);
 			}
-			ctx.fpscr.disableFlushMode();
-			navigation->m_9C = float(value9C);
-			navigation->m_280 = (uint32_t)targetEntity;
+			navigation->m_9C = navigationSpeed;
+			navigation->m_280 = uint32_t(targetEntity);
 			navigation->m_A8 = 3u;
-			navigation->m_B0 = (uint8_t)stateByte;
-			ctx.r5.u64 = useSecondValue;   // state the callee may pass on
-			CECNavigation_ResetNavigationData(ctx, base, navigationAddr);
+			navigation->m_B0 = (uint8_t)state;
+			ctx.r5.u64 = useAlternateSpeed;
+			CECNavigation_ResetNavigationData(ctx, base, navAddr);
 
-			// the virtual function at +64 of the object at targetEntity+124 writes a vector to stack+96
-			const uint32_t targetObject = LOAD32((uint32_t)targetEntity + 124);
-			const uint32_t targetVtable = LOAD32(targetObject);
-			callTarget.u64 = LOAD32(targetVtable + 64);
-			ctx.r3.u64 = uint64_t(stack) + 96;
+			uint32_t targetObject = LOAD32((uint32_t)targetEntity + 124);
+			uint32_t handleOut = stack + 96;
+			uint32_t targetVtable = LOAD32(targetObject);
+			uint32_t buildHandleFunc = LOAD32(targetVtable + 64);
+			callTarget.u64 = uint64_t(buildHandleFunc);
+			ctx.r3.u64 = handleOut;
 			ctx.r4.u64 = targetObject;
-			ctx.r9.u64 = callTarget.u64;
+			ctx.r9.u64 = buildHandleFunc;
 			ctx.r10.u64 = targetVtable;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
-			result = ctx.r3.u64;
-			r4Value = ctx.r4.u64;
+			navigationAddr = ctx.r3.u64;
+			savedSpeed = ctx.r4.u64;
 			navigation->m_AC = 6u;
-			PPCVRegister targetVector{};
-			SET_V8(targetVector, VLOAD(uint32_t(uint64_t(stack) + 96) & ~0xF));
+			SET_V8(handleVector, VLOAD(handleOut & ~0xFu));
 			navigation->m_260 = 2u;
-			VSTORE((uint32_t)navigationAddr + 32u & ~0xF, V8(targetVector));
+			VSTORE(((uint32_t)navAddr + 32u) & ~0xFu, V8(handleVector));
 		}
 	}
 
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = r4Value;   // callers read r4 after the call
-	return result;
+	ctx.r4.u64 = savedSpeed;
+	return navigationAddr;
 }
 PROMOTED_ENTRY(43, sub_82674D98, 0x82674D98) { ctx.r3.u64 = CECNavigation_SetMode6Target(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64, ctx.r7.u64); }
 

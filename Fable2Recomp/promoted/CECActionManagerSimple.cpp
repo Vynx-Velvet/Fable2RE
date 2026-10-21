@@ -194,58 +194,59 @@ uint64_t CECActionManagerSimple_IsActionActive(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(10, sub_82290020, 0x82290020) { ctx.r3.u64 = CECActionManagerSimple_IsActionActive(ctx, base, ctx.r3.u64); }
 
-// Returns an EntityHandle by value (r3 is the result, r4 the manager): the manager's entity with the current
-// action's word at +0x3C, or an empty handle (no target, -1) when the manager has no current action.
-uint64_t CECActionManagerSimple_SetAction(CpuState& ctx, uint8_t* base, uint64_t outHandleAddr, uint64_t actionManagerSimpleAddr) {
+uint64_t CECActionManagerSimple_SetAction(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t arg2) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
-	if (!UseLiftedCode(11, 0x8229EB80)) { ctx.r3.u64 = outHandleAddr; ctx.r4.u64 = actionManagerSimpleAddr; __imp__sub_8229EB80(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(11, 0x8229EB80)) { ctx.r3.u64 = actionManagerSimpleAddr; ctx.r4.u64 = arg2; __imp__sub_8229EB80(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8229EB80);
 	uint32_t stack = ctx.r1.u64;
-	EntityHandle* outHandle = GameObject<EntityHandle>(base, outHandleAddr);
 	CECActionManagerSimple* actionManagerSimple = GameObject<CECActionManagerSimple>(base, actionManagerSimpleAddr);
+
 	stack = PushStackFrame(base, stack, 128);
 
-	const uint32_t entityHandleVtable = uint32_t(g_820F0000 + 5732);
-
-	uint32_t hasCurrentActionFn = LOAD32(uint32_t(actionManagerSimple->vtable) + 88);
+	// Ask the source object (virtual call at vtable+0x58) whether it carries an action to copy.
+	uint32_t queryFunc = LOAD32(LOAD32((uint32_t)arg2) + 88);
 	PPCRegister callTarget{};
-	callTarget.u64 = hasCurrentActionFn;
+	callTarget.u64 = queryFunc;
 	ctx.r1.u64 = stack;
-	ctx.r3.u64 = actionManagerSimpleAddr;
-	ctx.r4.u64 = actionManagerSimpleAddr;
-	ctx.r10.u64 = hasCurrentActionFn;
+	ctx.r3.u64 = arg2;
+	ctx.r4.u64 = arg2;
+	ctx.r10.u64 = queryFunc;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
-	bool hasCurrentAction = (ctx.r3.u32 & 0xFF) != 0;
+	bool hasAction = (ctx.r3.u32 & 0xFF) != 0;
 
-	if (hasCurrentAction) {
-		uint32_t entity = actionManagerSimple->m_pEntity;
-		uint32_t currentAction = actionManagerSimple->m_pCurrentAction;
-		uint32_t actionWord = LOAD32(currentAction + 60);
-		outHandle->m_4 = 0u;
-		outHandle->vtable = entityHandleVtable;
-		// state the callee may pass on
-		ctx.r8.s64 = int64_t(g_820F0000) + 5732;
-		EntityHandle_SetTarget(ctx, base, outHandleAddr, entity);
-		outHandle->m_8 = actionWord;
+	if (hasAction) {
+		int32_t vtableBase = g_820F0000;
+		uint64_t newVtable = (int64_t)vtableBase + 5732;
+		uint32_t sourceTarget = LOAD32((uint32_t)arg2 + 4);
+		uint32_t sourceActionId = LOAD32(LOAD32((uint32_t)arg2 + 16) + 60);
+
+		actionManagerSimple->m_pEntity = 0;
+		actionManagerSimple->vtable = (uint32_t)newVtable;
+		ctx.r8.u64 = newVtable;
+		ctx.r10.s64 = vtableBase;
+		EntityHandle_SetTarget(ctx, base, actionManagerSimpleAddr, sourceTarget);
+		actionManagerSimple->m_8 = sourceActionId;
 	} else {
-		// copy an empty handle built on the stack, then destroy the temporary
-		uint32_t tempHandle = stack + 80;
-		STORE32(tempHandle + 4, 0u);
-		STORE32(tempHandle, entityHandleVtable);
-		STORE32(tempHandle + 8, 0xFFFFFFFFu);
-		// state the callee may pass on
+		// Copy the invalid entity handle: build it on the stack, copy it in, then release the temporary.
+		STORE32(stack + 84, 0u);
+		STORE32(stack + 80, 0x820F1664u);
+		uint64_t tempHandle = (int64_t)(uint64_t)stack + 80;
+		STORE32(stack + 88, 0xFFFFFFFFu);
 		ctx.r8.s64 = -1;
-		EntityHandle_CopyConstruct(ctx, base, outHandleAddr, tempHandle);
-		uint32_t tempWord8 = LOAD32(tempHandle + 8);
-		STORE32(tempHandle, entityHandleVtable);
-		outHandle->m_8 = tempWord8;
-		// state the callee may pass on
-		EntityHandle_Release(ctx, base, tempHandle);
+		EntityHandle_CopyConstruct(ctx, base, actionManagerSimpleAddr, tempHandle);
+
+		uint32_t actionId = LOAD32(stack + 88);
+		uint32_t vtableBase = uint32_t(g_820F0000);
+		uint64_t tempHandleAddr = (int64_t)(uint64_t)stack + 80;
+		uint32_t newVtable = (int32_t)vtableBase + 5732;
+		STORE32(stack + 80, newVtable);
+		actionManagerSimple->m_8 = actionId;
+		EntityHandle_Release(ctx, base, tempHandleAddr);
 	}
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	return outHandleAddr;
+	return actionManagerSimpleAddr;
 }
 PROMOTED_ENTRY(11, sub_8229EB80, 0x8229EB80) { ctx.r3.u64 = CECActionManagerSimple_SetAction(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
@@ -498,35 +499,38 @@ uint64_t n_sub_8297BF50(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimp
 }
 PROMOTED_ENTRY(68, sub_8297BF50, 0x8297BF50) { ctx.r3.u64 = n_sub_8297BF50(ctx, base, ctx.r3.u64); }
 
-uint64_t n_sub_8297BF70(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t entityHandle) {
-	if (!UseLiftedCode(68, 0x8297BF70)) { ctx.r3.u64 = actionManagerSimpleAddr; ctx.r4.u64 = entityHandle; __imp__sub_8297BF70(ctx, base); return ctx.r3.u64; }
+uint64_t n_sub_8297BF70(CpuState& ctx, uint8_t* base, uint64_t actionManagerSimpleAddr, uint64_t entityAddr) {
+	if (!UseLiftedCode(68, 0x8297BF70)) { ctx.r3.u64 = actionManagerSimpleAddr; ctx.r4.u64 = entityAddr; __imp__sub_8297BF70(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8297BF70);
 	uint32_t stack = ctx.r1.u64;
 	CECActionManagerSimple* actionManagerSimple = GameObject<CECActionManagerSimple>(base, actionManagerSimpleAddr);
 	stack = PushStackFrame(base, stack, 96);
 
-	// State the calls below may read. Callers read r4 after the call: the entity handle,
-	// or whatever the calls below leave in r4.
-	ctx.r4.u64 = entityHandle;
-
 	uint64_t result = actionManagerSimpleAddr;
-	if (int32_t(LOAD32((uint32_t)entityHandle + 8)) >= 0) {
+	bool shouldInvoke = false;
+	if (int32_t(LOAD32((uint32_t)entityAddr + 8)) >= 0) {
 		ctx.r1.u64 = stack;
-		uint64_t combatComponent = Entity_GetCombatComponent(ctx, base, entityHandle);
+		ctx.r4.u64 = entityAddr;
+		uint64_t combatComponent = Entity_GetCombatComponent(ctx, base, entityAddr);
+		entityAddr = ctx.r4.u64;
 		result = combatComponent;
-		if ((uint32_t)combatComponent != 0) {
-			// r4 still holds what Entity_GetCombatComponent left in it.
-			uint32_t virtualFunction = LOAD32(uint32_t(actionManagerSimple->vtable) + 72);
-			ctx.r1.u64 = stack;
-			ctx.r3.u64 = actionManagerSimpleAddr;
-			ctx.r10.u64 = virtualFunction;
-			REX_CALL_INDIRECT_FUNC(virtualFunction);
-			result = ctx.r3.u64;
-		}
+		shouldInvoke = ((uint32_t)combatComponent != 0);
+	}
+
+	if (shouldInvoke) {
+		uint32_t vtableSlot = LOAD32(uint32_t(actionManagerSimple->vtable) + 72);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = actionManagerSimpleAddr;
+		ctx.r4.u64 = entityAddr;
+		ctx.r10.u64 = vtableSlot;
+		REX_CALL_INDIRECT_FUNC(vtableSlot);
+		result = ctx.r3.u64;
+		entityAddr = ctx.r4.u64;
 	}
 
 	stack = PopStackFrame(stack, 96);
 	ctx.r1.u64 = stack;
+	ctx.r4.u64 = entityAddr;
 	return result;
 }
 PROMOTED_ENTRY(68, sub_8297BF70, 0x8297BF70) { ctx.r3.u64 = n_sub_8297BF70(ctx, base, ctx.r3.u64, ctx.r4.u64); }

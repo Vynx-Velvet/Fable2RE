@@ -111,13 +111,10 @@ uint64_t CECInChaos_Serialize(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr
 }
 PROMOTED_ENTRY(60, sub_82894FD8, 0x82894FD8) { ctx.r3.u64 = CECInChaos_Serialize(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r6.u64); }
 
-// When m_41 is set: points the EntityHandle at +100 at the entity looked up by the UID at +92 (if the UID is
-// nonzero), clears m_41 and m_40 and runs sub_82895338; then, when m_44 is set and m_46 clear, copies m_50 to
-// m_1C, sets m_46 and runs sub_82895690.
-uint64_t CECInChaos_Update(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t r8Value) {
+uint64_t CECInChaos_Update(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, uint64_t arg2) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
-	if (!UseLiftedCode(60, 0x828950E0)) { ctx.r3.u64 = inChaosAddr; ctx.r8.u64 = r8Value; __imp__sub_828950E0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(60, 0x828950E0)) { ctx.r3.u64 = inChaosAddr; ctx.r8.u64 = arg2; __imp__sub_828950E0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x828950E0);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
@@ -125,50 +122,50 @@ uint64_t CECInChaos_Update(CpuState& ctx, uint8_t* base, uint64_t inChaosAddr, u
 	CECInChaos* inChaos = GameObject<CECInChaos>(base, inChaosAddr);
 	uint64_t result = inChaosAddr;
 
-	if (inChaos->m_41 != 0) {
-		// the UID at +92 is two words; it is set when either word is nonzero
-		const uint64_t uidAddr = inChaosAddr + 92;
-		// r4 for sub_82895338: the UID address, or what the handle release below leaves in r4
-		uint64_t r4ForUpdate = uidAddr;
+	if (LOAD8((uint32_t)inChaosAddr + 65) != 0) {
+		const uint32_t targetInfo = (uint32_t)inChaosAddr + 92;  // pair of reference counts
+		const uint32_t tempHandle = stack + 80;                  // EntityHandle built on the game stack
 
-		if (LOAD32((uint32_t)uidAddr) != 0 || LOAD32((uint32_t)uidAddr + 4) != 0) {
-			const uint32_t globalRoot = LOAD32((uint32_t)g_83490000 + 26912);
-			const uint32_t container = LOAD32(LOAD32(globalRoot + 12) + 88);
-			const uint32_t containerData = LOAD32(container + 4);
-			const uint32_t firstWord = LOAD32(containerData);
-			// state the callee may pass on
-			ctx.r1.u64 = stack;
-			const uint64_t entity = EntityManager_LookupEntity(ctx, base, firstWord, uidAddr);
-
-			// A temporary EntityHandle at stack+80 (vtable 0x820F1664, second word 0) is aimed at the entity,
-			// assigned to the handle at +100, then released.
-			const uint64_t tempHandle = (uint64_t)stack + 80;
-			const uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
-			STORE32(stack + 84, 0);
-			STORE32(stack + 80, (uint32_t)handleVtable);
-			// state the callee may pass on
-			ctx.r6.u64 = handleVtable;
-			EntityHandle_SetTarget(ctx, base, tempHandle, entity);
-			EntityHandle_Assign(ctx, base, inChaosAddr + 100, tempHandle);
-			STORE32(stack + 80, (uint32_t)handleVtable);
-			// state the callee may pass on
-			EntityHandle_Release(ctx, base, tempHandle);
-			r4ForUpdate = ctx.r4.u64;
-			r8Value = ctx.r8.u64;
+		bool hasTarget = true;
+		if (LOAD32(targetInfo) <= 0) {
+			hasTarget = LOAD32(targetInfo + 4) > 0;
 		}
 
-		inChaos->m_41 = 0;
-		inChaos->m_40 = 0;
+		if (hasTarget) {
+			uint32_t entityManager = LOAD32(g_83490000 + 26912);
+			uint32_t entityList = LOAD32(LOAD32(entityManager + 12) + 88);
+			uint32_t entityRecord = LOAD32(entityList + 4);
+			uint32_t entityId = LOAD32(entityRecord);
 
-		// state the callee may pass on
+			ctx.r1.u64 = stack;
+			uint64_t entity = EntityManager_LookupEntity(ctx, base, entityId, targetInfo);
+
+			const int32_t handleClass = g_820F0000;
+			const uint64_t handleType = (int64_t)handleClass + 5732;
+			STORE32(stack + 84, 0);
+			STORE32(stack + 80, (uint32_t)handleType);
+			ctx.r6.u64 = handleType;
+			ctx.r7.s64 = handleClass;
+			EntityHandle_SetTarget(ctx, base, tempHandle, entity);
+
+			EntityHandle_Assign(ctx, base, (uint32_t)inChaosAddr + 100, tempHandle);
+
+			STORE32(stack + 80, (uint32_t)handleType);
+			EntityHandle_Release(ctx, base, tempHandle);
+
+			arg2 = ctx.r8.u64;
+		}
+
+		inChaos->m_41 = (uint8_t)0;
+		inChaos->m_40 = (uint8_t)0;
+
 		ctx.r1.u64 = stack;
-		ctx.r4.u64 = r4ForUpdate;
-		result = CECInChaos_StartEffects(ctx, base, inChaosAddr, r8Value);
+		result = CECInChaos_StartEffects(ctx, base, inChaosAddr, arg2);
 
-		if (inChaos->m_44 != 0 && inChaos->m_46 == 0) {
+		if (LOAD8((uint32_t)inChaosAddr + 68) != 0 && LOAD8((uint32_t)inChaosAddr + 70) == 0) {
 			ctx.fpscr.disableFlushMode();
 			inChaos->m_1C = float(double(inChaos->m_50));
-			inChaos->m_46 = 1;
+			inChaos->m_46 = uint8_t(1);
 			result = CECInChaos_SetState(ctx, base, inChaosAddr, 1);
 		}
 	}

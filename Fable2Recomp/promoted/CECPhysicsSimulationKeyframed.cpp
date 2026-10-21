@@ -149,128 +149,134 @@ uint64_t n_sub_82241468(CpuState& ctx, uint8_t* base, uint64_t self) {
 }
 PROMOTED_ENTRY(7, sub_82241468, 0x82241468) { ctx.r3.u64 = n_sub_82241468(ctx, base, ctx.r3.u64); }
 
-// Only when the virtual at vtable offset 92 returns an object: with removeFlag set,
-// removes the entity's handle from the handle list at +56; otherwise searches that
-// list (releasing handles whose entity is null on the way) and appends a handle to
-// the entity when none targets it.
-uint64_t CECPhysicsSimulationKeyframed_ToggleEntityHandle(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t entity, uint64_t removeFlag) {
+uint64_t CECPhysicsSimulationKeyframed_ToggleEntityHandle(CpuState& ctx, uint8_t* base, uint64_t physicsSimulationKeyframedAddr, uint64_t entityHandle, uint64_t mode) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_820F1664 = int32_t(0x820F1664);
-	if (!UseLiftedCode(11, 0x822A8A10)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = entity; ctx.r5.u64 = removeFlag; __imp__sub_822A8A10(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(11, 0x822A8A10)) { ctx.r3.u64 = physicsSimulationKeyframedAddr; ctx.r4.u64 = entityHandle; ctx.r5.u64 = mode; __imp__sub_822A8A10(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x822A8A10);
 	uint32_t stack = ctx.r1.u64;
+	PPCRegister callTarget{};
 	CECPhysicsSimulationKeyframed* physicsSimulationKeyframed = GameObject<CECPhysicsSimulationKeyframed>(base, physicsSimulationKeyframedAddr);
 	stack = PushStackFrame(base, stack, 144);
 
-	uint32_t getInnerFn = LOAD32(uint32_t(physicsSimulationKeyframed->vtable) + 92);
+	// Get the entity handle object for this entity (virtual call, vtable slot 92).
+	uint32_t findHandleFn = LOAD32(uint32_t(physicsSimulationKeyframed->vtable) + 92);
+	callTarget.u64 = (uint64_t)findHandleFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = physicsSimulationKeyframedAddr;
-	ctx.r4.u64 = entity;
-	ctx.r5.u64 = removeFlag;
-	ctx.r10.u64 = getInnerFn;
-	REX_CALL_INDIRECT_FUNC(getInnerFn);
+	ctx.r4.u64 = entityHandle;
+	ctx.r5.u64 = mode;
+	ctx.r10.u64 = findHandleFn;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+
 	uint64_t result = ctx.r3.u64;
-	uint64_t innerObject = result;
-	if ((uint32_t)innerObject != 0) {
+	uint64_t handleObj = result;
+	if ((uint32_t)handleObj != 0) {
 		CECPhysicsSimulationKeyframed_CleanupEntityHandles(ctx, base, physicsSimulationKeyframedAddr);
-		uint32_t innerVtable = LOAD32((uint32_t)innerObject);
-		// EntityHandle {vtable, control block} built on the stack.
+		uint32_t handleObjVtable = LOAD32((uint32_t)handleObj);
 		uint64_t handleBuf = (int64_t)(uint64_t)stack + 80;
 
-		if ((uint32_t(removeFlag) & 0xFF) != 0) {
-			uint32_t method80 = LOAD32(innerVtable + 80);
-			ctx.r3.u64 = innerObject;
-			ctx.r4.u64 = entity;
-			ctx.r10.u64 = method80;
-			REX_CALL_INDIRECT_FUNC(method80);
+		if ((uint32_t(mode) & 0xFF) != 0) {
+			// Virtual call (vtable slot 80), then remove the handle from the list and release it.
+			uint32_t slot80Fn = LOAD32(handleObjVtable + 80);
+			callTarget.u64 = (uint64_t)slot80Fn;
+			ctx.r3.u64 = handleObj;
+			ctx.r4.u64 = entityHandle;
+			ctx.r10.u64 = slot80Fn;
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
 			uint64_t handleVtable = (int64_t)g_820F0000 + 5732;
-			STORE32(stack + 84, 0);
+			uint32_t zero = 0;
+			STORE32(stack + 84, zero);
 			STORE32(stack + 80, (uint32_t)handleVtable);
 			ctx.r7.u64 = handleVtable;
-			ctx.r8.u64 = 0;
-			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
+			ctx.r8.u64 = zero;
+			EntityHandle_SetTarget(ctx, base, handleBuf, entityHandle);
 			EntityHandleList_Remove_822A8BC8(ctx, base, (int64_t)physicsSimulationKeyframedAddr + 56, handleBuf);
 
-			// Destroy the stack handle: restore its vtable, then release it.
 			uint32_t vtableBase = (uint32_t)g_820F0000;
-			uint32_t resetVtable = (int32_t)vtableBase + 5732;
-			STORE32(stack + 80, resetVtable);
+			uint32_t releaseVtable = (int32_t)vtableBase + 5732;
+			STORE32(stack + 80, releaseVtable);
 			uint64_t released = EntityHandle_Release(ctx, base, handleBuf);
 			stack = PopStackFrame(stack, 144);
 			ctx.r1.u64 = stack;
 			return released;
 		}
 
-		uint32_t method76 = LOAD32(innerVtable + 76);
-		ctx.r3.u64 = innerObject;
-		ctx.r4.u64 = entity;
-		ctx.r10.u64 = method76;
-		REX_CALL_INDIRECT_FUNC(method76);
+		// Virtual call (vtable slot 76) that drops the list entries owned by this handle.
+		uint32_t slot76Fn = LOAD32(handleObjVtable + 76);
+		callTarget.u64 = (uint64_t)slot76Fn;
+		ctx.r3.u64 = handleObj;
+		ctx.r4.u64 = entityHandle;
+		ctx.r10.u64 = slot76Fn;
+		REX_CALL_INDIRECT_FUNC(callTarget.u32);
+		result = ctx.r3.u64;
 
+		uint32_t listEnd = physicsSimulationKeyframed->m_3C;
 		uint32_t listHead = (int64_t)physicsSimulationKeyframedAddr + 56;
-		uint32_t endNode = physicsSimulationKeyframed->m_3C;
-		uint32_t node = LOAD32(endNode);
+		uint32_t foundEnd = listEnd;
+		uint32_t loopEnd = listEnd;
+		uint32_t currentNode = LOAD32(listEnd);
 
-		// Two checked iterators {list, node} at stack + 80 and stack + 88.
+		// Two iterators {container, node} kept in the stack scratch slot.
 		STORE32(stack + 80, listHead);
-		STORE32(stack + 84, node);
+		STORE32(stack + 84, currentNode);
 		STORE32(stack + 88, listHead);
-		STORE32(stack + 92, node);
-		uint64_t iterator = LOAD64(stack + 80);
-		uint64_t iteratorCopy = LOAD64(stack + 88);
-		STORE64(stack + 88, iteratorCopy);
-		STORE64(stack + 80, iterator);
+		STORE32(stack + 92, currentNode);
+		uint64_t iterA = LOAD64(stack + 80);
+		uint64_t iterB = LOAD64(stack + 88);
+		STORE64(stack + 88, iterB);
+		STORE64(stack + 80, iterA);
 
-		// r7-r9 are handed to EntityHandle_Release and read back after it.
-		uint32_t handedR9 = endNode;
-		while (node != endNode) {
-			uint32_t controlBlock = LOAD32(node + 12);
-			uint64_t nodeHandle = (uint64_t)node + 8;
-			result = nodeHandle;
-			uint32_t nodeEntity = 0;
-			if (controlBlock != 0) {
-				nodeEntity = LOAD32(controlBlock);
-				if (nodeEntity == 0) {
+		while (currentNode != loopEnd) {
+			uint32_t nodeRef = LOAD32(currentNode + 12);
+			uint64_t nodeHandle = (uint64_t)currentNode + 8;
+			uint32_t matchedId = 0;
+			if (nodeRef != 0) {
+				uint32_t refId = LOAD32(nodeRef);
+				if (refId != 0) {
+					matchedId = refId;
+				} else {
 					result = EntityHandle_Release(ctx, base, nodeHandle);
-					iteratorCopy = ctx.r7.u64;
-					iterator = ctx.r8.u64;
-					handedR9 = ctx.r9.u32;
+					iterA = ctx.r7.u64;
+					iterB = ctx.r8.u64;
+					listEnd = ctx.r9.u32;
 				}
 			}
-			if (nodeEntity == (uint32_t)entity) break;
-			node = LOAD32(node);
+			if (matchedId == (uint32_t)entityHandle) break;
+			currentNode = LOAD32(currentNode);
 		}
 
 		if (listHead != LOAD32(stack + 88)) {
 			ppc_trap(ctx, base, 22);
 		}
-		uint32_t iteratorList = LOAD32(stack + 80);
-		if (iteratorList == 0 || iteratorList != listHead) {
+		uint32_t iterHead = LOAD32(stack + 80);
+		if (iterHead == 0 || iterHead != listHead) {
 			ppc_trap(ctx, base, 22);
 		}
 
-		// No node targets the entity: insert a handle to it before the end node.
-		if (node == endNode) {
+		// Entity was not in the list yet: insert a new handle node for it.
+		if (currentNode == foundEnd) {
 			uint64_t handleVtable = g_820F1664;
-			STORE32(stack + 84, 0);
+			uint32_t zero = 0;
+			STORE32(stack + 84, zero);
 			STORE32(stack + 80, (uint32_t)handleVtable);
-			ctx.r7.u64 = iteratorCopy;
-			ctx.r8.u64 = iterator;
+			ctx.r7.u64 = iterA;
+			ctx.r8.u64 = iterB;
 			ctx.r9.u64 = handleVtable;
-			EntityHandle_SetTarget(ctx, base, handleBuf, entity);
+			ctx.r10.u64 = zero;
+			EntityHandle_SetTarget(ctx, base, handleBuf, entityHandle);
 
-			uint32_t listEndNode = LOAD32(listHead + 4);
+			uint32_t listHeadNext = LOAD32(listHead + 4);
 			STORE32(stack + 88, listHead);
-			STORE32(stack + 92, listEndNode);
-			uint64_t insertPosition = LOAD64(stack + 88);
-			ctx.r8.u64 = listEndNode;
-			List_InsertNodeWithCopyConstruct(ctx, base, listHead, insertPosition, handleBuf);
+			STORE32(stack + 92, listHeadNext);
+			uint64_t node = LOAD64(stack + 88);
+			ctx.r8.u64 = listHeadNext;
+			List_InsertNodeWithCopyConstruct(ctx, base, listHead, node, handleBuf);
 
-			// Destroy the stack handle: restore its vtable, then release it.
 			uint32_t vtableBase = (uint32_t)g_820F0000;
-			uint32_t resetVtable = (int32_t)vtableBase + 5732;
-			STORE32(stack + 80, resetVtable);
+			uint32_t releaseVtable = (int32_t)vtableBase + 5732;
+			STORE32(stack + 80, releaseVtable);
 			result = EntityHandle_Release(ctx, base, handleBuf);
 		}
 	}

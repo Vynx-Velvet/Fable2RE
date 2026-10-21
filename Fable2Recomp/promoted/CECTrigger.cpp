@@ -19,9 +19,6 @@ uint64_t CECTrigger_HasEntity(CpuState& ctx, uint8_t* base, uint32_t triggerAddr
 	stack = PushStackFrame(base, stack, 112);
 
 	const uint32_t handleToFind = (uint32_t)entityHandle;
-	// r4 as callers see it after the return: the handle argument, or what the last release left there
-	uint64_t callerR4 = entityHandle;
-	uint64_t found = 0;
 	uint32_t entry = LOAD32(uint32_t(trigger->m_38));
 
 	while (entry != uint32_t(trigger->m_38)) {
@@ -32,27 +29,23 @@ uint64_t CECTrigger_HasEntity(CpuState& ctx, uint8_t* base, uint32_t triggerAddr
 			if (entryHandle == 0) {
 				// the entry's entity is gone: release the handle it still keeps alive
 				ctx.r1.u64 = stack;
-				// state the callee may pass on
 				EntityHandle_Release(ctx, base, (uint64_t)entry + 8);
-				callerR4 = ctx.r4.u64;
+				entityHandle = ctx.r4.u64;
 			}
 		}
 		if (handleToFind == entryHandle) {
-			found = 1;
-			break;
-		}
-		// the release above may have changed the list: advancing from its end is an error
-		if (entry == uint32_t(trigger->m_38)) {
+			stack = PopStackFrame(stack, 112);
 			ctx.r1.u64 = stack;
-			ppc_trap(ctx, base, 22);
+			ctx.r4.u64 = entityHandle;
+			return 1;
 		}
 		entry = LOAD32(entry);
 	}
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	ctx.r4.u64 = callerR4;  // callers read r4 after the call
-	return found;
+	ctx.r4.u64 = entityHandle;
+	return 0;
 }
 PROMOTED_ENTRY(0, sub_8218AE80, 0x8218AE80) { ctx.r3.u64 = CECTrigger_HasEntity(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 

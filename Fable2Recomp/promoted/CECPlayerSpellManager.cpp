@@ -161,6 +161,92 @@ uint64_t CECPlayerSpellManager_GetClassName(CpuState& ctx, uint8_t* base, uint64
 }
 PROMOTED_ENTRY(39, sub_82610E30, 0x82610E30) { ctx.r3.u64 = CECPlayerSpellManager_GetClassName(ctx, base, ctx.r3.u64); }
 
+uint64_t CECPlayerSpellManager_Construct(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr, uint32_t ownerEntity) {
+	constexpr int32_t g_820991A0 = int32_t(0x820991A0);
+	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
+	constexpr int32_t str_TXT_820C0000_B_ = int32_t(0x820C0000);
+	if (!UseLiftedCode(39, 0x82610E70)) { ctx.r3.u64 = playerSpellManagerAddr; ctx.r4.u64 = ownerEntity; __imp__sub_82610E70(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x82610E70);
+
+	PPCRegister scratch{};
+	uint32_t stack = ctx.r1.u64;
+	CECPlayerSpellManager* playerSpellManager = GameObject<CECPlayerSpellManager>(base, playerSpellManagerAddr);
+
+	stack = PushStackFrame(base, stack, 112);
+
+	const uint32_t dataAddress = uint32_t(g_820A0000) - 27456;
+	ctx.fpscr.disableFlushMode();
+	const float stackValue = LOAD_F32(dataAddress);
+	const int32_t ntFailedFull = str_TXT_820C0000_B_;
+	const uint64_t spellManagerInitData = uint64_t(g_820991A0);
+	const uint8_t zeroByte = 0;
+	const uint32_t zeroWord = 0;
+
+	PPCVRegister zeroVector{};
+	PPCVRegister maskVector{};
+	PPCVRegister loadedVector{};
+	PPCVRegister splatVector{};
+	PPCVRegister storedVector{};
+
+	SET_V8(zeroVector, simde_mm_set1_epi32(0));
+
+	STORE_F32(stack + 80, stackValue);
+
+	playerSpellManager->m_owner = ownerEntity;
+	playerSpellManager->m_8 = zeroByte;
+	playerSpellManager->m_C = 0x820A5A58u;
+	playerSpellManager->vtable = 0x820043A0u;
+
+	const float chargeValue = LOAD_F32(dataAddress - 12);
+	playerSpellManager->m_chargeA = chargeValue;
+	playerSpellManager->m_chargeB = chargeValue;
+	playerSpellManager->m_C = uint32_t(int64_t(ntFailedFull) + 27932);
+	playerSpellManager->m_10 = zeroWord;
+	playerSpellManager->m_14 = zeroWord;
+	playerSpellManager->m_dirty = zeroByte;
+	playerSpellManager->m_1C = zeroWord;
+	playerSpellManager->m_currentSpell = zeroWord;
+
+	const uint64_t stackValueAddress = uint64_t(stack) + 80;
+	const uint32_t storeOffset1 = 48;
+	const uint32_t storeOffset2 = 64;
+
+	SET_V8(maskVector, VLOAD((uint32_t)spellManagerInitData & ~0xF));
+	scratch.u32 = (uint32_t)stackValueAddress;
+	SET_V8(loadedVector, simde_mm_shuffle_epi8(
+		simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)),
+		simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
+	SET_V8(splatVector, simde_mm_shuffle_epi32(V8(loadedVector), 0xFF));
+	SET_V8(storedVector, simde_mm_and_si128(V8(splatVector), V8(maskVector)));
+
+	VSTORE(((uint32_t)playerSpellManagerAddr + storeOffset1) & ~0xF, V8(storedVector));
+	VSTORE(((uint32_t)playerSpellManagerAddr + storeOffset2) & ~0xF, V8(zeroVector));
+
+	playerSpellManager->m_50 = zeroWord;
+	playerSpellManager->m_218 = zeroWord;
+	playerSpellManager->m_240 = zeroWord;
+
+	uint32_t owner = playerSpellManager->m_owner;
+
+	ctx.r1.u64 = stack;
+	ctx.r5.u64 = spellManagerInitData;
+	ctx.r6.s64 = ntFailedFull;
+	ctx.r7.u64 = storeOffset2;
+	ctx.r8.u64 = storeOffset1;
+	ctx.r9.u64 = stackValueAddress;
+	ctx.v10 = storedVector;
+	ctx.v11 = splatVector;
+	ctx.v12 = loadedVector;
+	ctx.v13 = zeroVector;
+
+	CECDoor_UpdateOpenStateForEntity(ctx, base, owner, playerSpellManagerAddr);
+
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return playerSpellManagerAddr;
+}
+PROMOTED_ENTRY(39, sub_82610E70, 0x82610E70) { ctx.r3.u64 = CECPlayerSpellManager_Construct(ctx, base, ctx.r3.u64, ctx.r4.u32); }
+
 uint64_t CECPlayerSpellManager_DeletingDestructor(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr, uint64_t deleteFlag) {
 	if (!UseLiftedCode(39, 0x82610F48)) { ctx.r3.u64 = playerSpellManagerAddr; ctx.r4.u64 = deleteFlag; __imp__sub_82610F48(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82610F48);
@@ -190,6 +276,156 @@ uint64_t CECPlayerSpellManager_DeletingDestructor(CpuState& ctx, uint8_t* base, 
 	return result;
 }
 PROMOTED_ENTRY(39, sub_82610F48, 0x82610F48) { ctx.r3.u64 = CECPlayerSpellManager_DeletingDestructor(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+
+uint64_t CECPlayerSpellManager_Initialise(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr) {
+	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	if (!UseLiftedCode(39, 0x82610FB0)) { ctx.r3.u64 = playerSpellManagerAddr; __imp__sub_82610FB0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x82610FB0);
+	uint32_t stack = ctx.r1.u64;
+	CECPlayerSpellManager* playerSpellManager = GameObject<CECPlayerSpellManager>(base, playerSpellManagerAddr);
+	const uint32_t managerAddr = (uint32_t)playerSpellManagerAddr;
+	const uint32_t spellManagerGlobals = uint32_t(g_83490000);
+	uint64_t pendingSpellState = 0;
+	uint64_t savedR6 = ctx.r6.u64;
+	uint64_t savedR8 = ctx.r8.u64;
+	auto xerCa = ctx.xer.ca;
+
+	stack = PushStackFrame(base, stack, 128);
+
+	// Look up the spell carried by the owning entity (either from the active spell
+	// container or from the sorted spell table of the entity).
+	uint32_t ownerEntity = playerSpellManager->m_owner;
+	if ((LOAD8(ownerEntity + 40) & 0x1) != 0) {
+		uint32_t levelTable = LOAD32(ownerEntity + 140);
+		uint32_t spellValue;
+		if (levelTable != 0) {
+			uint32_t levelIndex = LOAD8(levelTable + 56);
+			uint32_t tableStart = LOAD32(ownerEntity + 72);
+			spellValue = LOAD32(tableStart + levelIndex * 8 + 4);
+		} else {
+			uint32_t tableStart = LOAD32(ownerEntity + 72);
+			uint32_t tableEnd = LOAD32(ownerEntity + 76);
+			savedR6 = tableEnd;
+			STORE32(stack + 80, 0);
+			STORE32(stack + 84, tableStart);
+
+			// lower bound of the key 56 in the 8-byte entries
+			uint32_t diff = tableEnd - tableStart;
+			xerCa = ((int32_t)diff < 0) & ((diff & 0x7) != 0);
+			int32_t remaining = (int32_t)diff >> 3;
+			uint32_t iter = tableStart;
+			while (remaining > 0) {
+				xerCa = (remaining < 0) & ((remaining & 0x1) != 0);
+				int32_t half = remaining >> 1;
+				savedR8 = uint64_t(half << 3);
+				uint32_t mid = iter + uint32_t(half) * 8;
+				if ((int32_t)LOAD32(mid) < 56) {
+					iter = mid + 8;
+					remaining = remaining - half - 1;
+				} else {
+					remaining = half;
+				}
+			}
+			STORE32(stack + 84, iter);
+
+			uint32_t selectedEntry = tableEnd;
+			if (iter != tableEnd && (int32_t)LOAD32(iter) <= 56) {
+				selectedEntry = iter;
+			}
+			spellValue = LOAD32(selectedEntry + 4);
+		}
+		playerSpellManager->m_10 = spellValue;
+	}
+
+	uint64_t spellState = playerSpellManager->m_14;
+	if ((uint32_t)spellState != 0) {
+		uint32_t manager = LOAD32(spellManagerGlobals + 26912);
+		manager = LOAD32(manager + 12);
+		uint32_t localPlayer = LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 64);
+		ctx.r1.u64 = stack;
+		ctx.r6.u64 = savedR6;
+		ctx.r8.u64 = savedR8;
+		ctx.xer.ca = xerCa;
+		SpellVisual_Release(ctx, base, localPlayer, spellState);
+		pendingSpellState = ctx.r4.u64;
+		savedR8 = ctx.r8.u64;
+		xerCa = ctx.xer.ca;
+		playerSpellManager->m_14 = 0;
+	}
+
+	ownerEntity = playerSpellManager->m_owner;
+	ctx.r1.u64 = stack;
+	ctx.r8.u64 = savedR8;
+	ctx.xer.ca = xerCa;
+	uint32_t isNetworked = Entity_IsNetworked(ctx, base, ownerEntity);
+	if ((isNetworked & 0xFF) != 0) {
+		uint32_t manager = LOAD32(spellManagerGlobals + 26912);
+		uint32_t networkOwner = playerSpellManager->m_owner;
+		manager = LOAD32(manager + 12);
+		uint32_t localPlayer = LOAD32(LOAD32(LOAD32(manager + 88) + 4) + 64);
+		uint32_t newSpellState = SpellVisual_Create(ctx, base, localPlayer, networkOwner);
+		pendingSpellState = ctx.r4.u64;
+		playerSpellManager->m_14 = newSpellState;
+	}
+
+	ctx.r4.u64 = pendingSpellState;
+	uint64_t result = CECPlayerSpellManager_ResetTargeting(ctx, base, playerSpellManagerAddr);
+
+	// Reset the spell charge/selection state and clear both slot tables.
+	uint32_t savedSpellState = playerSpellManager->m_10;
+	uint32_t spellSlot = managerAddr + 0x21C;
+
+	uint32_t slotField0 = 0;
+	uint32_t slotField1 = 0;
+	uint32_t slotField2 = 0;
+	uint32_t slotField3 = 0;
+	STORE32(stack + 80, slotField0);
+	STORE32(stack + 84, slotField1);
+	STORE32(stack + 88, slotField2);
+	STORE32(stack + 92, slotField3);
+
+	ctx.fpscr.disableFlushMode();
+	const float defaultCharge = LOAD_F32(0x820994B4u);
+	playerSpellManager->m_1F0 = defaultCharge;
+	playerSpellManager->m_1E8 = (uint8_t)0;
+	playerSpellManager->m_1F4 = defaultCharge;
+	playerSpellManager->m_1E9 = (uint8_t)0;
+	playerSpellManager->m_1F8 = defaultCharge;
+	playerSpellManager->m_1EA = (uint8_t)0;
+	playerSpellManager->m_1FC = defaultCharge;
+	playerSpellManager->m_1EC = 0;
+	playerSpellManager->m_200 = defaultCharge;
+	playerSpellManager->m_savedSpellState = savedSpellState;
+
+	for (int slotIndex = 0; slotIndex < 2; ++slotIndex) {
+		ctx.fpscr.disableFlushMode();
+		STORE_F32(spellSlot, defaultCharge);
+		STORE_F32(spellSlot + 4, defaultCharge);
+		STORE_F32(spellSlot + 8, defaultCharge);
+		STORE_F32(spellSlot + 12, defaultCharge);
+		STORE32(spellSlot - 24, 0xFFFFFFFF);
+		STORE32(spellSlot - 20, LOAD32(stack + 80));
+		STORE32(spellSlot - 16, LOAD32(stack + 84));
+		STORE32(spellSlot - 12, LOAD32(stack + 88));
+		STORE32(spellSlot - 8, LOAD32(stack + 92));
+		STORE32(spellSlot - 4, 0);
+		spellSlot += 40;
+	}
+
+	uint32_t abilitySlot = managerAddr + 596;
+	playerSpellManager->m_2D4 = 0;
+	for (int slotIndex = 0; slotIndex < 16; ++slotIndex) {
+		STORE32(abilitySlot, 0);
+		STORE32(abilitySlot + 4, 0);
+		abilitySlot += 8;
+	}
+
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = slotField3;
+	return result;
+}
+PROMOTED_ENTRY(39, sub_82610FB0, 0x82610FB0) { ctx.r3.u64 = CECPlayerSpellManager_Initialise(ctx, base, ctx.r3.u64); }
 
 uint64_t CECPlayerSpellManager_Shutdown(CpuState& ctx, uint8_t* base, uint64_t playerSpellManagerAddr) {
 	constexpr int32_t g_83490000 = int32_t(0x83490000);

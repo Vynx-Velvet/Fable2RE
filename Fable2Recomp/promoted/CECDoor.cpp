@@ -1144,117 +1144,121 @@ uint64_t Door_AddWorldTextAtPosition(CpuState& ctx, uint8_t* base, uint64_t door
 	constexpr int32_t g_820BCE8C = int32_t(0x820BCE8C);
 	if (!UseLiftedCode(32, 0x8252AF38)) { ctx.r3.u64 = doorAddr; __imp__sub_8252AF38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8252AF38);
-	PPCVRegister savedV127 = ctx.v127;  // restored on return: the first CECDoor_PlayEffect call gets v1 in v127
-	const PPCVRegister inputVector = ctx.v1;  // handed on in v1 to every CECDoor_PlayEffect call
+	PPCVRegister savedV127 = ctx.v127;
+	const PPCVRegister savedV1 = ctx.v1;
 	uint32_t stack = ctx.r1.u64;
+	uint64_t entityHandle = 0;
+	uint64_t ctxR6 = 0, ctxR7 = 0, ctxR8 = 0, ctxR9 = 0;
+	PPCCRRegister compare{};
+	PPCXERRegister flags = ctx.xer;
 	CECDoor* door = GameObject<CECDoor>(base, doorAddr);
-	const uint32_t floatTable = uint32_t(g_8209B4E0);
 
 	VSTORE((stack + 0xFFFFFFD0u) & ~0xF, V8(savedV127));
 	stack = PushStackFrame(base, stack, 144);
-
-	// Strings are built in turn at stack+80 and handed to CECDoor_PlayEffect with floats from g_8209B4E0: one
-	// chosen by the open state, one chosen by door->m_21 and, when the door's entity has a component of
-	// type 64, the narrow string at +128 of the entity it refers to (or a fixed string).
 	ctx.r1.u64 = stack;
-	uint32_t isOpen = (uint32_t)Door_IsOpenForEntity(ctx, base, doorAddr, 0);
+
+	const uint32_t isOpen = Door_IsOpenForEntity(ctx, base, doorAddr, 0);
 	CCharString_AssignFromWideStr(ctx, base, stack + 80, (isOpen & 0xFF) ? g_820BCE44 : g_820BCE50);
+	ctx.v1 = savedV1;
+	ctx.v127 = savedV1;
 	ctx.fpscr.disableFlushMode();
-	double zOffset = double(LOAD_F32(floatTable + 3688));
-	// state the callee may pass on
-	ctx.v1 = inputVector;
-	ctx.v127 = inputVector;
-	CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
+	CECDoor_PlayEffect(ctx, base, stack + 80, double(LOAD_F32(uint32_t(g_8209B4E0) + 3688)));
+	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
+	CCharString_AssignFromWideStr(ctx, base, stack + 80, LOAD8(doorAddr + 33) ? g_820BCE68 : g_820BCE78);
+	ctx.v1 = savedV1;
+	ctx.fpscr.disableFlushMode();
+	CECDoor_PlayEffect(ctx, base, stack + 80, double(LOAD_F32(uint32_t(g_8209B4E0) + 17056)));
 	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
 
-	CCharString_AssignFromWideStr(ctx, base, stack + 80, door->m_21 ? g_820BCE68 : g_820BCE78);
-	ctx.fpscr.disableFlushMode();
-	zOffset = double(LOAD_F32(floatTable + 17056));
-	// state the callee may pass on
-	ctx.v1 = inputVector;
-	CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
-	CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
+	ctxR6 = ctx.r6.u64;
+	ctxR7 = ctx.r7.u64;
+	ctxR8 = ctx.r8.u64;
+	flags.ca = ctx.xer.ca;
 
-	// Component of type 64 of the door's entity (door->m_4), present when bit 0 of its +44 word is set:
-	// indexed through its component table at +140, or found by a lower_bound search over its sorted
-	// (type, component) pairs at +72..+76.
-	uint64_t result = 0;
-	uint32_t doorEntity = door->m_4;
-	if ((LOAD32(doorEntity + 44) & 1) != 0) {
-		uint32_t component;
-		uint32_t componentTable = LOAD32(doorEntity + 140);
-		if (componentTable != 0) {
-			uint64_t pairAddr = ((uint64_t)LOAD8(componentTable + 64) << 3) + LOAD32(doorEntity + 72);
-			component = LOAD32((uint32_t)pairAddr + 4);
-			// state the callee may pass on (r6-r8 and CA stay as the last release left them)
-			ctx.r9.u64 = pairAddr;
+	uint32_t found = 0;
+	const uint32_t doorData = door->m_4;
+	if (LOAD32(doorData + 44) & 0x1) {
+		const uint64_t nested = LOAD32(doorData + 140);
+		if (nested != 0) {
+			const uint32_t index = LOAD8(nested + 64);
+			const uint32_t table = LOAD32(doorData + 72);
+			ctxR9 = __builtin_rotateleft32(index, 3) + (uint64_t)table;
+			entityHandle = (uint64_t)LOAD32((uint32_t)ctxR9 + 4);
 		} else {
-			uint32_t begin = LOAD32(doorEntity + 72);
-			uint32_t end = LOAD32(doorEntity + 76);
-			STORE32(stack + 80, 0);
-			uint64_t byteSpan = (uint64_t)end - begin;
-			STORE32(stack + 84, begin);
-			uint8_t carry = (int32_t)byteSpan < 0 && (byteSpan & 7) != 0;  // CA of the shift
-			int32_t pairCount = (int32_t)byteSpan >> 3;
-			// r7-r9 as the search leaves them: the last step's comparison, step bytes and step count
-			uint64_t lastBelow = ctx.r7.u64;
-			uint64_t lastStepBytes = byteSpan;
-			uint64_t lastStep = 0;
-			uint32_t cursor = begin;
-			if (pairCount > 0) {
+			uint64_t cursor = LOAD32(doorData + 72);
+			ctxR9 = 0;
+			ctxR6 = LOAD32(doorData + 76);
+			STORE32(stack + 80, (uint32_t)ctxR9);
+			const uint64_t range = ctxR6 - cursor;
+			STORE32(stack + 84, (uint32_t)cursor);
+			flags.ca = (int32_t)range < 0 & ((uint32_t)range & 0x7) != 0;
+			uint32_t count = (int32_t)range >> 3;
+			if ((int32_t)count > 0) {
 				do {
-					int32_t half = pairCount >> 1;
-					uint32_t halfBytes = (uint32_t)half << 3;
-					cursor += halfBytes;
-					bool below = (int32_t)LOAD32(cursor) < 64;
-					if (below) {
-						pairCount = pairCount - half - 1;
-						cursor += 8;
+					flags.ca = (int32_t)count < 0 & (count & 0x1) != 0;
+					ctxR9 = (int32_t)count >> 1;
+					ctxR8 = (uint32_t)ctxR9 << 3;
+					cursor = ctxR8 + cursor;
+					compare.compare<int32_t>(int32_t(LOAD32((uint32_t)cursor)), 64, flags);
+					ctxR7 = compare.lt ? 1 : 0;
+					ctxR7 = (uint32_t)ctxR7 & 0xFF;
+					if ((uint32_t)ctxR7 != 0) {
+						count = count - (uint32_t)ctxR9;
+						cursor = (int64_t)cursor + 8;
+						count = (int32_t)count - 1;
 					} else {
-						cursor -= halfBytes;
-						pairCount = half;
+						cursor = cursor - ctxR8;
+						count = (uint32_t)ctxR9;
 					}
-					lastBelow = below;
-					lastStepBytes = halfBytes;
-					lastStep = (uint32_t)half;
-				} while (pairCount > 0);
-				carry = 0;  // the step's shift of a positive count
-				STORE32(stack + 84, cursor);
+				} while ((int32_t)count > 0);
+				STORE32(stack + 84, (uint32_t)cursor);
 			}
-			if (cursor != end && (int32_t)LOAD32(cursor) <= 64) {
+			bool useCursor = false;
+			if ((uint32_t)cursor != (uint32_t)ctxR6) {
+				compare.compare<int32_t>(int32_t(LOAD32((uint32_t)cursor)), 64, flags);
+				useCursor = !compare.gt;
+			}
+			if (useCursor) {
 				STORE64(stack + 80, LOAD64(stack + 80));
-				component = LOAD32(LOAD32(stack + 84) + 4);
+				entityHandle = (uint64_t)LOAD32(LOAD32(stack + 84) + 4);
 			} else {
-				component = LOAD32(end + 4);
+				entityHandle = (uint64_t)LOAD32((uint32_t)ctxR6 + 4);
 			}
-			// state the callee may pass on
-			ctx.r6.u64 = end;
-			ctx.r7.u64 = lastBelow;
-			ctx.r8.u64 = lastStepBytes;
-			ctx.r9.u64 = lastStep;
-			ctx.xer.ca = carry;
 		}
+		found = 1;
+	}
 
-		uint32_t entity = (uint32_t)EntityHandle_GetEntity(ctx, base, component);
-		if (entity != 0 && (LOAD8(entity + 144) & 0x40) != 0) {
-			WideString_ConstructFromNarrow(ctx, base, stack + 80, entity + 128);
+	if (found & 0xFF) {
+		ctx.r6.u64 = ctxR6;
+		ctx.r7.u64 = ctxR7;
+		ctx.r8.u64 = ctxR8;
+		ctx.r9.u64 = ctxR9;
+		ctx.xer.ca = flags.ca;
+		const uint32_t entity = EntityHandle_GetEntity(ctx, base, entityHandle);
+		uint32_t isNamed = 0;
+		if (entity != 0 && (LOAD8(entity + 144) & 64) != 0) {
+			isNamed = 1;
+		}
+		if (isNamed != 0) {
+			WideString_ConstructFromNarrow(ctx, base, stack + 80, (int32_t)entity + 128);
 		} else {
 			CCharString_AssignFromWideStr(ctx, base, stack + 80, g_820BCE8C);
 		}
+		ctx.v1 = savedV1;
 		ctx.fpscr.disableFlushMode();
-		zOffset = double(LOAD_F32(floatTable));
-		// state the callee may pass on
-		ctx.v1 = inputVector;
-		CECDoor_PlayEffect(ctx, base, stack + 80, zOffset);
-		result = CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
+		CECDoor_PlayEffect(ctx, base, stack + 80, double(LOAD_F32(uint32_t(g_8209B4E0))));
+		entityHandle = CCharString_ReleaseAndDecGlobalCountB(ctx, base, stack + 80);
+		ctxR6 = ctx.r6.u64;
+		flags.ca = ctx.xer.ca;
 	}
 
 	stack = PopStackFrame(stack, 144);
-	ctx.r1.u64 = stack;
-	// callers read r0 after the call; v127 gets back its value from the entry
 	ctx.r0.u64 = 0xFFFFFFD0;
+	ctx.r1.u64 = stack;
+	ctx.r6.u64 = ctxR6;
+	ctx.xer.ca = flags.ca;
 	ctx.v127 = savedV127;
-	return result;
+	return entityHandle;
 }
 PROMOTED_ENTRY(32, sub_8252AF38, 0x8252AF38) { ctx.r3.u64 = Door_AddWorldTextAtPosition(ctx, base, ctx.r3.u64); }
 

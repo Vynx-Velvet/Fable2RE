@@ -737,8 +737,6 @@ uint32_t CECElectrified_UpdateEffect(CpuState& ctx, uint8_t* base, uint32_t elec
 }
 PROMOTED_ENTRY(68, sub_82977C88, 0x82977C88) { ctx.r3.u64 = CECElectrified_UpdateEffect(ctx, base, ctx.r3.u32); }
 
-// Runs CECElectrified_ResetEffectHandle, then creates a new object through Entity_Create and points the EntityHandle at
-// electrified+0x88 at it, going through a temporary EntityHandle on the stack.
 uint32_t CECElectrified_CreateEffectEntity(CpuState& ctx, uint8_t* base, uint64_t electrifiedAddr) {
 	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
@@ -751,39 +749,38 @@ uint32_t CECElectrified_CreateEffectEntity(CpuState& ctx, uint8_t* base, uint64_
 	ctx.r1.u64 = stack;
 	CECElectrified_ResetEffectHandle(ctx, base, electrifiedAddr);
 
-	uint32_t owner = electrified->m_4;
+	uint32_t electrifiedId = electrified->m_4;
 	ctx.fpscr.disableFlushMode();
-	double floatConstant = double(LOAD_F32(0x8209DE04u));
+	double electrifyAmount = double(LOAD_F32(0x8209DE04u));
 
-	// bump the shared counter; its new value (not wrapped to 32 bits) is passed on
+	// electrification context: bump the shared handle id counter and grab the ability id
 	uint32_t manager = LOAD32(uint32_t(g_83490000) + 26912);
 	uint32_t contextObject = LOAD32(manager + 12);
-	uint32_t counterAddr = LOAD32(contextObject + 132);
-	uint64_t counterValue = uint64_t(LOAD32(counterAddr)) + 1;
-	STORE32(counterAddr, uint32_t(counterValue));
-	// manager+12 is read again after the store, as in the original
-	uint32_t container = LOAD32(LOAD32(LOAD32(LOAD32(manager + 12) + 88) + 4) + 60);
+	uint32_t handleIdCounter = LOAD32(contextObject + 132);
+	uint32_t handleId = LOAD32(handleIdCounter) + 1;
+	STORE32(handleIdCounter, handleId);
+	uint32_t abilityId = LOAD32(LOAD32(LOAD32(contextObject + 88) + 4) + 60);
 
-	// state the callee may pass on
-	ctx.f1.f64 = floatConstant;
-	uint64_t newObject = Entity_Create(ctx, base, container, counterValue, owner, 2, 0);
+	ctx.f1.f64 = electrifyAmount;
+	uint64_t newHandle = Entity_Create(ctx, base, abilityId, handleId, electrifiedId, 2, 0);
 
-	// temporary EntityHandle on the stack: {vtable, null}
-	const int64_t entityHandleVtable = (int64_t)g_820F0000 + 5732;
-	STORE32(stack + 80, uint32_t(entityHandleVtable));
+	// scratch handle on the stack, initialised to the default ({0x820F1664, null})
+	const int32_t defaultHandleTag = g_820F0000;
+	const int64_t defaultHandleTag64 = (int64_t)defaultHandleTag + 5732;
+	STORE32(stack + 80, uint32_t(defaultHandleTag64));
 	STORE32(stack + 84, 0);
-	ctx.r8.u64 = entityHandleVtable;
-	EntityHandle_SetTarget(ctx, base, uint64_t(stack + 80), newObject);
+	ctx.r8.u64 = defaultHandleTag64;
+	ctx.r9.s64 = defaultHandleTag;
+	EntityHandle_SetTarget(ctx, base, uint64_t(stack + 80), newHandle);
 
 	EntityHandle_Assign(ctx, base, electrifiedAddr + 136, uint64_t(stack + 80));
 
-	// destroy the temporary: restore its vtable, then release it
-	STORE32(stack + 80, uint32_t(entityHandleVtable));
-	uint32_t released = EntityHandle_Release(ctx, base, uint64_t(stack + 80));
+	STORE32(stack + 80, uint32_t(defaultHandleTag64));
+	uint32_t handleReleaseResult = EntityHandle_Release(ctx, base, uint64_t(stack + 80));
 
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	return released;
+	return handleReleaseResult;
 }
 PROMOTED_ENTRY(68, sub_82977DB8, 0x82977DB8) { ctx.r3.u64 = CECElectrified_CreateEffectEntity(ctx, base, ctx.r3.u64); }
 

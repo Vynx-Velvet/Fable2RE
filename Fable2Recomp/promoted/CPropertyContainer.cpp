@@ -630,6 +630,7 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 	LiftedFrame frame(0x83218630);
 
 	// vtable pointers of the property classes this loader knows how to instantiate
+	constexpr uint32_t kDefaultVtable = 0x8209003Fu;
 	constexpr uint32_t kVtableType1 = 0x820F19CCu;
 	constexpr uint32_t kVtableType64 = 0x820F1BE8u;
 	constexpr uint32_t kVtableType128 = 0x820F1C18u;
@@ -646,6 +647,8 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 	// stack + 88: handle owning the property being loaded
 	STORE32(stack + 80, propertyContainer->m_entryCount);
 
+	uint32_t entryCountVtableSource = LOAD32(0x8349E650u);
+	ctx.r4.u64 = entryCountVtableSource != 0 ? LOAD32(entryCountVtableSource) : kDefaultVtable;
 	uint32_t result = IStream_SerializeU32(ctx, base, loadStream, stack + 80);
 
 	auto createTaggedProperty = [&](uint32_t size, uint32_t vtable, uint32_t typeTag) -> uint32_t {
@@ -660,8 +663,10 @@ uint32_t CPropertyContainer_Load(CpuState& ctx, uint8_t* base, uint64_t property
 	};
 
 	for (int32_t i = 0; i < (int32_t)LOAD32(stack + 80); i++) {
+		uint32_t typeCodeVtableSource = LOAD32(0x8349E654u);
 		STORE32(stack + 88, 0);
 		STORE32(stack + 92, 0);
+		ctx.r4.u64 = typeCodeVtableSource != 0 ? LOAD32(typeCodeVtableSource) : kDefaultVtable;
 		IStream_SerializeU32(ctx, base, loadStream, stack + 84);
 
 		uint32_t propertyTypeCode = LOAD32(stack + 84);
@@ -861,6 +866,8 @@ uint64_t CPropertyContainer_LoadFromStream(CpuState& ctx, uint8_t* base, uint64_
 			if (singletonPtr3 != 0) {
 				singleton3 = LOAD32(singletonPtr3);
 			}
+			ctx.r4.u64 = singleton3;
+			ctx.r9.u64 = hasData;
 			IStream_SerializeU32(ctx, base, stream, versionAddr);
 
 			uint32_t streamEndRead = LOAD32(LOAD32(streamAddr) + 12);
@@ -880,8 +887,6 @@ uint64_t CPropertyContainer_LoadFromStream(CpuState& ctx, uint8_t* base, uint64_
 			CPropertyContainer_Load(ctx, base, propertyContainerAddr, stream);
 		}
 
-		// the callee reads the entity id and the two extra flags from r5/r6/r7,
-		// not from the argument registers
 		ctx.r6.u64 = entityId;
 		CRegistrableThing_LoadId(ctx, base, propertyContainerAddr, stream);
 

@@ -216,6 +216,7 @@ uint64_t COptionParser_GetStringByName(CpuState& ctx, uint8_t* base, uint64_t op
 		? (uint64_t)LOAD32(value + 0x04)   // long string: buffer held behind a pointer
 		: (uint64_t)(value + 0x04);        // short string: buffer stored inline
 
+	ctx.r10.u64 = length;
 	String_Assign(ctx, base, outString, stringData);
 	return 1;
 }
@@ -236,6 +237,7 @@ uint32_t COptionParser_Dtor(CpuState& ctx, uint8_t* base, uint64_t optionParserA
 	uint32_t stringArray = optionParser->m_94;
 	if (stringArray != 0) {
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = LOAD8(stack + 80);
 		StringArray_Destruct(ctx, base, stringArray, LOAD32(obj + 152));
 		HandleTarget_FreeThunk(ctx, base, LOAD32(obj + 148));
 	}

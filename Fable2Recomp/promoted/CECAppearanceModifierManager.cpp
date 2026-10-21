@@ -1022,25 +1022,26 @@ uint32_t AppearanceModifierManager_AdjustModifierValue(CpuState& ctx, uint8_t* b
 }
 PROMOTED_ENTRY(35, sub_82572AF8, 0x82572AF8) { ctx.r3.u64 = AppearanceModifierManager_AdjustModifierValue(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.f1.f64); }
 
-uint64_t AppearanceModifierManager_RemoveByRecordName(CpuState& ctx, uint8_t* base, uint64_t appearanceModifierManagerAddr, uint32_t recordNameAddr) {
-	if (!UseLiftedCode(35, 0x82574F38)) { ctx.r3.u64 = appearanceModifierManagerAddr; ctx.r4.u64 = recordNameAddr; __imp__sub_82574F38(ctx, base); return ctx.r3.u64; }
+uint64_t AppearanceModifierManager_RemoveByRecordName(CpuState& ctx, uint8_t* base, uint64_t arg1, uint32_t arg2) {
+	if (!UseLiftedCode(35, 0x82574F38)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_82574F38(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82574F38);
 	uint32_t stack = ctx.r1.u64;
 	stack = PushStackFrame(base, stack, 112);
-	// Look the record up by its name (a CCharString); the reference's first word is the record id, 0 if none.
 	uint32_t recordRef = stack + 80;
 	ctx.r1.u64 = stack;
-	GameDBRecordRef_Construct(ctx, base, recordRef, recordNameAddr);
-	uint32_t recordId = LOAD32(recordRef);
-	uint64_t result = 0;
-	if (recordId != 0) {
-		result = AppearanceModifierManager_RemoveEntryByRecordId(ctx, base, appearanceModifierManagerAddr, recordId);
+	GameDBRecordRef_Construct(ctx, base, recordRef, arg2);
+	uint32_t record = LOAD32(stack + 80);
+	if (record != 0) {
+		uint64_t result = AppearanceModifierManager_RemoveEntryByRecordId(ctx, base, arg1, record);
+		stack = PopStackFrame(stack, 112);
+		ctx.r1.u64 = stack;
+		ctx.r4.u64 = record;
+		return result;
 	}
 	stack = PopStackFrame(stack, 112);
 	ctx.r1.u64 = stack;
-	// callers read r4 after the call
-	ctx.r4.u64 = recordId;
-	return result;
+	ctx.r4.u64 = record;
+	return 0;
 }
 PROMOTED_ENTRY(35, sub_82574F38, 0x82574F38) { ctx.r3.u64 = AppearanceModifierManager_RemoveByRecordName(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 

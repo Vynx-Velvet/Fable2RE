@@ -265,7 +265,6 @@ uint64_t CPhysicsBodyEntity_SetBodyPosition(CpuState& ctx, uint8_t* base, uint64
 
 	// Spill the incoming vector register v1 into the frame's scratch slot.
 	VSTORE((stack + 160u) & ~0xF, V8(ctx.v1));
-	ctx.fpscr.disableFlushMode();
 
 	// Repack it as a float4: v1.xyz followed by a constant w component.
 	float vecX = LOAD_F32(stack + 160);
@@ -286,6 +285,8 @@ uint64_t CPhysicsBodyEntity_SetBodyPosition(CpuState& ctx, uint8_t* base, uint64
 	uint32_t linkedEntity = LOAD32((uint32_t)entity + 0x30);
 
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = vecPtr;
+	ctx.f12.f64 = double(vecZ);
 	uint64_t result = RigidBodyOwnerHandle_SetBodyPosition(ctx, base, linkedEntity, vecPtr);
 
 	stack = PopStackFrame(stack, 128);
@@ -367,6 +368,8 @@ uint64_t CPhysicsBodyEntity_SetRotation(CpuState& ctx, uint8_t* base, uint32_t p
 
 	hkRotation_SetFromQuaternion(ctx, base, stack + 144, stack + 112);
 	uint32_t bodyAddr = physicsBodyEntity->m_body;
+	ctx.r5.u64 = needsRescale;
+	ctx.r7.u64 = vec7Dst;
 	ctx.v10 = v10;
 	ctx.v11 = v11;
 	uint64_t result = hkpRigidBody_SetRotation(ctx, base, bodyAddr, stack + 144);
@@ -442,6 +445,8 @@ uint32_t CPhysicsBodyEntity_Destructor(CpuState& ctx, uint8_t* base, uint64_t ph
 
 	uint32_t body = physicsBodyEntity->m_body;
 	ctx.r1.u64 = stack;
+	ctx.r9.u64 = r9Value;
+	ctx.r10.u64 = r10Value;
 	hkReferencedObject_RemoveReference(ctx, base, body);
 
 	uint32_t entityHandleValue = (uint32_t)g_820F1664;

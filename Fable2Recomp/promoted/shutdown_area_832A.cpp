@@ -75,6 +75,89 @@ uint64_t Destroy_TXT_83497260_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A00C0, 0x832A00C0) { ctx.r3.u64 = Destroy_TXT_83497260_G_(ctx, base); }
 
+// sub_832A00D0  [104 bytes]
+// Releases the strings of a global array from its end backwards; each release decrements the
+// global string count (atomically) and clears the slot.
+uint64_t n_sub_832A00D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	if (!UseLiftedCode(145, 0x832A00D0)) { __imp__sub_832A00D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A00D0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_83490000 + 29288;
+	uint64_t slot = arrayStart + 64;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 15;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A00D0, 0x832A00D0) { ctx.r3.u64 = n_sub_832A00D0(ctx, base); }
+
+uint64_t n_sub_832A0138(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	if (!UseLiftedCode(145, 0x832A0138)) { __imp__sub_832A0138(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A0138);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_83490000 + 29352;
+	uint64_t slot = arrayStart + 64;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 15;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A0138, 0x832A0138) { ctx.r3.u64 = n_sub_832A0138(ctx, base); }
+
 uint64_t Destroy_TXT_83497338_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497338_G_ = int32_t(0x83497338);
 	if (!UseLiftedCode(145, 0x832A01A0)) { __imp__sub_832A01A0(ctx, base); return ctx.r3.u64; }
@@ -588,6 +671,35 @@ uint64_t Destroy_TXT_834974D0_G_(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_834974D0_G_);
 }
 PROMOTED_ENTRY(145, sub_832A05F8, 0x832A05F8) { ctx.r3.u64 = Destroy_TXT_834974D0_G_(ctx, base); }
+
+uint64_t n_sub_832A0608(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834974D4 = int32_t(0x834974D4);
+	if (!UseLiftedCode(145, 0x832A0608)) { __imp__sub_832A0608(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A0608);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_834974D4);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		HandleRange_ReleaseAll(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A0608, 0x832A0608) { ctx.r3.u64 = n_sub_832A0608(ctx, base); }
 
 uint64_t Destroy_TXT_834974E4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_834974E4_G_ = int32_t(0x834974E4);
@@ -1963,6 +2075,46 @@ uint64_t Destroy_TXT_83497A7C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1548, 0x832A1548) { ctx.r3.u64 = Destroy_TXT_83497A7C_G_(ctx, base); }
 
+uint64_t n_sub_832A1558(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	if (!UseLiftedCode(145, 0x832A1558)) { __imp__sub_832A1558(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A1558);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_83490000 + 31360;
+	uint64_t slot = arrayStart + 32;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 7;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A1558, 0x832A1558) { ctx.r3.u64 = n_sub_832A1558(ctx, base); }
+
 uint64_t Destroy_TXT_83497AA0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497AA0_G_ = int32_t(0x83497AA0);
 	if (!UseLiftedCode(145, 0x832A15C0)) { __imp__sub_832A15C0(ctx, base); return ctx.r3.u64; }
@@ -2932,6 +3084,46 @@ uint64_t DestroyGlobalSharedHandle_83497E6C(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A1DE0, 0x832A1DE0) { ctx.r3.u64 = DestroyGlobalSharedHandle_83497E6C(ctx, base); }
 
+uint64_t n_sub_832A1DF0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834F0000 = int32_t(0x834F0000);
+	if (!UseLiftedCode(145, 0x832A1DF0)) { __imp__sub_832A1DF0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A1DF0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834F0000 + 27252;
+	uint64_t slot = arrayStart + 20;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 4;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A1DF0, 0x832A1DF0) { ctx.r3.u64 = n_sub_832A1DF0(ctx, base); }
+
 uint64_t ClearHandleTargetGlobal_83497E74(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83497E74 = int32_t(0x83497E74);
 	if (!UseLiftedCode(145, 0x832A1E58)) { __imp__sub_832A1E58(ctx, base); return ctx.r3.u64; }
@@ -3008,6 +3200,46 @@ uint64_t Destroy_TXT_83497E9C_G_(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_83497E9C_G_);
 }
 PROMOTED_ENTRY(145, sub_832A1F10, 0x832A1F10) { ctx.r3.u64 = Destroy_TXT_83497E9C_G_(ctx, base); }
+
+uint64_t n_sub_832A1F20(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83490000 = int32_t(0x83490000);
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	if (!UseLiftedCode(145, 0x832A1F20)) { __imp__sub_832A1F20(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A1F20);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_83490000 + 32416;
+	uint64_t slot = arrayStart + 128;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 31;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A1F20, 0x832A1F20) { ctx.r3.u64 = n_sub_832A1F20(ctx, base); }
 
 uint64_t Destroy_TXT_83497F20_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83497F20_G_ = int32_t(0x83497F20);
@@ -3587,6 +3819,64 @@ uint64_t Destroy_TXT_8349810C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A2458, 0x832A2458) { ctx.r3.u64 = Destroy_TXT_8349810C_G_(ctx, base); }
 
+uint64_t n_sub_832A2468(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83498110 = int32_t(0x83498110);
+	if (!UseLiftedCode(145, 0x832A2468)) { __imp__sub_832A2468(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A2468);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_83498110);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		EntityHandlePair_DestroyRange(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A2468, 0x832A2468) { ctx.r3.u64 = n_sub_832A2468(ctx, base); }
+
+uint64_t n_sub_832A24D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83498120 = int32_t(0x83498120);
+	if (!UseLiftedCode(145, 0x832A24D0)) { __imp__sub_832A24D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A24D0);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_83498120);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		EntityHandlePair_DestroyRange(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A24D0, 0x832A24D0) { ctx.r3.u64 = n_sub_832A24D0(ctx, base); }
+
 uint64_t ClearHandleTargetGlobal_83498130(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_83498130 = int32_t(0x83498130);
 	if (!UseLiftedCode(145, 0x832A2538)) { __imp__sub_832A2538(ctx, base); return ctx.r3.u64; }
@@ -3735,6 +4025,46 @@ uint64_t Destroy_TXT_8349817C_G_(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_8349817C_G_);
 }
 PROMOTED_ENTRY(145, sub_832A2680, 0x832A2680) { ctx.r3.u64 = Destroy_TXT_8349817C_G_(ctx, base); }
+
+uint64_t n_sub_832A2690(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A2690)) { __imp__sub_832A2690(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A2690);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 14156;
+	uint64_t slot = arrayStart + 16;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 3;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A2690, 0x832A2690) { ctx.r3.u64 = n_sub_832A2690(ctx, base); }
 
 uint64_t Destroy_TXT_83498198_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498198_G_ = int32_t(0x83498198);
@@ -7046,6 +7376,46 @@ uint64_t Destroy_TXT_83498FB0_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4460, 0x832A4460) { ctx.r3.u64 = Destroy_TXT_83498FB0_G_(ctx, base); }
 
+uint64_t n_sub_832A4470(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A4470)) { __imp__sub_832A4470(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4470);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 14260;
+	uint64_t slot = arrayStart + 8;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 1;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4470, 0x832A4470) { ctx.r3.u64 = n_sub_832A4470(ctx, base); }
+
 uint64_t Destroy_TXT_83498FB4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498FB4_G_ = int32_t(0x83498FB4);
 	if (!UseLiftedCode(145, 0x832A44D8)) { __imp__sub_832A44D8(ctx, base); return ctx.r3.u64; }
@@ -7190,6 +7560,25 @@ uint64_t DestroyGlobalPtrVector8_834C3860(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4878, 0x832A4878) { ctx.r3.u64 = DestroyGlobalPtrVector8_834C3860(ctx, base); }
 
+uint64_t n_sub_832A48B8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349A2D0 = int32_t(0x8349A2D0);
+	if (!UseLiftedCode(145, 0x832A48B8)) { __imp__sub_832A48B8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A48B8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349A2D0);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_8263FDB0(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A48B8, 0x832A48B8) { ctx.r3.u64 = n_sub_832A48B8(ctx, base); }
+
 uint64_t Destroy_TXT_8349AA40_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AA40_G_ = int32_t(0x8349AA40);
 	if (!UseLiftedCode(145, 0x832A4A48)) { __imp__sub_832A4A48(ctx, base); return ctx.r3.u64; }
@@ -7267,6 +7656,25 @@ uint64_t ClearHandleTargetGlobal_8349AD40(CpuState& ctx, uint8_t* base) {
 	return held;
 }
 PROMOTED_ENTRY(145, sub_832A4B08, 0x832A4B08) { ctx.r3.u64 = ClearHandleTargetGlobal_8349AD40(ctx, base); }
+
+uint64_t n_sub_832A4B60(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349AD50 = int32_t(0x8349AD50);
+	if (!UseLiftedCode(145, 0x832A4B60)) { __imp__sub_832A4B60(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4B60);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349AD50);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_82678C80(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4B60, 0x832A4B60) { ctx.r3.u64 = n_sub_832A4B60(ctx, base); }
 
 uint64_t Destroy_TXT_8349AD2C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AD2C_G_ = int32_t(0x8349AD2C);
@@ -7375,6 +7783,25 @@ uint64_t DestroyGlobalList_8349ADB4(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A4C68, 0x832A4C68) { ctx.r3.u64 = DestroyGlobalList_8349ADB4(ctx, base); }
 
+uint64_t n_sub_832A4C78(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349ADC0 = int32_t(0x8349ADC0);
+	if (!UseLiftedCode(145, 0x832A4C78)) { __imp__sub_832A4C78(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4C78);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349ADC0);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_82684348(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4C78, 0x832A4C78) { ctx.r3.u64 = n_sub_832A4C78(ctx, base); }
+
 uint64_t ClearHandleTargetGlobal_8349ADCC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8349ADCC = int32_t(0x8349ADCC);
 	if (!UseLiftedCode(145, 0x832A4CC0)) { __imp__sub_832A4CC0(ctx, base); return ctx.r3.u64; }
@@ -7395,6 +7822,44 @@ uint64_t ClearHandleTargetGlobal_8349ADCC(CpuState& ctx, uint8_t* base) {
 	return held;
 }
 PROMOTED_ENTRY(145, sub_832A4CC0, 0x832A4CC0) { ctx.r3.u64 = ClearHandleTargetGlobal_8349ADCC(ctx, base); }
+
+uint64_t n_sub_832A4D18(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349ADF0 = int32_t(0x8349ADF0);
+	if (!UseLiftedCode(145, 0x832A4D18)) { __imp__sub_832A4D18(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4D18);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349ADF0);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4D18, 0x832A4D18) { ctx.r3.u64 = n_sub_832A4D18(ctx, base); }
+
+uint64_t n_sub_832A4D60(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349ADFC = int32_t(0x8349ADFC);
+	if (!UseLiftedCode(145, 0x832A4D60)) { __imp__sub_832A4D60(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4D60);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349ADFC);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_822D5528(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4D60, 0x832A4D60) { ctx.r3.u64 = n_sub_832A4D60(ctx, base); }
 
 uint64_t Destroy_TXT_8349ADDC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349ADDC_G_ = int32_t(0x8349ADDC);
@@ -7419,6 +7884,64 @@ uint64_t Destroy_TXT_8349AE18_G_(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_8349AE18_G_);
 }
 PROMOTED_ENTRY(145, sub_832A4DC8, 0x832A4DC8) { ctx.r3.u64 = Destroy_TXT_8349AE18_G_(ctx, base); }
+
+uint64_t n_sub_832A4DD8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349AE1C = int32_t(0x8349AE1C);
+	if (!UseLiftedCode(145, 0x832A4DD8)) { __imp__sub_832A4DD8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4DD8);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349AE1C);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		EntityHandlePair_DestroyRange(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4DD8, 0x832A4DD8) { ctx.r3.u64 = n_sub_832A4DD8(ctx, base); }
+
+uint64_t n_sub_832A4E40(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349AE2C = int32_t(0x8349AE2C);
+	if (!UseLiftedCode(145, 0x832A4E40)) { __imp__sub_832A4E40(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4E40);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349AE2C);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		EntityHandlePair_DestroyRange(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4E40, 0x832A4E40) { ctx.r3.u64 = n_sub_832A4E40(ctx, base); }
 
 uint64_t Destroy_TXT_8349AE3C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AE3C_G_ = int32_t(0x8349AE3C);
@@ -7467,6 +7990,35 @@ uint64_t Destroy_TXT_8349AE50_G_(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, TXT_8349AE50_G_);
 }
 PROMOTED_ENTRY(145, sub_832A4EF8, 0x832A4EF8) { ctx.r3.u64 = Destroy_TXT_8349AE50_G_(ctx, base); }
+
+uint64_t n_sub_832A4F08(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349AE54 = int32_t(0x8349AE54);
+	if (!UseLiftedCode(145, 0x832A4F08)) { __imp__sub_832A4F08(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A4F08);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349AE54);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		Range_DestroyElements(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A4F08, 0x832A4F08) { ctx.r3.u64 = n_sub_832A4F08(ctx, base); }
 
 uint64_t Destroy_TXT_8349AE68_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AE68_G_ = int32_t(0x8349AE68);
@@ -8720,6 +9272,35 @@ uint64_t Destroy_TXT_8349B220_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A5A30, 0x832A5A30) { ctx.r3.u64 = Destroy_TXT_8349B220_G_(ctx, base); }
 
+uint64_t n_sub_832A5A40(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349B224 = int32_t(0x8349B224);
+	if (!UseLiftedCode(145, 0x832A5A40)) { __imp__sub_832A5A40(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A5A40);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349B224);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		HandleRange_ReleaseAll(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A5A40, 0x832A5A40) { ctx.r3.u64 = n_sub_832A5A40(ctx, base); }
+
 uint64_t Destroy_TXT_8349B234_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B234_G_ = int32_t(0x8349B234);
 	if (!UseLiftedCode(145, 0x832A5AB0)) { __imp__sub_832A5AB0(ctx, base); return ctx.r3.u64; }
@@ -9685,6 +10266,35 @@ uint64_t Destroy_TXT_8349BB18_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6380, 0x832A6380) { ctx.r3.u64 = Destroy_TXT_8349BB18_G_(ctx, base); }
 
+uint64_t n_sub_832A6390(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349BB1C = int32_t(0x8349BB1C);
+	if (!UseLiftedCode(145, 0x832A6390)) { __imp__sub_832A6390(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A6390);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349BB1C);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		HandleRange_ReleaseAll(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A6390, 0x832A6390) { ctx.r3.u64 = n_sub_832A6390(ctx, base); }
+
 uint64_t Destroy_TXT_8349BB2C_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349BB2C_G_ = int32_t(0x8349BB2C);
 	if (!UseLiftedCode(145, 0x832A63F8)) { __imp__sub_832A63F8(ctx, base); return ctx.r3.u64; }
@@ -10470,6 +11080,46 @@ uint64_t Destroy_TXT_8349BCEC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(145, sub_832A6A88, 0x832A6A88) { ctx.r3.u64 = Destroy_TXT_8349BCEC_G_(ctx, base); }
 
+uint64_t n_sub_832A6A98(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A6A98)) { __imp__sub_832A6A98(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A6A98);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 14680;
+	uint64_t slot = arrayStart + 12;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 2;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A6A98, 0x832A6A98) { ctx.r3.u64 = n_sub_832A6A98(ctx, base); }
+
 uint64_t Destroy_TXT_8349BCF0_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349BCF0_G_ = int32_t(0x8349BCF0);
 	if (!UseLiftedCode(145, 0x832A6B00)) { __imp__sub_832A6B00(ctx, base); return ctx.r3.u64; }
@@ -11141,6 +11791,184 @@ uint64_t ReleaseCCharStringArray_832A7090(CpuState& ctx, uint8_t* base) {
 	return result;
 }
 PROMOTED_ENTRY(145, sub_832A7090, 0x832A7090) { ctx.r3.u64 = ReleaseCCharStringArray_832A7090(ctx, base); }
+
+uint64_t n_sub_832A7100(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A7100)) { __imp__sub_832A7100(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A7100);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 13204;
+	uint64_t slot = arrayStart + 40;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 9;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A7100, 0x832A7100) { ctx.r3.u64 = n_sub_832A7100(ctx, base); }
+
+uint64_t n_sub_832A7168(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A7168)) { __imp__sub_832A7168(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A7168);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 13248;
+	uint64_t slot = arrayStart + 160;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 39;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A7168, 0x832A7168) { ctx.r3.u64 = n_sub_832A7168(ctx, base); }
+
+uint64_t n_sub_832A71D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_83496EB8 = int32_t(0x83496EB8);
+	constexpr int32_t g_834C0000 = int32_t(0x834C0000);
+	if (!UseLiftedCode(145, 0x832A71D0)) { __imp__sub_832A71D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A71D0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 128);
+	uint32_t entryMsr = ctx.r13.u32;
+	uint64_t arrayStart = (int64_t)g_834C0000 + 13408;
+	uint64_t slot = arrayStart + 160;
+	uint32_t stringCount = uint32_t(g_83496EB8);
+	int32_t remaining = 39;
+	uint64_t result = 0;
+	do {
+		slot -= 4;
+		ctx.r1.u64 = stack;
+		result = CCharString_Release(ctx, base, slot);
+		bool swapped = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t lockMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = entryMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW(stringCount);
+			uint32_t newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			swapped = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(stringCount)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!swapped);
+		remaining = remaining - 1;
+		STORE32((uint32_t)slot, 0);
+	} while (remaining >= 0);
+	stack = PopStackFrame(stack, 128);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A71D0, 0x832A71D0) { ctx.r3.u64 = n_sub_832A71D0(ctx, base); }
+
+uint64_t n_sub_832A7238(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349BFE4 = int32_t(0x8349BFE4);
+	if (!UseLiftedCode(145, 0x832A7238)) { __imp__sub_832A7238(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A7238);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349BFE4);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		Range_DestroyElements(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A7238, 0x832A7238) { ctx.r3.u64 = n_sub_832A7238(ctx, base); }
+
+uint64_t n_sub_832A72A0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349BFF4 = int32_t(0x8349BFF4);
+	if (!UseLiftedCode(145, 0x832A72A0)) { __imp__sub_832A72A0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832A72A0);
+	uint32_t stack = ctx.r1.u64;
+	uint64_t result = ctx.r3.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vector = uint32_t(g_8349BFF4);
+	uint32_t begin = LOAD32(vector + 4);
+	uint64_t handedBack = begin;
+	if (begin != 0) {
+		uint32_t end = LOAD32(vector + 8);
+		ctx.r1.u64 = stack;
+		ctx.r3.u64 = vector;
+		Range_DestroyElements(ctx, base, begin, end);
+		uint32_t storage = LOAD32(vector + 4);
+		result = HandleTarget_Free(ctx, base, storage);
+		handedBack = ctx.r4.u64;
+	}
+	STORE32(vector + 4, 0u);
+	STORE32(vector + 8, 0u);
+	STORE32(vector + 12, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	ctx.r4.u64 = handedBack;
+	return result;
+}
+PROMOTED_ENTRY(145, sub_832A72A0, 0x832A72A0) { ctx.r3.u64 = n_sub_832A72A0(ctx, base); }
 
 uint64_t Destroy_TXT_8349C004_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349C004_G_ = int32_t(0x8349C004);
@@ -18818,6 +19646,66 @@ uint64_t ReleaseGlobalHandle_8349F540(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832ABA10, 0x832ABA10) { ctx.r3.u64 = ReleaseGlobalHandle_8349F540(ctx, base); }
 
+// sub_832ABA78  [92 bytes]
+// Destructor chain of the global object at g_83320000 - 22472: each level stores its vtable at +0 and
+// runs n_sub_821FBED8 on the object.
+uint64_t n_sub_832ABA78(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832ABA78)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832ABA78(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ABA78);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 22472;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ABA78, 0x832ABA78) { ctx.r3.u64 = n_sub_832ABA78(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
+uint64_t n_sub_832ABAD8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832ABAD8)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832ABAD8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ABAD8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 22464;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ABAD8, 0x832ABAD8) { ctx.r3.u64 = n_sub_832ABAD8(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
+uint64_t n_sub_832ABB38(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832ABB38)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832ABB38(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ABB38);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 22456;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ABB38, 0x832ABB38) { ctx.r3.u64 = n_sub_832ABB38(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
 uint64_t C_820F5E8C_Cleanup_8331A868(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331A868 = int32_t(0x8331A868);
 	if (!UseLiftedCode(146, 0x832ABC48)) { __imp__sub_832ABC48(ctx, base); return ctx.r3.u64; }
@@ -19282,6 +20170,25 @@ uint64_t ReleaseGlobalString_8349F898(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AC708, 0x832AC708) { ctx.r3.u64 = ReleaseGlobalString_8349F898(ctx, base); }
 
+uint64_t n_sub_832AC718(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_8349F89C = int32_t(0x8349F89C);
+	if (!UseLiftedCode(146, 0x832AC718)) { __imp__sub_832AC718(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AC718);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_8349F89C);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_82A5E0D8(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AC718, 0x832AC718) { ctx.r3.u64 = n_sub_832AC718(ctx, base); }
+
 uint64_t ReleaseGlobalString_834A0B9C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0B9C = int32_t(0x834A0B9C);
 	if (!UseLiftedCode(146, 0x832AC860)) { __imp__sub_832AC860(ctx, base); return ctx.r3.u64; }
@@ -19442,6 +20349,44 @@ uint64_t C_820F5E8C_Cleanup_8331AA18(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832ACB00, 0x832ACB00) { ctx.r3.u64 = C_820F5E8C_Cleanup_8331AA18(ctx, base); }
 
+uint64_t n_sub_832ACB10(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832ACB10)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832ACB10(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACB10);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 21948;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACB10, 0x832ACB10) { ctx.r3.u64 = n_sub_832ACB10(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
+uint64_t n_sub_832ACB70(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832ACB70)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832ACB70(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACB70);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 21940;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACB70, 0x832ACB70) { ctx.r3.u64 = n_sub_832ACB70(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
 uint64_t ReleaseGlobalString_834A0DAC(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0DAC = int32_t(0x834A0DAC);
 	if (!UseLiftedCode(146, 0x832ACBD0)) { __imp__sub_832ACBD0(ctx, base); return ctx.r3.u64; }
@@ -19482,6 +20427,414 @@ uint64_t ReleaseGlobalString_834A0DB8(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832ACC10, 0x832ACC10) { ctx.r3.u64 = ReleaseGlobalString_834A0DB8(ctx, base); }
 
+// sub_832ACC20  [116 bytes]
+uint64_t n_sub_832ACC20(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACC20)) { __imp__sub_832ACC20(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACC20);
+	// Releases the object the global word at g_834A0000 + 3516 holds: an atomic decrement of the count at +4 of
+	// the object, a call of the method at +4 of its vtable when the count reaches 0, then the word is cleared.
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3516;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACC20, 0x832ACC20) { ctx.r3.u64 = n_sub_832ACC20(ctx, base); }
+
+uint64_t n_sub_832ACC98(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACC98)) { __imp__sub_832ACC98(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACC98);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3520;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACC98, 0x832ACC98) { ctx.r3.u64 = n_sub_832ACC98(ctx, base); }
+
+uint64_t n_sub_832ACD10(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACD10)) { __imp__sub_832ACD10(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACD10);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3524;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACD10, 0x832ACD10) { ctx.r3.u64 = n_sub_832ACD10(ctx, base); }
+
+uint64_t n_sub_832ACD88(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACD88)) { __imp__sub_832ACD88(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACD88);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3528;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACD88, 0x832ACD88) { ctx.r3.u64 = n_sub_832ACD88(ctx, base); }
+
+uint64_t n_sub_832ACE00(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACE00)) { __imp__sub_832ACE00(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACE00);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3532;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACE00, 0x832ACE00) { ctx.r3.u64 = n_sub_832ACE00(ctx, base); }
+
+uint64_t n_sub_832ACE78(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACE78)) { __imp__sub_832ACE78(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACE78);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3536;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACE78, 0x832ACE78) { ctx.r3.u64 = n_sub_832ACE78(ctx, base); }
+
+uint64_t n_sub_832ACEF0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACEF0)) { __imp__sub_832ACEF0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACEF0);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3540;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACEF0, 0x832ACEF0) { ctx.r3.u64 = n_sub_832ACEF0(ctx, base); }
+
+uint64_t n_sub_832ACF68(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACF68)) { __imp__sub_832ACF68(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACF68);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3544;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACF68, 0x832ACF68) { ctx.r3.u64 = n_sub_832ACF68(ctx, base); }
+
+uint64_t n_sub_832ACFE0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832ACFE0)) { __imp__sub_832ACFE0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ACFE0);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3548;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ACFE0, 0x832ACFE0) { ctx.r3.u64 = n_sub_832ACFE0(ctx, base); }
+
 uint64_t C_820FF240_Cleanup_8331AA54(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AA54 = int32_t(0x8331AA54);
 	if (!UseLiftedCode(146, 0x832AD058)) { __imp__sub_832AD058(ctx, base); return ctx.r3.u64; }
@@ -19489,6 +20842,51 @@ uint64_t C_820FF240_Cleanup_8331AA54(CpuState& ctx, uint8_t* base) {
 	return C_820FF240_Destructor(ctx, base, g_8331AA54);
 }
 PROMOTED_ENTRY(146, sub_832AD058, 0x832AD058) { ctx.r3.u64 = C_820FF240_Cleanup_8331AA54(ctx, base); }
+
+uint64_t n_sub_832AD068(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832AD068)) { __imp__sub_832AD068(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AD068);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 3552;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AD068, 0x832AD068) { ctx.r3.u64 = n_sub_832AD068(ctx, base); }
 
 uint64_t CCharString_ReleaseGlobal_834A0E00(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A0E00 = int32_t(0x834A0E00);
@@ -19778,6 +21176,51 @@ uint64_t CCharString_ReleaseGlobal_834A40D4(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AD540, 0x832AD540) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A40D4(ctx, base); }
 
+uint64_t n_sub_832AD5A8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832AD5A8)) { __imp__sub_832AD5A8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AD5A8);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 16680;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AD5A8, 0x832AD5A8) { ctx.r3.u64 = n_sub_832AD5A8(ctx, base); }
+
 uint64_t CCharString_ReleaseGlobal_834A412C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A412C = int32_t(0x834A412C);
 	if (!UseLiftedCode(146, 0x832AD620)) { __imp__sub_832AD620(ctx, base); return ctx.r3.u64; }
@@ -19847,6 +21290,51 @@ uint64_t CCharString_ReleaseGlobal_834A41A0(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AD728, 0x832AD728) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A41A0(ctx, base); }
 
+uint64_t n_sub_832AD7F8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(146, 0x832AD7F8)) { __imp__sub_832AD7F8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AD7F8);
+	uint32_t stack = ctx.r1.u64;
+	uint32_t lockMsr = ctx.r13.u32;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t slot = uint32_t(g_834A0000) + 19088;
+	uint64_t object = LOAD32(slot);
+	uint64_t result = object;
+	if ((uint32_t)object != 0) {
+		uint64_t countAddress = object + 4;
+		uint32_t newCount = 0;
+		bool stored = false;
+		do {
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			uint32_t savedMsr = REX_CHECK_GLOBAL_LOCK();
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = lockMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_ENTER_GLOBAL_LOCK();
+			ctx.reserved.u32 = *(uint32_t*)RAW((uint32_t)countAddress);
+			newCount = __builtin_bswap32(ctx.reserved.u32) - 1;
+			stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW((uint32_t)countAddress)), ctx.reserved.s32, __builtin_bswap32(newCount));
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			ctx.msr = savedMsr & 0x8020 | ctx.msr & ~0x8020;
+			REX_LEAVE_GLOBAL_LOCK();
+		} while (!stored);
+		if ((int32_t)newCount == 0) {
+			uint32_t vtable = LOAD32((uint32_t)object);
+			uint32_t method = LOAD32(vtable + 4);
+			ctx.r1.u64 = stack;
+			ctx.r3.u64 = object;
+			ctx.r9.u64 = countAddress;
+			ctx.r10.u64 = method;
+			REX_CALL_INDIRECT_FUNC(method);
+			result = ctx.r3.u64;
+		}
+		STORE32(slot, 0u);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AD7F8, 0x832AD7F8) { ctx.r3.u64 = n_sub_832AD7F8(ctx, base); }
+
 uint64_t DestroyGlobalObject_8331AAC8(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_8331AAC8 = int32_t(0x8331AAC8);
 	if (!UseLiftedCode(146, 0x832AD870)) { __imp__sub_832AD870(ctx, base); return ctx.r3.u64; }
@@ -19870,6 +21358,44 @@ uint64_t CCharString_ReleaseGlobal_834A4AE4(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4AE4);
 }
 PROMOTED_ENTRY(146, sub_832AD890, 0x832AD890) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4AE4(ctx, base); }
+
+uint64_t n_sub_832AD8A0(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832AD8A0)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832AD8A0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AD8A0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 21784;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AD8A0, 0x832AD8A0) { ctx.r3.u64 = n_sub_832AD8A0(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
+uint64_t n_sub_832AD900(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832AD900)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832AD900(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AD900);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 21776;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AD900, 0x832AD900) { ctx.r3.u64 = n_sub_832AD900(ctx, base, ctx.r7.u64, ctx.r8.u64); }
 
 uint64_t DestroyGlobalContainer_834A4B10(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4B10 = int32_t(0x834A4B10);
@@ -19995,6 +21521,25 @@ uint64_t CCharString_ReleaseGlobal_834A4BD4(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A4BD4);
 }
 PROMOTED_ENTRY(146, sub_832ADB48, 0x832ADB48) { ctx.r3.u64 = CCharString_ReleaseGlobal_834A4BD4(ctx, base); }
+
+uint64_t n_sub_832ADCB0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A4C00 = int32_t(0x834A4C00);
+	if (!UseLiftedCode(146, 0x832ADCB0)) { __imp__sub_832ADCB0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832ADCB0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A4C00);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	n_sub_82A8BC88(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832ADCB0, 0x832ADCB0) { ctx.r3.u64 = n_sub_832ADCB0(ctx, base); }
 
 uint64_t CCharString_ReleaseGlobal_834A4C20(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A4C20 = int32_t(0x834A4C20);
@@ -20214,6 +21759,120 @@ uint64_t ReleaseGlobalCCharString_834A52F4(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AE100, 0x832AE100) { ctx.r3.u64 = ReleaseGlobalCCharString_834A52F4(ctx, base); }
 
+uint64_t n_sub_832AE110(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A52F8 = int32_t(0x834A52F8);
+	if (!UseLiftedCode(146, 0x832AE110)) { __imp__sub_832AE110(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE110);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A52F8);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A52F8(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE110, 0x832AE110) { ctx.r3.u64 = n_sub_832AE110(ctx, base); }
+
+uint64_t n_sub_832AE158(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A5304 = int32_t(0x834A5304);
+	if (!UseLiftedCode(146, 0x832AE158)) { __imp__sub_832AE158(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE158);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A5304);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A5304(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE158, 0x832AE158) { ctx.r3.u64 = n_sub_832AE158(ctx, base); }
+
+uint64_t n_sub_832AE1A0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A5310 = int32_t(0x834A5310);
+	if (!UseLiftedCode(146, 0x832AE1A0)) { __imp__sub_832AE1A0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE1A0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A5310);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A5310(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE1A0, 0x832AE1A0) { ctx.r3.u64 = n_sub_832AE1A0(ctx, base); }
+
+uint64_t n_sub_832AE1E8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A531C = int32_t(0x834A531C);
+	if (!UseLiftedCode(146, 0x832AE1E8)) { __imp__sub_832AE1E8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE1E8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A531C);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A531C(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE1E8, 0x832AE1E8) { ctx.r3.u64 = n_sub_832AE1E8(ctx, base); }
+
+uint64_t n_sub_832AE230(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A5328 = int32_t(0x834A5328);
+	if (!UseLiftedCode(146, 0x832AE230)) { __imp__sub_832AE230(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE230);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A5328);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A5328(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE230, 0x832AE230) { ctx.r3.u64 = n_sub_832AE230(ctx, base); }
+
+uint64_t n_sub_832AE278(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_834A5334 = int32_t(0x834A5334);
+	if (!UseLiftedCode(146, 0x832AE278)) { __imp__sub_832AE278(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE278);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t container = uint32_t(g_834A5334);
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = container;
+	HandleList_FreeAllNodes_834A5334(ctx, base);
+	uint32_t head = LOAD32(container + 4);
+	uint64_t result = HandleTarget_Free(ctx, base, head);
+	STORE32(container + 4, 0u);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE278, 0x832AE278) { ctx.r3.u64 = n_sub_832AE278(ctx, base); }
+
 uint64_t ReleaseGlobalRefCountedPtr_834A5344(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5344 = int32_t(0x834A5344);
 	if (!UseLiftedCode(146, 0x832AE318)) { __imp__sub_832AE318(ctx, base); return ctx.r3.u64; }
@@ -20350,6 +22009,25 @@ uint64_t ReleaseGlobalCCharString_834A53C8(CpuState& ctx, uint8_t* base) {
 	return CCharString_ReleaseAndDecGlobalCountA(ctx, base, g_834A53C8);
 }
 PROMOTED_ENTRY(146, sub_832AE438, 0x832AE438) { ctx.r3.u64 = ReleaseGlobalCCharString_834A53C8(ctx, base); }
+
+uint64_t n_sub_832AE628(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832AE628)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832AE628(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AE628);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 21524;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AE628, 0x832AE628) { ctx.r3.u64 = n_sub_832AE628(ctx, base, ctx.r7.u64, ctx.r8.u64); }
 
 uint64_t CleanupGlobalList_834A542C(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A542C = int32_t(0x834A542C);
@@ -21374,6 +23052,25 @@ uint64_t ReleaseCCharStringGlobal_834A5C5C(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(146, sub_832AF078, 0x832AF078) { ctx.r3.u64 = ReleaseCCharStringGlobal_834A5C5C(ctx, base); }
 
+uint64_t n_sub_832AF088(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832AF088)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832AF088(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AF088);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 20628;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AF088, 0x832AF088) { ctx.r3.u64 = n_sub_832AF088(ctx, base, ctx.r7.u64, ctx.r8.u64); }
+
 uint64_t ReleaseAtomicGlobal_834A5C64(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A5C64 = int32_t(0x834A5C64);
 	if (!UseLiftedCode(146, 0x832AF1A8)) { __imp__sub_832AF1A8(ctx, base); return ctx.r3.u64; }
@@ -21447,6 +23144,25 @@ uint64_t ReleaseContainerGlobal_834A5D48(CpuState& ctx, uint8_t* base) {
 	return ReleaseContainer_834A5D48(ctx, base);
 }
 PROMOTED_ENTRY(146, sub_832AF2A0, 0x832AF2A0) { ctx.r3.u64 = ReleaseContainerGlobal_834A5D48(ctx, base); }
+
+uint64_t n_sub_832AF3B8(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	constexpr int32_t g_820F0000 = int32_t(0x820F0000);
+	constexpr int32_t g_83320000 = int32_t(0x83320000);
+	if (!UseLiftedCode(146, 0x832AF3B8)) { ctx.r7.u64 = arg1; ctx.r8.u64 = arg2; __imp__sub_832AF3B8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832AF3B8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 112);
+	uint32_t object = g_83320000 - 20504;
+	STORE32(object, g_820F0000 + 7536);
+	ctx.r1.u64 = stack;
+	n_sub_821FBED8(ctx, base, object, arg1, arg2);
+	STORE32(object, g_820F0000 + 7552);
+	uint64_t result = n_sub_821FBED8(ctx, base, object, ctx.r7.u64, ctx.r8.u64);
+	stack = PopStackFrame(stack, 112);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(146, sub_832AF3B8, 0x832AF3B8) { ctx.r3.u64 = n_sub_832AF3B8(ctx, base, ctx.r7.u64, ctx.r8.u64); }
 
 uint64_t ReleaseRefCountedPtrGlobal_834A6018(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t g_834A6018 = int32_t(0x834A6018);

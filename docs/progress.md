@@ -2,11 +2,11 @@
 
 <!-- written by tools/progress.py from tracked files: do not edit by hand -->
 
-As of **2026-10-20**, **15.2%** of Lionhead's game functions are human-readable C++ in this repository (readable code with every name): 6,274 of 41,186, 2.2% of the game's code by size. Another 1,266 are readable code whose names are still to give, and 1,884 are rewrites that behave exactly like the original but still work through the CPU registers. Fable2RE rebuilds the game as readable C++ ([direction](project-direction.md)); this page counts how far that has come.
+As of **2026-10-21**, **15.3%** of Lionhead's game functions are human-readable C++ in this repository (readable code with every name): 6,303 of 41,186, 2.2% of the game's code by size. Another 1,443 are readable code whose names are still to give, and 4,459 are rewrites that behave exactly like the original but still work through the CPU registers. Fable2RE rebuilds the game as readable C++ ([direction](project-direction.md)); this page counts how far that has come.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="images/progress-dark.svg">
-  <img alt="15.2% of Lionhead's game functions are readable C++ with every name (6,274 of 41,186), as of 2026-10-20" src="images/progress-light.svg" width="860">
+  <img alt="15.3% of Lionhead's game functions are readable C++ with every name (6,303 of 41,186), as of 2026-10-21" src="images/progress-light.svg" width="860">
 </picture>
 
 ## Lionhead's game code
@@ -15,15 +15,15 @@ The game and engine code and its start-up initialisers: the code Lionhead wrote.
 
 | Kind | Functions | Share | Code bytes | Share |
 |---|---:|---:|---:|---:|
-| Readable C++ with every name | 6,217 | 15.1% | 265,224 | 2.2% |
+| Readable C++ with every name | 6,246 | 15.2% | 266,156 | 2.2% |
 | Readable C++, written by hand | 57 | 0.1% | 5,080 | 0.0% |
-| Readable C++, names still to do | 1,266 | 3.1% | 39,484 | 0.3% |
-| Rewritten, still at machine level | 1,884 | 4.6% | 372,380 | 3.1% |
-| Machine-translated C++, exact and tested | 30,470 | 74.0% | 11,193,272 | 91.8% |
-| Recompiled only | 1,292 | 3.1% | 323,876 | 2.7% |
+| Readable C++, names still to do | 1,443 | 3.5% | 45,144 | 0.4% |
+| Rewritten, still at machine level | 4,459 | 10.8% | 1,268,076 | 10.4% |
+| Machine-translated C++, exact and tested | 27,943 | 67.8% | 10,346,296 | 84.8% |
+| Recompiled only | 1,038 | 2.5% | 268,564 | 2.2% |
 | **Total** | **41,186** | | **12,199,316** | |
 
-Of the 9,367 reviewed rewrites, 5,900 are look-alikes that carry the reviewed rewrite of their group's representative with their own values (see what is counted, below).
+Of the 12,148 reviewed rewrites, 8,334 are look-alikes that carry the reviewed rewrite of their group's representative with their own values (see what is counted, below).
 
 ## What the rewrites still need
 
@@ -31,14 +31,14 @@ Each reviewed rewrite that is not readable C++ with every name yet, by what it s
 
 | Still has | Functions | Step that removes it |
 |---|---:|---|
-| address | 2,199 | naming (the global) |
-| cpu state | 1,884 | readable form: values passed as arguments, not through the CPU registers |
-| field offset | 1,743 | naming (the field, in the class model) |
-| stack frame | 1,491 | readable form: the frame bookkeeping in the generated entry, not in the body |
-| unnamed callee | 878 | naming (the callee) |
-| machine variable name | 510 | naming (variables and parameters) |
-| unnamed function | 492 | naming |
-| placeholder name | 143 |  |
+| cpu state | 4,459 | readable form: values passed as arguments, not through the CPU registers |
+| address | 4,109 | naming (the global) |
+| field offset | 4,104 | naming (the field, in the class model) |
+| stack frame | 3,904 | readable form: the frame bookkeeping in the generated entry, not in the body |
+| unnamed function | 2,904 | naming |
+| unnamed callee | 2,463 | naming (the callee) |
+| machine variable name | 2,270 | naming (variables and parameters) |
+| placeholder name | 392 |  |
 
 ## The whole executable
 
@@ -46,12 +46,12 @@ Every function of `default.xex`, by area ([scope](../research/catalog/scope.tsv)
 
 | Area | Functions | Human-readable | Names to do | Machine-level rewrite | Machine-translated | Recompiled only |
 |---|---:|---:|---:|---:|---:|---:|
-| Game and engine code | 32,344 | 417 (1.3%) | 506 (1.6%) | 1,378 (4.3%) | 28,751 (88.9%) | 1,292 (4.0%) |
-| Start-up initialisers | 8,842 | 5,857 (66.2%) | 760 (8.6%) | 506 (5.7%) | 1,719 (19.4%) | 0 (0.0%) |
+| Game and engine code | 32,344 | 446 (1.4%) | 629 (1.9%) | 3,592 (11.1%) | 26,639 (82.4%) | 1,038 (3.2%) |
+| Start-up initialisers | 8,842 | 5,857 (66.2%) | 814 (9.2%) | 867 (9.8%) | 1,304 (14.7%) | 0 (0.0%) |
 | Middleware libraries | 11,437 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 11,231 (98.2%) | 206 (1.8%) |
 | System libraries | 7,059 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 6,434 (91.1%) | 625 (8.9%) |
 | Unidentified code | 1,179 | 0 (0.0%) | 0 (0.0%) | 0 (0.0%) | 1,138 (96.5%) | 41 (3.5%) |
-| **All** | **60,861** | **6,274** (10.3%) | | | | |
+| **All** | **60,861** | **6,303** (10.4%) | | | | |
 
 ## Names
 
@@ -71,6 +71,7 @@ A row for every day the numbers changed in this repository (rows before 2026-10-
 
 | Date | Human-readable | Share | Names to do | Machine-level rewrite | By hand | Machine-translated | Recompiled only | Named in the dictionary |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026-10-21 | 6,303 | 15.3% | 1,443 | 4,459 | 57 | 27,943 | 1,038 | 9,000 |
 | 2026-10-20 | 6,274 | 15.2% | 1,266 | 1,884 | 57 | 30,470 | 1,292 | 9,000 |
 | 2026-10-19 | 6,274 | 15.2% | 1,268 | 1,885 | 57 | 30,722 | 1,037 | 9,000 |
 | 2026-10-17 | 71 | 0.2% | 133 | 1,294 | 57 | 38,651 | 1,037 | 5,232 |

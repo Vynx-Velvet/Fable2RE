@@ -1455,127 +1455,131 @@ uint64_t Lua_Stats_SetAsBerserk(CpuState& ctx, uint8_t* base, uint64_t statsAddr
 }
 PROMOTED_ENTRY(28, sub_8249F170, 0x8249F170) { ctx.r3.u64 = Lua_Stats_SetAsBerserk(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
-// Lua Stats.SetTitleAsFreeToBuy: when m_58 is not below the global threshold and the stats owner
-// (m_4) is not the entity stored under key 2, adds the title to the free-to-buy list (vector at
-// +0x74, begin m_78, end m_7C) unless it is listed already, checks the completionist achievement
-// and, when the title record has message text, shows it in a message box.
-uint64_t Lua_Stats_SetTitleAsFreeToBuy(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t titleRecordName, uint64_t callerR8) {
+uint64_t Lua_Stats_SetTitleAsFreeToBuy(CpuState& ctx, uint8_t* base, uint64_t statsAddr, uint64_t titleRecordName, uint64_t arg3) {
 	constexpr int32_t str_TXT_820B2E78_B_ = int32_t(0x820B2E78);
 	constexpr int32_t str_TXT_820B5D84_B_ = int32_t(0x820B5D84);
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t TXT_83498164_G_ = int32_t(0x83498164);
-	if (!UseLiftedCode(28, 0x8249F8A0)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = titleRecordName; ctx.r8.u64 = callerR8; __imp__sub_8249F8A0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(28, 0x8249F8A0)) { ctx.r3.u64 = statsAddr; ctx.r4.u64 = titleRecordName; ctx.r8.u64 = arg3; __imp__sub_8249F8A0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8249F8A0);
 	uint32_t stack = ctx.r1.u64;
 	CECStats* stats = GameObject<CECStats>(base, statsAddr);
 	stack = PushStackFrame(base, stack, 160);
-
-	// r4, r8 and f13 as the original leaves them for its callers: the entry values, then what the
-	// calls below leave there.
-	uint64_t r4Out = titleRecordName;
-	uint64_t r8Out = callerR8;
+	uint64_t statsObjectAddr = statsAddr;
+	uint64_t arg2 = titleRecordName;
 	ctx.fpscr.disableFlushMode();
-	const double field58 = double(stats->m_58);
-	double f13Out = field58;
+	double titleValue = double(stats->m_58);
 	uint64_t result = statsAddr;
 
-	if (!(field58 < double(LOAD_F32(0x8209B4E0u)))) {
-		const uint32_t world = LOAD32(LOAD32(uint32_t(g_83490000) + 26912) + 12);
-		if (int32_t(LOAD32(world + 284)) >= 1) {
-			// State the callee may pass on.
+	if (!(titleValue < double(LOAD_F32(0x8209B4E0u)))) {
+		uint32_t manager = (uint32_t)g_83490000;
+		manager = LOAD32(manager + 26912);
+		manager = LOAD32(manager + 12);
+		if (int32_t(LOAD32(manager + 284)) >= 1) {
+			uint32_t heroIndex = 2;
+			uint32_t heroList = LOAD32(manager + 156);
 			ctx.r1.u64 = stack;
-			const uint64_t handle = SortedArray_FindValueByKey(ctx, base, LOAD32(world + 156), 2);
-			r8Out = ctx.r8.u64;
-			if (uint32_t(handle) != 0) {
-				// State the callee may pass on: r4 still holds the key.
-				ctx.f13.f64 = f13Out;
-				result = EntityHandle_GetEntity(ctx, base, handle);
-				r4Out = ctx.r4.u64;
-				r8Out = ctx.r8.u64;
-				f13Out = ctx.f13.f64;
-				// The owner is that entity (same words at +20 and +24): nothing to do.
-				const uint32_t entity = uint32_t(result);
-				const uint32_t owner = stats->m_4;
-				if (LOAD32(entity + 20) == LOAD32(owner + 20) && LOAD32(entity + 24) == LOAD32(owner + 24)) goto done;
+			uint64_t heroHandle = SortedArray_FindValueByKey(ctx, base, heroList, heroIndex);
+			arg3 = ctx.r8.u64;
+			if ((uint32_t)heroHandle != 0) {
+				ctx.r4.u64 = heroIndex;
+				ctx.f13.f64 = titleValue;
+				uint64_t heroEntity = EntityHandle_GetEntity(ctx, base, heroHandle);
+				arg2 = ctx.r4.u64;
+				arg3 = ctx.r8.u64;
+				titleValue = ctx.f13.f64;
+				uint32_t ownEntity = stats->m_4;
+				if (LOAD32((uint32_t)heroEntity + 20) == LOAD32(ownEntity + 20) &&
+				    LOAD32((uint32_t)heroEntity + 24) == LOAD32(ownEntity + 24)) {
+					goto done;
+				}
 			}
 		}
 
-		// State the callee may pass on.
 		ctx.r1.u64 = stack;
-		result = GameDBRecordRef_Construct(ctx, base, uint64_t(stack) + 88, titleRecordName);
-		r4Out = ctx.r4.u64;
-		r8Out = ctx.r8.u64;
-		if (LOAD32(stack + 88) == 0) goto done;   // no such record
-
-		// Search the list for the title; the iterator {0, begin} goes through the slot at +96.
-		const uint32_t titlesBegin = stats->m_78;
-		const uint32_t titlesEnd = stats->m_7C;
-		STORE32(stack + 96, 0u);
-		STORE32(stack + 100, titlesBegin);
-		STORE64(stack + 96, LOAD64(stack + 96));
-		uint32_t it = LOAD32(stack + 100);
-		if (titlesBegin != titlesEnd) {
-			const uint32_t wantedName = LOAD32(uint32_t(titleRecordName));
-			do {
-				const uint32_t listedName = LOAD32(it);
-				if (listedName == wantedName) {
-					result = 1;
-				} else if (listedName != 0 && wantedName != 0) {
-					result = CCharString_Equals(ctx, base, listedName, wantedName);
-					r4Out = ctx.r4.u64;
-				} else {
-					result = 0;
-				}
-				if ((uint32_t(result) & 0xFF) != 0) break;
-				it += 4;
-			} while (it != titlesEnd);
-		}
-		if (it != titlesEnd) goto done;   // already listed
-
-		ctx.f13.f64 = f13Out;   // state the callee may pass on
-		StringVector_PushBack(ctx, base, statsAddr + 116, titleRecordName);
-		Stats_CheckCompletionistAchievement(ctx, base, statsAddr, ctx.r8.u64);
-		f13Out = ctx.f13.f64;
-
-		const uint64_t record = IdRef_Get(ctx, base, uint64_t(stack) + 88);
-		ctx.r7.u64 = uint64_t(int64_t(str_TXT_820B2E78_B_));   // state the callee may pass on
-		result = GameDB_ReadU32Field(ctx, base, record, str_TXT_820B2E78_B_);
-		r4Out = ctx.r4.u64;
-		r8Out = ctx.r8.u64;
-		if (uint32_t(result) == 0) goto done;
-
-		const uint64_t textKey = GameDB_GetStringField(ctx, base, result, str_TXT_820B5D84_B_);
-		CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, textKey, -1);
-		const uint32_t textData = LOAD32(stack + 80);
-		if (textData != 0 && int32_t(LOAD32(textData + 4)) != 0) {
-			const uint32_t displayRoot = LOAD32(uint32_t(g_83490000) + 26788);
-			const uint32_t boxList = LOAD32(LOAD32(displayRoot + 28) + 52);
-			const uint64_t keyCopy = CCharString_CopyConstruct(ctx, base, uint64_t(stack) + 96, uint64_t(stack) + 80);
-			LocalisedText_InitFromKey(ctx, base, uint64_t(stack) + 88, keyCopy);
-			const uint64_t boxMemory = operator_new(ctx, base, 48);
-			if (uint32_t(boxMemory) != 0) {
-				const uint32_t box = uint32_t(GuiMessageBox_Init(ctx, base, boxMemory, uint64_t(int64_t(TXT_83498164_G_)), uint64_t(stack) + 88, -1, 0));
-				if (box != 0) {
-					STORE32(stack + 96, box);
-					const uint64_t controlBlock = SharedPtr_CreateControlBlock(ctx, base, uint64_t(stack) + 96);
-					GUIDisplayBoxList_AddBox(ctx, base, uint64_t(boxList) + 4, controlBlock);
-				}
+		result = GameDBRecordRef_Construct(ctx, base, (uint64_t)stack + 88, titleRecordName);
+		arg2 = ctx.r4.u64;
+		arg3 = ctx.r8.u64;
+		if (LOAD32(stack + 88) != 0) {
+			uint32_t titlesBegin = stats->m_78;
+			uint32_t titlesEnd = stats->m_7C;
+			STORE32(stack + 96, 0u);
+			STORE32(stack + 100, titlesBegin);
+			STORE64(stack + 96, LOAD64(stack + 96));
+			uint32_t it = LOAD32(stack + 100);
+			if (titlesBegin != titlesEnd) {
+				uint32_t wantedKey = LOAD32((uint32_t)titleRecordName);
+				do {
+					uint32_t element = LOAD32(it);
+					if (element == wantedKey) {
+						result = 1;
+					} else if (element != 0 && wantedKey != 0) {
+						result = CCharString_Equals(ctx, base, element, (uint64_t)wantedKey);
+						arg2 = ctx.r4.u64;
+					} else {
+						result = 0;
+					}
+					if ((uint32_t)((uint32_t)result & 0xFF) != 0) break;
+					it += 4;
+				} while (it != titlesEnd);
 			}
-			CCharString_ReleaseAndDecGlobalCountB(ctx, base, uint64_t(stack) + 88);
+			if (it != titlesEnd) goto done;
+
+			ctx.f13.f64 = titleValue;
+			StringVector_PushBack(ctx, base, (uint64_t)statsObjectAddr + 116, titleRecordName);
+			titleValue = ctx.f13.f64;
+			Stats_CheckCompletionistAchievement(ctx, base, statsObjectAddr, ctx.r8.u64);
+			titleValue = ctx.f13.f64;
+
+			uint64_t idRef = IdRef_Get(ctx, base, (uint64_t)stack + 88);
+			uint64_t TXT_820B2E78_L_ = str_TXT_820B2E78_B_;
+			result = GameDB_ReadU32Field(ctx, base, idRef, TXT_820B2E78_L_);
+			arg2 = ctx.r4.u64;
+			arg3 = ctx.r8.u64;
+			if ((uint32_t)result != 0) {
+				uint64_t TXT_820B5D84_L_ = str_TXT_820B5D84_B_;
+				uint64_t textEntry = GameDB_GetStringField(ctx, base, result, TXT_820B5D84_L_);
+				CCharString_ConstructFromCStr(ctx, base, (uint64_t)stack + 80, textEntry, -1);
+				titleValue = ctx.f13.f64;
+
+				uint32_t textHandle = LOAD32(stack + 80);
+				if (textHandle != 0 && (int32_t)LOAD32(textHandle + 4) != 0) {
+					uint32_t globalMgr = LOAD32((uint32_t)g_83490000 + 26788);
+					uint32_t boxList = LOAD32(LOAD32(globalMgr + 28) + 52);
+					uint64_t copiedText = CCharString_CopyConstruct(ctx, base, (uint64_t)stack + 96, (uint64_t)stack + 80);
+					titleValue = ctx.f13.f64;
+					LocalisedText_InitFromKey(ctx, base, (uint64_t)stack + 88, copiedText);
+					titleValue = ctx.f13.f64;
+					uint64_t mem = operator_new(ctx, base, 48);
+					titleValue = ctx.f13.f64;
+					if ((uint32_t)mem != 0) {
+						uint64_t box = GuiMessageBox_Init(ctx, base, mem, (uint64_t)TXT_83498164_G_, (uint64_t)stack + 88, -1, 0);
+						titleValue = ctx.f13.f64;
+						if (box != 0) {
+							STORE32(stack + 96, box);
+							uint64_t controlBlock = SharedPtr_CreateControlBlock(ctx, base, (uint64_t)stack + 96);
+							titleValue = ctx.f13.f64;
+							GUIDisplayBoxList_AddBox(ctx, base, (uint64_t)boxList + 4, controlBlock);
+							titleValue = ctx.f13.f64;
+						}
+					}
+					CCharString_ReleaseAndDecGlobalCountB(ctx, base, (uint64_t)stack + 88);
+					titleValue = ctx.f13.f64;
+				}
+				result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, (uint64_t)stack + 80);
+				arg2 = ctx.r4.u64;
+				arg3 = ctx.r8.u64;
+				titleValue = ctx.f13.f64;
+			}
 		}
-		result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, uint64_t(stack) + 80);
-		r4Out = ctx.r4.u64;
-		r8Out = ctx.r8.u64;
-		f13Out = ctx.f13.f64;
 	}
 
 done:
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	// callers read r4, r8 and f13 after the call
-	ctx.r4.u64 = r4Out;
-	ctx.r8.u64 = r8Out;
-	ctx.f13.f64 = f13Out;
+	ctx.r4.u64 = arg2;
+	ctx.r8.u64 = arg3;
+	ctx.f13.f64 = titleValue;
 	return result;
 }
 PROMOTED_ENTRY(28, sub_8249F8A0, 0x8249F8A0) { ctx.r3.u64 = Lua_Stats_SetTitleAsFreeToBuy(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r8.u64); }

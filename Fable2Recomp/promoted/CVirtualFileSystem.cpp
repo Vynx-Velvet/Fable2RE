@@ -387,6 +387,7 @@ uint64_t CVirtualFileSystem_AddFile(CpuState& ctx, uint8_t* base, uint32_t virtu
 
 		uint32_t textBuffer = stack + 80;
 		ctx.r1.u64 = stack;
+		ctx.r10.u64 = savedLink;
 		WString_ToNarrowString(ctx, base, textBuffer, widePath, charCount, flags);
 
 		ctx.r3.u64 = textBuffer;

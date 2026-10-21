@@ -356,13 +356,11 @@ uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, ui
 	CChainedEntityEffectCurve* chainedEntityEffectCurve = GameObject<CChainedEntityEffectCurve>(base, chainedEntityEffectCurveAddr);
 	stack = PushStackFrame(base, stack, 160);
 
-	// Keep the original effect addresses for field loads; the shared-handle
-	// calls may overwrite the argument registers used for the next call.
+	// The two effect handles and their field addresses are read once up front, before
+	// any call that could overwrite the argument registers.
 	uint32_t effectAAddr = (uint32_t)effectA;
 	uint32_t effectBAddr = (uint32_t)effectB;
 	double originalFloatArg1 = blendWeight;
-	uint64_t callArgA = effectA;
-	uint64_t callArgB = effectB;
 
 	uint32_t handleA = stack + 88;       // shared handle built from effectA
 	uint32_t handleB = stack + 80;       // shared handle built from effectB
@@ -379,13 +377,10 @@ uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, ui
 
 	if (aControlBlock != 0) {
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = callArgA;
-		ctx.r6.u64 = callArgB;
+		ctx.r5.u64 = effectAAddr;
+		ctx.r6.u64 = effectBAddr;
 		ctx.f1.f64 = blendWeight;
 		SharedHandle_Release(ctx, base, handleA);
-		callArgA = ctx.r5.u64;
-		callArgB = ctx.r6.u64;
-		blendWeight = ctx.f1.f64;
 		uint32_t refCount = LOAD32(aControlBlock);
 		STORE32(handleA, aObject);
 		STORE32(handleA + 4, aControlBlock);
@@ -396,8 +391,8 @@ uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, ui
 	uint32_t bObject = LOAD32(effectBAddr + 208);
 	if (bControlBlock != 0) {
 		ctx.r1.u64 = stack;
-		ctx.r5.u64 = callArgA;
-		ctx.r6.u64 = callArgB;
+		ctx.r5.u64 = effectAAddr;
+		ctx.r6.u64 = effectBAddr;
 		ctx.f1.f64 = blendWeight;
 		SharedHandle_Release(ctx, base, handleB);
 		uint32_t refCount = LOAD32(bControlBlock);
@@ -412,6 +407,7 @@ uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, ui
 	ctx.r1.u64 = stack;
 	uint32_t newPair = CChainedEntityEffectCurve_BlendHandles(ctx, base, curveOut, handleA, handleB, blendWeight);
 	uint32_t savedLockState = ctx.r9.u64;
+	blendWeight = ctx.f1.f64;
 
 	STORE32(resultHandle, LOAD32(newPair));
 	uint32_t newControlBlock = LOAD32(newPair + 4);
@@ -452,10 +448,22 @@ uint64_t CChainedEntityEffectCurve_BlendEffects(CpuState& ctx, uint8_t* base, ui
 	ctx.r9.u64 = savedLockState;
 	ctx.r10.u64 = callTargetAddr;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	blendWeight = ctx.f1.f64;
 
+	ctx.r1.u64 = stack;
+	ctx.f1.f64 = blendWeight;
 	SharedHandle_Release(ctx, base, resultHandle);
+	blendWeight = ctx.f1.f64;
+	ctx.r1.u64 = stack;
+	ctx.f1.f64 = blendWeight;
 	SharedHandle_Release(ctx, base, curveOut);
+	blendWeight = ctx.f1.f64;
+	ctx.r1.u64 = stack;
+	ctx.f1.f64 = blendWeight;
 	SharedHandle_Release(ctx, base, handleB);
+	blendWeight = ctx.f1.f64;
+	ctx.r1.u64 = stack;
+	ctx.f1.f64 = blendWeight;
 	uint64_t result = SharedHandle_Release(ctx, base, handleA);
 
 	stack = PopStackFrame(stack, 160);

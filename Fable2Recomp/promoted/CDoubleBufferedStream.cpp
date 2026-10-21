@@ -18,9 +18,6 @@ uint64_t CDoubleBufferedStream_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 	CDoubleBufferedStream* doubleBufferedStream = GameObject<CDoubleBufferedStream>(base, doubleBufferedStreamAddr);
 	stack = PushStackFrame(base, stack, 128);
 
-	uint64_t initialPosition = startPosition;
-	uint64_t initialTotalBufferSize = totalBufferSize;
-
 	doubleBufferedStream->m_4 = 0;
 	doubleBufferedStream->vtable = 0x820F8F0Cu;
 	doubleBufferedStream->m_stream = (uint32_t)sourceStream;
@@ -33,14 +30,11 @@ uint64_t CDoubleBufferedStream_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 		ctx.r6.u64 = totalBufferSize;
 		ctx.r10.u64 = virtualFunction;
 		REX_CALL_INDIRECT_FUNC(virtualFunction);
-		sourceStream = ctx.r4.u64;
-		startPosition = ctx.r5.u64;
-		totalBufferSize = ctx.r6.u64;
 	}
 
 	doubleBufferedStream->m_18 = 0;
-	doubleBufferedStream->m_position = initialPosition;
-	doubleBufferedStream->m_bufferSize = (uint32_t)(initialTotalBufferSize >> 1);
+	doubleBufferedStream->m_position = startPosition;
+	doubleBufferedStream->m_bufferSize = (uint32_t)(totalBufferSize >> 1);
 	doubleBufferedStream->m_currentBuffer = 0;
 
 	uint32_t descriptorAddr = (uint32_t)doubleBufferedStreamAddr + 40;
@@ -64,6 +58,9 @@ uint64_t CDoubleBufferedStream_Construct(CpuState& ctx, uint8_t* base, uint64_t 
 	doubleBufferedStream->m_bufferA = LOAD64(stack + 80);
 
 	uint32_t bufferSize2 = doubleBufferedStream->m_bufferSize;
+	ctx.r4.u64 = sourceStream;
+	ctx.r5.u64 = startPosition;
+	ctx.r6.u64 = totalBufferSize;
 	uint32_t bufferB = operator_new(ctx, base, bufferSize2);
 	STORE32(stack + 80, bufferB);
 	STORE32(stack + 84, 0);

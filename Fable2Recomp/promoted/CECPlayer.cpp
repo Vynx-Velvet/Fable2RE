@@ -793,23 +793,25 @@ uint32_t n_sub_823C2610(CpuState& ctx, uint8_t* base, uint32_t playerAddr) {
 }
 PROMOTED_ENTRY(21, sub_823C2610, 0x823C2610) { ctx.r3.u64 = n_sub_823C2610(ctx, base, ctx.r3.u32); }
 
-uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t ownerAddr, uint64_t handleIdAddr) {
-	if (!UseLiftedCode(21, 0x823C4D58)) { ctx.r3.u64 = ownerAddr; ctx.r4.u64 = handleIdAddr; __imp__sub_823C4D58(ctx, base); return ctx.r3.u64; }
+uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2) {
+	if (!UseLiftedCode(21, 0x823C4D58)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; __imp__sub_823C4D58(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x823C4D58);
 	uint32_t stack = ctx.r1.u64;
-	// r4 and r7-r9 as the loop leaves them: each erase call receives r7-r9, and callers read all four
-	uint64_t result = ownerAddr;
-	uint64_t r4Value = handleIdAddr;
+	uint64_t iterator{};
 	uint64_t r7Value = ctx.r7.u64;
 	uint64_t iterContainer = ctx.r8.u64;
 	uint64_t iterEnd = ctx.r9.u64;
+	uint32_t listEnd{};
+	uint32_t handle{};
+	uint32_t node{};
+	uint32_t handleIdPtr{};
+	uint64_t handleList{};
 	stack = PushStackFrame(base, stack, 128);
 
-	uint32_t handleIdPtr = (uint32_t)handleIdAddr;
+	handleIdPtr = (uint32_t)arg2;
 	if (LOAD32(handleIdPtr) != 0) {
-		uint64_t handleList = ownerAddr + 272;
-		uint32_t node = LOAD32((uint32_t)ownerAddr + 276);
-		uint64_t iterator;
+		handleList = arg1 + 272;
+		node = LOAD32((uint32_t)arg1 + 276);
 		iterContainer = handleList;
 		STORE32(stack + 80, (uint32_t)iterContainer);
 
@@ -818,7 +820,7 @@ uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t o
 		STORE32(stack + 84, node);
 		iterator = LOAD64(stack + 80);
 		for (;;) {
-			uint32_t listEnd = LOAD32((uint32_t)handleList + 4);
+			listEnd = LOAD32((uint32_t)handleList + 4);
 			if ((uint32_t)iterContainer == 0 || (uint32_t)iterContainer != (uint32_t)handleList) {
 				ctx.r1.u64 = stack;
 				ppc_trap(ctx, base, 22);
@@ -834,29 +836,34 @@ uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t o
 				ppc_trap(ctx, base, 22);
 			}
 			uint32_t entry = LOAD32(node + 8);
-			uint32_t handle = LOAD32(entry + 4);
-			// entries with a null handle are erased too, through a different result slot
-			uint32_t eraseResultSlot = stack + 96;
+			handle = LOAD32(entry + 4);
 			if (handle != 0) {
 				r7Value = LOAD32(handleIdPtr);
-				if (handle != (uint32_t)r7Value) {
-					if (node == (uint32_t)iterEnd) {
-						ctx.r1.u64 = stack;
-						ppc_trap(ctx, base, 22);
-					}
-					goto advance_iterator;
+				if (handle == (uint32_t)r7Value) {
+					ctx.r1.u64 = stack;
+					ctx.r7.u64 = r7Value;
+					arg1 = SharedHandleList_Erase(ctx, base, stack + 88, handleList, iterator);
+					arg2 = ctx.r4.u64;
+					r7Value = ctx.r7.u64;
+					iterEnd = ctx.r9.u64;
+					iterator = LOAD64((uint32_t)arg1);
+					STORE64(stack + 80, iterator);
+					node = LOAD32(stack + 84);
+					iterContainer = LOAD32(stack + 80);
+					continue;
 				}
-				eraseResultSlot = stack + 88;
+				if (node != (uint32_t)iterEnd) goto advance_iterator;
+				ctx.r1.u64 = stack;
+				ppc_trap(ctx, base, 22);
+				goto advance_iterator;
 			}
-
-			// state the callee may pass on
 			ctx.r1.u64 = stack;
 			ctx.r7.u64 = r7Value;
-			result = SharedHandleList_Erase(ctx, base, eraseResultSlot, handleList, iterator);
-			r4Value = ctx.r4.u64;
+			arg1 = SharedHandleList_Erase(ctx, base, stack + 96, handleList, iterator);
+			arg2 = ctx.r4.u64;
 			r7Value = ctx.r7.u64;
 			iterEnd = ctx.r9.u64;
-			iterator = LOAD64((uint32_t)result);
+			iterator = LOAD64((uint32_t)arg1);
 			STORE64(stack + 80, iterator);
 			node = LOAD32(stack + 84);
 			iterContainer = LOAD32(stack + 80);
@@ -865,12 +872,11 @@ uint64_t SharedHandleList_EraseMatching(CpuState& ctx, uint8_t* base, uint64_t o
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	// callers read these registers after the call
-	ctx.r4.u64 = r4Value;
+	ctx.r4.u64 = arg2;
 	ctx.r7.u64 = r7Value;
 	ctx.r8.u64 = iterContainer;
 	ctx.r9.u64 = iterEnd;
-	return result;
+	return arg1;
 }
 PROMOTED_ENTRY(21, sub_823C4D58, 0x823C4D58) { ctx.r3.u64 = SharedHandleList_EraseMatching(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
@@ -1473,6 +1479,11 @@ uint64_t CECPlayer_SetMicrophoneIndex(CpuState& ctx, uint8_t* base, uint64_t pla
 	PPCRegister scratch{};
 	PPCRegister callTarget{};
 	PPCVRegister savedMicrophonePosition = ctx.v1;
+	PPCVRegister vecFrom84{};
+	PPCVRegister vecFrom80{};
+	PPCVRegister vecFrom84Late{};
+	PPCVRegister messageVec{};
+	uint64_t result{};
 	uint32_t stack = ctx.r1.u64;
 
 	stack = PushStackFrame(base, stack, 160);
@@ -1480,16 +1491,15 @@ uint64_t CECPlayer_SetMicrophoneIndex(CpuState& ctx, uint8_t* base, uint64_t pla
 	VSTORE(uint32_t(stack + 192) & ~0xF, V8(savedMicrophonePosition));
 
 	uint32_t globalRoot = uint32_t(g_83490000);
-	uint32_t refSource = LOAD32(globalRoot + 27596);
-	// state the callee may pass on (r8 then goes on to n_sub_823D2820)
+	uint32_t soundHandle = LOAD32(globalRoot + 27596);
 	ctx.r1.u64 = stack;
 	ctx.r8.u64 = forwardedArg;
-	uint64_t createdRef = StringRef_Construct(ctx, base, stack + 88, refSource);
+	uint64_t createdRef = StringRef_Construct(ctx, base, stack + 88, soundHandle);
 
-	uint64_t microphoneSlot = n_sub_823D2820(ctx, base, player + 184, stack + 80, ctx.r8.u64);
-	RefPtr_Assign(ctx, base, microphoneSlot, createdRef);
+	uint64_t playerMicrophone = n_sub_823D2820(ctx, base, player + 184, stack + 80, ctx.r8.u64);
+	RefPtr_Assign(ctx, base, playerMicrophone, createdRef);
 
-	uint64_t result = LOAD32(stack + 92);
+	result = LOAD32(stack + 92);
 	if ((uint32_t)result != 0) {
 		uint32_t releaseFunc = LOAD32(LOAD32((uint32_t)result) + 4);
 		callTarget.u64 = (uint64_t)releaseFunc;
@@ -1502,70 +1512,68 @@ uint64_t CECPlayer_SetMicrophoneIndex(CpuState& ctx, uint8_t* base, uint64_t pla
 	STORE32(stack + 88, 0);
 
 	uint32_t world = LOAD32(LOAD32(globalRoot + 26912) + 12);
-	uint32_t sender = LOAD32(world + 140);
-	uint32_t senderFlag52 = LOAD8(sender + 52);
-	bool senderFlagsSet = senderFlag52 != 0 && LOAD8(sender + 53) != 0;
+	uint32_t playerController = LOAD32(world + 140);
+	uint32_t isHeroFlag = LOAD8(playerController + 52);
 
-	if (senderFlagsSet) {
-		uint32_t playerEntity = LOAD32((uint32_t)player + 4);
-		uint32_t firstPlayer = LOAD32(LOAD32(LOAD32(world + 88) + 4));
-		ctx.r9.u64 = senderFlag52;  // state the callee may pass on
-		result = EntityHandle_Get(ctx, base, firstPlayer);
+	bool isLocalPlayer = isHeroFlag != 0 && LOAD8(playerController + 53) != 0;
 
-		if (playerEntity == (uint32_t)result) {
-			uint32_t playerList = LOAD32(LOAD32(LOAD32(LOAD32(globalRoot + 26912) + 12) + 88) + 4);
-			uint32_t firstPlayerNow = LOAD32(playerList);
-			ctx.r9.u64 = playerList;  // state the callee may pass on
-			result = SpellShot_GetOwner(ctx, base, firstPlayerNow);
-			uint64_t ownerEntity = result;
+	if (isLocalPlayer) {
+		uint32_t heroEntityId = LOAD32((uint32_t)player + 4);
+		uint32_t heroHandleSlot = LOAD32(LOAD32(LOAD32(world + 88) + 4));
+		ctx.r9.u64 = isHeroFlag;
+		result = EntityHandle_Get(ctx, base, heroHandleSlot);
 
-			if ((uint32_t)ownerEntity != 0 && (LOAD8((uint32_t)ownerEntity + 144) & 64) != 0) {
-				// The net message is built at stack + 96: vtable at +0, the index from stack + 80 at +4 and a
-				// position at +16 (stack + 112). The position is first filled from the float constant at
-				// 0x820994B4 through the stack slots at +80 / +84, then Player_ComputeCutsceneMicrophonePosition
-				// merges in the v1 this function received (saved at stack + 192).
-				uint32_t messageIndex = LOAD32(stack + 80);
-				uint32_t slot84Addr = stack + 84;
+		if (heroEntityId == (uint32_t)result) {
+			uint32_t worldNow = LOAD32(LOAD32(globalRoot + 26912) + 12);
+			uint32_t speakerHandleSlot = LOAD32(LOAD32(worldNow + 88) + 4);
+			uint32_t speakerEntityId = LOAD32(speakerHandleSlot);
+			ctx.r9.u64 = speakerHandleSlot;
+			result = SpellShot_GetOwner(ctx, base, speakerEntityId);
+			uint64_t speaker = result;
+
+			if (speaker != 0 && (LOAD8((uint32_t)speaker + 144) & 64) != 0) {
+				uint32_t storedMicrophoneIndex = LOAD32(stack + 80);
+				uint32_t positionAddr = stack + 84;
 				ctx.fpscr.disableFlushMode();
-				double fillValue = double(LOAD_F32(0x820994B4u));
-				uint32_t messageVtable = uint32_t(g_820A0000) + 18020;
+				double componentValue = double(LOAD_F32(0x820994B4u));
+				uint32_t soundDescriptor = uint32_t(g_820A0000);
 
-				STORE_F32(stack + 80, float(fillValue));
-				STORE_F32(stack + 84, float(fillValue));
-
-				PPCVRegister vecFrom84{};
-				PPCVRegister vecFrom80{};
-				PPCVRegister vecFrom84Late{};
-				PPCVRegister positionVec{};
+				STORE_F32(stack + 80, float(componentValue));
+				STORE_F32(stack + 84, float(componentValue));
+				soundDescriptor = (int32_t)soundDescriptor + 18020;
 
 				scratch.u32 = uint32_t(stack + 84);
 				SET_V8(vecFrom84, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 
-				STORE32(stack + 100, messageIndex);
-				STORE_F32(stack + 84, float(fillValue));
-				STORE32(stack + 96, messageVtable);
+				STORE32(stack + 100, storedMicrophoneIndex);
+				STORE_F32(stack + 84, float(componentValue));
+				STORE32(stack + 96, soundDescriptor);
 
 				scratch.u32 = uint32_t(stack + 80);
 				SET_V8(vecFrom80, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 
-				STORE_F32(stack + 80, float(fillValue));
+				uint32_t messagePayloadAddr = stack + 192;
+				STORE_F32(stack + 80, float(componentValue));
 				SET_VF(vecFrom84, simde_mm_blend_ps(VF(vecFrom84), simde_mm_permute_ps(VF(vecFrom80), 57), 4));
 
-				scratch.u32 = slot84Addr;
+				scratch.u32 = positionAddr;
 				SET_V8(vecFrom84Late, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
 
+				uint32_t messageAddr = stack + 112;
 				scratch.u32 = uint32_t(stack + 80);
-				SET_V8(positionVec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
-				SET_VF(positionVec, simde_mm_blend_ps(VF(positionVec), simde_mm_permute_ps(VF(vecFrom84Late), 57), 4));
-				SET_VF(positionVec, simde_mm_blend_ps(VF(positionVec), simde_mm_permute_ps(VF(vecFrom84), 78), 3));
-				VSTORE(uint32_t(stack + 112) & ~0xF, V8(positionVec));
+				SET_V8(messageVec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
+				SET_VF(messageVec, simde_mm_blend_ps(VF(messageVec), simde_mm_permute_ps(VF(vecFrom84Late), 57), 4));
+				SET_VF(messageVec, simde_mm_blend_ps(VF(messageVec), simde_mm_permute_ps(VF(vecFrom84), 78), 3));
+				VSTORE(uint32_t(stack + 112) & ~0xF, V8(messageVec));
 
-				// state the callee may pass on
-				Player_ComputeCutsceneMicrophonePosition(ctx, base, stack + 112, stack + 192);
+				ctx.r1.u64 = stack;
+				ctx.r3.u64 = messageAddr;
+				ctx.r4.u64 = messagePayloadAddr;
+				sub_82309738(ctx, base);
 
-				uint32_t senderNow = LOAD32(LOAD32(LOAD32(globalRoot + 26912) + 12) + 140);
-				uint64_t ownerUniqueId = Entity_GetUniqueId(ctx, base, ownerEntity);
-				result = Player_SendCutsceneMicrophoneNetMessage(ctx, base, senderNow, stack + 96, ownerUniqueId);
+				uint32_t microphoneController = LOAD32(LOAD32(LOAD32(globalRoot + 26912) + 12) + 140);
+				uint64_t speakerUniqueId = Entity_GetUniqueId(ctx, base, speaker);
+				result = Player_SendCutsceneMicrophoneNetMessage(ctx, base, microphoneController, stack + 96, speakerUniqueId);
 			}
 		}
 	}

@@ -133,6 +133,66 @@ uint64_t CCameraEffectController_Destruct(CpuState& ctx, uint8_t* base, uint64_t
 }
 PROMOTED_ENTRY(54, sub_827D0F48, 0x827D0F48) { ctx.r3.u64 = CCameraEffectController_Destruct(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
+uint64_t CCameraEffectController_ApplyEffectData(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr, uint64_t effectDataAddr) {
+	if (!UseLiftedCode(54, 0x827D1090)) { ctx.r3.u64 = cameraEffectControllerAddr; ctx.r4.u64 = effectDataAddr; __imp__sub_827D1090(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x827D1090);
+	uint32_t stack = ctx.r1.u64;
+	CCameraEffectController* cameraEffectController = GameObject<CCameraEffectController>(base, cameraEffectControllerAddr);
+	stack = PushStackFrame(base, stack, 160);
+
+	uint32_t effectAddr = (uint32_t)effectDataAddr;
+	// r4 as left for callers: the input, or what n_sub_821DECC8 leaves in it.
+	uint64_t callerR4 = effectDataAddr;
+
+	// Flag 0x2 in the word at +0x48 asks for the six values at +0x4C to be rebuilt; the flag is cleared afterwards.
+	if ((LOAD32(effectAddr + 0x48) & 2) != 0) {
+		ctx.fpscr.disableFlushMode();
+		double valueA0 = double(LOAD_F32(effectAddr + 0xA0));
+		double constantValue = double(LOAD_F32(0x820994B4u));
+		uint32_t sourceAddr;
+		if (valueA0 == constantValue) {
+			// six copies of the constant, built on the stack
+			sourceAddr = stack + 80;
+			for (uint32_t i = 0; i < 6; ++i) {
+				STORE_F32(sourceAddr + 4 * i, float(constantValue));
+			}
+		} else {
+			// state the callee may pass on
+			ctx.r1.u64 = stack;
+			ctx.f13.f64 = valueA0;
+			uint64_t vec4Addr = n_sub_827D0FC0(ctx, base, stack + 80, effectDataAddr);
+			sourceAddr = n_sub_821DECC8(ctx, base, stack + 112, effectDataAddr, vec4Addr);
+			callerR4 = ctx.r4.u64;
+		}
+		for (uint32_t i = 0; i < 6; ++i) {
+			STORE32(effectAddr + 0x4C + 4 * i, LOAD32(sourceAddr + 4 * i));
+		}
+		STORE32(effectAddr + 0x48, LOAD32(effectAddr + 0x48) & ~2u);
+	}
+
+	// Copy the six values to offsets 0x00..0x14 of the output.
+	ctx.fpscr.disableFlushMode();
+	float value0 = LOAD_F32(effectAddr + 0x4C);
+	float value1 = LOAD_F32(effectAddr + 0x50);
+	float value2 = LOAD_F32(effectAddr + 0x54);
+	float value3 = LOAD_F32(effectAddr + 0x58);
+	float value4 = LOAD_F32(effectAddr + 0x5C);
+	float value5 = LOAD_F32(effectAddr + 0x60);
+	cameraEffectController->vtable = AS_U32(value0);
+	cameraEffectController->m_4 = value1;
+	cameraEffectController->m_8 = value2;
+	cameraEffectController->m_C = value3;
+	cameraEffectController->m_10 = value4;
+	cameraEffectController->m_mode = AS_U32(value5);
+
+	stack = PopStackFrame(stack, 160);
+	ctx.r1.u64 = stack;
+	// callers read r4 after the call
+	ctx.r4.u64 = callerR4;
+	return cameraEffectControllerAddr;
+}
+PROMOTED_ENTRY(54, sub_827D1090, 0x827D1090) { ctx.r3.u64 = CCameraEffectController_ApplyEffectData(ctx, base, ctx.r3.u64, ctx.r4.u64); }
+
 // sub_827D11A8  [92 bytes]
 uint64_t CCameraEffectController_ResetBlend(CpuState& ctx, uint8_t* base, uint64_t cameraEffectControllerAddr, uint64_t initDataAddr) {
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);

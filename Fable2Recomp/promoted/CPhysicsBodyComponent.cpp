@@ -249,6 +249,7 @@ uint64_t CPhysicsBodyComponent_Destroy(CpuState& ctx, uint8_t* base, uint64_t ph
 			uint32_t listenerId = 4;
 			uint64_t listener = (int64_t)listenerVtableBase - 28824;
 			STORE32(stack + 96, listenerId);
+			ctx.r7.u64 = listenerId;
 			uint64_t listenerHandle = n_sub_8273A3A8(ctx, base, listenerArgSlot);
 
 			EntityHandle_Assign_827392E0(ctx, base, listenerHandle, handleSlot);
@@ -335,58 +336,60 @@ uint64_t n_sub_82739638(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 }
 PROMOTED_ENTRY(49, sub_82739638, 0x82739638) { ctx.r3.u64 = n_sub_82739638(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u32); }
 
-uint64_t n_sub_82739650(CpuState& ctx, uint8_t* base, uint64_t physicsBodyComponentAddr, uint64_t arg2, uint64_t arg3, double floatArg1) {
+uint64_t n_sub_82739650(CpuState& ctx, uint8_t* base, uint64_t arg1, uint64_t arg2, uint64_t arg3, double floatArg1) {
 	constexpr uint32_t g_83330000 = 0x83330000;
-	if (!UseLiftedCode(49, 0x82739650)) { ctx.r3.u64 = physicsBodyComponentAddr; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_82739650(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(49, 0x82739650)) { ctx.r3.u64 = arg1; ctx.r4.u64 = arg2; ctx.r5.u64 = arg3; ctx.f1.f64 = floatArg1; __imp__sub_82739650(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82739650);
 	uint32_t stack = ctx.r1.u64;
-	PPCRegister callTarget{};
-	CPhysicsBodyComponent* physicsBodyComponent = GameObject<CPhysicsBodyComponent>(base, physicsBodyComponentAddr);
 	stack = PushStackFrame(base, stack, 128);
 
-	uint64_t result = physicsBodyComponentAddr;
-	uint32_t body = physicsBodyComponent->m_Body;
-	if (body != 0) {
-		if (LOAD8((uint32_t)physicsBodyComponentAddr + 0x50) == 0) {
+	uint32_t physicsBody = (uint32_t)arg1;
+	uint32_t entity = (uint32_t)arg2;
+	uint32_t bodyNode = LOAD32(physicsBody + 0x38);
+	uint64_t stackFlagAddr = (uint64_t)stack + 80;
+
+	if (bodyNode != 0) {
+		if (LOAD8(physicsBody + 0x50) == 0) {
 			ctx.r1.u64 = stack;
-			result = n_sub_82522098(ctx, base, body, arg2, arg3, floatArg1);
+			arg1 = n_sub_82522098(ctx, base, bodyNode, entity, arg3, floatArg1);
 			arg2 = ctx.r4.u64;
 			floatArg1 = ctx.f1.f64;
-		} else if (LOAD8(body + 0x118) != 0) {
-			uint32_t flagAddr = stack + 80;
-			STORE8(flagAddr, 0);
+		} else if (LOAD8(bodyNode + 0x118) != 0) {
+
 			uint32_t globalObject = LOAD32(g_83330000 + 29792);
+			STORE8(stack + 80, 0);
 			uint32_t vtable = LOAD32(globalObject);
-			uint32_t method = LOAD32(vtable + 16);
-			callTarget.u64 = method;
+			uint32_t setFlag = LOAD32(vtable + 16);
 			ctx.r1.u64 = stack;
 			ctx.r3.u64 = globalObject;
 			ctx.r4.u64 = 0x1FF88F0E;
-			ctx.r5.u64 = LOAD8(flagAddr);
-			ctx.r8.u64 = method;
+			ctx.r5.u64 = 0;
+			ctx.r8.u64 = setFlag;
 			ctx.r9.u64 = vtable;
 			ctx.r10.u64 = 0;
 			ctx.f1.f64 = floatArg1;
-			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			REX_CALL_INDIRECT_FUNC(setFlag);
+			floatArg1 = ctx.f1.f64;
 
-			uint64_t object = n_sub_82D5DB48(ctx, base, arg2);
-			uint32_t bodyField2C = LOAD32(body + 0x2C);
-			uint32_t objectFirstWord = LOAD32((uint32_t)object);
-			// state the callee may pass on
-			ctx.r7.u64 = object;
-			n_sub_82E67E98(ctx, base, bodyField2C, objectFirstWord);
+			uint32_t someObject = (uint32_t)n_sub_82D5DB48(ctx, base, entity);
+			uint32_t nodeField = LOAD32(bodyNode + 0x2C);
+			uint32_t objectValue = LOAD32(someObject);
+			ctx.r7.u64 = someObject;
+			n_sub_82E67E98(ctx, base, nodeField, objectValue);
+			floatArg1 = ctx.f1.f64;
 
 			uint32_t globalObject2 = LOAD32(g_83330000 + 29792);
-			STORE8(flagAddr, 1);
-			uint32_t flagValue = LOAD8(flagAddr);
-			uint32_t method2 = LOAD32(LOAD32(globalObject2) + 16);
-			callTarget.u64 = method2;
+			STORE8(stack + 80, 1);
+			uint32_t setFlag2 = LOAD32(LOAD32(globalObject2) + 16);
+			uint32_t flagValue = LOAD8((uint32_t)stackFlagAddr);
 			ctx.r3.u64 = globalObject2;
 			ctx.r4.u64 = 0x1FF88F0E;
 			ctx.r5.u64 = flagValue;
-			ctx.r6.u64 = flagAddr;
-			ctx.r10.u64 = method2;
-			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			ctx.r6.u64 = stackFlagAddr;
+			ctx.r10.u64 = setFlag2;
+			ctx.f1.f64 = floatArg1;
+			REX_CALL_INDIRECT_FUNC(setFlag2);
+			floatArg1 = ctx.f1.f64;
 
 			stack = PopStackFrame(stack, 128);
 			ctx.r1.u64 = stack;
@@ -396,10 +399,9 @@ uint64_t n_sub_82739650(CpuState& ctx, uint8_t* base, uint64_t physicsBodyCompon
 
 	stack = PopStackFrame(stack, 128);
 	ctx.r1.u64 = stack;
-	// callers read r4 and f1 after the call
 	ctx.r4.u64 = arg2;
 	ctx.f1.f64 = floatArg1;
-	return result;
+	return arg1;
 }
 PROMOTED_ENTRY(49, sub_82739650, 0x82739650) { ctx.r3.u64 = n_sub_82739650(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r5.u64, ctx.f1.f64); }
 

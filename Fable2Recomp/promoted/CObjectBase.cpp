@@ -751,88 +751,98 @@ uint64_t CObjectBase_Destructor_ListMember(CpuState& ctx, uint8_t* base, uint64_
 PROMOTED_ENTRY(84, sub_82B68378, 0x82B68378) { ctx.r3.u64 = CObjectBase_Destructor_ListMember(ctx, base, ctx.r3.u64, ctx.r4.u64, ctx.r7.u64); }
 
 uint32_t CObjectBase_Destructor_SharedHandle(CpuState& ctx, uint8_t* base, uint64_t objectBaseAddr) {
-	constexpr int32_t g_834A601C = int32_t(0x834A601C);
 	constexpr int32_t g_834A6028 = int32_t(0x834A6028);
 	if (!UseLiftedCode(84, 0x82B6A810)) { ctx.r3.u64 = objectBaseAddr; __imp__sub_82B6A810(ctx, base); return ctx.r3.u32; }
 	LiftedFrame frame(0x82B6A810);
 	uint32_t stack = ctx.r1.u64;
-	uint32_t msrFromR13 = ctx.r13.u64;
+	uint32_t savedReg = ctx.r13.u64;
+	uint32_t zero = 0;
+	uint32_t handle44{};
+	uint32_t handle2c{};
+	uint32_t handleTarget{};
+	uint32_t handleBlockAddr{};
+	uint32_t fieldBlockAddr{};
+	uint32_t countA{};
+	uint32_t countB{};
+	uint64_t r9Value{};
+	uint64_t r10Value{};
+	uint64_t ownsLock{};
+	uint64_t freeResult{};
 	CObjectBase* objectBase = GameObject<CObjectBase>(base, objectBaseAddr);
 
 	stack = PushStackFrame(base, stack, 160);
 	objectBase->vtable = 0x820FA264u;
-	uint32_t handle44 = objectBase->m_44;
+	handle44 = objectBase->m_44;
 	ctx.r1.u64 = stack;
+
 	uint32_t freed44 = HandleTarget_Free(ctx, base, handle44);
-	objectBase->m_44 = 0;
+	objectBase->m_44 = zero;
+	countA = n_sub_82B69040(ctx, base);
+	r9Value = ctx.r9.u64;
+	countB = GetCurrentThreadId(ctx, base);
 
-	// a global word read under a lock, compared with a word of the current thread block (r13 + 256 -> +332)
-	uint32_t globalWord = n_sub_82B69040(ctx, base);
-	uint64_t r9Value = ctx.r9.u64;
-	uint32_t threadWord = GetCurrentThreadId(ctx, base);
-
-	if (threadWord != globalWord) {
-		// local copy of the shared handle m_3C/m_40 at stack + 80
-		uint32_t refCountAddr = objectBase->m_40;
-		uint64_t r10Value = objectBase->m_3C;
-		STORE32(stack + 84, refCountAddr);
+	if (countB != countA) {
+		handleTarget = objectBase->m_40;
+		r10Value = objectBase->m_3C;
+		STORE32(stack + 84, handleTarget);
 		STORE32(stack + 80, (uint32_t)r10Value);
-		if (refCountAddr != 0) {
-			// the copy takes a reference: atomic increment of the count m_40 points to
-			bool stored;
+		if (handleTarget != 0) {
+			// take an intrusive reference on the handle target before wrapping it
+			bool casSucceeded;
 			do {
 				std::atomic_thread_fence(std::memory_order_seq_cst);
 				r9Value = REX_CHECK_GLOBAL_LOCK();
 				std::atomic_thread_fence(std::memory_order_seq_cst);
-				ctx.msr = msrFromR13 & 0x8020 | ctx.msr & ~0x8020;
+				ctx.msr = savedReg & 0x8020 | ctx.msr & ~0x8020;
 				REX_ENTER_GLOBAL_LOCK();
-				ctx.reserved.u32 = *(uint32_t*)RAW(refCountAddr);
-				r10Value = uint64_t(__builtin_bswap32(ctx.reserved.u32)) + 1;
-				stored = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(refCountAddr)), ctx.reserved.s32, __builtin_bswap32((int32_t)r10Value));
+				ctx.reserved.u32 = *(uint32_t*)RAW(handleTarget);
+				r10Value = __builtin_bswap32(ctx.reserved.u32);
+				r10Value = (int64_t)r10Value + 1;
+				casSucceeded = __sync_bool_compare_and_swap(reinterpret_cast<uint32_t*>(RAW(handleTarget)), ctx.reserved.s32, __builtin_bswap32((int32_t)r10Value));
 				std::atomic_thread_fence(std::memory_order_seq_cst);
 				ctx.msr = (uint32_t)r9Value & 0x8020 | ctx.msr & ~0x8020;
 				REX_LEAVE_GLOBAL_LOCK();
-			} while (!stored);
+			} while (!casSucceeded);
 		}
-		// lock guard at stack + 88 (String_Construct enters critical section g_834A6028; byte at +4 = held)
-		ctx.r9.u64 = r9Value; // state the callee may pass on
+		ctx.r9.u64 = r9Value;
 		ctx.r10.u64 = r10Value;
-		String_Construct(ctx, base, stack + 88, g_834A6028, 0);
-		ctx.r4.u64 = g_834A601C; // the callee reads r4 from the state
+		String_Construct(ctx, base, stack + 88, (uint64_t)g_834A6028, 0);
 		n_sub_82B6BF20(ctx, base, stack + 96, stack + 80, ctx.r8.u64);
-		uint8_t lockHeld = LOAD8(stack + 92);
-		ctx.r8.u64 = lockHeld; // state the callees below may pass on
-		if (lockHeld != 0) {
-			ctx.r3.u64 = LOAD32(stack + 88);
+		ownsLock = LOAD8(stack + 92);
+		if ((uint32_t)ownsLock != 0) {
+			uint32_t lockPtr = LOAD32(stack + 88);
+			ctx.r3.u64 = lockPtr;
+			ctx.r8.u64 = ownsLock;
 			__imp__RtlLeaveCriticalSection(ctx, base);
+			ownsLock = ctx.r8.u64;
 		}
+		ctx.r8.u64 = ownsLock;
 		SharedHandle_Release(ctx, base, stack + 80);
 	}
 
-	SharedHandle_Release(ctx, base, objectBaseAddr + 60);
+	SharedHandle_Release(ctx, base, (uint32_t)(objectBaseAddr + 60));
 
-	uint32_t block28Addr = objectBaseAddr + 40;
-	uint32_t handle2c = objectBase->m_2C;
+	handle2c = objectBase->m_2C;
+	handleBlockAddr = (uint32_t)(objectBaseAddr + 40);
 	if (handle2c != 0) {
 		HandleTarget_Free(ctx, base, handle2c);
 	}
-	STORE32(block28Addr + 4, 0);
-	STORE32(block28Addr + 8, 0);
-	STORE32(block28Addr + 12, 0);
+	STORE32(handleBlockAddr + 4, zero);
+	fieldBlockAddr = (uint32_t)(objectBaseAddr + 8);
+	STORE32(handleBlockAddr + 8, zero);
+	STORE32(handleBlockAddr + 12, zero);
 
-	uint32_t block8Addr = objectBaseAddr + 8;
-	uint32_t handleC = objectBase->m_C;
-	uint64_t result = 0;
-	if (handleC != 0) {
-		result = HandleTarget_Free(ctx, base, handleC);
+	freeResult = objectBase->m_C;
+	if ((uint32_t)freeResult != 0) {
+		freeResult = HandleTarget_Free(ctx, base, freeResult);
 	}
-	STORE32(block8Addr + 4, 0);
-	STORE32(block8Addr + 8, 0);
-	STORE32(block8Addr + 12, 0);
+	STORE32(fieldBlockAddr + 4, zero);
+	STORE32(fieldBlockAddr + 8, zero);
+	STORE32(fieldBlockAddr + 12, zero);
 
 	objectBase->vtable = 0x820F3A24u;
 	stack = PopStackFrame(stack, 160);
 	ctx.r1.u64 = stack;
-	return result;
-};
+	return freeResult;
+}
 PROMOTED_ENTRY(84, sub_82B6A810, 0x82B6A810) { ctx.r3.u64 = CObjectBase_Destructor_SharedHandle(ctx, base, ctx.r3.u64); }

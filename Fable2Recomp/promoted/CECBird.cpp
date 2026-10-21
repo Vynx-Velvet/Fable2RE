@@ -538,7 +538,6 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 	uint64_t reg6 = ctx.r6.u64;
 	uint64_t reg7 = ctx.r7.u64;
 	uint64_t reg8 = ctx.r8.u64;
-	PPCXERRegister flags = ctx.xer;
 	PPCRegister callTarget{};
 
 	// Make sure the bird is initialised before anything else touches it.
@@ -548,7 +547,6 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 		reg6 = ctx.r6.u64;
 		reg7 = ctx.r7.u64;
 		reg8 = ctx.r8.u64;
-		flags.ca = ctx.xer.ca;
 	}
 
 	if (LOAD32(entityAddr + 16) == 1) {
@@ -576,12 +574,11 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 			} else {
 				// Lower bound search for the first entry whose key is >= 49.
 				const uint32_t begin = LOAD32(owner + 72);
-				reg6 = LOAD32(owner + 76);
-				slot = 1;
+				reg8 = LOAD32(owner + 76);
 				STORE32(stack + 80, 0);
 				uint32_t cursor = begin;
 				STORE32(stack + 84, cursor);
-				int32_t count = (int32_t)(uint32_t(reg6) - begin) >> 3;
+				int32_t count = (int32_t)(uint32_t(reg8) - begin) >> 3;
 				if (count > 0) {
 					do {
 						const int32_t half = count >> 1;
@@ -600,15 +597,17 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 					} while (count > 0);
 					STORE32(stack + 84, cursor);
 				}
-				if (cursor != uint32_t(reg6)) {
-					if ((int32_t)LOAD32(cursor) > 49) {
-						element = LOAD32(uint32_t(reg6) + 4);
+				if (cursor != uint32_t(reg8)) {
+					reg7 = (int32_t(LOAD32(cursor)) > 49) ? 1 : 0;
+					reg7 &= 0xFF;
+					if (uint32_t(reg7) != 0) {
+						element = LOAD32(uint32_t(reg8) + 4);
 					} else {
 						STORE64(stack + 80, LOAD64(stack + 80));
 						element = LOAD32(LOAD32(stack + 84) + 4);
 					}
 				} else {
-					element = LOAD32(uint32_t(reg6) + 4);
+					element = LOAD32(uint32_t(reg8) + 4);
 				}
 				hasElement = true;
 			}
@@ -624,10 +623,8 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 			ctx.r8.u64 = reg8;
 			ctx.r9.u64 = slot;
 			ctx.r10.u64 = uint64_t(handler);
-			ctx.xer.ca = flags.ca;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			result = ctx.r3.u64;
-			flags.ca = ctx.xer.ca;
 
 			if ((uint32_t(result) & 0xFF) == 0) {
 				// Behaviour finished: schedule the next idle evaluation.
@@ -642,12 +639,14 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 					? int32_t(0x80000000)
 					: (nextTime > double(INT_MAX) ? INT_MAX : simde_mm_cvttsd_si32(simde_mm_load_sd(&nextTime)));
 				bird->m_58 = nextTimeInt;
+				ctx.f10.s64 = int64_t(nextTimeInt);
+				ctx.f11.f64 = nextTime;
+				ctx.f12.f64 = now;
+				ctx.f13.f64 = span;
 
 				const uint64_t idleString = uint64_t(int64_t(str_TXT_820AE654_B_));
 				CCharString_ConstructFromCStr(ctx, base, uint64_t(stack) + 80, idleString, -1);
-				flags.ca = ctx.xer.ca;
 				C_820F0D08_Construct(ctx, base, uint64_t(stack) + 112, 1, uint64_t(stack) + 80, 0);
-				flags.ca = ctx.xer.ca;
 
 				STORE32(stack + 112, uint32_t(g_82005430));
 				const uint32_t action = LOAD32(LOAD32(element) + 64);
@@ -658,25 +657,19 @@ uint64_t CECBird_UpdateIdle(CpuState& ctx, uint8_t* base, uint64_t birdAddr) {
 				ctx.r6.u64 = 0;
 				ctx.r10.u64 = uint64_t(action);
 				REX_CALL_INDIRECT_FUNC(callTarget.u32);
-				flags.ca = ctx.xer.ca;
 
 				STORE32(stack + 88, uint32_t(g_820F0000) + 5732);
 				EntityHandle_Release(ctx, base, uint64_t(stack) + 88);
-				flags.ca = ctx.xer.ca;
 				STORE32(stack + 92, 0);
 				CCharString_ReleaseAndDecGlobalCountA(ctx, base, uint64_t(stack) + 196);
-				flags.ca = ctx.xer.ca;
 				HandleHolder_Dtor(ctx, base, uint64_t(stack) + 112);
-				flags.ca = ctx.xer.ca;
 				result = CCharString_ReleaseAndDecGlobalCountA(ctx, base, uint64_t(stack) + 80);
-				flags.ca = ctx.xer.ca;
 			}
 		}
 	}
 
 	stack = PopStackFrame(stack, 272);
 	ctx.r1.u64 = stack;
-	ctx.xer.ca = flags.ca;
 	return result;
 }
 PROMOTED_ENTRY(69, sub_8299CF70, 0x8299CF70) { ctx.r3.u64 = CECBird_UpdateIdle(ctx, base, ctx.r3.u64); }
@@ -1025,6 +1018,7 @@ uint64_t CECBird_SpawnDeathEffects(CpuState& ctx, uint8_t* base, uint32_t birdAd
 		VSTORE((stack + 112) & ~0xF, V8(vec));
 	}
 
+	ctx.r6.u64 = reg6;
 
 	uint64_t bloodName = str_TXT_820ECB54_B_;
 	CCharString_ConstructFromCStr(ctx, base, stack + 96, bloodName, -1);

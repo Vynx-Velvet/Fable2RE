@@ -772,171 +772,172 @@ uint64_t CBinaryDataStream_ReadInt16(CpuState& ctx, uint8_t* base, uint64_t bina
 }
 PROMOTED_ENTRY(93, sub_82C79EC8, 0x82C79EC8) { ctx.r3.u64 = CBinaryDataStream_ReadInt16(ctx, base, ctx.r3.u64, ctx.r4.u32); }
 
-// Turns the pairs of a source object into one text for the stream. A wide string stream on the game stack
-// receives the pair count and ':' (58), then for each pair the key's length, ':', the key, the value's
-// length, ':', the value; a length-prefixed copy of the finished text goes to the stream's method at
-// vtable +56, whose result is returned. CBinaryDataStream_ReadStringPairMap parses text of this layout.
-uint64_t CBinaryDataStream_WriteStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t source) {
+// sub_82C7C4C0  [692 bytes]
+uint64_t CBinaryDataStream_WriteStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint64_t arg2) {
 	constexpr int32_t g_8200E480 = int32_t(0x8200E480);
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820CCFBC = int32_t(0x820CCFBC);
-	if (!UseLiftedCode(93, 0x82C7C4C0)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = source; __imp__sub_82C7C4C0(ctx, base); return ctx.r3.u64; }
+	if (!UseLiftedCode(93, 0x82C7C4C0)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = arg2; __imp__sub_82C7C4C0(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C7C4C0);
 	uint32_t stack = ctx.r1.u64;
+
 	CBinaryDataStream* binaryDataStream = GameObject<CBinaryDataStream>(base, binaryDataStreamAddr);
+	PPCRegister callTarget{};
+
 	stack = PushStackFrame(base, stack, 384);
 
-	// the string stream: object at stack+144, its buffer at +148, its virtual base at +220
-	const uint32_t textStream = stack + 144;
-	const uint32_t textBuffer = stack + 148;
-	const uint32_t textStreamBase = stack + 220;
-	const uint64_t firstBaseVtable = g_8200E480;                       // 0xFFFFFFFF8200E480
-	const uint64_t streamBaseVtable = (int64_t)g_82010000 - 7036;      // 0xFFFFFFFF8200E484
-	const uint64_t lastBaseVtable = g_820CCFBC;                        // 0xFFFFFFFF820CCFBC
-
-	STORE32(textStream, 0x820CCE8Cu);
-	STORE32(textStreamBase, (uint32_t)firstBaseVtable);
+	// game-stack objects: the key table at stack+220, the string builder at stack+144
+	const uint64_t tableVtable = g_8200E480;                              // 0xFFFFFFFF8200E480
+	STORE32(stack + 144, 0x820CCE8Cu);
+	STORE32(stack + 220, (uint32_t)tableVtable);
 	ctx.r1.u64 = stack;
-	WStringStream_ConstructWithBuffer(ctx, base, textStreamBase, textBuffer, 0, firstBaseVtable);
+	WStringStream_ConstructWithBuffer(ctx, base, stack + 220, stack + 148, 0, tableVtable);
 
-	// the virtual base is found through the offset at +4 of the object's vtable
-	STORE32(LOAD32(LOAD32(textStream) + 4) + textStream, (uint32_t)streamBaseVtable);
-	// state the callee may pass on
-	ctx.r5.u64 = streamBaseVtable;
-	WStringStream_SetModeFlags(ctx, base, textBuffer, 2, ctx.r8.u64);
+	const int32_t builderBase = g_82010000;                              // 0xFFFFFFFF82010000
+	const uint64_t builderVtable = (uint64_t)(int64_t)builderBase - 7036;  // 0xFFFFFFFF8200E484
+	STORE32(LOAD32(LOAD32(stack + 144) + 4) + stack + 144, (uint32_t)builderVtable);
+	ctx.r5.u64 = builderVtable;
+	ctx.r6.s64 = builderBase;
+	WStringStream_SetModeFlags(ctx, base, stack + 148, 2, ctx.r8.u64);
 
-	// the source's method at +24 puts an enumerator object at stack+80
-	uint32_t sourceVtable = LOAD32((uint32_t)source);
-	uint32_t enumerateMethod = LOAD32(sourceVtable + 24);
-	ctx.r3.u64 = source;
+	uint32_t sourceVtable = LOAD32((uint32_t)arg2);
+	uint32_t sourceMethod = LOAD32(sourceVtable + 24);
+	callTarget.u64 = sourceMethod;
+	ctx.r3.u64 = arg2;
 	ctx.r4.u64 = stack + 80;
-	ctx.r8.u64 = enumerateMethod;
+	ctx.r8.u64 = sourceMethod;
 	ctx.r9.u64 = sourceVtable;
-	REX_CALL_INDIRECT_FUNC(enumerateMethod);
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	auto destroyBaseAndFail = [&]() -> uint64_t {
-		WStringStreamBase_Destructor(ctx, base, textStreamBase);
-		STORE32(textStreamBase, (uint32_t)lastBaseVtable);
-		ctx.r10.u64 = lastBaseVtable;  // state the callee may pass on
-		RefCountedObject_Release(ctx, base, textStreamBase);
+	auto failNow = [&]() -> uint64_t {
+		WStringStreamBase_Destructor(ctx, base, stack + 220);
+		const uint64_t cleanupVtable = g_820CCFBC;                       // 0xFFFFFFFF820CCFBC
+		STORE32(stack + 220, (uint32_t)cleanupVtable);
+		ctx.r10.u64 = cleanupVtable;
+		RefCountedObject_Release(ctx, base, stack + 220);
 		stack = PopStackFrame(stack, 384);
 		ctx.r1.u64 = stack;
 		return 0xFFFFFFFF80004005ull;
 	};
-	auto destroyStreamAndFail = [&]() -> uint64_t {
-		WStringStream_Destructor(ctx, base, textStream);
+	auto failTidyBuilder = [&]() -> uint64_t {
+		WStringStream_Destructor(ctx, base, stack + 144);
 		stack = PopStackFrame(stack, 384);
 		ctx.r1.u64 = stack;
 		return 0xFFFFFFFF80004005ull;
 	};
 
-	if ((int32_t)ctx.r3.u32 < 0) return destroyBaseAndFail();
+	if ((int32_t)ctx.r3.u32 < 0) return failNow();
 
-	uint32_t enumerator = LOAD32(stack + 80);
-	uint32_t countMethod = LOAD32(LOAD32(enumerator) + 20);
-	ctx.r3.u64 = enumerator;
+	uint32_t rowSource = LOAD32(stack + 80);
+	uint32_t countMethod = LOAD32(LOAD32(rowSource) + 20);
+	callTarget.u64 = countMethod;
+	ctx.r3.u64 = rowSource;
 	ctx.r4.u64 = stack + 84;
 	ctx.r10.u64 = countMethod;
-	REX_CALL_INDIRECT_FUNC(countMethod);
-	if ((int32_t)ctx.r3.u32 < 0) return destroyStreamAndFail();
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	if ((int32_t)ctx.r3.u32 < 0) return failTidyBuilder();
 
-	uint64_t countChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 84), ctx.r8.u64);
-	WStringStream_WriteChar(ctx, base, countChain, 58, ctx.r8.u64);
+	uint64_t bucket = WStringStream_WriteInteger(ctx, base, stack + 144, LOAD32(stack + 84), ctx.r8.u64);
+	WStringStream_WriteChar(ctx, base, bucket, 58, ctx.r8.u64);
 
-	enumerator = LOAD32(stack + 80);
-	uint32_t resetMethod = LOAD32(LOAD32(enumerator) + 12);
-	ctx.r3.u64 = enumerator;
+	uint32_t rowSource2 = LOAD32(stack + 80);
+	uint32_t resetMethod = LOAD32(LOAD32(rowSource2) + 12);
+	callTarget.u64 = resetMethod;
+	ctx.r3.u64 = rowSource2;
 	ctx.r10.u64 = resetMethod;
-	REX_CALL_INDIRECT_FUNC(resetMethod);
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	uint32_t pairCount = LOAD32(stack + 84);
-	// r9 for the calls below: the pair count first, then what the previous pair left in it
-	uint64_t nextR9 = pairCount;
-	if (pairCount != 0) {
-		uint32_t pairIndex = 0;
+	uint32_t rowCount = LOAD32(stack + 84);
+	uint32_t carriedR9 = rowCount;
+	uint32_t i = 0;
+	if (rowCount != 0) {
 		do {
-			enumerator = LOAD32(stack + 80);
-			uint32_t nextMethod = LOAD32(LOAD32(enumerator) + 16);
-			ctx.r3.u64 = enumerator;
+			uint32_t row = LOAD32(stack + 80);
+			uint32_t nextMethod = LOAD32(LOAD32(row) + 16);
+			callTarget.u64 = nextMethod;
+			ctx.r3.u64 = row;
 			ctx.r4.u64 = stack + 96;
-			ctx.r9.u64 = nextR9;
+			ctx.r9.u64 = carriedR9;
 			ctx.r10.u64 = nextMethod;
-			REX_CALL_INDIRECT_FUNC(nextMethod);
-			if ((int32_t)ctx.r3.u32 < 0) return destroyBaseAndFail();
-			if (LOAD32(stack + 96) == 0) return destroyBaseAndFail();
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			if ((int32_t)ctx.r3.u32 < 0) return failNow();
+			if (LOAD32(stack + 96) == 0) return failNow();
 
-			enumerator = LOAD32(stack + 80);
-			uint32_t keyMethod = LOAD32(LOAD32(enumerator) + 24);
-			ctx.r3.u64 = enumerator;
+			uint32_t keyRow = LOAD32(stack + 80);
+			uint32_t keyMethod = LOAD32(LOAD32(keyRow) + 24);
+			callTarget.u64 = keyMethod;
+			ctx.r3.u64 = keyRow;
 			ctx.r4.u64 = stack + 88;
 			ctx.r10.u64 = keyMethod;
-			REX_CALL_INDIRECT_FUNC(keyMethod);
-			if ((int32_t)ctx.r3.u32 < 0) return destroyStreamAndFail();
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
+			if ((int32_t)ctx.r3.u32 < 0) return failTidyBuilder();
 
-			enumerator = LOAD32(stack + 80);
-			uint32_t valueMethod = LOAD32(LOAD32(enumerator) + 28);
-			ctx.r3.u64 = enumerator;
+			uint32_t valueRow = LOAD32(stack + 80);
+			uint32_t valueMethod = LOAD32(LOAD32(valueRow) + 28);
+			callTarget.u64 = valueMethod;
+			ctx.r3.u64 = valueRow;
 			ctx.r4.u64 = stack + 92;
 			ctx.r10.u64 = valueMethod;
-			REX_CALL_INDIRECT_FUNC(valueMethod);
+			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 			if ((int32_t)ctx.r3.u32 < 0) {
 				FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 88));
-				return destroyStreamAndFail();
+				return failTidyBuilder();
 			}
 
-			// key and value as strings at stack+304 and stack+272 (their lengths at +20)
 			BasicWString_ConstructFromWideCStr(ctx, base, stack + 304, LOAD32(stack + 88), ctx.r8.u64);
 			BasicWString_ConstructFromWideCStr(ctx, base, stack + 272, LOAD32(stack + 92), ctx.r8.u64);
 
-			uint64_t keyChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 324), ctx.r8.u64);
-			keyChain = WStringStream_WriteChar(ctx, base, keyChain, 58, ctx.r8.u64);
-			WStringStream_WriteString(ctx, base, keyChain, stack + 304, ctx.r8.u64);
+			uint64_t keyBucket = WStringStream_WriteInteger(ctx, base, stack + 144, LOAD32(stack + 324), ctx.r8.u64);
+			uint64_t keyEntry = WStringStream_WriteChar(ctx, base, keyBucket, 58, ctx.r8.u64);
+			WStringStream_WriteString(ctx, base, keyEntry, stack + 304, ctx.r8.u64);
 
-			uint64_t valueChain = WStringStream_WriteInteger(ctx, base, textStream, LOAD32(stack + 292), ctx.r8.u64);
-			valueChain = WStringStream_WriteChar(ctx, base, valueChain, 58, ctx.r8.u64);
-			WStringStream_WriteString(ctx, base, valueChain, stack + 272, ctx.r8.u64);
+			uint64_t valueBucket = WStringStream_WriteInteger(ctx, base, stack + 144, LOAD32(stack + 292), ctx.r8.u64);
+			uint64_t valueEntry = WStringStream_WriteChar(ctx, base, valueBucket, 58, ctx.r8.u64);
+			WStringStream_WriteString(ctx, base, valueEntry, stack + 272, ctx.r8.u64);
 
 			FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 88));
 			FreeLengthPrefixedBlock(ctx, base, LOAD32(stack + 92));
 			WString_Tidy(ctx, base, stack + 272);
 			WString_Tidy(ctx, base, stack + 304);
-			nextR9 = ctx.r9.u64;
-			++pairIndex;
-		} while (pairIndex < LOAD32(stack + 84));
+
+			carriedR9 = ctx.r9.u64;
+			++i;
+		} while (i < LOAD32(stack + 84));
 	}
 
-	ctx.r9.u64 = nextR9;  // state the callee may pass on
-	WStringStream_GetString(ctx, base, stack + 112, textBuffer, ctx.r8.u64);
+	ctx.r9.u64 = carriedR9;
+	WStringStream_GetString(ctx, base, stack + 112, stack + 148, ctx.r8.u64);
 
-	// the finished text, a string at stack+112: characters inline at +116 while the capacity at +136 is below 8
-	uint32_t text = LOAD32(stack + 116);
-	if (LOAD32(stack + 136) < 8) text = stack + 116;
-	uint64_t textCopy = WString_DuplicateWithLengthPrefix(ctx, base, text);
+	uint32_t lookupName = LOAD32(stack + 116);
+	if (LOAD32(stack + 136) < 8) lookupName = stack + 116;
+	uint64_t nameCopy = WString_DuplicateWithLengthPrefix(ctx, base, lookupName);
 
-	uint32_t writeMethod = LOAD32(uint32_t(binaryDataStream->vtable) + 56);
+	uint32_t saveMethod = LOAD32(uint32_t(binaryDataStream->vtable) + 56);
+	callTarget.u64 = saveMethod;
 	ctx.r3.u64 = binaryDataStreamAddr;
-	ctx.r4.u64 = textCopy;
-	ctx.r10.u64 = writeMethod;
-	REX_CALL_INDIRECT_FUNC(writeMethod);
-	uint64_t result = ctx.r3.u64;
+	ctx.r4.u64 = nameCopy;
+	ctx.r10.u64 = saveMethod;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	uint64_t saveResult = ctx.r3.u64;
 
-	FreeLengthPrefixedBlock(ctx, base, textCopy);
+	FreeLengthPrefixedBlock(ctx, base, nameCopy);
 	if (LOAD32(stack + 136) >= 8) {
 		HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 116));
 	}
-	STORE32(stack + 132, 0);
-	STORE16(stack + 116, 0);
-	STORE32(stack + 136, 7);
 
-	WStringStreamBase_Destructor(ctx, base, textStreamBase);
-	STORE32(textStreamBase, (uint32_t)lastBaseVtable);
-	// state the callee may pass on
-	ctx.r9.u64 = lastBaseVtable;
-	RefCountedObject_Release(ctx, base, textStreamBase);
+	STORE32(stack + 132, 0u);
+	STORE16(stack + 116, (uint16_t)0);
+	STORE32(stack + 136, 7u);
+
+	WStringStreamBase_Destructor(ctx, base, stack + 220);
+	const uint64_t zapVtable = (uint64_t)g_820CCFBC;                     // 0xFFFFFFFF820CCFBC
+	STORE32(stack + 220, (uint32_t)zapVtable);
+	ctx.r9.u64 = zapVtable;
+	RefCountedObject_Release(ctx, base, stack + 220);
 
 	stack = PopStackFrame(stack, 384);
 	ctx.r1.u64 = stack;
-	return result;
+	return saveResult;
 }
 PROMOTED_ENTRY(93, sub_82C7C4C0, 0x82C7C4C0) { ctx.r3.u64 = CBinaryDataStream_WriteStringPairMap(ctx, base, ctx.r3.u64, ctx.r4.u64); }
 
@@ -999,189 +1000,253 @@ uint32_t CBinaryDataStream_ReadDelimitedString(CpuState& ctx, uint8_t* base, uin
 }
 PROMOTED_ENTRY(93, sub_82C7C778, 0x82C7C778) { ctx.r3.u64 = CBinaryDataStream_ReadDelimitedString(ctx, base, ctx.r4.u64, ctx.r5.u64, ctx.r6.u64); }
 
-// Reads a text from the stream (its method at vtable +60) and parses it in a wide string stream on the game
-// stack: the pair count, then for each pair the key's length, the key, the value's length, the value (each
-// number is followed by one separator character, skipped by WStringStream_SkipSeparator). A new object receives the pairs
-// through its method at vtable +16 and is stored at outObjectPtr; on a parse or add failure it is released
-// through its method at +8 instead and E_FAIL is returned. CBinaryDataStream_WriteStringPairMap writes text of this layout.
-uint64_t CBinaryDataStream_ReadStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outObjectPtr, uint64_t callerR8) {
+uint64_t CBinaryDataStream_ReadStringPairMap(CpuState& ctx, uint8_t* base, uint64_t binaryDataStreamAddr, uint32_t outObjectPtr, uint64_t arg3) {
 	constexpr int32_t g_82010000 = int32_t(0x82010000);
 	constexpr int32_t g_820CCFBC = int32_t(0x820CCFBC);
-	if (!UseLiftedCode(93, 0x82C7C830)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = outObjectPtr; ctx.r8.u64 = callerR8; __imp__sub_82C7C830(ctx, base); return ctx.r3.u64; }
+	constexpr int32_t str_TXT_820D0000_B_ = int32_t(0x820D0000);
+	if (!UseLiftedCode(93, 0x82C7C830)) { ctx.r3.u64 = binaryDataStreamAddr; ctx.r4.u64 = outObjectPtr; ctx.r8.u64 = arg3; __imp__sub_82C7C830(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x82C7C830);
 	uint32_t stack = ctx.r1.u64;
-	CBinaryDataStream* binaryDataStream = GameObject<CBinaryDataStream>(base, binaryDataStreamAddr);
+
+	const uint32_t zero = 0;
+	const uint32_t stringCapacity = 7;
+	const uint64_t delimiter = 0xFFFFull;
+
+	PPCRegister callTarget{};
+	CBinaryDataStream* stream = GameObject<CBinaryDataStream>(base, binaryDataStreamAddr);
+	uint32_t streamAddr = binaryDataStreamAddr;
+	uint64_t resultObject = 0;
+	uint64_t basePtr = (uint64_t)g_82010000;
+	uint32_t entryFlags = 0;
+	uint32_t entryVtable = 0;
+	uint32_t trackFlags = 0;
+	uint32_t lineCount = 0;
+	uint32_t eventIndex = 0;
+
 	stack = PushStackFrame(base, stack, 416);
 
-	STORE32(outObjectPtr, 0);
+	STORE32(outObjectPtr, zero);
 
-	uint32_t readMethod = LOAD32(uint32_t(binaryDataStream->vtable) + 60);
+	uint32_t readFn = LOAD32(uint32_t(stream->vtable) + 60);
+	callTarget.u64 = (uint64_t)readFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = binaryDataStreamAddr;
 	ctx.r4.u64 = stack + 148;
-	ctx.r8.u64 = callerR8;
-	ctx.r10.u64 = readMethod;
-	REX_CALL_INDIRECT_FUNC(readMethod);
-	if ((int32_t)ctx.r3.u32 < 0) {
-		stack = PopStackFrame(stack, 416);
-		ctx.r1.u64 = stack;
-		return 0xFFFFFFFF80004005ull;
-	}
+	ctx.r8.u64 = arg3;
+	ctx.r10.u64 = readFn;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	uint32_t readStatus = ctx.r3.u32;
 
-	uint64_t allocation = operator_new(ctx, base, 52);
-	uint64_t resultObject = (uint32_t)allocation != 0 ? StringPairMap_Constructor(ctx, base, allocation) : 0;
-
-	uint32_t initFn = LOAD32(LOAD32((uint32_t)resultObject) + 4);
-	ctx.r3.u64 = resultObject;
-	ctx.r10.u64 = initFn;
-	REX_CALL_INDIRECT_FUNC(initFn);
-
-	// strings on the game stack: characters inline at +4 (a heap pointer there once the capacity at +24
-	// is 8 or more), length at +20
-	auto makeEmpty = [&](uint32_t stringAddr) {
-		STORE32(stringAddr + 24, 7);
-		STORE32(stringAddr + 20, 0);
-		STORE16(stringAddr + 4, 0);
-	};
-	auto destroyString = [&](uint32_t stringAddr) {
-		if (LOAD32(stringAddr + 24) >= 8) {
-			HandleTarget_FreeThunk(ctx, base, LOAD32(stringAddr + 4));
+	if ((int32_t)readStatus >= 0) {
+		uint64_t allocation = operator_new(ctx, base, 52);
+		if ((uint32_t)allocation != 0) {
+			resultObject = StringPairMap_Constructor(ctx, base, allocation);
+		} else {
+			resultObject = zero;
 		}
-		makeEmpty(stringAddr);
-	};
-	auto charactersOf = [&](uint32_t stringAddr) -> uint32_t {
-		return LOAD32(stringAddr + 24) < 8 ? stringAddr + 4 : LOAD32(stringAddr + 4);
-	};
 
-	// the string stream: object at stack+192, its buffer at +200, its virtual base at +272
-	const uint32_t textStream = stack + 192;
-	const uint64_t lastBaseVtable = g_820CCFBC;  // 0xFFFFFFFF820CCFBC
-
-	auto releaseAndFail = [&]() -> uint64_t {
-		uint32_t destroyFn = LOAD32(LOAD32((uint32_t)resultObject) + 8);
+		uint32_t initFn = LOAD32(LOAD32((uint32_t)resultObject) + 4);
+		callTarget.u64 = (uint64_t)initFn;
 		ctx.r3.u64 = resultObject;
-		ctx.r10.u64 = destroyFn;
-		REX_CALL_INDIRECT_FUNC(destroyFn);
-		destroyString(stack + 80);
-		destroyString(stack + 112);
-		n_sub_82C73F18(ctx, base, stack + 272);
-		STORE32(stack + 272, (uint32_t)lastBaseVtable);
-		ctx.r10.u64 = lastBaseVtable;  // state the callee may pass on
-		RefCountedObject_Release(ctx, base, stack + 272);
-		stack = PopStackFrame(stack, 416);
-		ctx.r1.u64 = stack;
-		return 0xFFFFFFFF80004005ull;
-	};
+		ctx.r10.u64 = initFn;
+		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	BasicWString_ConstructFromWideCStr(ctx, base, stack + 160, LOAD32(stack + 148), ctx.r8.u64);
-	WStringStream_InitFromString(ctx, base, textStream, stack + 160, 1, 1);
+		uint32_t wideName = LOAD32(stack + 148);
+		BasicWString_ConstructFromWideCStr(ctx, base, stack + 160, wideName, ctx.r8.u64);
 
-	// destroy the string at stack+160; r9 for WStringStream_ReadInteger: its capacity, or what the free left in it
-	uint64_t nextR9 = LOAD32(stack + 184);
-	if ((uint32_t)nextR9 >= 8) {
-		HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 164));
-		nextR9 = ctx.r9.u64;
-	}
-	makeEmpty(stack + 160);
-	ctx.r9.u64 = nextR9;  // state the callee may pass on
-	WStringStream_ReadInteger(ctx, base, textStream, stack + 140, ctx.r8.u64);
-	ctx.r11.u64 = 0;  // state the callee may pass on
-	WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
+		WStringStream_InitFromString(ctx, base, stack + 192, stack + 160, 1, 1);
 
-	// r11 for each WStringStream_ReadInteger in the loop: what WStringStream_SkipSeparator left in it, then the pair count
-	uint32_t nextR11 = ctx.r11.u32;
-	uint32_t pairCount = LOAD32(stack + 140);
-	if (pairCount != 0) {
-		uint32_t pairIndex = 0;
-		do {
-			// the key at stack+112 and the value at stack+80, their lengths read into stack+152 and stack+144
-			makeEmpty(stack + 112);
-			makeEmpty(stack + 80);
-			ctx.r11.u64 = nextR11;  // state the callee may pass on
-			WStringStream_ReadInteger(ctx, base, textStream, stack + 152, ctx.r8.u64);
-			WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
-			ctx.r3.u64 = (uint32_t)binaryDataStreamAddr;  // state the callee may pass on
-			CBinaryDataStream_ReadDelimitedString(ctx, base, textStream, stack + 112, LOAD32(stack + 152));
-			WStringStream_ReadInteger(ctx, base, textStream, stack + 144, ctx.r8.u64);
-			WStringStream_SkipSeparator(ctx, base, textStream, 1, 0xFFFF, ctx.r8.u64);
-			ctx.r3.u64 = (uint32_t)binaryDataStreamAddr;  // state the callee may pass on
-			CBinaryDataStream_ReadDelimitedString(ctx, base, textStream, stack + 80, LOAD32(stack + 144));
-
-			// state word at +8 of the stream's virtual base (found through the offset at +4 of its vtable);
-			// a state with 2 or 4 set (mask 6) means the parse failed
-			uint32_t virtualBaseOffset = LOAD32(LOAD32(textStream) + 4);
-			uint32_t streamState = LOAD32(virtualBaseOffset + stack + 200);
-			uint32_t errorBits = streamState & 6;
-			if (errorBits != 0) {
-				// state the callee may pass on
-				return releaseAndFail();
-			}
-
-			ctx.r8.u64 = streamState;  // state the callee may pass on
-			uint64_t keyCopy = WString_DuplicateWithLengthPrefix(ctx, base, charactersOf(stack + 112));
-			uint64_t valueCopy = WString_DuplicateWithLengthPrefix(ctx, base, charactersOf(stack + 80));
-
-			uint32_t addFn = LOAD32(LOAD32((uint32_t)resultObject) + 16);
-			ctx.r3.u64 = resultObject;
-			ctx.r4.u64 = keyCopy;
-			ctx.r5.u64 = valueCopy;
-			ctx.r10.u64 = addFn;
-			REX_CALL_INDIRECT_FUNC(addFn);
-			uint32_t addStatus = ctx.r3.u32;
-			FreeLengthPrefixedBlock(ctx, base, keyCopy);
-			FreeLengthPrefixedBlock(ctx, base, valueCopy);
-			if ((int32_t)addStatus < 0) return releaseAndFail();
-
-			destroyString(stack + 80);
-			destroyString(stack + 112);
-			pairCount = LOAD32(stack + 140);
-			nextR11 = pairCount;
-			++pairIndex;
-		} while (pairIndex < pairCount);
-	}
-
-	uint32_t streamVtable = LOAD32(textStream);
-	STORE32(outObjectPtr, (uint32_t)resultObject);
-	STORE32(LOAD32(streamVtable + 4) + textStream, 0x8200E254u);
-	STORE32(stack + 200, 0x8200E21Cu);
-	WStringStream_Reset(ctx, base, stack + 200);
-
-	// r4 as handed on through the calls below
-	uint64_t nextR4 = (uint64_t)(int64_t)g_82010000;
-	// the object the buffer holds at +56: release what it points to, then free it
-	uint32_t heldObject = LOAD32(stack + 256);
-	STORE32(stack + 200, uint32_t((int64_t)g_82010000 - 7708));  // 0x8200E1E4
-	if (heldObject != 0) {
-		uint32_t inner = LOAD32(heldObject);
-		if (inner != 0) {
-			uint64_t releasedObject = n_sub_826C4B38(ctx, base, inner);
-			nextR4 = ctx.r4.u64;
-			if ((uint32_t)releasedObject != 0) {
-				uint32_t destroyMethod = LOAD32(LOAD32((uint32_t)releasedObject));
-				ctx.r3.u64 = releasedObject;
-				ctx.r4.u64 = 1;
-				ctx.r10.u64 = destroyMethod;
-				REX_CALL_INDIRECT_FUNC(destroyMethod);
-				nextR4 = ctx.r4.u64;
-			}
+		uint32_t nameCapacity = LOAD32(stack + 184);
+		if (nameCapacity >= 8) {
+			HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 164));
+			nameCapacity = ctx.r9.u32;
 		}
-		HandleTarget_FreeThunk(ctx, base, heldObject);
-		nextR4 = ctx.r4.u64;
-	}
-	n_sub_82CD1D00(ctx, base, stack + 204);
+		STORE32(stack + 180, zero);
+		STORE16(stack + 164, (uint16_t)zero);
+		STORE32(stack + 184, stringCapacity);
 
-	streamVtable = LOAD32(textStream);
-	uint64_t streamBaseVtable = (int64_t)g_82010000 - 7716;  // 0xFFFFFFFF8200E1DC
-	STORE32(LOAD32(streamVtable + 4) + textStream, (uint32_t)streamBaseVtable);
-	STORE32(stack + 272, (uint32_t)lastBaseVtable);
-	// state the callee may pass on
-	ctx.r6.u64 = streamVtable;
-	ctx.r7.u64 = lastBaseVtable;
-	ctx.r8.u64 = streamBaseVtable;
-	RefCountedObject_Release(ctx, base, stack + 272);
+		ctx.r9.u64 = nameCapacity;
+		WStringStream_ReadInteger(ctx, base, stack + 192, stack + 140, ctx.r8.u64);
+
+		WStringStream_SkipSeparator(ctx, base, stack + 192, 1, delimiter, ctx.r8.u64);
+		lineCount = ctx.r11.u32;
+
+		eventIndex = zero;
+		if (LOAD32(stack + 140) != 0) {
+			do {
+				STORE32(stack + 136, stringCapacity);
+				STORE32(stack + 132, zero);
+				STORE16(stack + 116, (uint16_t)zero);
+				STORE32(stack + 104, stringCapacity);
+				STORE32(stack + 100, zero);
+				STORE16(stack + 84, (uint16_t)zero);
+
+				WStringStream_ReadInteger(ctx, base, stack + 192, stack + 152, ctx.r8.u64);
+				WStringStream_SkipSeparator(ctx, base, stack + 192, 1, delimiter, ctx.r8.u64);
+
+				CBinaryDataStream_ReadDelimitedString(ctx, base, stack + 192, stack + 112, LOAD32(stack + 152));
+
+				WStringStream_ReadInteger(ctx, base, stack + 192, stack + 144, ctx.r8.u64);
+				WStringStream_SkipSeparator(ctx, base, stack + 192, 1, delimiter, ctx.r8.u64);
+
+				CBinaryDataStream_ReadDelimitedString(ctx, base, stack + 192, stack + 80, LOAD32(stack + 144));
+
+				entryVtable = LOAD32(LOAD32(stack + 192) + 4);
+				entryFlags = LOAD32(entryVtable + uint32_t(stack + 200));
+				trackFlags = entryFlags & 6;
+				if ((int32_t)trackFlags != 0) goto loc_82C7CB28;
+
+				uint32_t firstText = LOAD32(stack + 116);
+				if (LOAD32(stack + 136) < 8) {
+					firstText = stack + 116;
+				}
+				ctx.r8.u64 = entryFlags;
+				uint64_t firstCopy = WString_DuplicateWithLengthPrefix(ctx, base, firstText);
+
+				uint32_t secondText = LOAD32(stack + 84);
+				if (LOAD32(stack + 104) < 8) {
+					secondText = stack + 84;
+				}
+				uint64_t secondCopy = WString_DuplicateWithLengthPrefix(ctx, base, secondText);
+
+				uint32_t addFn = LOAD32(LOAD32((uint32_t)resultObject) + 16);
+				callTarget.u64 = (uint64_t)addFn;
+				ctx.r3.u64 = resultObject;
+				ctx.r4.u64 = firstCopy;
+				ctx.r5.u64 = secondCopy;
+				ctx.r10.u64 = addFn;
+				REX_CALL_INDIRECT_FUNC(callTarget.u32);
+				uint32_t addStatus = ctx.r3.u32;
+
+				FreeLengthPrefixedBlock(ctx, base, firstCopy);
+				FreeLengthPrefixedBlock(ctx, base, secondCopy);
+
+				if ((int32_t)addStatus < 0) goto loc_82C7CBA8;
+
+				if (LOAD32(stack + 104) >= 8) {
+					HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 84));
+				}
+				STORE32(stack + 104, stringCapacity);
+				STORE32(stack + 100, zero);
+				STORE16(stack + 84, (uint16_t)zero);
+				if (LOAD32(stack + 136) >= 8) {
+					HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 116));
+				}
+				lineCount = LOAD32(stack + 140);
+				eventIndex = (int32_t)eventIndex + 1;
+				STORE32(stack + 136, stringCapacity);
+				STORE32(stack + 132, zero);
+				STORE16(stack + 116, (uint16_t)zero);
+			} while (eventIndex < lineCount);
+		}
+
+		uint32_t trackerVtable = LOAD32(stack + 192);
+		STORE32(outObjectPtr, (uint32_t)resultObject);
+		STORE32(LOAD32(trackerVtable + 4) + uint32_t(stack + 192), 0x8200E254u);
+		STORE32(stack + 200, 0x8200E21Cu);
+		WStringStream_Reset(ctx, base, stack + 200);
+
+		uint32_t listener = LOAD32(stack + 256);
+		STORE32(stack + 200, (uint32_t)((int64_t)basePtr - 7708));
+		if (listener != 0) {
+			uint32_t listenerInner = LOAD32(listener);
+			if (listenerInner != 0) {
+				uint64_t released = n_sub_826C4B38(ctx, base, listenerInner);
+				basePtr = ctx.r4.u64;
+				if ((uint32_t)released == 0) goto loc_82C7CAE0;
+				uint32_t releaseFn = LOAD32(LOAD32((uint32_t)released));
+				callTarget.u64 = (uint64_t)releaseFn;
+				ctx.r3.u64 = released;
+				ctx.r4.u64 = 1;
+				ctx.r10.u64 = releaseFn;
+				REX_CALL_INDIRECT_FUNC(callTarget.u32);
+				basePtr = ctx.r4.u64;
+			}
+loc_82C7CAE0:
+			HandleTarget_FreeThunk(ctx, base, (uint64_t)listener);
+			basePtr = ctx.r4.u64;
+		}
+
+		n_sub_82CD1D00(ctx, base, stack + 204);
+
+		uint32_t eventVtable = LOAD32(stack + 192);
+		uint64_t vtableSlot = (uint64_t)((int64_t)g_82010000 - 7716);
+		uint64_t eventSlot = (uint64_t)((int64_t)str_TXT_820D0000_B_ - 12356);
+		STORE32(LOAD32(eventVtable + 4) + uint32_t(stack + 192), (uint32_t)vtableSlot);
+		STORE32(stack + 272, (uint32_t)eventSlot);
+		ctx.r6.u64 = eventVtable;
+		ctx.r7.u64 = eventSlot;
+		ctx.r8.u64 = vtableSlot;
+		RefCountedObject_Release(ctx, base, stack + 272);
+	}
 
 	stack = PopStackFrame(stack, 416);
 	ctx.r1.u64 = stack;
 	return 0;
+
+loc_82C7CB28:
+	{
+		uint32_t destroyFn = LOAD32(LOAD32((uint32_t)resultObject) + 8);
+		callTarget.u64 = (uint64_t)destroyFn;
+		ctx.r3.u64 = resultObject;
+		ctx.r7.u64 = trackFlags;
+		ctx.r8.u64 = entryFlags;
+		ctx.r9.u64 = entryVtable;
+		ctx.r10.u64 = destroyFn;
+		REX_CALL_INDIRECT_FUNC(callTarget.u32);
+
+		if (LOAD32(stack + 104) >= 8) {
+			HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 84));
+		}
+		STORE32(stack + 104, stringCapacity);
+		STORE32(stack + 100, zero);
+		STORE16(stack + 84, (uint16_t)zero);
+		if (LOAD32(stack + 136) >= 8) {
+			HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 116));
+		}
+		STORE32(stack + 136, stringCapacity);
+		STORE32(stack + 132, zero);
+		STORE16(stack + 116, (uint16_t)zero);
+
+		n_sub_82C73F18(ctx, base, stack + 272);
+		uint64_t ccfbcSlot = (uint64_t)g_820CCFBC;
+		STORE32(stack + 272, (uint32_t)ccfbcSlot);
+		ctx.r10.u64 = ccfbcSlot;
+		RefCountedObject_Release(ctx, base, stack + 272);
+	}
+	stack = PopStackFrame(stack, 416);
+	ctx.r1.u64 = stack;
+	return 0xFFFFFFFF80004005ull;
+
+loc_82C7CBA8:
+	{
+		uint32_t destroyFn = LOAD32(LOAD32((uint32_t)resultObject) + 8);
+		callTarget.u64 = (uint64_t)destroyFn;
+		ctx.r3.u64 = resultObject;
+		ctx.r10.u64 = destroyFn;
+		REX_CALL_INDIRECT_FUNC(callTarget.u32);
+
+		if (LOAD32(stack + 104) >= 8) {
+			HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 84));
+		}
+		STORE32(stack + 104, stringCapacity);
+		STORE32(stack + 100, zero);
+		STORE16(stack + 84, (uint16_t)zero);
+		if (LOAD32(stack + 136) >= 8) {
+			HandleTarget_FreeThunk(ctx, base, LOAD32(stack + 116));
+		}
+		STORE32(stack + 136, stringCapacity);
+		STORE32(stack + 132, zero);
+		STORE16(stack + 116, (uint16_t)zero);
+
+		n_sub_82C73F18(ctx, base, stack + 272);
+		uint64_t ccfbcSlot = (uint64_t)g_820CCFBC;
+		STORE32(stack + 272, (uint32_t)ccfbcSlot);
+		ctx.r10.u64 = ccfbcSlot;
+		RefCountedObject_Release(ctx, base, stack + 272);
+	}
+	stack = PopStackFrame(stack, 416);
+	ctx.r1.u64 = stack;
+	return 0xFFFFFFFF80004005ull;
 }
 PROMOTED_ENTRY(93, sub_82C7C830, 0x82C7C830) { ctx.r3.u64 = CBinaryDataStream_ReadStringPairMap(ctx, base, ctx.r3.u64, ctx.r4.u32, ctx.r8.u64); }

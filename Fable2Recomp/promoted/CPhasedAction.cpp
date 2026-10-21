@@ -104,6 +104,7 @@ uint32_t CPhasedAction_StartAction(CpuState& ctx, uint8_t* base, uint64_t phased
 	if (hasAction) {
 		uint32_t actionName = stack + 80;
 		ctx.r1.u64 = stack;
+		ctx.r6.u64 = liveR6;
 		CCharString_ConstructFromCStr(ctx, base, actionName, str_TXT_82000E50_B_, -1);
 		n_sub_8223E410(ctx, base, actionValue, phasedActionAddr, phasedActionAddr + 40, stack + 80);
 		CCharString_ReleaseAndDecGlobalCountA(ctx, base, stack + 80);

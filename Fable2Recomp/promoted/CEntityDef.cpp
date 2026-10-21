@@ -429,8 +429,6 @@ uint64_t CEntityDef_WriteData(CpuState& ctx, uint8_t* base, uint32_t entityDefAd
 PROMOTED_ENTRY(141, sub_8321EC30, 0x8321EC30) { ctx.r3.u64 = CEntityDef_WriteData(ctx, base, ctx.r3.u32, ctx.r4.u64); }
 
 // sub_8321ED18  [664 bytes]
-// Serializes the definition through a stream: id, the Position vector stored at +80, four floats for the
-// matrix built by sub_82A0B288, the UseLife flag (m_A0), a scaled count (m_A4) and a float (m_A8).
 uint64_t CEntityDef_ReadData(CpuState& ctx, uint8_t* base, uint32_t entityDefAddr, uint64_t stream, uint64_t arg3, uint64_t arg4) {
 	constexpr int32_t g_8209003F = int32_t(0x8209003F);
 	constexpr int32_t g_820A0000 = int32_t(0x820A0000);
@@ -438,7 +436,6 @@ uint64_t CEntityDef_ReadData(CpuState& ctx, uint8_t* base, uint32_t entityDefAdd
 	constexpr int32_t g_83490000 = int32_t(0x83490000);
 	constexpr int32_t TXT_8349E468_G_ = int32_t(0x8349E468);
 	constexpr int32_t TXT_8349E470_G_ = int32_t(0x8349E470);
-	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
 	if (!UseLiftedCode(141, 0x8321ED18)) { ctx.r3.u64 = entityDefAddr; ctx.r4.u64 = stream; ctx.r5.u64 = arg3; ctx.r6.u64 = arg4; __imp__sub_8321ED18(ctx, base); return ctx.r3.u64; }
 	LiftedFrame frame(0x8321ED18);
 	PPCRegister callTarget{};
@@ -446,178 +443,173 @@ uint64_t CEntityDef_ReadData(CpuState& ctx, uint8_t* base, uint32_t entityDefAdd
 	CEntityDef* entityDef = GameObject<CEntityDef>(base, entityDefAddr);
 	stack = PushStackFrame(base, stack, 208);
 
-	// Most stream calls get a key (r4) read through a global slot; this constant replaces a null slot.
-	const uint64_t defaultKey = g_8209003F;
+	// Fallback object used while a global cache pointer has not been created yet.
+	const uint64_t defaultSingleton = g_8209003F;
 
-	// stream->vtbl[1] begins a block and stream->vtbl[3] ends it; a zero result skips the block.
-	uint32_t blockKeySlot = LOAD32(0x8349E464u);
-	uint64_t blockKey = defaultKey;
-	if (blockKeySlot != 0) blockKey = LOAD32(blockKeySlot);
+	// stream->vtbl[1](stream, singleton, arg3, arg4): open the entity definition for reading.
+	uint32_t singletonAddr = LOAD32(0x8349E464u);
+	uint64_t serializeContext = defaultSingleton;
+	if (singletonAddr != 0) serializeContext = LOAD32(singletonAddr);
 	uint32_t beginFn = LOAD32(LOAD32((uint32_t)stream) + 4);
 	callTarget.u64 = beginFn;
 	ctx.r1.u64 = stack;
 	ctx.r3.u64 = stream;
-	ctx.r4.u64 = blockKey;
+	ctx.r4.u64 = serializeContext;
 	ctx.r5.u64 = arg3;
 	ctx.r6.u64 = arg4;
 	ctx.r10.u64 = beginFn;
 	REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-	uint32_t blockBegun = ctx.r3.u32 & 0xFF;
-	if (blockBegun != 0) {
-		// id into stack+88
+	uint32_t isReading = ctx.r3.u32 & 0xFF;
+	if (isReading != 0) {
+		// entity id
 		STORE32(stack + 88, 0u);
-		uint64_t idKey = defaultKey;
-		uint32_t idKeySlot = LOAD32(0x8349E47Cu);
-		if (idKeySlot != 0) idKey = LOAD32(idKeySlot);
-		ctx.r4.u64 = idKey;
-		ctx.r9.u64 = blockBegun;
+		uint64_t idContext = defaultSingleton;
+		uint32_t idGlobalAddr = LOAD32(0x8349E47Cu);
+		if (idGlobalAddr != 0) idContext = LOAD32(idGlobalAddr);
+		ctx.r4.u64 = idContext;
+		ctx.r9.u64 = isReading;
 		IStream_SerializeId(ctx, base, stream, (uint64_t)(stack + 88));
 
-		// Position property value into a zeroed vector at stack+128
+		// world position, produced by the Position property
 		PPCVRegister zeroVec{};
 		SET_V8(zeroVec, simde_mm_set1_epi32(0));
 		VSTORE((stack + 128) & ~0xF, V8(zeroVec));
 		CProperty_SerializeVector3(ctx, base, uint32_t(TXT_8349E468_G_), stream, (uint64_t)(stack + 128));
 
-		// Permute the float constant at 0x820994C0 into the position vector (mask at 0x82099200)
-		// and store the result at entityDef+80.
-		PPCVRegister positionVec{}, maskVec{}, constantVec{}, mergedVec{};
+		PPCVRegister positionVec{}, maskVec{}, shiftedVec{}, resultVec{};
 		PPCRegister scratch{};
-		const int32_t constBase = g_820A0000;
+		const int32_t positionGlobal = g_820A0000;
 		uint32_t positionAddr = stack + 128;
-		uint64_t maskAddr = (int64_t)constBase - 28160;
-		uint32_t constantSlot = stack + 96;
-		uint64_t constantAddr = (int64_t)constBase - 27456;
+		uint64_t maskTableAddr = (int64_t)positionGlobal - 28160;
+		uint32_t scratchAddr = stack + 96;
+		uint64_t dataBase = (int64_t)positionGlobal - 27456;
 		ctx.fpscr.disableFlushMode();
-		double mergedFloat = double(LOAD_F32((uint32_t)constantAddr));
-		uint32_t vectorOffset = 80;
+		double defaultLife = double(LOAD_F32((uint32_t)dataBase));
+		uint32_t vectorSize = 80;
 		SET_V8(positionVec, VLOAD(positionAddr & ~0xF));
-		SET_V8(maskVec, VLOAD((uint32_t)maskAddr & ~0xF));
-		STORE_F32(stack + 96, float(mergedFloat));
-		scratch.u32 = constantSlot;
-		SET_V8(constantVec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
-		SET_V8(mergedVec, rex::ppc::simde_mm_perm_epi8_(V8(positionVec), V8(constantVec), V8(maskVec)));
-		uint32_t oldB0 = entityDef->m_B0;
-		VSTORE((entityDefAddr + vectorOffset) & ~0xF, V8(mergedVec));
-		entityDef->m_B0 = uint32_t(int32_t(oldB0) + 1);
+		SET_V8(maskVec, VLOAD((uint32_t)maskTableAddr & ~0xF));
+		STORE_F32(stack + 96, float(defaultLife));
+		scratch.u32 = scratchAddr;
+		SET_V8(shiftedVec, simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)RAW(scratch.u32 & ~0xF)), simde_mm_load_si128((simde__m128i*)&VectorMaskL[(scratch.u32 & 0xF) * 16])));
+		SET_V8(resultVec, rex::ppc::simde_mm_perm_epi8_(V8(positionVec), V8(shiftedVec), V8(maskVec)));
+		uint32_t refCount = entityDef->m_B0;
+		VSTORE((entityDefAddr + vectorSize) & ~0xF, V8(resultVec));
+		entityDef->m_B0 = uint32_t(int32_t(refCount) + 1);
 
-		// Inner block holding four floats at stack+112..124.
-		uint64_t innerKey = defaultKey;
-		uint32_t innerKeySlot = LOAD32(0x8349E46Cu);
-		if (innerKeySlot != 0) innerKey = LOAD32(innerKeySlot);
-		uint32_t innerBeginFn = LOAD32(LOAD32((uint32_t)stream) + 4);
-		callTarget.u64 = innerBeginFn;
-		// state the callee may pass on
+		// stream->vtbl[1](stream, singleton, 80, scratchAddr, maskTableAddr, positionAddr, positionGlobal, v11..v13)
+		uint64_t vectorContext = defaultSingleton;
+		uint32_t vectorGlobalAddr = LOAD32(0x8349E46Cu);
+		if (vectorGlobalAddr != 0) vectorContext = LOAD32(vectorGlobalAddr);
+		uint32_t setPositionFn = LOAD32(LOAD32((uint32_t)stream) + 4);
+		callTarget.u64 = setPositionFn;
 		ctx.r3.u64 = stream;
-		ctx.r4.u64 = innerKey;
-		ctx.r5.u64 = vectorOffset;
-		ctx.r6.u64 = constantSlot;
-		ctx.r7.u64 = maskAddr;
+		ctx.r4.u64 = vectorContext;
+		ctx.r5.u64 = vectorSize;
+		ctx.r6.u64 = scratchAddr;
+		ctx.r7.u64 = maskTableAddr;
 		ctx.r8.u64 = positionAddr;
-		ctx.r9.s64 = constBase;
-		ctx.r10.u64 = innerBeginFn;
-		ctx.v11 = mergedVec;
+		ctx.r9.s64 = positionGlobal;
+		ctx.r10.u64 = setPositionFn;
+		ctx.v11 = resultVec;
 		ctx.v12 = positionVec;
-		ctx.v13 = constantVec;
+		ctx.v13 = shiftedVec;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 
-		uint32_t innerBegun = ctx.r3.u32 & 0xFF;
-		if (innerBegun != 0) {
-			// r4 = per-float key address; r9 is handed over to the first call only.
-			uint64_t floatKeyAddr = (int64_t)constantAddr + 6024;
-			ctx.r4.u64 = floatKeyAddr;
-			ctx.r9.u64 = innerBegun;
+		uint32_t hasPosition = ctx.r3.u32 & 0xFF;
+		if (hasPosition != 0) {
+			uint64_t fieldAddr = (int64_t)dataBase + 6024;
+			ctx.r4.u64 = fieldAddr;
+			ctx.r9.u64 = hasPosition;
 			IStream_SerializeFloat(ctx, base, stream, (uint64_t)(stack + 112));
-			floatKeyAddr = (int64_t)constantAddr + 6028;
-			ctx.r4.u64 = floatKeyAddr;
+			fieldAddr = (int64_t)dataBase + 6028;
+			ctx.r4.u64 = fieldAddr;
+			ctx.r9.u64 = hasPosition;
 			IStream_SerializeFloat(ctx, base, stream, (uint64_t)(stack + 116));
-			floatKeyAddr = (int64_t)constantAddr + 6032;
-			ctx.r4.u64 = floatKeyAddr;
+			fieldAddr = (int64_t)dataBase + 6032;
+			ctx.r4.u64 = fieldAddr;
+			ctx.r9.u64 = hasPosition;
 			IStream_SerializeFloat(ctx, base, stream, (uint64_t)(stack + 120));
-			floatKeyAddr = (int64_t)constantAddr + 6036;
-			ctx.r4.u64 = floatKeyAddr;
+			fieldAddr = (int64_t)dataBase + 6036;
+			ctx.r4.u64 = fieldAddr;
+			ctx.r9.u64 = hasPosition;
 			IStream_SerializeFloat(ctx, base, stream, (uint64_t)(stack + 124));
-			uint32_t innerEndFn = LOAD32(LOAD32((uint32_t)stream) + 12);
-			callTarget.u64 = innerEndFn;
+			uint32_t endFn = LOAD32(LOAD32((uint32_t)stream) + 12);
+			callTarget.u64 = endFn;
 			ctx.r3.u64 = stream;
-			ctx.r10.u64 = innerEndFn;
+			ctx.r10.u64 = endFn;
 			REX_CALL_INDIRECT_FUNC(callTarget.u32);
 		}
 
-		// matrix at entityDef+32 from the vector at +80 and the four floats
+		// bounding box built from the four floats just serialized
 		CEntityDef_SetRotation(ctx, base, entityDefAddr, LOAD64(stack + 112), LOAD64(stack + 120));
 
+		// life property
 		CProperty_ProcessValue(ctx, base, uint32_t(TXT_8349E470_G_), stream, (uint64_t)(stack + 80));
-		uint32_t useLife = LOAD8(stack + 80);
-		entityDef->m_A0 = uint8_t(useLife);
-		uint64_t countKey = defaultKey;
-		uint32_t countKeySlot = LOAD32(0x8349E474u);
-		if (countKeySlot != 0) countKey = LOAD32(countKeySlot);
-		ctx.r4.u64 = countKey;
-		ctx.r9.u64 = useLife;
+		uint32_t lifeValue = LOAD8(stack + 80);
+		entityDef->m_A0 = uint8_t(lifeValue);
+		uint64_t lifeContext = defaultSingleton;
+		uint32_t lifeGlobalAddr = LOAD32(0x8349E474u);
+		if (lifeGlobalAddr != 0) lifeContext = LOAD32(lifeGlobalAddr);
+		ctx.r4.u64 = lifeContext;
+		ctx.r9.u64 = lifeValue;
 		IStream_SerializeU32(ctx, base, stream, (uint64_t)(stack + 104));
 
-		// m_A4 = int(table[index] * table[9] * count): floats at 0x8335EFF4, index read from 0x83496C00.
-		uint32_t tableIndex = LOAD32(uint32_t(g_83490000) + 27648);
+		// scale: global-indexed table entry times the serialized value
+		uint32_t scaleIndex = LOAD32(uint32_t(g_83490000) + 27648);
 		ctx.fpscr.disableFlushMode();
-		double defaultA8 = double(LOAD_F32((uint32_t)constantAddr + 5992));
-		int32_t serializedCount = int32_t(LOAD32(stack + 104));
-		STORE_F32(stack + 84, float(defaultA8));
-		STORE64(stack + 96, (uint64_t)(int64_t)serializedCount);
-		PPCRegister countBits{};
-		countBits.f64 = LOAD_F64(stack + 96);
-		double countAsDouble = double(countBits.s64);
-		uint64_t floatTable = g_8335EFF4;
-		uint32_t tableOffset = tableIndex << 2;
-		double tableValue = double(LOAD_F32(tableOffset + (uint32_t)floatTable));
-		double tableProduct = double(float(tableValue * double(LOAD_F32((uint32_t)floatTable + 36))));
-		double scaledCount = double(float(tableProduct * double(float(countAsDouble))));
+		double defaultLife2 = double(LOAD_F32((uint32_t)dataBase + 5992));
+		int32_t serializedValue = int32_t(LOAD32(stack + 104));
+		STORE_F32(stack + 84, float(defaultLife2));
+		STORE64(stack + 96, (uint64_t)(int64_t)serializedValue);
+		PPCRegister valueBits{};
+		valueBits.f64 = LOAD_F64(stack + 96);
+		double valueAsFloat = double(valueBits.s64);
+		uint64_t scaleTable = g_8335EFF4;
+		uint32_t tableOffset = scaleIndex << 2;
+		double tableValue = double(LOAD_F32(tableOffset + (uint32_t)scaleTable));
+		double scaledTable = double(float(tableValue * double(LOAD_F32((uint32_t)scaleTable + 36))));
+		double scaledValue = double(float(scaledTable * double(float(valueAsFloat))));
 		PPCRegister converted{};
-		converted.s64 = std::isnan(scaledCount) ? int64_t(0x80000000U) : scaledCount > double(INT_MAX) ? INT_MAX : simde_mm_cvttsd_si32(simde_mm_load_sd(&scaledCount));
+		converted.s64 = std::isnan(scaledValue) ? int64_t(0x80000000U) : scaledValue > double(INT_MAX) ? INT_MAX : simde_mm_cvttsd_si32(simde_mm_load_sd(&scaledValue));
 		STORE32(entityDefAddr + 164, converted.u32);
 
-		// float into stack+84, preset to the constant at 0x8209AC28
-		uint64_t floatKey = defaultKey;
-		uint32_t floatKeySlot = LOAD32(0x8349E478u);
-		if (floatKeySlot != 0) floatKey = LOAD32(floatKeySlot);
-		// state the callee may pass on
-		ctx.r4.u64 = floatKey;
+		uint64_t floatContext = defaultSingleton;
+		uint32_t floatGlobalAddr = LOAD32(0x8349E478u);
+		if (floatGlobalAddr != 0) floatContext = LOAD32(floatGlobalAddr);
+		ctx.r4.u64 = floatContext;
 		ctx.r6.u64 = tableOffset;
-		ctx.r7.s64 = g_834A0000;
-		ctx.r8.u64 = floatTable;
-		ctx.r9.u64 = 164;
+		ctx.r8.u64 = scaleTable;
 		ctx.f7 = converted;
-		ctx.f8.f64 = scaledCount;
-		ctx.f9.f64 = double(float(countAsDouble));
-		ctx.f10.f64 = countAsDouble;
-		ctx.f11 = countBits;
-		ctx.f12.f64 = tableProduct;
+		ctx.f8.f64 = scaledValue;
+		ctx.f9.f64 = double(float(valueAsFloat));
+		ctx.f10.f64 = valueAsFloat;
+		ctx.f11 = valueBits;
+		ctx.f12.f64 = scaledTable;
 		ctx.f13.f64 = tableValue;
 		IStream_SerializeFloat(ctx, base, stream, (uint64_t)(stack + 84));
-		double handoverF13 = ctx.f13.f64;
-		// With a zero id the float is capped at that same constant.
+		double carriedFloat = ctx.f13.f64;
 		if (LOAD32(stack + 88) == 0) {
 			ctx.fpscr.disableFlushMode();
-			double capA8 = double(LOAD_F32((uint32_t)constantAddr + 5992));
-			handoverF13 = double(LOAD_F32(stack + 84));
-			if (handoverF13 > capA8) {
-				STORE_F32(stack + 84, float(capA8));
+			double defaultLife3 = double(LOAD_F32((uint32_t)dataBase + 5992));
+			carriedFloat = double(LOAD_F32(stack + 84));
+			if (carriedFloat > defaultLife3) {
+				STORE_F32(stack + 84, float(defaultLife3));
 			}
 		}
 		ctx.fpscr.disableFlushMode();
-		double valueA8 = double(LOAD_F32(stack + 84));
-		entityDef->m_A8 = float(valueA8);
-		// state the callee may pass on
+		double finalLife = double(LOAD_F32(stack + 84));
+		uint32_t registrableFlags = 0;
+		entityDef->m_A8 = float(finalLife);
 		ctx.r5.u64 = arg3;
 		ctx.r6.u64 = arg4;
-		ctx.r7.u64 = 0;
-		ctx.f13.f64 = handoverF13;
+		ctx.r7.u64 = registrableFlags;
+		ctx.f13.f64 = carriedFloat;
 		CRegistrableThing_LoadId(ctx, base, entityDefAddr, stream);
-		uint32_t endFn = LOAD32(LOAD32((uint32_t)stream) + 12);
-		callTarget.u64 = endFn;
+		uint32_t closeFn = LOAD32(LOAD32((uint32_t)stream) + 12);
+		callTarget.u64 = closeFn;
 		ctx.r3.u64 = stream;
-		ctx.r10.u64 = endFn;
+		ctx.r10.u64 = closeFn;
 		REX_CALL_INDIRECT_FUNC(callTarget.u32);
 	}
 	stack = PopStackFrame(stack, 208);

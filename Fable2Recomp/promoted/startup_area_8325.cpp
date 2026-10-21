@@ -6716,6 +6716,49 @@ uint64_t Construct_TXT_83498F64_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(143, sub_83258608, 0x83258608) { ctx.r3.u64 = Construct_TXT_83498F64_G_(ctx, base); }
 
+// sub_83258648  [144 bytes]
+uint64_t n_sub_83258648(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83258648)) { __imp__sub_83258648(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83258648);
+	// Static initialiser of a global container (head node at +4, element count at +8): a new head node whose
+	// three links (+0, +4, +8) point to itself and whose flag bytes +28 and +29 are set to 1, then atexit
+	// (RegisterAtExit) registers the function that releases the global.
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 32);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 29, 0);
+	STORE8(head + 28, 1);
+	uint64_t container = (int64_t)g_834A0000 - 28824;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 29, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 17248, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83258648, 0x83258648) { ctx.r3.u64 = n_sub_83258648(ctx, base); }
+
 uint64_t Construct_TXT_83498F74_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_83498F74_G_ = int32_t(0x83498F74);
 	constexpr int32_t str_TXT_820C5744_B_ = int32_t(0x820C5744);
@@ -7084,6 +7127,72 @@ uint64_t RegisterAtExit_832A4610(CpuState& ctx, uint8_t* base, uint64_t exitCont
 }
 PROMOTED_ENTRY(143, sub_83258E60, 0x83258E60) { ctx.r3.u64 = RegisterAtExit_832A4610(ctx, base, ctx.r8.u64); }
 
+uint64_t n_sub_83258F70(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83258F70)) { __imp__sub_83258F70(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83258F70);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 96);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 89, 0);
+	STORE8(head + 88, 1);
+	uint64_t container = (int64_t)g_834A0000 - 28372;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 89, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 18096, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83258F70, 0x83258F70) { ctx.r3.u64 = n_sub_83258F70(ctx, base); }
+
+uint64_t n_sub_832592A8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x832592A8)) { __imp__sub_832592A8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832592A8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 12);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 26648;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 18272, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_832592A8, 0x832592A8) { ctx.r3.u64 = n_sub_832592A8(ctx, base); }
+
 uint64_t HashName_TXT_820BD244_B_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t str_TXT_820BD244_B_ = int32_t(0x820BD244);
 	constexpr uint32_t g_HashOf_TXT_820BD244_B_ = 0x83499D58u;
@@ -7095,6 +7204,72 @@ uint64_t HashName_TXT_820BD244_B_(CpuState& ctx, uint8_t* base) {
 	return hash;
 }
 PROMOTED_ENTRY(143, sub_83259490, 0x83259490) { ctx.r3.u64 = HashName_TXT_820BD244_B_(ctx, base); }
+
+uint64_t n_sub_832595D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x832595D0)) { __imp__sub_832595D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832595D0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 112);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 97, 0);
+	STORE8(head + 96, 1);
+	uint64_t container = (int64_t)g_834A0000 - 24420;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 97, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 18536, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_832595D0, 0x832595D0) { ctx.r3.u64 = n_sub_832595D0(ctx, base); }
+
+uint64_t n_sub_832596F0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x832596F0)) { __imp__sub_832596F0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x832596F0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 24);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 23856;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 18616, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_832596F0, 0x832596F0) { ctx.r3.u64 = n_sub_832596F0(ctx, base); }
 
 uint64_t Construct_TXT_8349AA40_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349AA40_G_ = int32_t(0x8349AA40);
@@ -7187,6 +7362,33 @@ uint64_t RegisterAtExit_832A4B08(CpuState& ctx, uint8_t* base, uint64_t exitCont
 	return RegisterAtExit(ctx, base, n_sub_832A4B08_address, exitContext);
 }
 PROMOTED_ENTRY(143, sub_83259B60, 0x83259B60) { ctx.r3.u64 = RegisterAtExit_832A4B08(ctx, base, ctx.r8.u64); }
+
+uint64_t n_sub_83259B70(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83259B70)) { __imp__sub_83259B70(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83259B70);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 48);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 21168;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19296, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83259B70, 0x83259B70) { ctx.r3.u64 = n_sub_83259B70(ctx, base); }
 
 // sub_83259BD0  [64 bytes]
 uint64_t DynamicObstacle_Init(CpuState& ctx, uint8_t* base) {
@@ -7304,6 +7506,150 @@ uint64_t Construct_TXT_8349AD98_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(143, sub_83259E48, 0x83259E48) { ctx.r3.u64 = Construct_TXT_8349AD98_G_(ctx, base); }
 
+uint64_t n_sub_83259E88(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83259E88)) { __imp__sub_83259E88(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83259E88);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 24);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 21, 0);
+	STORE8(head + 20, 1);
+	uint64_t container = (int64_t)g_834A0000 - 21092;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 21, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19528, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83259E88, 0x83259E88) { ctx.r3.u64 = n_sub_83259E88(ctx, base); }
+
+uint64_t n_sub_83259F18(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83259F18)) { __imp__sub_83259F18(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83259F18);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 36);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 33, 0);
+	STORE8(head + 32, 1);
+	uint64_t container = (int64_t)g_834A0000 - 21080;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 33, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19544, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83259F18, 0x83259F18) { ctx.r3.u64 = n_sub_83259F18(ctx, base); }
+
+uint64_t n_sub_83259FA8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x83259FA8)) { __imp__sub_83259FA8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x83259FA8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 24);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 21, 0);
+	STORE8(head + 20, 1);
+	uint64_t container = (int64_t)g_834A0000 - 21068;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 21, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19560, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_83259FA8, 0x83259FA8) { ctx.r3.u64 = n_sub_83259FA8(ctx, base); }
+
+uint64_t n_sub_8325A038(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325A038)) { __imp__sub_8325A038(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325A038);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 40);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 21056;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19576, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325A038, 0x8325A038) { ctx.r3.u64 = n_sub_8325A038(ctx, base); }
+
 uint64_t RegisterAtExit_832A4CC0(CpuState& ctx, uint8_t* base, uint64_t exitContext) {
 	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
 	constexpr int32_t n_sub_832A4CC0_address = int32_t(0x832A4CC0);
@@ -7313,6 +7659,60 @@ uint64_t RegisterAtExit_832A4CC0(CpuState& ctx, uint8_t* base, uint64_t exitCont
 	return RegisterAtExit(ctx, base, n_sub_832A4CC0_address, exitContext);
 }
 PROMOTED_ENTRY(143, sub_8325A098, 0x8325A098) { ctx.r3.u64 = RegisterAtExit_832A4CC0(ctx, base, ctx.r8.u64); }
+
+uint64_t n_sub_8325A0C0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325A0C0)) { __imp__sub_8325A0C0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325A0C0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 16);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 21008;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19736, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325A0C0, 0x8325A0C0) { ctx.r3.u64 = n_sub_8325A0C0(ctx, base); }
+
+uint64_t n_sub_8325A120(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325A120)) { __imp__sub_8325A120(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325A120);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 36);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 20996;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 19808, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325A120, 0x8325A120) { ctx.r3.u64 = n_sub_8325A120(ctx, base); }
 
 uint64_t Construct_TXT_8349ADDC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349ADDC_G_ = int32_t(0x8349ADDC);
@@ -8984,6 +9384,157 @@ uint64_t Construct_TXT_8349B17C_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(143, sub_8325CB38, 0x8325CB38) { ctx.r3.u64 = Construct_TXT_8349B17C_G_(ctx, base); }
 
+// sub_8325CB78  [88 bytes]
+uint64_t n_sub_8325CB78(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB30_B_ = int32_t(0x820CEB30);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CB78)) { __imp__sub_8325CB78(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CB78);
+	uint32_t stack = ctx.r1.u64;
+	// Construct the global string as a copy of another global string, append a C string to it
+	// (CCharString_AssignCString appends to a string that is not empty), then register its release
+	// to run at exit (RegisterAtExit is atexit; the value it passes to the registered function is the page base here).
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20096;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB30_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22496, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CB78, 0x8325CB78) { ctx.r3.u64 = n_sub_8325CB78(ctx, base); }
+
+uint64_t n_sub_8325CBD0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB3C_B_ = int32_t(0x820CEB3C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CBD0)) { __imp__sub_8325CBD0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CBD0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20092;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB3C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22512, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CBD0, 0x8325CBD0) { ctx.r3.u64 = n_sub_8325CBD0(ctx, base); }
+
+uint64_t n_sub_8325CC28(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB48_B_ = int32_t(0x820CEB48);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CC28)) { __imp__sub_8325CC28(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CC28);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20088;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB48_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22528, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CC28, 0x8325CC28) { ctx.r3.u64 = n_sub_8325CC28(ctx, base); }
+
+uint64_t n_sub_8325CC80(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB5C_B_ = int32_t(0x820CEB5C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CC80)) { __imp__sub_8325CC80(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CC80);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20084;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB5C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22544, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CC80, 0x8325CC80) { ctx.r3.u64 = n_sub_8325CC80(ctx, base); }
+
+uint64_t n_sub_8325CCD8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB74_B_ = int32_t(0x820CEB74);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CCD8)) { __imp__sub_8325CCD8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CCD8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20080;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB74_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22560, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CCD8, 0x8325CCD8) { ctx.r3.u64 = n_sub_8325CCD8(ctx, base); }
+
+uint64_t n_sub_8325CD30(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB88_B_ = int32_t(0x820CEB88);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CD30)) { __imp__sub_8325CD30(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CD30);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20076;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB88_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22576, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CD30, 0x8325CD30) { ctx.r3.u64 = n_sub_8325CD30(ctx, base); }
+
+uint64_t n_sub_8325CD88(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB9C_B_ = int32_t(0x820CEB9C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B17C_G_ = int32_t(0x8349B17C);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CD88)) { __imp__sub_8325CD88(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CD88);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20072;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B17C_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB9C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22592, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CD88, 0x8325CD88) { ctx.r3.u64 = n_sub_8325CD88(ctx, base); }
+
 uint64_t Construct_TXT_8349B1A4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1A4_G_ = int32_t(0x8349B1A4);
 	constexpr int32_t str_TXT_820CEBA4_B_ = int32_t(0x820CEBA4);
@@ -8996,6 +9547,27 @@ uint64_t Construct_TXT_8349B1A4_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(143, sub_8325CE40, 0x8325CE40) { ctx.r3.u64 = Construct_TXT_8349B1A4_G_(ctx, base); }
 
+uint64_t n_sub_8325CE80(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB9C_B_ = int32_t(0x820CEB9C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1A4_G_ = int32_t(0x8349B1A4);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CE80)) { __imp__sub_8325CE80(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CE80);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20056;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1A4_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB9C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22624, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CE80, 0x8325CE80) { ctx.r3.u64 = n_sub_8325CE80(ctx, base); }
+
 uint64_t Construct_TXT_8349B1AC_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
 	constexpr int32_t str_TXT_820CEBBC_B_ = int32_t(0x820CEBBC);
@@ -9007,6 +9579,111 @@ uint64_t Construct_TXT_8349B1AC_G_(CpuState& ctx, uint8_t* base) {
 	return RegisterAtExit(ctx, base, Destroy_TXT_8349B1AC_G__address);
 }
 PROMOTED_ENTRY(143, sub_8325CED8, 0x8325CED8) { ctx.r3.u64 = Construct_TXT_8349B1AC_G_(ctx, base); }
+
+uint64_t n_sub_8325CF18(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB9C_B_ = int32_t(0x820CEB9C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CF18)) { __imp__sub_8325CF18(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CF18);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20048;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1AC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB9C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22656, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CF18, 0x8325CF18) { ctx.r3.u64 = n_sub_8325CF18(ctx, base); }
+
+uint64_t n_sub_8325CF70(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEBCC_B_ = int32_t(0x820CEBCC);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CF70)) { __imp__sub_8325CF70(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CF70);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20044;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1AC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEBCC_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22672, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CF70, 0x8325CF70) { ctx.r3.u64 = n_sub_8325CF70(ctx, base); }
+
+uint64_t n_sub_8325CFC8(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEBD8_B_ = int32_t(0x820CEBD8);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325CFC8)) { __imp__sub_8325CFC8(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325CFC8);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20040;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1AC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEBD8_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22688, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325CFC8, 0x8325CFC8) { ctx.r3.u64 = n_sub_8325CFC8(ctx, base); }
+
+uint64_t n_sub_8325D020(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEBE4_B_ = int32_t(0x820CEBE4);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D020)) { __imp__sub_8325D020(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D020);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20036;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1AC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEBE4_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22704, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D020, 0x8325D020) { ctx.r3.u64 = n_sub_8325D020(ctx, base); }
+
+uint64_t n_sub_8325D078(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEBEC_B_ = int32_t(0x820CEBEC);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1AC_G_ = int32_t(0x8349B1AC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D078)) { __imp__sub_8325D078(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D078);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20032;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1AC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEBEC_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22720, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D078, 0x8325D078) { ctx.r3.u64 = n_sub_8325D078(ctx, base); }
 
 uint64_t Construct_TXT_8349B1C8_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
@@ -9032,6 +9709,90 @@ uint64_t Construct_TXT_8349B1CC_G_(CpuState& ctx, uint8_t* base) {
 }
 PROMOTED_ENTRY(143, sub_8325D140, 0x8325D140) { ctx.r3.u64 = Construct_TXT_8349B1CC_G_(ctx, base); }
 
+uint64_t n_sub_8325D210(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC0C_B_ = int32_t(0x820CEC0C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D210)) { __imp__sub_8325D210(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D210);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20012;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1C8_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC0C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22784, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D210, 0x8325D210) { ctx.r3.u64 = n_sub_8325D210(ctx, base); }
+
+uint64_t n_sub_8325D268(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC14_B_ = int32_t(0x820CEC14);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D268)) { __imp__sub_8325D268(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D268);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20008;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1C8_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC14_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22800, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D268, 0x8325D268) { ctx.r3.u64 = n_sub_8325D268(ctx, base); }
+
+uint64_t n_sub_8325D2C0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC28_B_ = int32_t(0x820CEC28);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D2C0)) { __imp__sub_8325D2C0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D2C0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20004;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1C8_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC28_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22816, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D2C0, 0x8325D2C0) { ctx.r3.u64 = n_sub_8325D2C0(ctx, base); }
+
+uint64_t n_sub_8325D318(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC30_B_ = int32_t(0x820CEC30);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1C8_G_ = int32_t(0x8349B1C8);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D318)) { __imp__sub_8325D318(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D318);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 20000;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1C8_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC30_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22832, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D318, 0x8325D318) { ctx.r3.u64 = n_sub_8325D318(ctx, base); }
+
 uint64_t Construct_TXT_8349B1E4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1E4_G_ = int32_t(0x8349B1E4);
 	constexpr int32_t str_TXT_820CEC44_B_ = int32_t(0x820CEC44);
@@ -9043,6 +9804,69 @@ uint64_t Construct_TXT_8349B1E4_G_(CpuState& ctx, uint8_t* base) {
 	return RegisterAtExit(ctx, base, Destroy_TXT_8349B1E4_G__address);
 }
 PROMOTED_ENTRY(143, sub_8325D370, 0x8325D370) { ctx.r3.u64 = Construct_TXT_8349B1E4_G_(ctx, base); }
+
+uint64_t n_sub_8325D3B0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC50_B_ = int32_t(0x820CEC50);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1E4_G_ = int32_t(0x8349B1E4);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D3B0)) { __imp__sub_8325D3B0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D3B0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 19992;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1E4_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC50_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22864, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D3B0, 0x8325D3B0) { ctx.r3.u64 = n_sub_8325D3B0(ctx, base); }
+
+uint64_t n_sub_8325D408(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC60_B_ = int32_t(0x820CEC60);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1E4_G_ = int32_t(0x8349B1E4);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D408)) { __imp__sub_8325D408(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D408);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 19988;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1E4_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC60_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22880, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D408, 0x8325D408) { ctx.r3.u64 = n_sub_8325D408(ctx, base); }
+
+uint64_t n_sub_8325D460(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEB9C_B_ = int32_t(0x820CEB9C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1E4_G_ = int32_t(0x8349B1E4);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D460)) { __imp__sub_8325D460(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D460);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 19984;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1E4_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEB9C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22896, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D460, 0x8325D460) { ctx.r3.u64 = n_sub_8325D460(ctx, base); }
 
 uint64_t Construct_TXT_8349B1F4_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B1F4_G_ = int32_t(0x8349B1F4);
@@ -9079,6 +9903,48 @@ uint64_t Construct_TXT_8349B1FC_G_(CpuState& ctx, uint8_t* base) {
 	return RegisterAtExit(ctx, base, Destroy_TXT_8349B1FC_G__address);
 }
 PROMOTED_ENTRY(143, sub_8325D538, 0x8325D538) { ctx.r3.u64 = Construct_TXT_8349B1FC_G_(ctx, base); }
+
+uint64_t n_sub_8325D578(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CEC9C_B_ = int32_t(0x820CEC9C);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1FC_G_ = int32_t(0x8349B1FC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D578)) { __imp__sub_8325D578(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D578);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 19968;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1FC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CEC9C_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22960, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D578, 0x8325D578) { ctx.r3.u64 = n_sub_8325D578(ctx, base); }
+
+uint64_t n_sub_8325D5D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t str_TXT_820CECA8_B_ = int32_t(0x820CECA8);
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t TXT_8349B1FC_G_ = int32_t(0x8349B1FC);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325D5D0)) { __imp__sub_8325D5D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325D5D0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint64_t globalString = (int64_t)g_834A0000 - 19964;
+	ctx.r1.u64 = stack;
+	ctx.r11.s64 = g_834A0000;
+	CCharString_CopyConstruct(ctx, base, globalString, TXT_8349B1FC_G_);
+	CCharString_AssignCString(ctx, base, globalString, str_TXT_820CECA8_B_);
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 22976, g_832A0000);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325D5D0, 0x8325D5D0) { ctx.r3.u64 = n_sub_8325D5D0(ctx, base); }
 
 uint64_t Construct_TXT_8349B208_G_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B208_G_ = int32_t(0x8349B208);
@@ -9833,6 +10699,84 @@ uint64_t HashName_TXT_820D0C30_B_(CpuState& ctx, uint8_t* base) {
 	return hash;
 }
 PROMOTED_ENTRY(143, sub_8325E508, 0x8325E508) { ctx.r3.u64 = HashName_TXT_820D0C30_B_(ctx, base); }
+
+uint64_t n_sub_8325E540(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325E540)) { __imp__sub_8325E540(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325E540);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 24);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 21, 0);
+	STORE8(head + 20, 1);
+	uint64_t container = (int64_t)g_834A0000 - 19692;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 21, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 23744, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325E540, 0x8325E540) { ctx.r3.u64 = n_sub_8325E540(ctx, base); }
+
+uint64_t n_sub_8325E5D0(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325E5D0)) { __imp__sub_8325E5D0(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325E5D0);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 32);
+	if (head != 0) {
+		STORE32(head, 0u);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, 0u);
+	}
+	if (head + 8 != 0) {
+		STORE32(head + 8, 0u);
+	}
+	STORE8(head + 29, 0);
+	STORE8(head + 28, 1);
+	uint64_t container = (int64_t)g_834A0000 - 19680;
+	STORE32((uint32_t)container + 4, head);
+	STORE8(head + 29, 1);
+	uint32_t linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 4, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead, linkedHead);
+	linkedHead = LOAD32((uint32_t)container + 4);
+	STORE32(linkedHead + 8, linkedHead);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = linkedHead;
+	ctx.xer.ca = head > 4294967287;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 23760, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325E5D0, 0x8325E5D0) { ctx.r3.u64 = n_sub_8325E5D0(ctx, base); }
 
 uint64_t HashName_TXT_820D0C3C_B_(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t str_TXT_820D0C3C_B_ = int32_t(0x820D0C3C);
@@ -10869,6 +11813,60 @@ uint64_t Construct_TXT_8349B4E4_G_(CpuState& ctx, uint8_t* base) {
 	return RegisterAtExit(ctx, base, Destroy_TXT_8349B4E4_G__address);
 }
 PROMOTED_ENTRY(143, sub_8325FCD8, 0x8325FCD8) { ctx.r3.u64 = Construct_TXT_8349B4E4_G_(ctx, base); }
+
+uint64_t n_sub_8325FD18(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325FD18)) { __imp__sub_8325FD18(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325FD18);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 16);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 19224;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 24608, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325FD18, 0x8325FD18) { ctx.r3.u64 = n_sub_8325FD18(ctx, base); }
+
+uint64_t n_sub_8325FD78(CpuState& ctx, uint8_t* base) {
+	constexpr int32_t g_832A0000 = int32_t(0x832A0000);
+	constexpr int32_t g_834A0000 = int32_t(0x834A0000);
+	if (!UseLiftedCode(143, 0x8325FD78)) { __imp__sub_8325FD78(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x8325FD78);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	ctx.r1.u64 = stack;
+	uint32_t head = operator_new(ctx, base, 20);
+	if (head != 0) {
+		STORE32(head, head);
+	}
+	if (head + 4 != 0) {
+		STORE32(head + 4, head);
+	}
+	uint64_t container = (int64_t)g_834A0000 - 19212;
+	STORE32((uint32_t)container + 4, head);
+	STORE32((uint32_t)container + 8, 0u);
+	ctx.r11.u64 = head;
+	ctx.xer.ca = head > 4294967291;
+	uint64_t result = RegisterAtExit(ctx, base, (int64_t)g_832A0000 + 24624, container);
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(143, sub_8325FD78, 0x8325FD78) { ctx.r3.u64 = n_sub_8325FD78(ctx, base); }
 
 uint64_t InitGlobalString_OnActionUseBase_8349B500(CpuState& ctx, uint8_t* base) {
 	constexpr int32_t TXT_8349B500_G_ = int32_t(0x8349B500);

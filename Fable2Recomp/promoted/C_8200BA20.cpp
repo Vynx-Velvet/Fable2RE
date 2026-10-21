@@ -17,3 +17,30 @@ uint64_t GetSimpleVariation(CpuState& ctx, uint8_t* base) {
 	return TXT_83334D74_G_;
 }
 PROMOTED_ENTRY(90, sub_82C27FB0, 0x82C27FB0) { ctx.r3.u64 = GetSimpleVariation(ctx, base); }
+
+uint64_t n_sub_82C28290(CpuState& ctx, uint8_t* base, uint64_t object) {
+	constexpr int32_t g_83330000 = int32_t(0x83330000);
+	if (!UseLiftedCode(90, 0x82C28290)) { ctx.r4.u64 = object; __imp__sub_82C28290(ctx, base); return ctx.r3.u64; }
+	LiftedFrame frame(0x82C28290);
+	uint32_t stack = ctx.r1.u64;
+	stack = PushStackFrame(base, stack, 96);
+	uint32_t vtable = LOAD32((uint32_t)object);
+	uint64_t globalAddress = (int64_t)g_83330000 + 19824;
+	uint32_t method = LOAD32(vtable + 4);
+	PPCRegister callTarget{};
+	callTarget.u64 = method;
+	ctx.r1.u64 = stack;
+	ctx.r3.u64 = object;
+	ctx.r4.u64 = globalAddress;
+	ctx.r9.u64 = method;
+	ctx.r10.s64 = g_83330000;
+	REX_CALL_INDIRECT_FUNC(callTarget.u32);
+	uint64_t result = ctx.r3.u64;
+	if ((uint32_t)result != 0) {
+		result = LOAD32((uint32_t)result + 12);
+	}
+	stack = PopStackFrame(stack, 96);
+	ctx.r1.u64 = stack;
+	return result;
+}
+PROMOTED_ENTRY(90, sub_82C28290, 0x82C28290) { ctx.r3.u64 = n_sub_82C28290(ctx, base, ctx.r4.u64); }
